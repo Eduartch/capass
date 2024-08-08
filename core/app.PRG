@@ -1,0 +1,2 @@
+DEFINE CLASS app as Custom
+ENDDEFINE 
