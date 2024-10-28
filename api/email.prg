@@ -27,10 +27,10 @@ Define Class E_MAIL As Custom
 	Function ENVIAR
 	Local lcEsquema, loCDO, loMsg, loError, lnI, lcArchivo
 	#Define KEY_ENTER Chr(13)
-	IF !PEMSTATUS(goapp,'puerto',5) then
-	    ADDPROPERTY(goapp,'puerto','465')
-	ENDIF     
-	this.nSMTPPuerto=VAL(goapp.puerto)
+	If !Pemstatus(goapp,'puerto',5) Then
+		AddProperty(goapp,'puerto','465')
+	Endif
+	This.nSMTPPuerto=IIF(Val(goapp.puerto)>0,VAL(goapp.puerto),465)
 	If !Pemstatus(goapp,'clavecorreo',5)
 		AddProperty(goapp,'clavecorreo','')
 	Endif
@@ -38,7 +38,7 @@ Define Class E_MAIL As Custom
 		This.cdominio='companysysven.com'
 	Else
 		This.cdominio='compania-sysven.com'
-	ENDIF
+	Endif
 	If 'compania-sysven.com' $ This.cRemitente  Then
 		If Empty(goapp.clavecorreo)
 			cpassword= This.SolicitaContraseña(This.cRemitente)
@@ -52,13 +52,13 @@ Define Class E_MAIL As Custom
 			This.cContrasena=goapp.clavecorreo
 		Endif
 	Else
-		objcorreo=this.Solicitaemail('cpe')
+		objcorreo=This.Solicitaemail('cpe')
 		If Vartype(objcorreo.correo)='L' Then
-			this.CmensajeError='No se Puede Acceder a la URL del Correo '+This.cRemitente
+			This.CmensajeError='No se Puede Acceder a la URL del Correo '+This.cRemitente
 			Return
 		Endif
 
-		This.cContrasena=objcorreo.password
+		This.cContrasena=objcorreo.Password
 	Endif
 	With This
 		.VALIDAR()
@@ -86,16 +86,17 @@ Define Class E_MAIL As Custom
 		loMsg = Createobject("CDO.Message")
 		With loMsg
 			.Configuration = loCDO
-			.From		   = This.cRemitente          && Requerido
-			.To			   = This.cDestinatario       && Requerido
-			.Cc			   = This.cConCopia           && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
-			.Bcc		   = This.cConCopiaOculta     && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
-			.Subject	   = This.ctitulo             && Requerido
-			.TextBody	   = This.cTexto              && Requerido
-*!*	WAIT WINDOW This.cRemitente
-*!*	WAIT WINDOW This.cContrasena
-*!*	WAIT WINDOW This.cDestinatario
-*!*	WAIT WINDOW This.cConCopia
+			.From		   = ALLTRIM(This.cRemitente)          && Requerido
+			.To			   = ALLTRIM(This.cDestinatario)       && Requerido
+			.Cc			   = ALLTRIM(This.cConCopia)           && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
+	     	.Bcc		   = ALLTRIM(This.cConCopiaOculta)     && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
+			.Subject	   = ALLTRIM(This.ctitulo)             && Requerido
+			.TextBody	   = ALLTRIM(This.cTexto)              && Requerido
+			
+*!*	WAIT WINDOW loMsg.From
+*!*	WAIT WINDOW loMsg.To
+*!*	WAIT WINDOW loMsg.cc
+*!*	WAIT WINDOW loMsg.Bcc	
 *!*	WAIT WINDOW This.cSMTPServidor
 *--- Si hay archivos adjuntos, se los agrega al e-mail
 			If !Empty(This.cAdjuntos) Then
@@ -108,6 +109,7 @@ Define Class E_MAIL As Custom
 *--- Si se quiere usar HTML, se agrega el contenido HTML
 			If !Empty(This.cPaginaHTML) Then
 				.CreateMHTMLBody(This.cPaginaHTML, 0)
+				.CreateMHTMLBody("file://"+This.cPaginaHTML)
 			Endif
 *--- Se determina a quien se debe notificar
 			If This.lConfirmacion Then

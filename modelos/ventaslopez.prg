@@ -151,7 +151,6 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Endfunc
 	Function ValidarTemporalVtas(Calias)
 	Local Sw As Integer
-*:Global cmensaje
 	Sw		 = 1
 	Cmensaje = ""
 	Select (Calias)
@@ -624,27 +623,32 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lc Noshow Textmerge
-	  SELECT  a.kar_Cost  AS kar_cost,	  c.idusua,a.kar_comi  AS kar_comi,	  a.codv      AS codv,
-	  a.idauto    AS idauto,	  c.codt      AS alma,	  a.kar_idco  AS idcosto,	  a.idkar     AS idkar,
-	  a.idart     AS Coda,	  a.cant      AS cant,	  a.prec      AS prec,	  c.valor     AS valor,
-	  c.igv       AS igv,	  c.impo      AS impo,	  c.fech      AS fech, c.fecr      AS fecr,	  c.form      AS form,	  c.deta      AS deta,
-	  c.exon      AS exon,	  c.ndo2      AS ndo2,	  c.rcom_entr AS rcom_entr,	  c.idcliente AS idclie,	  d.razo      AS razo,	  d.nruc      AS nruc,
-	  d.dire      AS dire,	  d.ciud      AS ciud,	  d.ndni      AS ndni,	  a.tipo      AS tipo,	  c.tdoc      AS tdoc,	  c.ndoc      AS ndoc,	  c.dolar     AS dolar,	  c.mone      AS mone,	  b.descri    AS descri,
-	  IFNULL(xx.idcaja,0) AS idcaja,	  b.unid      AS unid,	  b.premay    AS pre1,	  b.tipro     AS tipro,
-	  b.peso      AS peso,	  b.premen    AS pre2,	  IFNULL(z.vend_idrv,0) AS nidrv,	  c.vigv      AS vigv,	  a.dsnc      AS dsnc, a.dsnd      AS dsnd,	  a.gast      AS gast, c.idcliente AS idcliente,
-	  c.codt      AS codt, b.pre3      AS pre3,	  b.cost      AS costo,  b.uno       AS uno,	  b.dos       AS dos,b.tre,b.cua,	  (b.uno + b.dos+b.tre+b.cua) AS TAlma,
-	  c.fusua     AS fusua,  p.nomv      AS Vendedor,	  q.nomb      AS Usuario,	  a.incl      AS incl,	  c.rcom_mens AS rcom_mens,rcom_idtr
-	FROM fe_art b
-    INNER JOIN fe_kar a  ON a.idart = b.idart
-    INNER  JOIN fe_rcom c ON a.idauto = c.idauto
-    LEFT JOIN fe_caja xx   ON xx.idauto = c.idauto
-    INNER JOIN fe_clie d  ON c.idcliente = d.idclie
-    INNER  JOIN fe_vend p      ON p.idven = a.codv
-    INNER JOIN fe_usua q     ON q.idusua = c.idusua
-    LEFT JOIN (SELECT vend_idau,vend_idrv FROM fe_rvendedor WHERE vend_acti='A') AS z  ON z.vend_idau = c.idauto
-    WHERE c.acti <> 'I'   AND a.acti <> 'I' AND c.idauto=<<nidauto>> order by idkar
-	Endtext
+	SET TEXTMERGE on
+	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
+	\  SELECT  a.kar_Cost  AS kar_cost,	  c.idusua,a.kar_comi  AS kar_comi,	  a.codv      AS codv,
+	\  a.idauto    AS idauto,	  c.codt      AS alma,	  a.kar_idco  AS idcosto,	  a.idkar     AS idkar,
+	\  a.idart     AS Coda,	  a.cant      AS cant,	  a.prec      AS prec,	  c.valor     AS valor,c.rcom_exon,
+	\  c.igv       AS igv,	  c.impo      AS impo,	  c.fech      AS fech, c.fecr      AS fecr,	  c.form      AS form,	  c.deta      AS deta,
+	\  c.exon      AS exon,	  c.ndo2      AS ndo2,	  c.rcom_entr AS rcom_entr,	  c.idcliente AS idclie,	  d.razo      AS razo,	  d.nruc      AS nruc,
+	\  d.dire      AS dire,	  d.ciud      AS ciud,	  d.ndni      AS ndni,	  a.tipo      AS tipo,	  c.tdoc      AS tdoc,	  c.ndoc      AS ndoc,	  c.dolar     AS dolar,	  c.mone      AS mone,	  b.descri    AS descri,
+	\  IFNULL(xx.idcaja,0) AS idcaja,	  b.unid      AS unid,	  b.premay    AS pre1,	  b.tipro     AS tipro,
+	\  b.peso      AS peso,	  b.premen    AS pre2,	  IFNULL(z.vend_idrv,0) AS nidrv,	  c.vigv      AS vigv,	  a.dsnc      AS dsnc, a.dsnd      AS dsnd,	  a.gast      AS gast, c.idcliente AS idcliente,
+	\  c.codt      AS codt, b.pre3      AS pre3,	  b.cost      AS costo,  b.uno       AS uno,	  b.dos       AS dos,b.tre,b.cua,	  (b.uno + b.dos+b.tre+b.cua) AS TAlma,
+	\  c.fusua     AS fusua,  p.nomv      AS Vendedor,	  q.nomb      AS Usuario,	  a.incl      AS incl,	  c.rcom_mens AS rcom_mens,rcom_idtr
+	IF goapp.prodexo='S' THEN 
+	\,kar_tigv
+	ENDIF 
+	\FROM fe_art b
+    \INNER JOIN fe_kar a  ON a.idart = b.idart
+    \INNER  JOIN fe_rcom c ON a.idauto = c.idauto
+    \LEFT JOIN fe_caja xx   ON xx.idauto = c.idauto
+    \INNER JOIN fe_clie d  ON c.idcliente = d.idclie
+    \INNER  JOIN fe_vend p      ON p.idven = a.codv
+    \INNER JOIN fe_usua q     ON q.idusua = c.idusua
+    \LEFT JOIN (SELECT vend_idau,vend_idrv FROM fe_rvendedor WHERE vend_acti='A') AS z  ON z.vend_idau = c.idauto
+    \WHERE c.acti <> 'I'   AND a.acti <> 'I' AND c.idauto=<<nidauto>> order by idkar
+	SET TEXTMERGE off
+	SET TEXTMERGE TO 
 	If This.EjecutaConsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif

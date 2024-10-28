@@ -129,42 +129,42 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function Autorizarpsysw(ctipo, Ccursor)
+	Function Autorizarpsysw(Ctipo, Ccursor)
 	goApp.uauto = 0
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,2)='Ad' ORDER BY nomb
 		Endtext
-	Case ctipo = "C"
+	Case Ctipo = "C"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_acre=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,2)='Ad') ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "p"
+	Case Ctipo = "p"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_prec=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "g"
+	Case Ctipo = "g"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_guia=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "t"
+	Case Ctipo = "t"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_cont=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "Z"
+	Case Ctipo = "Z"
 		Text To lC Noshow Textmerge
         select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_super=1 ORDER BY nomb
 		Endtext
@@ -174,25 +174,25 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function autorizarxsysl(ctipo, Ccursor)
+	Function autorizarxsysl(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow
          SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='A' ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow
           SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,1)='A') ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow
                   SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow
                  SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "a"
+	Case Ctipo = "a"
 		Text To lC Noshow
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_apro=1 ORDER BY nomb
 		Endtext
@@ -202,29 +202,29 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function Autorizarpsys(ctipo, Ccursor)
+	Function Autorizarpsys(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='A' ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow
          SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,1)='A') ORDER BY nomb
 		Endtext
-	Case ctipo = "C"
+	Case Ctipo = "C"
 		Text To lC Noshow
          SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow
          SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "a"
+	Case Ctipo = "a"
 		Text To lC Noshow
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_apro=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "R"
+	Case Ctipo = "R"
 		Text To lC Noshow
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_grat=1 ORDER BY nomb
 		Endtext
@@ -234,45 +234,45 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function autorizarxsysg(ctipo, Ccursor)
+	Function autorizarxsysg(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow Textmerge
       select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,2)='Ad' ORDER BY nomb
 		Endtext
-	Case ctipo = "C"
+	Case Ctipo = "C"
 		Text To lC Noshow Textmerge
        select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_acre=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow Textmerge
        select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,2)='Ad') ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow Textmerge
       select   idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "p"
+	Case Ctipo = "p"
 		Text To lC Noshow Textmerge
        select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_prec=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "g"
+	Case Ctipo = "g"
 		Text To lC Noshow Textmerge
      select   idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_guia=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "t"
+	Case Ctipo = "t"
 		Text To lC Noshow Textmerge
       select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_cont=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "Z"
+	Case Ctipo = "Z"
 		Text To lC Noshow Textmerge
         select   idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_super=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow Textmerge
         select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_cont=2 ORDER BY nomb
 		Endtext
-	Case ctipo = "X"
+	Case Ctipo = "X"
 		Text To lC Noshow Textmerge
          select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,2)='Ad'  and usua_cont>1 ORDER BY nomb
 		Endtext
@@ -282,41 +282,41 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function Autorizarpsysrx(ctipo, Ccursor)
+	Function Autorizarpsysrx(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,2)='Ad' ORDER BY nomb
 		Endtext
-	Case ctipo = "C"
+	Case Ctipo = "C"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_acre=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,2)='Ad') ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "p"
+	Case Ctipo = "p"
 		Text To lC Noshow
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_prec=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "g"
+	Case Ctipo = "g"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_guia=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "t"
+	Case Ctipo = "t"
 		Text To lC Noshow
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_cont=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "Z"
+	Case Ctipo = "Z"
 		Text To lC Noshow Textmerge
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_super=1 ORDER BY nomb
 		Endtext
@@ -326,21 +326,21 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function autorizarxsysr(ctipo, Ccursor)
+	Function autorizarxsysr(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow
                   SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='A' ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow
                   SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,1)='A') ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow
                   SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow
                  SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
@@ -350,29 +350,29 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function Autorizarpsystr(ctipo, Ccursor)
+	Function Autorizarpsystr(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow Textmerge
          select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='A' ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow Textmerge
         select   idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,1)='A') ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow Textmerge
         select   idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow Textmerge
         select   idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "a"
+	Case Ctipo = "a"
 		Text To lC Noshow Textmerge
         select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_apro=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "Z"
+	Case Ctipo = "Z"
 		Text To lC Noshow Textmerge
         select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_super=1 ORDER BY nomb
 		Endtext
@@ -382,41 +382,41 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function autorizarxsys5(ctipo, Ccursor)
+	Function autorizarxsys5(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow Textmerge
         select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='A' ORDER BY nomb
 		Endtext
-	Case ctipo = "C"
+	Case Ctipo = "C"
 		Text To lC Noshow Textmerge
        select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_acre=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow Textmerge
        select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,1)='A') ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow Textmerge
       select idusua,nomb,clave ,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow Textmerge
       select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "a"
+	Case Ctipo = "a"
 		Text To lC Noshow Textmerge
       select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_apro=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "c"
+	Case Ctipo = "c"
 		Text To lC Noshow Textmerge
       select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_comi=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "I"
+	Case Ctipo = "I"
 		Text To lC Noshow Textmerge
         select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_reim=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "1"
+	Case Ctipo = "1"
 		Text To lC Noshow Textmerge
         select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_comi=1 ORDER BY nomb
 		Endtext
@@ -426,37 +426,37 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function autorizarpsysr(ctipo, Ccursor)
+	Function autorizarpsysr(Ctipo, Ccursor)
 	Do Case
-	Case ctipo = "A"
+	Case Ctipo = "A"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,2)='Ad' ORDER BY nomb
 		Endtext
-	Case ctipo = "C"
+	Case Ctipo = "C"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_acre=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "G"
+	Case Ctipo = "G"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND (LEFT(tipo,1)='G' OR LEFT(tipo,2)='Ad') ORDER BY nomb
 		Endtext
-	Case ctipo = "D"
+	Case Ctipo = "D"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='D'  ORDER BY nomb
 		Endtext
-	Case ctipo = "V"
+	Case Ctipo = "V"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
-	Case ctipo = "p"
+	Case Ctipo = "p"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_prec=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "g"
+	Case Ctipo = "g"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_guia=1 ORDER BY nomb
 		Endtext
-	Case ctipo = "t"
+	Case Ctipo = "t"
 		Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_cont=1 ORDER BY nomb
 		Endtext
@@ -467,7 +467,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function DesAutorizaprecios()
-	Text To lC NOSHOW TEXTMERGE 
+	Text To lC Noshow Textmerge
         UPDATE fe_usua SET usua_prec=0 WHERE idusua=<<this.idusuario>>
 	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
@@ -475,7 +475,21 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function mostrarusuarioslimitados(Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To  This.Idsesion
+	Endif
+	Text To lC Noshow Textmerge Pretext 7
+      select nomb,idusua FROM fe_usua WHERE activo='S' AND LEFT(tipo,1) NOT in('A','G') ORDER BY nomb
+	Endtext
+	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
 Enddefine
+
+
 
 
 

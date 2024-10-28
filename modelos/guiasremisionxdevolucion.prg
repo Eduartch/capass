@@ -9,9 +9,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	Na = IngresaResumenDcto('09', 'E', ;
-		  This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, '', 'S', ;
-		  fe_gene.dola, fe_gene.igv, 'k', This.idprov, 'C', goApp.nidusua, 0, goApp.Tienda, 0, 0, 0, 0, 0)
+	Na = IngresaResumenDcto('09', 'E',  This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, '', 'S',  fe_gene.dola, fe_gene.igv, 'k', This.idprov, 'C', goApp.nidusua, 0, goApp.Tienda, 0, 0, 0, 0, 0)
 	If Na < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -24,46 +22,46 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Select tmpvg
 	Go Top
 	Do While !Eof()
-		If fe_gene.alma_nega = 0 Then
-			If DevuelveStocks(tmpvg.coda, "Stock") < 1 Then
-				s = 0
-				Cmensaje = 'No está activado la venta con Negativos'
-				Exit
-			Endif
-			Do Case
-			Case goApp.Tienda = 1
-				Ts = stock.uno
-			Case goApp.Tienda = 2
-				Ts = stock.Dos
-			Case goApp.Tienda = 3
-				Ts = stock.tre
-			Case goApp.Tienda = 4
-				Ts = stock.cua
-			Case goApp.Tienda = 5
-				Ts = stock.cin
-			Case goApp.Tienda = 6
-				Ts = stock.sei
-			Case goApp.Tienda = 7
-				Ts = stock.sie
-			Case goApp.Tienda = 8
-				Ts = stock.och
-			Case goApp.Tienda = 9
-				Ts = stock.nue
-			Case goApp.Tienda = 10
-				Ts = stock.die
-			Endcase
-			If tmpvg.cant > Ts Then
-				s = 0
-				Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
-				Exit
-			Endif
-		Endif
-		If This.condsctostock = 'N' Then
-			ncodalmacen = 0
-		Else
+		If This.condsctostock = 'S' Then
 			ncodalmacen = goApp.Tienda
+			If fe_gene.alma_nega = 0 Then
+				If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
+					s = 0
+					Cmensaje = 'No está activado la venta con Negativos'
+					Exit
+				Endif
+				Do Case
+				Case goApp.Tienda = 1
+					Ts = stock.uno
+				Case goApp.Tienda = 2
+					Ts = stock.Dos
+				Case goApp.Tienda = 3
+					Ts = stock.tre
+				Case goApp.Tienda = 4
+					Ts = stock.cua
+				Case goApp.Tienda = 5
+					Ts = stock.cin
+				Case goApp.Tienda = 6
+					Ts = stock.sei
+				Case goApp.Tienda = 7
+					Ts = stock.sie
+				Case goApp.Tienda = 8
+					Ts = stock.och
+				Case goApp.Tienda = 9
+					Ts = stock.nue
+				Case goApp.Tienda = 10
+					Ts = stock.die
+				Endcase
+				If tmpvg.cant > Ts Then
+					s = 0
+					Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
+					Exit
+				Endif
+			Endif
+		Else
+			ncodalmacen = 0
 		Endif
-		nidkar = INGRESAKARDEX1(Na, tmpvg.coda, "V", 0, tmpvg.cant, "I", "K", 0, ncodalmacen, 0, 0)
+		nidkar = INGRESAKARDEX1(Na, tmpvg.Coda, "V", 0, tmpvg.cant, "I", "K", 0, ncodalmacen, 0, 0)
 		If nidkar < 1 Then
 			s = 0
 			Cmensaje = 'Al Registrar Kardex'
@@ -75,7 +73,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 			Exit
 		Endif
 		If This.condsctostock <> 'N' Then
-			If ActualizaStock(tmpvg.coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
+			If ActualizaStock(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
 				s = 0
 				Cmensaje = 'Al actualizar Stock'
 				Exit
@@ -102,7 +100,6 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Endfunc
 	Function IngresaGuiasxDcompras(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10)
 	Local lC, lp
-*:Global cur
 	lC			  = "FUNINGRESAGUIASxdCompras"
 	cur			  = "YY"
 	goApp.npara1  = np1
@@ -170,7 +167,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Go Top
 	Do While !Eof()
 		If fe_gene.alma_nega = 0 Then
-			If DevuelveStocks(tmpvg.coda, "Stock") < 1 Then
+			If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
 				s = 0
 				Cmensaje = 'No está activado la venta con Negativos'
 				Exit
@@ -203,7 +200,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 				Exit
 			Endif
 		Endif
-		nidkar = INGRESAKARDEXR(Na, tmpvg.coda, "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, '')
+		nidkar = INGRESAKARDEXR(Na, tmpvg.Coda, "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, '')
 *INGRESAKARDEXR(.nauto,tmpc.coda,'C',xprec,tmpc.cant,cincl,'K',0,calma,nidcosto,0,tmpc.codigoi)
 		If nidkar < 1 Then
 			s = 0
@@ -254,7 +251,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Go Top
 	Do While !Eof()
 		If fe_gene.alma_nega = 0 Then
-			If DevuelveStocks(tmpvg.coda, "Stock") < 1 Then
+			If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
 				s = 0
 				Cmensaje = 'No está activado la venta con Negativos'
 				Exit
@@ -287,7 +284,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 				Exit
 			Endif
 		Endif
-		nidkar = INGRESAKARDEXR(Na, tmpvg.coda, "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, 0)
+		nidkar = INGRESAKARDEXR(Na, tmpvg.Coda, "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, 0)
 		If nidkar < 1 Then
 			s = 0
 			Cmensaje = 'Al Registrar Kardex'
@@ -298,7 +295,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 			Cmensaje = 'Al Registrar detalle de Guia'
 			Exit
 		Endif
-		If ActualizaStock(tmpvg.coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
+		If ActualizaStock(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
 			s = 0
 			Cmensaje = 'Al actualizar Stock'
 			Exit
@@ -346,19 +343,19 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Go Top
 	Do While !Eof()
 		dfv = Ctod("01/01/0001")
-		nidkar = IngresaKardexFl(Na, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0, 0, tmpvg.equi, ;
+		nidkar = IngresaKardexFl(Na, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0, 0, tmpvg.equi, ;
 			  tmpvg.Unid, tmpvg.idepta, tmpvg.pos, tmpvg.costo, fe_gene.igv, Iif(Empty(tmpvg.Fechavto), dfv, tmpvg.Fechavto), tmpvg.nlote)
 		If nidkar < 1
 			sws = 0
 			Cmensaje = "Al Registrar el detalle de la guia"
 			Exit
 		Endif
-		If GrabaDetalleGuiasCons(tmpvg.coda, tmpvg.cant, nidg, nidkar) = 0
+		If GrabaDetalleGuiasCons(tmpvg.Coda, tmpvg.cant, nidg, nidkar) = 0
 			sws = 0
 			Cmensaje = "Al Registrar el detalle de la guia por devolución"
 			Exit
 		Endif
-		If Actualizastock1(tmpvg.coda, goApp.Tienda, tmpvg.cant, 'V', tmpvg.equi) = 0 Then
+		If Actualizastock1(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V', tmpvg.equi) = 0 Then
 			Cmensaje = "Al Actualizar Stock"
 			sws = 0
 			Exit
@@ -383,11 +380,11 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\   Select guia_ndoc As Ndoc,guia_fech As fech,guia_fect As fechat,
 	\   a.Descri,a.Unid,e.entr_cant As cant,a.peso,g.guia_ptoll,g.guia_ptop As ptop,
-	\   k.idart As coda,k.Prec,k.idkar,g.guia_idtr,ifnull(placa,'') As placa,ifnull(T.razon,'') As razont,
+	\   k.idart As Coda,k.Prec,k.idkar,g.guia_idtr,ifnull(placa,'') As placa,ifnull(T.razon,'') As razont,
 	\   ifnull(T.ructr,'') As ructr,ifnull(T.nombr,'') As conductor,guia_mens,
 	\   ifnull(T.dirtr,'') As direcciont,ifnull(T.breve,'') As brevete,
 	\   ifnull(T.Cons,'') As constancia,ifnull(T.marca,'') As marca,c.nruc,c.ndni,entr_iden,
-	\   ifnull(T.placa1,'') As placa1,r.Ndoc As dcto,Tdoc,r.idcliente,r.fech As fechadcto,
+	\   ifnull(T.placa1,'') As placa1,r.Ndoc As dcto,Tdoc,r.idcliente,r.fech As fechadcto,guia_deta,
 	\   c.Razo,'S' As mone,guia_idgui As idgui,r.Idauto,c.Dire,c.ciud,guia_arch,guia_hash,guia_mens,guia_ubig,guia_idpr
 	If goApp.Proyecto = 'xsysz' Then
 	   \,prod_coda
@@ -418,23 +415,11 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 			Return 0
 		Endif
 	Endif
-	If  ActualizaResumenDcto('09', 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, "", 'S', ;
-			  fe_gene.dola, fe_gene.igv, 'K', This.idprov, 'V', goApp.nidusua, 0, goApp.Tienda, 0, 0, 0, 0, 0, This.Idauto) = 0 Then
+	If  ActualizaResumenDcto('09', 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, "", 'S', fe_gene.dola, fe_gene.igv, 'K', This.idprov, 'V', goApp.nidusua, 0, goApp.Tienda, 0, 0, 0, 0, 0, This.Idauto) = 0 Then
 		This.DEshacerCambios()
 		Return 0
-	ENDIF
-*!*		
-*!*		If ActualizaResumenDcto(.TDOC,Left(.cmbforma.Value,1),;
-*!*				.TXTSErie.Value+.TXTNUmero.Value,.txtfecha.Value,.txtfechar.Value,"",nv,nigv,nt,.txtguia.Value,cm,;
-*!*				.txtdolar.Value,fe_gene.igv,'1',.txtcodigo.Value,'1',goapp.nidusua,0,.calmacen,nidcta1,nidcta2,nidcta3,.txtOtros.Value,.txtpercepcion.Value,.nauto)=0 Then
-*!*			Deshacercambios()
-*!*			Return
-*!*		ENDIF
-	
-	
-	
-	
-	nidg = This.IngresaGuiasxDcompras(This.Fecha, This.ptop, This.ptoll, this.idauto, This.fechat, goApp.nidusua, This.Detalle, This.Idtransportista, This.Ndoc, goApp.Tienda)
+	Endif
+	nidg = This.IngresaGuiasxDcompras(This.Fecha, This.ptop, This.ptoll, This.Idauto, This.fechat, goApp.nidusua, This.Detalle, This.Idtransportista, This.Ndoc, goApp.Tienda)
 	If nidg < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -442,46 +427,46 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Select tmpvg
 	Go Top
 	Do While !Eof()
-		If fe_gene.alma_nega = 0 Then
-			If DevuelveStocks(tmpvg.coda, "Stock") < 1 Then
-				s = 0
-				Cmensaje = 'No está activado la venta con Negativos'
-				Exit
+		If This.condsctostock = 'S' Then
+			If fe_gene.alma_nega = 0 Then
+				If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
+					s = 0
+					Cmensaje = 'No está activado la venta con Negativos'
+					Exit
+				Endif
+				Do Case
+				Case goApp.Tienda = 1
+					Ts = stock.uno
+				Case goApp.Tienda = 2
+					Ts = stock.Dos
+				Case goApp.Tienda = 3
+					Ts = stock.tre
+				Case goApp.Tienda = 4
+					Ts = stock.cua
+				Case goApp.Tienda = 5
+					Ts = stock.cin
+				Case goApp.Tienda = 6
+					Ts = stock.sei
+				Case goApp.Tienda = 7
+					Ts = stock.sie
+				Case goApp.Tienda = 8
+					Ts = stock.och
+				Case goApp.Tienda = 9
+					Ts = stock.nue
+				Case goApp.Tienda = 10
+					Ts = stock.die
+				Endcase
+				If tmpvg.cant > Ts Then
+					s = 0
+					Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
+					Exit
+				Endif
+				ncodalmacen = goApp.Tienda
 			Endif
-			Do Case
-			Case goApp.Tienda = 1
-				Ts = stock.uno
-			Case goApp.Tienda = 2
-				Ts = stock.Dos
-			Case goApp.Tienda = 3
-				Ts = stock.tre
-			Case goApp.Tienda = 4
-				Ts = stock.cua
-			Case goApp.Tienda = 5
-				Ts = stock.cin
-			Case goApp.Tienda = 6
-				Ts = stock.sei
-			Case goApp.Tienda = 7
-				Ts = stock.sie
-			Case goApp.Tienda = 8
-				Ts = stock.och
-			Case goApp.Tienda = 9
-				Ts = stock.nue
-			Case goApp.Tienda = 10
-				Ts = stock.die
-			Endcase
-			If tmpvg.cant > Ts Then
-				s = 0
-				Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
-				Exit
-			Endif
-		Endif
-		If This.condsctostock = 'N' Then
-			ncodalmacen = 0
 		Else
-			ncodalmacen = goApp.Tienda
+			ncodalmacen = 0
 		Endif
-		nidkar = INGRESAKARDEX1(this.idauto, tmpvg.coda, "V", 0, tmpvg.cant, "I", "K", 0, ncodalmacen, 0, 0)
+		nidkar = INGRESAKARDEX1(This.Idauto, tmpvg.Coda, "V", 0, tmpvg.cant, "I", "K", 0, ncodalmacen, 0, 0)
 		If nidkar < 1 Then
 			s = 0
 			Cmensaje = 'Al Registrar Kardex'
@@ -492,8 +477,8 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 			Cmensaje = 'Al Registrar detalle de Guia'
 			Exit
 		Endif
-		If This.condsctostock <> 'N' Then
-			If ActualizaStock(tmpvg.coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
+		If This.condsctostock = 'S' Then
+			If ActualizaStock(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
 				s = 0
 				Cmensaje = 'Al actualizar Stock'
 				Exit
@@ -539,6 +524,15 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Return 1
 	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
 
 
 

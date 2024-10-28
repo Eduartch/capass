@@ -247,9 +247,9 @@ Return r
 Endfunc
 ************************************
 Function REGDVTO(CALIAS)
-IF verificaAlias((calias))=0 then
-  RETURN 0
-ENDIF
+If verificaAlias((CALIAS))=0 Then
+	Return 0
+Endif
 Select (CALIAS)
 If Reccount()=0
 	Return 0
@@ -289,7 +289,7 @@ Return ;
 	NOT Empty(Date(tnAnio, tnMes, tnDia))
 Endfunc
 **************************
-Function VerificaAlias(CALIAS)
+Function verificaAlias(CALIAS)
 If Used((CALIAS)) Then
 	Return 1
 Else
@@ -648,10 +648,10 @@ ENDTEXT
 If EJECUTARF(lc,lp,cur)<1 Then
 	errorbd(ERRORPROC+ ' Verificando Pagos a Cuenta '+lc)
 	Return 0
-ENDIF 
+Endif
 If lcreditos.Id>0
-   Return 0
-ENDIF 
+	Return 0
+Endif
 Return 1
 Endfunc
 **************************
@@ -1466,7 +1466,7 @@ Else
 	If lmone.vta>0 Then
 		Return lmone.vta
 	Else
-		IF USED("fe_gene") then
+		If Used("fe_gene") Then
 *!*			If DatosGlobales()>0 Then
 			Return fe_gene.dola
 		Else
@@ -1836,84 +1836,7 @@ Else
 	Return 1
 Endif
 Endfunc
-*!*	**********************
-*!*	Function EJECUTARP(tcComando As String ,clparametros As String ,NombCursor As String )
-*!*	Local lResultado As Integer
-*!*	NCursor = Iif(Vartype(NombCursor) <> "C", "", NombCursor)
-*!*	Local laError[1], lcError
-*!*	lR=0
-*!*	If Empty(NombCursor) Then
-*!*		lR = SQLExec(goapp.bdconn, 'CALL ' +tcComando + clparametros)
-*!*	Else
-*!*		lR = SQLExec(goapp.bdconn, 'CALL ' +tcComando + clparametros,NombCursor)
-*!*	Endif
-*!*	If lR>0 Then
-*!*		Return 1
-*!*	Else
-*!*		csql='CALL ' +tcComando + clparametros
-*!*		Messagebox(csql, 16, MSGTITULO)
-*!*		= Aerror(laError)
-*!*		lcError = laError(1, 2)
-*!*		Messagebox("Inconveniente " + Chr(13) +	lcError, 16, MSGTITULO)
-*!*		Return 0
-*!*	Endif
-*!*	Endfunc
-*!*	***************
-*!*	Function EJECUTARF(tcComando As String ,lp As String ,NCursor As String )
-*!*	Local lResultado As Integer
-*!*	NCursor = Iif(Vartype(NCursor) <> "C", "", NCursor)
-*!*	Local laError[1], lcError
-*!*	If Empty(NCursor) Then
-*!*		lR = SQLExec(goapp.bdconn, 'Select ' +Alltrim(tcComando) + Alltrim(lp))
-*!*	Else
-*!*		lR = SQLExec(goapp.bdconn, 'Select ' +Alltrim(tcComando) + Alltrim(lp) +' as Id ',NCursor)
-*!*	Endif
-*!*	*WAIT WINDOW 'hola'
-*!*	*WAIT WINDOW lR
-*!*	If lR>0 Then
-*!*		Return 1
-*!*	Else
-*!*		csql='Select ' +tcComando + Alltrim(lp) +' as Id '
-*!*	*	Strtofile(csql,'d:\psystr\error0.txt')
-*!*		Messagebox(csql, 16, MSGTITULO)
-*!*		= Aerror(laError)
-*!*	*conerror='N'
-*!*	*For N = 1 To 7  && Display all elements of the array
-*!*	*	conerror='S'
-*!*	*	Wait Window laError(N)
-*!*	*Endfor
-*!*	*	cmerror = AErrorbd[2]
-*!*	*	nroerror=laError(1)
-*!*	*  WAIT WINDOW 'hola'
-*!*	*    WAIT WINDOW nroerror
-
-*!*		If Vartype(laError(2))='U' Or Isnull(Vartype(laError(2)))
-*!*			cmensaje=Alltrim(laError(2))+' '+Alltrim(laError(3))
-*!*		Else
-*!*			cmensaje='No Especificado'
-*!*		Endif
-*!*	* lcError = IIF(vartype(laError(2)),laError(2),'no Especificado')
-*!*	*	Strtofile(cmerror,'d:\psysl\error.txt')
-*!*		Messagebox("Inconveniente " + Chr(13) + cmensaje, 16, MSGTITULO)
-*!*		Return 0
-*!*	Endif
-*!*	Endfunc
-*!*	***************
-*!*	Function EJECUTARS(tcComando As String ,lp As String ,NCursor As String )
-*!*	Local lResultado As Integer
-*!*	NCursor = Iif(Vartype(NCursor) <> "C", "", NCursor)
-*!*	If Empty(NCursor) Then
-*!*		lR = SQLExec(goapp.bdconn, 'SELECT ' +tcComando + lp)
-*!*	Else
-*!*		lR = SQLExec(goapp.bdconn, 'SELECT ' +tcComando + lp,NCursor)
-*!*	Endif
-*!*	If lR>0 Then
-*!*		Return 1
-*!*	Else
-*!*		Return 0
-*!*	Endif
-*!*	Endfunc
-***************
+************************************
 Function MuestraPresentaciones(npara1,npara2,npara3,cur)
 goapp.npara1=npara1
 goapp.npara2=npara2
@@ -4398,20 +4321,24 @@ Endif
 Endfunc
 *********************************
 Function MostrarMenu1(np1,np2,np3)
-cur="menus"
-lc='ProMostrarMenu1'
-goapp.npara1=np1
-goapp.npara2=np2
-goapp.npara3=np3
-TEXT to lp noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-ENDTEXT
-If EJECUTARP(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Opciones del Menú Lateral')
+If _Screen.omenus.MostrarMenu1(np1, np2, np3, "menus")<1 Then
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
+*!*	cur=
+*!*	lc='ProMostrarMenu1'
+*!*	goapp.npara1=np1
+*!*	goapp.npara2=np2
+*!*	goapp.npara3=np3
+*!*	TEXT to lp noshow
+*!*	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
+*!*	ENDTEXT
+*!*	If EJECUTARP(lc,lp,cur)=0 Then
+*!*		errorbd(ERRORPROC+ ' Mostrando Opciones del Menú Lateral')
+*!*		Return 0
+*!*	Else
+*!*		Return 1
+*!*	Endif
 Endfunc
 **********************************
 Function YaestaRegistradoTraspaso(np1,np2)
@@ -6431,7 +6358,7 @@ If EJECUTARF(lc,lp,cur)=0 Then
 Else
 	Return Xn.Id
 Endif
-ENDFUNC
+Endfunc
 **********************************
 Function IngresaDatosLCajaYape(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11,np12,np13,np14)
 lc='FUNIngresaCajaBancosYape'
@@ -7019,33 +6946,16 @@ Endif
 Endfunc
 *****************************
 Function PermiteIngresoVentas1(np1,np2,np3,np4)
-*!*	cur="idv"
-*!*	lc="FUNVALIDADCTOS1"
-*!*	goapp.npara1=np1
-*!*	goapp.npara2=np2
-*!*	goapp.npara3=np3
-*!*	TEXT to lp noshow
-*!*	(?goapp.npara1,?goapp.npara2,?goapp.npara3)
-*!*	ENDTEXT
-*!*	If EJECUTARF(lc,lp,cur)=0 Then
-*!*		errorbd(ERRORPROC)
-*!*		Return 0
-*!*	Endif
-*!*	If idv.Id>0 Then
-*!*		Return 0
-*!*	Else
-*!*		Return 1
-*!*	Endif
-SET PROCEDURE TO d:\capass\modelos\ventas ADDITIVE 
-ovtas=CREATEOBJECT("ventas")
-ovtas.serie=LEFT(np1,4)
-ovtas.numero=SUBSTR(np1,5)
+Set Procedure To d:\capass\modelos\ventas Additive
+ovtas=Createobject("ventas")
+ovtas.serie=Left(np1,4)
+ovtas.numero=Substr(np1,5)
 ovtas.tdoc=np2
 ovtas.idauto=np3
-IF ovtas.verificarsiesta()<1 then
-   RETURN 0
-ENDIF 
-RETURN 1   
+If ovtas.verificarsiesta()<1 Then
+	Return 0
+Endif
+Return 1
 Endfunc
 *****************
 Function RegistraCargos(np1,np2,np3,np4)
@@ -7574,19 +7484,23 @@ Endif
 Endfunc
 ********************************
 Function muestramenu(np1,np2)
-ccursor="menus"
-lc='PROMUESTRAMENU'
-goapp.npara1=np1
-goapp.npara2=np2
-TEXT to lp noshow
-(?goapp.npara1,?goapp.npara2)
-ENDTEXT
-If EJECUTARP(lc,lp,ccursor)<1 Then
-	errorbd(ERRORPROC+ ' Consultando Menus ')
+If _Screen.omenus.muestramenu(np1, np2,"menus")<1 Then
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
+*!*	ccursor="menus"
+*!*	lc='PROMUESTRAMENU'
+*!*	goapp.npara1=np1
+*!*	goapp.npara2=np2
+*!*	TEXT to lp noshow
+*!*	(?goapp.npara1,?goapp.npara2)
+*!*	ENDTEXT
+*!*	If EJECUTARP(lc,lp,ccursor)<1 Then
+*!*		errorbd(ERRORPROC+ ' Consultando Menus ')
+*!*		Return 0
+*!*	Else
+*!*		Return 1
+*!*	Endif
 Endfunc
 *******************************
 Function OtorgaOpciones1(np1,np2,np3,np4)
@@ -7626,21 +7540,25 @@ Endif
 Endfunc
 ******************************
 Function MostrarMenu11(np1,np2,np3,np4)
-cur="menus"
-lc='ProMostrarMenu1'
-goapp.npara1=np1
-goapp.npara2=np2
-goapp.npara3=np3
-goapp.npara4=np4
-TEXT to lp noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-ENDTEXT
-If EJECUTARP(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Opciones del Menú Lateral')
+If _Screen.omenus.MostrarMenu1(np1, np2, np3, np4,"menus")<1 Then
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
+*!*	cur="menus"
+*!*	lc='ProMostrarMenu1'
+*!*	goapp.npara1=np1
+*!*	goapp.npara2=np2
+*!*	goapp.npara3=np3
+*!*	goapp.npara4=np4
+*!*	TEXT to lp noshow
+*!*	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
+*!*	ENDTEXT
+*!*	If EJECUTARP(lc,lp,cur)=0 Then
+*!*		errorbd(ERRORPROC+ ' Mostrando Opciones del Menú Lateral')
+*!*		Return 0
+*!*	Else
+*!*		Return 1
+*!*	Endif
 Endfunc
 ***********************
 Function CambiaEstadoTraspaso(np1)
@@ -9220,15 +9138,15 @@ Otherwise
 	lnColor=Rgb(234,234,234)
 Endcase
 Return lnColor
-ENDFUNC
+Endfunc
 ***********************************
 Function ColoresFondooferta
 Lparameters oferta
-IF oferta>0 then
+If oferta>0 Then
 	lnColor =Rgb(0,255,0)
-ELSE 
+Else
 	lnColor=Rgb(234,234,234)
-ENDIF 
+Endif
 Return lnColor
 Endfunc
 **************************************
@@ -9250,7 +9168,7 @@ goapp.npara12=np12
 goapp.npara13=np13
 goapp.npara14=np14
 goapp.npara15=np15
-TEXT to lp NOSHOW 
+TEXT to lp NOSHOW
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
 ENDTEXT
 If EJECUTARP(lc,lp,cur)=0 Then
@@ -9590,7 +9508,7 @@ If EJECUTARP(lc,lp,cur)=0 Then
 Else
 	Return 1
 Endif
-ENDFUNC
+Endfunc
 *******************************
 Function IngresaDatosLCajaEFectivoCturnos31(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11,np12,np13,np14,np15,np16,np17)
 lc="ProIngresaDatosLcajaEfectivoCturnos10"
@@ -9660,7 +9578,7 @@ Procedure OpcionesGrid
 Lparameters opt,CALIAS,citulo,cinforme
 Try
 	Go Top In (CALIAS)
-	If VerificaAlias(CALIAS)=1 Then
+	If verificaAlias(CALIAS)=1 Then
 		Do Case
 		Case opt=1
 			Report Form (cinforme) To Printer Prompt Noconsole
@@ -9768,13 +9686,13 @@ Endfunc
 *******************
 Function colorestiendanorplast
 Lparameters ctienda
-If LEFT(ctienda,5)='PIURA' Then
+If Left(ctienda,5)='PIURA' Then
 	lnColor =Rgb(128,255,128)
 Else
 	lnColor=Rgb(234,234,234)
 Endif
 Return lnColor
-ENDFUNC
+Endfunc
 *******************
 Function coloresmoneda
 Lparameters cmone
@@ -10135,7 +10053,7 @@ Endfunc
 ****************************************
 Function CFECHAS(df)
 Return Alltrim(Str(Year(df)))+'-'+Alltrim(Str(Month(df)))+'-'+Alltrim(Str(Day(df)))
-ENDFUNC 
+Endfunc
 ****************************************
 Define Class Empresa As Custom
 	Empresa=""
@@ -10564,7 +10482,7 @@ Else
 	lnColor=Rgb(224,224,224)
 Endif
 Return lnColor
-ENDFUNC
+Endfunc
 ************
 Function colorStockok
 Lparameters stock
@@ -10578,7 +10496,7 @@ Endfunc
 ****************
 Function colorstockfaltante
 Lparameters stock,stockmin
-If stock<0 OR stock<stockmin Then
+If stock<0 Or stock<stockmin Then
 	lnColor = Rgb(255,0,0)
 Else
 	lnColor=Rgb(224,224,224)
@@ -10772,7 +10690,7 @@ If EJECUTARP(lc,lp,cur)=0 Then
 Else
 	Return 1
 Endif
-ENDFUNC
+Endfunc
 ****************************
 Function IngresaDatosLCajaEFectivoCturnos30(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11,np12,np13,np14,np15,np16,np17,np18,np19,np20,np21)
 lc="ProIngresaDatosLcajaEfectivoCturnos30"
@@ -10842,7 +10760,7 @@ If EJECUTARP(lc,lp,cur)=0 Then
 Else
 	Return 1
 Endif
-ENDFUNC
+Endfunc
 ***************************
 Function IngresaDatosLCajaEFectivoCturnosTarjetas30(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11,np12,np13,np14,np15,np16,np17,np18,np19,np20)
 lc="ProIngresaDatosLcajaEfectivoCturnosTarjetas10"
@@ -11002,7 +10920,7 @@ Return 1
 Endfunc
 *************************
 Function CuentaRegistros(CALIAS)
-If VerificaAlias(CALIAS)=1 Then
+If verificaAlias(CALIAS)=1 Then
 	Select (CALIAS)
 	Return Reccount()
 Else

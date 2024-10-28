@@ -273,7 +273,7 @@ Define Class cotizacion As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	\From fe_ped  As b
 	\      inner Join fe_art As a On (a.idart=b.idart)
-	\       inner Join fe_rped As c On(c.idautop=b.idautop)
+	\      inner Join fe_rped As c On(c.idautop=b.idautop)
 	\	   inner Join fe_clie As d On(d.idclie=c.idclie)
 	\	   inner Join fe_usua As x On x.idusua=c.rped_idus
 	\	   inner Join fe_fletes As p On p.idflete=a.idflete,fe_gene v
@@ -368,7 +368,7 @@ Define Class cotizacion As Odata Of 'd:\capass\database\data.prg'
            ifnull(round(if(tmon='S',((b.prec*v.igv)+b.prod_flet)*prod_uti3,((b.prec*v.igv*v.dola)+b.prod_flet)*prod_uti3),3),0) as pre3,
            ifnull(round(if(tmon='S',(b.prec*v.igv)+b.prod_flet,(b.prec*v.igv*v.dola)+b.prod_flet),2),0) as costo,b.uno,b.dos,b.tre,b.cua,
            ped_tpro as tp,marca,ifnull(a.prod_coda,'') as codigo,ped_code as codigoe,ped_cant as cant1,ped_pre1 as precio1,ped_esti as estilo,rped_dscto,rped_idus,
-           ifnull(b.idmar,0) as idmar,ped_dsct as ndscto1,ped_entr as entrega2,rped_vigv,rped_incl,ifnull(prod_mdsc,0) as prod_mdsc,ped_grup
+           ifnull(b.idmar,0) as idmar,ped_dsct as ndscto1,ped_entr as entrega2,rped_vigv,rped_incl,ifnull(prod_mdsc,0) as prod_mdsc,ped_grup,ped_item
            FROM vmuestracotizaciones a
            left join fe_art b on b.idart=a.idart
            left join fe_fletes p on p.idflete=b.idflete, fe_gene v
@@ -387,9 +387,7 @@ Define Class cotizacion As Odata Of 'd:\capass\database\data.prg'
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-
 	nid = This.RegistraCabeceraCotizacionAtm()
-
 	If nid < 1  Then
 		This.DEshacerCambios()
 		Return 0
@@ -406,9 +404,16 @@ Define Class cotizacion As Odata Of 'd:\capass\database\data.prg'
 			Skip
 			Loop
 		Else
-			If This.IngresaDCotizacionIaisac(Iif(tmpp.Coda = -1, 0, tmpp.Coda), tmpp.cant, tmpp.Prec, nid, tmpp.precio1, tmpp.Tp, tmpp.cant1, tmpp.estilo, tmpp.codigoe, tmpp.Desc, z, tmpp.ndscto, tmpp.entrega1, tmpp.grupo) < 1 Then
+			nidetalle = This.IngresaDCotizacionIaisac(Iif(tmpp.Coda = -1, 0, tmpp.Coda), tmpp.cant, tmpp.Prec, nid, tmpp.precio1, tmpp.Tp, tmpp.cant1, tmpp.estilo, tmpp.codigoe, tmpp.Desc, z, tmpp.ndscto, tmpp.entrega1, tmpp.grupo, tmpp.tipoItem)
+			If m.nidetalle < 1 Then
 				x = 0
 				Exit
+			Endif
+			If tmpp.tipoItem = 'A' Then
+				If This.InsertarVarios(m.nidetalle) < 1 Then
+					x = 0
+					Exit
+				Endif
 			Endif
 		Endif
 		If ni = 12
@@ -475,8 +480,8 @@ Define Class cotizacion As Odata Of 'd:\capass\database\data.prg'
 	Return nid
 	Endfunc
 **********************************
-	Function IngresaDCotizacionIaisac(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14)
-	lC = 'FuningresaDCotizacion'
+	Function IngresaDCotizacionIaisac(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15)
+	lC = 'FuningresaDCotizacion1'
 	cur = ""
 	goApp.npara1 = np1
 	goApp.npara2 = np2
@@ -492,15 +497,57 @@ Define Class cotizacion As Odata Of 'd:\capass\database\data.prg'
 	goApp.npara12 = np12
 	goApp.npara13 = np13
 	goApp.npara14 = np14
+	goApp.npara15 = np15
 	Text To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
 	Endtext
-	If This.EJECUTARf(lC, lp, cur) < 1  Then
+	m.nidetalle = This.EJECUTARf(lC, lp, cur)
+	If  m.nidetalle < 1  Then
+		Return 0
+	Endif
+	Return  m.nidetalle
+	Endfunc
+	Function InsertarVarios(pk)
+	Sw = 1
+	Select tacc
+	Scan All
+		Text To lC Noshow Textmerge
+	     INSERT INTO fe_varios(vari_desc,vari_cant,vari_prec,vari_idco,vari_unid)values('<<tacc.descri>>',<<tacc.cant>>,<<tacc.prec>>,<<pk>>,'<<tacc.unid>>')
+		Endtext
+		If This.Ejecutarsql(lC) < 1 Then
+			Sw = 0
+			Exit
+		Endif
+	Endscan
+	If Sw = 0 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
+	Function buscarvarioscotizacioniaisac(nid, Ccursor)
+	Text To lC Noshow Textmerge
+	SELECT vari_desc,vari_unid,vari_cant,vari_prec,vari_idco FROM fe_varios AS v
+    INNER JOIN fe_ped AS p ON p.`idped`= v.`vari_idco` WHERE vari_acti='A' and vari_idco=<<nid>> order by vari_idva 
+	Endtext
+	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Create Cursor tacc (Descri c(100), Unid c(10), cant N(8, 2), Prec N(8, 2))
+	Select vacc
+	Scan All
+		Insert Into tacc(Descri, Unid, cant, Prec)Values(vacc.vari_desc, vacc.vari_unid, vacc.vari_cant, vacc.vari_prec)
+	Endscan
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
 
 
 

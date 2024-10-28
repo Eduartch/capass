@@ -8,6 +8,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	numero = 0
 	conletras = ""
 	letras = ""
+	ncodt = 0
 	Function Listar(Ccursor)
 	Text To lC Noshow Textmerge
      select serie,t.nomb,nume,ifnull(a.nomb,'') as tienda,items,'' as letra,s.tdoc,seri_idal,idserie
@@ -36,7 +37,6 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function ValidarSerie(Cserie, nidtda, cTdoc)
 	Local lC, Vdvto
-
 	Vdvto = 1
 	For x = 1 To Len(Cserie)
 		cvalor = Substr(Cserie, x, 1)
@@ -44,7 +44,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 			Vdvto = 0
 			Exit
 		Endif
-	NEXT
+	Next
 	If Vdvto = 0 Then
 		This.Cmensaje = 'Formato de Serie no Válido'
 		Return 0
@@ -65,11 +65,11 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Select (Ccursor)
-	numserie=IIF(VARTYPE(Serie)='C',VAL(Serie),serie)
+	numserie = Iif(Vartype(Serie) = 'C', Val(Serie), Serie)
 	If numserie > 0 Then
 		Return 1
 	Else
-		This.Cmensaje = 'La Serie '+ALLTRIM(STR(lista.nserie))+ 'NO Pertenece a esta Punto de Venta '+ALLTRIM(STR(m.nidtda))
+		This.Cmensaje = 'La Serie ' + Alltrim(Str(lista.nserie)) + 'NO Pertenece a esta Punto de Venta ' + Alltrim(Str(m.nidtda))
 		Return 0
 	Endif
 	Endfunc
@@ -99,7 +99,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	lista = This.ObtenerSerie(ALLTRIM(STR(this.nserie)))
+	lista = This.ObtenerSerie(Alltrim(Str(This.nserie)))
 	Ccursor = 'c_' + Sys(2015)
 	If This.conletras = 'S' Then
 		Text To lC Noshow Textmerge
@@ -160,7 +160,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
-	SELECT (ccursor)
+	Select (Ccursor)
 	Do Case
 	Case Idserie > 0
 		If cTdoc = '01' Or cTdoc = '03' Or cTdoc = '20' Or cTdoc = '09' Or cTdoc = "07" Or cTdoc = "08"  Or cTdoc = "12" Or cTdoc = "SC"  Then
@@ -188,7 +188,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 			Return 1
 		Endif
 		Return 1
-	CASE Idserie <= 0
+	Case Idserie <= 0
 		This.Cmensaje = "Serie NO Registrada"
 		Return 0
 	Endcase
@@ -256,7 +256,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	Select (Ccursor)
 	Return gene_corc
 	Endfunc
-	Function generacorrelativo1()
+	Function GeneraCorrelativo1()
 	lC = "ProGeneraCorrelativo"
 	goApp.npara1 = This.Nsgte + 1
 	goApp.npara2 = This.Idserie
@@ -301,15 +301,85 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-*!*	*******************
-*!*		Function MostrarSeries(Ccursor)
-*!*		lC = "PROMUESTRASERIES"
-*!*	    If This.EJECUTARP(lC, "", Ccursor) < 1  Then
-*!*			Return 0
-*!*		Endif
-*!*		Return 1
-*!*		Endfunc
+	Function Buscarsiestaregistrado(Cserie, cTdoc)
+	Text To lsql Noshow Textmerge
+       select serie FROM fe_serie WHERE serie='<<cserie>>' AND tdoc='<<ctdoc>>'
+	Endtext
+	Ccursor = 'c_' + Sys(2015)
+	If This.EjecutaConsulta(lsql, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If Serie = m.Cserie
+		This.Cmensaje = "Serie Ya Registrada"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizarSeriesDctos()
+	lC = "ProActulizaSeriesDctos"
+	Text To lp Noshow Textmerge
+        (<<this.nserie>>,<<this.numero>>,'<<this.ctdoc>>',<<this.Items>>,<<this.ncodt>>,<<this.Idserie>>)
+	Endtext
+	If This.EJECUTARP(lC, lp, "") < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function RegistraSeriesDctos()
+	lC = "FunCreaSeriesDctos"
+	Text To lp Noshow Textmerge
+        (<<this.nserie>>,<<this.numero>>,'<<this.ctdoc>>',<<this.Items>>,<<this.ncodt>>)
+	Endtext
+	Vdvto = This.EJECUTARf(lC, lp, "ids")
+	If m.Vdvto < 1 Then
+		Return 0
+	Endif
+	Return m.Vdvto
+	Endfunc
+	Function AnterioresdesdeCaja(df,Ccursor)
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	ENDIF
+	dfecha=cfechas(df)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select  Max(a.Ndoc) As Ndoc,a.tdoc From fe_lcaja As b
+	\INNER Join fe_rcom As a  On(a.idauto=b.lcaj_idau)
+	\Where a.Acti<>'I' And b.lcaj_fech<'<<dfecha>>' And b.lcaj_acti='A' And idcliente>0
+	If goApp.Cdatos = 'S' Then
+	  \ And a.codt=<<goApp.nidtda>>
+	Endif
+	\ Group By a.tdoc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EjecutaConsulta(lC, Ccursor) < 1  Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,3 @@
-#Define MSGTITULO 'SISVEN'
 Define Class ventaskya As ventas Of 'd:\capass\modelos\ventas.prg'
 	Function createmporalpedidos(calias)
 	Create Cursor unidades(uequi N(7,4),ucoda N(8),uunid c(15),uitem N(4),uprecio N(12,6),uidepta N(8),ucosto N(10,2))
@@ -73,4 +72,29 @@ Define Class ventaskya As ventas Of 'd:\capass\modelos\ventas.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function packingkya(ccursor)
+	dfi=cfechas(this.fechai)
+	dff=cfechas(this.fechaf)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\SELECT b.descri,a.kar_unid as unid,sum(a.cant) as cant,sum(ROUND(a.cant*a.prec,2)) as timporte,kar_equi,a.idart FROM fe_rcom as e
+	\inner JOIN  fe_clie as d ON d.idclie=e.idcliente
+	\inner join fe_kar as a on a.idauto=e.idauto
+	\inner join fe_art as  b ON b.idart=a.idart
+	\WHERE e.ACTI<>'I' and a.acti<>'I'  and e.fech  BETWEEN '<<dfi>>' and '<<dff>>'
+	If This.vendedor>0 Then
+	\ and a.codv=<<this.vendedor>>
+	ENDIF 
+	IF this.agrupada = 1
+	\group by a.idart,a.kar_unid
+	ELSE
+	\ group by a.idart
+	ENDIF 
+	Set Textmerge Off
+	Set Textmerge To
+	IF this.ejecutaconsulta(lc,ccursor)<1  Then
+			RETURN 0
+	Endif
+	RETURN 1
+		Endfunc
 Enddefine

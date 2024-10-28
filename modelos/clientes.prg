@@ -226,7 +226,7 @@ Define Class cliente As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Select (ccursor)
 	If Len(Alltrim(razo))>0
-		This.Cmensaje = "Nº de Ruc Ya Registrado"
+		This.Cmensaje = "Nombre Ya Registrado"
 		Return 0
 	Endif
 	Return 1

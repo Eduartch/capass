@@ -81,22 +81,28 @@ Define Class productosneumaticos As Producto Of 'd:\capass\modelos\productos.prg
 	Case This.nflete = 0
 		This.Cmensaje = 'Ingrese Costo de Flete de Producto'
 		Return 0
+	Case This.npeso <= 0
+		This.Cmensaje = 'Ingrese Peso'
+		Return 0
 	Otherwise
 		Return 1
 	Endcase
-	ENDFUNC
-	FUNCTION listarproductosxservicio(lw,ccursor)
-	cb="%"+TRIM(lw)+"%"
-	TEXT TO lc NOSHOW TEXTMERGE 
+	Endfunc
+	Function listarproductosxservicio(lw, Ccursor)
+	cb = "%" + Trim(lw) + "%"
+	Text To lC Noshow Textmerge
 	SELECT prod_ccai,descri,uno,dos,tre,cua,cin,sei,die,sie,onc,doce,trece,catorce,quince,cost*v.igv AS costo,
 	IF(tmon="S","Soles","Dólares") AS tmon,ROUND(cost*v.igv*prod_uti1,2) AS pre1,
 	CAST(0 AS DECIMAL(12,2)) AS costop,unid,pre2,pre3,peso,prod_perc,tipro,prod_grat,idart 
 	FROM fe_art  AS a,fe_gene AS v  WHERE descri LIKE '<<cb>>' AND prod_acti<>'I'  and tipro='S'  ORDER BY descri;
-	ENDTEXT 
-	IF this.ejecutaconsulta(lc,ccursor)<1 then
-	   RETURN 0
-	ENDIF 
-	RETURN 1   
-	ENDFUNC 
+	Endtext
+	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
 

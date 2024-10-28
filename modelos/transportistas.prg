@@ -14,6 +14,7 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	npropio = 0
 	activofijo = ""
 	dni = ""
+	cmodo=""
 	Function listarTransportistax(np1, np2, ccur)
 	Local lC, lp
 	m.lC		 = 'ProMuestraTransportista'
@@ -27,7 +28,6 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-**********************************
 	Function VAlidar()
 	Do Case
 	Case Len(Alltrim(This.nombre)) = 0
@@ -36,6 +36,14 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Case !ValidaRuc(This.Ruc)
 		This.Cmensaje = "Ruc NO Válido"
 		Return 0
+	Case !Empty(This.Placa) And Len(Alltrim(This.Placa)) < 5
+		This.Cmensaje = 'Placa No Válida'
+		Return 0
+	Case This.cmodo = 'N' And !Empty(This.Placa) 
+		If This.buscarplaca() < 1 Then
+			Return 0
+		ENDIF
+		RETURN 1
 	Otherwise
 		Return 1
 	Endcase
@@ -98,7 +106,7 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Endfunc
 ************************************
-	Function ProcesaTransportista1(Cruc, crazo, cdire, cbreve, ccons, cmarca, cplaca, idtr, optt, cchofer, nidus, cplaca1, cfono, cContacto)
+	Function ProcesaTransportista1(Cruc, crazo, cdire, cbreve, ccons, cmarca, cplaca, idtr, optt, cchofer, nidus, cplaca1, Cfono, cContacto)
 	If optt = 0 Then
 		If SQLExec(goApp.bdConn, "SELECT FUNCREATRANSPORTISTA1(?cplaca,?crazo,?cdire,?cruc,?cchofer,?cbreve,?cmarca,?ccons,?nidus,?cplaca1,?cfono,?ccontacto) as nid", "yy") < 1 Then
 			Errorbd(ERRORPROC + ' Ingresando Transportista')
@@ -131,10 +139,9 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function buscarplaca()
-	cplaca = This.Placa
 	Ccursor = 'c_' + Sys(2015)
 	Text To lC Noshow Textmerge
-        select placa FROM fe_tra WHERE placa='<<cplaca>>' limit 1
+        select placa FROM fe_tra WHERE placa='<<This.Placa>>' AND ructr='<<this.ruc>>' limit 1
 	Endtext
 	If This.EjecutaConsulta(lC, Ccursor) < 1
 		Return 0
@@ -145,15 +152,15 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
-    Function buscaruc(cmodo, Cruc, nidtra)
+	Endfunc
+	Function buscaruc(cmodo, Cruc, nidtra)
 	If Len(Alltrim(Cruc)) <> 11 Or  !ValidaRuc(Cruc) Then
 		This.Cmensaje = 'RUC NO Válido'
 		Return 0
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC  Noshow
-	\select ructr as nruc FROM fe_tra WHERE ructr='<<cruc>>'
+	\Select ructr As nruc From fe_tra Where ructr='<<cruc>>'
 	If cmodo <> "N"
 	 \ And idtra<><<nidtra>>
 	Endif
@@ -169,6 +176,10 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
+
+
+
+
 
 
 

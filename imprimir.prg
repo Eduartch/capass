@@ -16,6 +16,7 @@ Define Class Imprimir As Custom
 	ConvistaPrevia = ""
 	Cgarantia = ""
 	reimpresion = ''
+	crucempresa = ''
 	Procedure ImprimeComprobante
 	Lparameters cmodoimpresion
 	This.ImprimeComprobanteM(cmodoimpresion)
@@ -57,7 +58,7 @@ Define Class Imprimir As Custom
 	Select tmpv
 	Go Top
 	If  goApp.ImpresionTicket = 'S'
-		Set Filter To !Empty(coda)
+		Set Filter To !Empty(Coda)
 		Go Top
 		Do Case
 		Case This.Tdoc = '07' Or This.Tdoc = '08'
@@ -123,7 +124,11 @@ Define Class Imprimir As Custom
 	If 	 Type('oempresa') = 'U' Then
 		Cruc = fe_gene.nruc
 	Else
-		Cruc = Oempresa.nruc
+		If Empty(This.crucempresa) Then
+			Cruc = Oempresa.nruc
+		Else
+			Cruc = This.crucempresa
+		Endif
 	Endif
 	Cruta = Addbs(Addbs(Sys(5) + Sys(2003)) + Alltrim(Cruc))
 	Set Procedure To FoxbarcodeQR Additive
@@ -270,7 +275,6 @@ Define Class Imprimir As Custom
 					Select * From tmpv Into Cursor cop
 					Select cop
 					Go Top
-
 					If File(carfilee) Then
 						Report Form (carfilee) To Printer Noconsole
 					Endif
@@ -392,7 +396,6 @@ Define Class Imprimir As Custom
 	Lparameters modo
 	This.ImprimeComprobanteComoticketM(modo, This.Tdoc)
 	Endproc
-************************
 	Procedure ImprimeComprobanteComoticketM
 	Lparameters cmodo, cctdoc
 	Set Procedure To FoxbarcodeQR Additive
@@ -456,7 +459,6 @@ Define Class Imprimir As Custom
 				goApp.AddProperty("Otraimpresora", "")
 			Endif
 			carfilee = Addbs(Addbs(Sys(5) + Sys(2003)) + fe_gene.nruc) + 'oentrega.frx'
-*And Val(goApp.Tiendaconcopia) = goApp.Tienda
 			If goApp.Otraimpresionvtas = 'S' And !Empty(goApp.Otraimpresora) Then
 				Declare Integer SetDefaultPrinter In WINSPOOL.DRV ;
 					String pszPrinter
@@ -472,20 +474,6 @@ Define Class Imprimir As Custom
 				Set Printer To Name (Alltrim(lcImpresoraActual))
 			Endif
 		Endif
-*!*				If goApp.Otraimpresionvtas = 'S' And !Empty(goApp.Otraimpresora1) And Val(goApp.Tiendaconcopia) = goApp.Tienda Then
-*!*					Declare Integer SetDefaultPrinter In WINSPOOL.DRV ;
-*!*						String pszPrinter
-*!*					lcImpresoraActual = ObtenerImpresoraActual()
-*!*					Set Printer To Name (Alltrim(goApp.Otraimpresora1))
-*!*					Select * From tmpv Into Cursor cop
-*!*					Select cop
-*!*					Go Top
-*!*					If File(carfilee) Then
-*!*						Report Form (carfilee) To Printer Noconsole
-*!*					Endif
-*!*					lnResultado = SetDefaultPrinter(lcImpresoraActual)
-*!*					Set Printer To Name (Alltrim(lcImpresoraActual))
-*!*				Endif
 	Endif
 	Release m.oFbc
 	Delete File (goApp.archivoqr)
@@ -508,7 +496,7 @@ Define Class Imprimir As Custom
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Set Procedure To abrirpdf   Additive
+	Set Procedure To abrirpdf, FoxbarcodeQR   Additive
 	Do "FoxyPreviewer.App"
 	If  !Directory(Sys(5) + Sys(2003) + "\cotizaciones") Then
 		ccarpeta = Sys(5) + Sys(2003) + "\cotizaciones"
@@ -525,10 +513,10 @@ Define Class Imprimir As Custom
 	Private oFbc
 	Local lcImpresora, lcImpresoraActual, lcStrings, lnResultado
 	Do "Foxypreviewer.App" With "Release"
-	Set Procedure To FoxbarcodeQR Additive
+	Set Procedure To FoxbarcodeQR   Additive
 	m.oFbc = Createobject("FoxBarcodeQR")
 	cpropiedad = 'archivoqr'
-	If !Pemstatus(goApp, cpropiedad, 5)
+	If !Pemstatus(goApp, cpropiedad, 5) Then
 		goApp.AddProperty("archivoqr", "")
 	Endif
 	goApp.archivoqr = Addbs(Sys(5) + Sys(2003)) + "codigoqr.png"
@@ -634,6 +622,8 @@ Define Class Imprimir As Custom
 	This.ConvistaPrevia = ""
 	Endfunc
 Enddefine
+
+
 
 
 

@@ -54,7 +54,8 @@ Define Class sire As Custom
 		Iif(Empty(Left(Refe, 4)), '-' + Space(3), Iif(Len(Alltrim(Refe)) < 3, '0' + Left(Refe, 3), Left(Refe, 4))) As serien, ;
 		Iif(Empty(Refe), '-' + Space(10), Iif(Len(Alltrim(Refe)) < 3, Substr(Refe, 4), Substr(Refe, 5))) As ndocn, ;
 		'' As contrato, Mone As Moneda;
-		From registro Where Left(Razo, 5) <> '-----'   And Importe <> 0 Into Cursor lreg
+		From registro Where Left(Razo, 5) <> '-----'    Into Cursor lreg
+*!*		And Importe <> 0	
 	Select lreg
 	Set Textmerge On Noshow
 	Set Textmerge To ((cr1))

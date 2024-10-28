@@ -8,36 +8,30 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	If Alltrim(goApp.datosvend) <> 'S' Then
-		m.lC		 = 'PROMUESTRAVENDEDORES'
-		goApp.npara1 = m.np1
-		Text To m.lp Noshow Textmerge
-       (?goapp.npara1)
-		Endtext
-		If This.EJECUTARP(m.lC, m.lp, m.Ccursor) < 1 Then
+		If This.consultardata(np1, Ccursor) < 1 Then
 			Return 0
 		Endif
-		Select (Ccursor)
-		nCount = Afields(cfieldsfevend)
-		Select * From (Ccursor) Into Cursor a_vend
-		cdata = nfcursortojson(.T.)
-		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'v'+ALLTRIM(STR(goapp.xopcion))+'.json'
-		If File(cfilejson) Then
-			Delete File (cfilejson)
-		Endif
-		rutajson = Addbs(Sys(5) + Sys(2003)) + 'v'+ALLTRIM(STR(goapp.xopcion))+'.json'
-		Strtofile (cdata, rutajson)
-		goApp.datosvend = 'S'
 	Else
-		If Type("cfieldsfevend") <> 'U' Then
-*!*		       wait WINDOW cfieldsfevend[1,1]
-		Endif
 		Create Cursor b_vend From Array cfieldsfevend
-		responseType1 = Addbs(Sys(5) + Sys(2003)) +  'v'+ALLTRIM(STR(goapp.xopcion))+'.json'
-		oResponse = nfJsonRead( m.responseType1 )
-		For Each oRow In  oResponse.Array
-			Insert Into b_vend From Name oRow
-		Endfor
-		Select * From b_vend Into Cursor (Ccursor)
+		cfilejson = Addbs(Sys(5) + Sys(2003)) +  'v' + Alltrim(Str(goApp.Xopcion)) + '.json'
+		If File(m.cfilejson) Then
+			responseType1 = Addbs(Sys(5) + Sys(2003)) +  'v' + Alltrim(Str(goApp.Xopcion)) + '.json'
+			oResponse = nfJsonRead( m.responseType1 )
+			If Vartype(m.oResponse) = 'O' Then
+				For Each oRow In  oResponse.Array
+					Insert Into b_vend From Name oRow
+				Endfor
+				Select * From b_vend Into Cursor (Ccursor)
+			Else
+				If This.consultardata(np1, Ccursor) < 1 Then
+					Return 0
+				Endif
+			Endif
+		Else
+			If This.consultardata(np1, Ccursor) < 1 Then
+				Return 0
+			Endif
+		Endif
 	Endif
 	Select (Ccursor)
 	Return 1
@@ -46,19 +40,19 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	SET TEXTMERGE on
-	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
-	\    Select a.razo,a.nruc,a.dire,a.ciud,a.fono,a.fax,a.clie_rpm,ifnull(x.zona_nomb,'') as zona,a.refe as Referencia,ifnull(v.nomv,'') As vendedor
-    \    from fe_clie as a 
-    \    left join fe_zona as x on x.zona_idzo=a.clie_idzo 
-    \    left join fe_vend as v on v.idven=a.clie_codv
-    \    where a.clie_acti='A' 
-        IF this.nidv>0 then
-        \ and a.clie_codv=<<this.nidv>>
-        ENDIF 
-        \ order by zona,a.razo 
-	SET TEXTMERGE OFF 
-	SET TEXTMERGE to
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\    Select a.Razo as cliente,a.nruc,a.Dire as direccion,a.ciud as ciudad,a.fono,a.fax,a.clie_rpm,ifnull(x.zona_nomb,'') As zona,a.Refe As Referencia,ifnull(v.nomv,'') As vendedor
+    \    From fe_clie As a
+    \    Left Join fe_zona As x On x.zona_idzo=a.clie_idzo
+    \    Left Join fe_vend As v On v.idven=a.clie_codv
+    \    Where a.clie_acti='A'
+	If This.nidv > 0 Then
+        \ And a.clie_codv=<<This.nidv>>
+	Endif
+        \ Order By zona,a.Razo
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -137,10 +131,10 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Select com
 	Go Top
 	Do While !Eof()
-		nidauto = com.Idauto
+		niDAUTO = com.Idauto
 		tacta = 0
 		ncomi = 0
-		Do While !Eof() And com.Idauto = nidauto
+		Do While !Eof() And com.Idauto = niDAUTO
 			If tacta >= com.Impo Then
 				Select com
 				Skip
@@ -173,7 +167,35 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function consultardata(np1, Ccursor)
+	m.lC		 = 'PROMUESTRAVENDEDORES'
+	goApp.npara1 = m.np1
+	Text To m.lp Noshow Textmerge
+       (?goapp.npara1)
+	Endtext
+	If This.EJECUTARP(m.lC, m.lp, m.Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	nCount = Afields(cfieldsfevend)
+	Select * From (Ccursor) Into Cursor a_vend
+	cdata = nfcursortojson(.T.)
+	cfilejson = Addbs(Sys(5) + Sys(2003)) + 'v' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	If File(cfilejson) Then
+		Delete File (cfilejson)
+	Endif
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'v' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	Strtofile (cdata, rutajson)
+	goApp.datosvend = 'S'
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
 
 
 

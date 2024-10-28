@@ -7,7 +7,7 @@ Define Class dctos As Odata Of "d:\capass\database\data.prg"
 	dct[2, 1] = 'BOLETA      '
 	dct[2, 2] = '03'
 	dct[2, 3] = 2
-	dct[3, 1] = 'NOTAS-PEDIDO'
+	dct[3, 1] = 'NOTAS-VENTAS'
 	dct[3, 2] = '20'
 	dct[3, 3] = 3
 	Create Cursor (Ccursor) (nomb c(10), Tdoc c(2), idtdoc N(2))
@@ -44,39 +44,35 @@ Define Class dctos As Odata Of "d:\capass\database\data.prg"
 	Insert Into (Ccursor) From Array dct
 	Return 1
 	Endfunc
-*******************************
 	Function MuestraDctos(cb, Ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
-	ENDIF
+	Endif
 	If Alltrim(goApp.datosdctos) <> 'S' Then
-		lC = "PROMUESTRADCTOS"
-		Text To lp Noshow Textmerge
-       ('<<cb>>')
-		Endtext
-		If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		If This.consultardata(cb, Ccursor) < 1 Then
 			Return 0
 		Endif
-		Select (Ccursor)
-		nCount = Afields(cfieldsfetdoc)
-		Select * From (Ccursor) Into Cursor a_dctos
-		cdata = nfcursortojson(.T.)
-		rutajson = Addbs(Sys(5) + Sys(2003)) + 'd'+ALLTRIM(STR(goapp.xopcion))+'.json'
-		cfilejson = Addbs(Sys(5) + Sys(2003)) + goapp.rucempresa+'d.json'
-		Delete File cfilejson
-		Strtofile (cdata, rutajson)
-		goApp.datosdctos = 'S'
 	Else
-		If Type("cfieldsfetdoc") <> 'U' Then
-*!*		       wait WINDOW cfieldsfesucu[1,1]
-		Endif
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.Xopcion)) + '.json'
 		Create Cursor b_dctos From Array cfieldsfetdoc
-		responseType1 = Addbs(Sys(5) + Sys(2003)) +'d'+ALLTRIM(STR(goapp.xopcion))+'.json'
-		oResponse = nfJsonRead( m.responseType1 )
-		For Each oRow In  oResponse.Array
-			Insert Into b_dctos From Name oRow
-		Endfor
-		Select * From b_dctos Into Cursor (Ccursor)
+		If File(m.cfilejson) Then
+			responseType1 = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.Xopcion)) + '.json'
+			oResponse = nfJsonRead( m.responseType1 )
+			If Vartype(m.oResponse) = 'O' Then
+				For Each oRow In  oResponse.Array
+					Insert Into b_dctos From Name oRow
+				Endfor
+				Select * From b_dctos Into Cursor (Ccursor)
+			Else
+				If This.consultardata(cb, Ccursor) < 1 Then
+					Return 0
+				Endif
+			Endif
+		Else
+			If This.consultardata(cb, Ccursor) < 1 Then
+				Return 0
+			Endif
+		Endif
 	Endif
 	Select (Ccursor)
 	Return 1
@@ -110,7 +106,7 @@ Define Class dctos As Odata Of "d:\capass\database\data.prg"
 	dct[2, 1] = 'BOLETA      '
 	dct[2, 2] = '03'
 	dct[2, 3] = 2
-	dct[3, 1] = 'NOTAS-PEDIDO'
+	dct[3, 1] = 'NOTAS-VENTA'
 	dct[3, 2] = '20'
 	dct[3, 3] = 3
 	dct[4, 1] = 'G.INTERNO'
@@ -122,13 +118,42 @@ Define Class dctos As Odata Of "d:\capass\database\data.prg"
 	Endfunc
 	Function mostrarvtasinternas(Ccursor)
 	Dimension dct[1, 3]
-	dct[1, 1] = 'NOTAS-PEDIDO'
+	dct[1, 1] = 'NOTAS-VENTA'
 	dct[1, 2] = '20'
 	dct[1, 3] = 1
 	Create Cursor (Ccursor) (nomb c(10), Tdoc c(2), idtdoc N(2))
 	Insert Into (Ccursor) From Array dct
 	Return 1
 	Endfunc
+	Function consultardata(cb, Ccursor)
+	lC = "PROMUESTRADCTOS"
+	Text To lp Noshow Textmerge
+       ('<<cb>>')
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	nCount = Afields(cfieldsfetdoc)
+	Select * From (Ccursor) Into Cursor a_dctos
+	cdata = nfcursortojson(.T.)
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	If File(m.rutajson) Then
+		Delete File m.rutajson
+	Endif
+	Strtofile (cdata, rutajson)
+	goApp.datosdctos = 'S'
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
 
 

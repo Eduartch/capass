@@ -13,11 +13,15 @@ Define Class cajae As Odata Of  'd:\capass\database\data.prg'
 	nidusua = 0
 	nidclpr = 0
 	NAuto = 0
-	cmoneda=""
+	Cmoneda = ""
 	cTdoc = ""
-	cforma=""
-	dfi=DATE()
-	dff=DATE()
+	cforma = ""
+	dfi = Date()
+	dff = Date()
+	confechas=0
+	dffi=DATE()
+	dfff=DATE()
+	nsaldoinicial = 0
 	Function ReporteCajaEfectivo(dfi, dff, Calias)
 	Local lC
 	fi = cfechas(dfi)
@@ -63,7 +67,7 @@ Define Class cajae As Odata Of  'd:\capass\database\data.prg'
 	Function Saldoinicialcajaefectivo10(Df)
 	F = cfechas(Df)
 	Text To lC Noshow Textmerge Pretext 7
-     SELECT 
+     SELECT
      CAST((SUM(IF(lcaj_mone='S',a.lcaj_deud,ROUND(a.lcaj_deud*a.lcaj_dola,2)))-SUM(IF(a.lcaj_mone='S',a.lcaj_acre,ROUND(a.lcaj_acre*a.lcaj_dola,2)))) as decimal(12,2)) AS si
 	 FROM fe_lcaja AS a
 	 WHERE a.lcaj_acti='A' AND a.lcaj_fech<'<<f>>'  AND lcaj_idct>0 AND lcaj_form='E'
@@ -76,7 +80,7 @@ Define Class cajae As Odata Of  'd:\capass\database\data.prg'
 	Function Saldoinicialcajaefectivo(Df)
 	F = cfechas(Df)
 	Text To lC Noshow Textmerge Pretext 7
-     SELECT 
+     SELECT
      CAST((SUM(IF(lcaj_mone='S',a.lcaj_deud,ROUND(a.lcaj_deud*a.lcaj_dola,2)))-SUM(IF(a.lcaj_mone='S',a.lcaj_acre,ROUND(a.lcaj_acre*a.lcaj_dola,2)))) as decimal(12,2)) AS si
 	 FROM fe_lcaja AS a
 	 WHERE a.lcaj_acti='A' AND a.lcaj_fech<'<<f>>'  AND lcaj_idct>0 AND (lcaj_form='E' OR (lcaj_form='T' AND lcaj_deud>0))
@@ -86,7 +90,7 @@ Define Class cajae As Odata Of  'd:\capass\database\data.prg'
 	Endif
 	Return Iif(Isnull(iniciocaja.si), 0, iniciocaja.si)
 	Endfunc
-    FUNCTION IngresaDatosLCajaEe(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10)  
+	Function IngresaDatosLCajaEe(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10)
 	lC = "FunIngresaDatosLcajaEe"
 	cur = "Ca"
 	goApp.npara1 = np1
@@ -136,7 +140,7 @@ Define Class cajae As Odata Of  'd:\capass\database\data.prg'
 	Endfunc
 	Function IngresaDatosLCajaEFectivo10()
 	lC = "ProIngresaDatosLcajaEefectivo"
-	Text To lp NOSHOW TEXTMERGE 
+	Text To lp Noshow Textmerge
      ('<<cfechas(this.dfecha)>>','','<<this.cdetalle>>',<<this.nidcta>>,<<this.ndebe>>,<<this.nhaber>>,'<<this.cmoneda>>',<<this.ndolar>>,<<goapp.nidusua>>,<<this.nidclpr>>,<<this.NAuto>>,'<<this.cforma>>','<<this.ndoc>>','<<this.cTdoc>>')
 	Endtext
 	If This.EJECUTARP(lC, lp, "") < 1 Then
@@ -146,7 +150,7 @@ Define Class cajae As Odata Of  'd:\capass\database\data.prg'
 	Endfunc
 	Function IngresaDatosLCajaEFectivo11()
 	lC = "ProIngresaDatosLcajaEefectivo11"
-	Text To lp NOSHOW TEXTMERGE 
+	Text To lp Noshow Textmerge
      ('<<cfechas(this.dfecha)>>','','<<this.cdetalle>>',<<this.nidcta>>,<<this.ndebe>>,<<this.nhaber>>,'<<this.cmoneda>>',<<this.ndolar>>,<<goapp.nidusua>>,<<this.nidclpr>>,<<this.NAuto>>,'<<this.cforma>>','<<this.ndoc>>','<<this.cTdoc>>',<<this.codt>>)
 	Endtext
 	If This.EJECUTARP(lC, lp, "") < 1 Then
@@ -275,27 +279,137 @@ Define Class cajae As Odata Of  'd:\capass\database\data.prg'
 	Text To lp Noshow
 	     (?goapp.npara1)
 	Endtext
-	If This.EJECUTARP(lC, lp, "") = 0 Then
+	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
-	FUNCTION resumenporcajero(ccursor)
-	fi=cfechas(this.dfi)
-	ff=cfechas(this.dff)
-	TEXT TO lc NOSHOW TEXTMERGE 
+	Endfunc
+	Function resumenporcajero(Ccursor)
+	fi = cfechas(This.dfi)
+	ff = cfechas(This.dff)
+	Text To lC Noshow Textmerge
 	  select nomb,saldo,lcaj_idus FROM (
 	  SELECT SUM(if(a.lcaj_deud<>0,lcaj_deud,-lcaj_acre)) as saldo,lcaj_idus
-      FROM fe_lcaja  as a 
+      FROM fe_lcaja  as a
       WHERE  a.lcaj_fech between '<<fi>>' and '<<ff>>' and a.lcaj_acti='A' and a.lcaj_form='E'  group by lcaj_idus) as c
-      inner join fe_usua as u on u.idusua=c.lcaj_idus 
-	ENDTEXT
-	If this.ejecutaconsulta(lc,"tc")<1
-		RETURN 0
+      inner join fe_usua as u on u.idusua=c.lcaj_idus
+	Endtext
+	If This.EjecutaConsulta(lC, "tc") < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function historialporcajero(df1, df2, Ccursor)
+	f1 = cfechas(df1)
+	f2 = cfechas(df2)
+	Ccursor1 = 'c_' + Sys(2015)
+	Text To lC Noshow Textmerge Pretext 7
+	    select SUM(if(a.lcaj_deud<>0,lcaj_deud,0)) as ingresoss,SUM(if(a.lcaj_acre<>0,lcaj_acre,0)) as egresoss
+	    FROM fe_lcaja  as a WHERE  a.lcaj_fech between '<<f1>>' and '<<f2>>'  and a.lcaj_acti='A' and a.lcaj_form='E'
+	    and lcaj_idus=<<this.nidusua>>  and lcaj_mone='<<this.cmoneda>>' group by lcaj_idus
+	Endtext
+	If This.EjecutaConsulta(lC, Ccursor1) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor1)
+	nsaldo = ingresoss - egresoss
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
+	Text To lC Noshow Textmerge
+	    select lcaj_fech as fech,round(SUM(if(lcaj_deud<>0,lcaj_deud,0)),2) as ingresos,round(SUM(if(a.lcaj_acre<>0,lcaj_acre,0)),2) as egresos
+        FROM  fe_lcaja  as a WHERE  a.lcaj_fech between '<<dfi>>' and '<<dff>>' and a.lcaj_acti='A' and a.lcaj_form='E' and lcaj_idus=<<this.nidusua>> Group by lcaj_idus,lcaj_fech
+	Endtext
+	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select fech, Ingresos, egresos, Ingresos - egresos As saldo, nidusuario As idus From (Ccursor) Into Cursor rcaja Readwrite Order By fech
+	Select rcaja
+	Do While !Eof()
+		nsaldo = nsaldo + (rcaja.Ingresos - rcaja.egresos)
+		Replace saldo With nsaldo
+		Select rcaja
+		Skip
+	Enddo
+	Return 1
+	Endfunc
+	Function liquidapsystr(Ccursor)
+	f1 = cfechas(This.dfi)
+	f2 = cfechas(This.dff)
+	f11=cfechas(this.dffi)
+	f12=cfechas(this.dfff)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select  Sum(If(a.lcaj_deud<>0,lcaj_deud,0)) As ingresoss,Sum(If(a.lcaj_acre<>0,lcaj_acre,0)) As egresoss
+	\From fe_lcaja  As a Where  a.lcaj_fech Between '<<f1>>' And '<<f2>>' And a.lcaj_acti='A' And a.lcaj_form='E' And lcaj_idus=<<This.nidusua>>
+	If goApp.Cdatos = 'S' Then
+	\And lcaj_codt=<<This.codt>>
+	Endif
+	\Group By lcaj_idus
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EjecutaConsulta(lC, "tc1") < 1
+		This.conerror = 1
+		Return 0
+	Endif
+	This.nsaldoinicial = tc1.ingresoss - tc1.egresoss
+	F = cfechas(This.dFecha)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select  Deta,Ndoc,
+	\		Round(Case Forma When 'E' Then If(tipo='I',Impo,0) Else 0 End,2) As efectivo,
+	\		Round(Case Forma When 'C' Then If(tipo='I',Impo,0) Else 0 End,2) As credito,
+	\		Round(Case Forma When 'D' Then If(tipo='I',Impo,0) Else 0 End,2) As deposito,
+	\		Round(Case Forma When 'H' Then If(tipo='I',Impo,0) Else 0 End,2) As cheque,
+	\		Round(Case Forma When 'T' Then If(tipo='I',Impo,0) Else 0 End,2) As tarjeta,
+	\		Round(Case Forma When 'R' Then If(tipo='I',Impo,0) Else 0 End,2) As Centrega,
+	\		Round(Case Forma When 'Y' Then If(tipo='I',Impo,0) Else 0 End,2) As Yape,
+	\		Round(Case tipo When 'S' Then If(Forma='E',Impo,0) Else 0 End,2) As egresos,
+	\		usuavtas,fechao,lcaj_fech,usua,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,orden
+	\		From(
+	\		Select a.lcaj_tdoc As tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I',If(lcaj_acre=0,'I','S')) As tipo,lcaj_dcto As Ndoc,
+	\		If(lcaj_deud<>0,lcaj_deud,If(lcaj_acre=0,lcaj_deud,lcaj_acre)) As Impo,
+    \        lcaj_deta As Deta,lcaj_mone As  mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
+	\		c.nomb As usua,a.lcaj_fope As fechao,ifnull(u.nomb,'') As usuavtas,a.lcaj_mone As tmon1,lcaj_dola As dola,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As nimpo,lcaj_fech,
+	\		'1' As orden From 	fe_lcaja As a
+	\		inner Join fe_usua As c On 	c.idusua=a.lcaj_idus
+	\		Left Join fe_rcom As r On r.idauto=a.lcaj_idau
+	\		Left Join fe_usua As u  On u.idusua=r.idusua
+	\		Where 
+	IF this.confechas=0 then
+	     \ lcaj_fech='<<f>>' 
+	ELSE
+	     \ lcaj_fech between '<<f11>>' and '<<f12>>' 
 	ENDIF 
-	RETURN 1
-	ENDFUNC 
+	\And lcaj_acti<>'I' And lcaj_idau>0 And a.lcaj_idus=<<This.nidusua>>
+	If goApp.Cdatos = 'S' Then
+	\And lcaj_codt=<<nitda>>
+	Endif
+	\		Union All
+	\		Select a.lcaj_tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I','S') As tipo,a.lcaj_ndoc As Ndoc,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As Impo,
+    \       a.lcaj_deta As Deta,a.lcaj_mone As mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
+	\		c.nomb As usua,a.lcaj_fope As fechao,ifnull(u.nomb,'') As usuavtas,a.lcaj_mone As tmon1,a.lcaj_dola As dola,a.lcaj_deud As nimpo,a.lcaj_fech,
+	\		If(lcaj_deud>0,'2','3') As orden  From  fe_lcaja As a
+	\		inner Join fe_usua As c On c.idusua=a.lcaj_idus
+	\		Left Join fe_rcom As r On r.idauto=a.lcaj_idau
+	\		Left Join fe_usua As u  On u.idusua=r.idusua
+	\		Where 
+	IF this.confechas=0 then
+	     \ lcaj_fech='<<f>>' 
+	ELSE
+	     \ lcaj_fech between '<<f11>>' and '<<f12>>' 
+	ENDIF 
+	\And lcaj_acti<>'I' And lcaj_idau=0 And a.lcaj_idus=<<This.nidusua>>)  As b Order By orden,Ndoc,tdoc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
 
 
 

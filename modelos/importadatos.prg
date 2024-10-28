@@ -33,6 +33,7 @@ Define Class importadatos As Odata Of 'd:\capass\database\data'
 	Endif
 	This.cmensaje=""
 	lcHTML = loXmlHttp.Responsetext
+	*MESSAGEBOX(lcHTML)
 	Set Procedure  To d:\librerias\nfJsonRead.prg Additive
 	ocontrib = nfJsonRead(lcHTML)
 	If  Vartype(ocontrib.nombre_o_razon_social)<>'U' Then

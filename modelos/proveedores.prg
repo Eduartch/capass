@@ -20,16 +20,16 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	idsegmento = 0
 	Cmensaje   = ""
 	Procedure AsignaValores
-	Lparameters Codigo, Cnruc, crazo, cdire, cciud, cfono, cfax, cdni, ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
+	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
 	This.Codigo	   = m.Codigo
 	This.nruc	   = m.Cnruc
 	This.nombre	   = m.crazo
 	This.Direccion = m.cdire
 	This.ciudad	   = m.cciud
-	This.fono	   = m.cfono
+	This.fono	   = m.Cfono
 	This.fax	   = m.cfax
 	This.ndni	   = m.cdni
-	This.Tipo	   = m.ctipo
+	This.Tipo	   = m.Ctipo
 	This.correo	   = m.cemail
 	This.Vendedor  = m.nidven
 	This.Usuario   = m.cusua
@@ -107,8 +107,6 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Procedure Listarproveedores
 	Lparameters	np1, np2, np3, nombrecursor
 	Local lparametros
-*:Global cproc
-	cproc		 = ""
 	cproc		 = 'promuestraproveedor'
 	goApp.npara1 = m.np1
 	goApp.npara2 = m.np2
@@ -118,9 +116,8 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Endtext
 	If This.EJECUTARP10(cproc, m.lparametros, m.nombrecursor) < 1 Then
 		Return 0
-	Else
-		Return 1
 	Endif
+	Return 1
 	Endproc
 	Function buscaruc(cmodo, Cruc, nidclie)
 	If Len(Alltrim(Cruc)) <> 11 Or  !ValidaRuc(Cruc) Then
@@ -207,6 +204,7 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

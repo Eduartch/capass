@@ -263,7 +263,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	If This.codt > 0 Then
 			\ And  rdeu_codt=<<This.codt>>
 	Endif
-	If This.nidprov = 0 Then
+	If This.nidprov > 0 Then
 			\ And  rdeu_idpr=<<This.nidprov>>
 	Endif
 			\Group By rdeu_idpr,a.ncontrol,rdeu_mone Having saldo<>0) s

@@ -77,6 +77,8 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	motivootros = ''
 	ticket = ""
 	condsctostock=""
+	dfi=DATE()
+	dff=DATE()
 	Function VerificaSiguiaVtaEstaIngresada(np1)
 	Local lC
 	TEXT To m.lC Noshow Textmerge
@@ -225,7 +227,6 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 ************************
 	Function ActualizaResumenDcto(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17, np18, np19, np20, np21, np22, np23, np24, np25)
 	Local lC, lp
-*:Global cur
 	m.lC		  = 'ProActualizaCabeceraCV'
 	cur			  = ""
 	goApp.npara1  = m.np1
@@ -279,7 +280,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 		Constancia With This.Constancia, brevete With This.brevete, ;
 		razont With This.razont, ructr With This.ructr, Motivo With This.Motivo, ;
 		tref With This.tref, Refe With This.Referencia, Archivo With This.Archivo, tipotra With This.tipotransporte;
-		Ndoc With This.Ndoc, ndni With This.ndni, fechafactura With This.Fechafacturacompra, Detalle With This.Detalle  In tmpvg
+		Ndoc With This.Ndoc, ndni With This.ndni, fechafactura With This.Fechafacturacompra, Detalle With This.Detalle   In tmpvg
 	If This.Cmulti = 'S' Then
 		carpdf = Oempresa.nruc + "-" + This.Tdoc + "-" + Left(This.Ndoc, 4) + '-' + Substr(This.Ndoc, 5) + ".Pdf"
 	Else
@@ -308,7 +309,6 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Endfunc
 	Function ActualizaguiasRemitenteventas()
 	This.contransaccion = 'S'
-	
 	If This.IniciaTransaccion() = 0
 		This.contransaccion = ''
 		Return 0
@@ -623,7 +623,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Go Top
 	s = 1
 	Do While !Eof()
-		If This.Proyecto = 'psysw' Or This.Proyecto = 'xmsys' Then
+		If This.Proyecto = 'psysw' Or This.Proyecto = 'xmsys' OR this.Proyecto='psysm' Then
 			nidkar = INGRESAKARDEX1(NAuto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0)
 		Else
 			nidkar = IngresaKardexGrifo(NAuto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0, 0, 0)
@@ -992,10 +992,11 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 			If Left(orpta.rpta, 1) = '0' Then
 				XML = orpta.XML
 				cdr = orpta.cdr
+				cqr=orpta.qr
 				crpta = orpta.rpta
 				cticket = orpta.ticket
 				TEXT To lC Noshow Textmerge
-		         update fe_guias set guia_feen=curdate(),guia_arch='<<nxml>>',guia_xml='<<xml>>',guia_cdr='<<cdr>>',guia_mens='<<crpta>>',guia_tick='<<cticket>>' where guia_idgui=<<this.idautog>>
+		         update fe_guias set guia_feen=curdate(),guia_arch='<<cqr>>',guia_xml='<<xml>>',guia_cdr='<<cdr>>',guia_mens='<<crpta>>',guia_tick='<<cticket>>' where guia_idgui=<<this.idautog>>
 				ENDTEXT
 				If This.Ejecutarsql(lC) < 1 Then
 					Return 0
@@ -1133,7 +1134,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	    \      Select  fech,Ndoc,cliente,Detalle,Refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt From(
-        \      Select guia_fech As fech,guia_ndoc As Ndoc,c.Razo As cliente,guia_deta As Detalle,'' As Refe,
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,c.Razo As cliente,guia_deta As Detalle,r.ndoc As Refe,
 		\      IFNULL(T.razon,'') As Transportista,guia_idgui As idguia,guia_arch,clie_corr,'V' As Motivo,guia_codt From
 		\      fe_guias As g
 		\      INNER Join fe_rcom As r On r.Idauto=g.guia_idau
@@ -1144,7 +1145,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
         \And guia_codt=<<nidt>>
 	Endif
         \      Union All
-        \      Select guia_fech As fech,guia_ndoc As Ndoc,p.Razo As cliente,guia_deta As Detalle,'' As Refe,
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,p.Razo As cliente,guia_deta As Detalle,guia_dcto As Refe,
 	    \      IFNULL(T.razon,'') As Transportista,guia_idgui As idguia,guia_arch,email As clie_corr,'D' As Motivo,guia_codt From
 	    \      fe_guias As g
 		\      INNER Join fe_prov As p On p.idprov=g.guia_idpr
@@ -1154,7 +1155,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
         \And guia_codt=<<nidt>>
 	Endif
         \      Union All
-        \      Select guia_fech As fech,guia_ndoc As Ndoc,p.Razo As cliente,guia_deta As Detalle,'' As Refe,
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,p.Razo As cliente,guia_deta As Detalle,guia_dcto As Refe,
 	    \      IFNULL(T.razon,'') As Transportista,guia_idgui As idguia,guia_arch,email As clie_corr,'C' As Motivo,guia_codt From
 	    \      fe_guias As g
 		\      INNER Join fe_prov As p On p.idprov=g.guia_idpr
@@ -1164,7 +1165,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
         \And guia_codt=<<nidt>>
 	Endif
         \      Union All
-        \      Select guia_fech As fech,guia_ndoc As Ndoc,g.empresa As cliente,guia_deta As Detalle,'' As Refe,
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,g.empresa As cliente,guia_deta As Detalle,guia_dcto As Refe,
         \      IFNULL(T.razon,'') As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'T' As Motivo,guia_codt From fe_guias As a
         \      Left Join fe_tra As T On T.idtra=a.guia_idtr,fe_gene  As g
         \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='T' And guia_acti='A'
@@ -1175,59 +1176,6 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
         \      Group By fech,Ndoc,cliente,Detalle,Refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt Order By fech
 	Set Textmerge Off
 	Set Textmerge To
-
-*!*		TEXT TO lc NOSHOW TEXTMERGE
-*!*			      fech,ndoc,cliente,detalle,refe,Transportista,idguia,guia_arch,clie_corr,Motivo from(
-*!*			      select
-*!*			      fech,ndoc,cliente,detalle,refe,Transportista,idguia,guia_arch,clie_corr,'V' as Motivo FROM  vguiasventas WHERE LEFT(ndoc,1)='T'
-*!*	              and fech between '<<dfi>>' and '<<dff>>'
-*!*	              union all
-*!*	              SELECT fech,ndoc,cliente,detalle,refe,Transportista,idguia,guia_arch,email as clie_corr,'D' as Motivo FROM  vguiasdevolucion
-*!*	              WHERE LEFT(ndoc,1)<>'S' AND LEFT(ndoc,1)='T'   and fech between '<<dfi>>' and '<<dff>>'
-*!*	              union all
-*!*	              SELECT fech,ndoc,cliente,detalle,refe,Transportista,idguia,guia_arch,email as clie_corr,'C' as Motivo FROM  vguiasrcompras
-*!*	              WHERE LEFT(ndoc,1)<>'S' AND LEFT(ndoc,1)='T'  and fech between '<<dfi>>' and '<<dff>>'
-*!*	              union all
-*!*	              SELECT guia_fech AS fech,guia_ndoc AS ndoc,g.empresa AS cliente,guia_deta AS detalle,'' AS refe,
-*!*	              IFNULL(t.razon,'') AS Transportista,guia_idgui AS idguia,guia_arch,g.correo AS clie_corr,'T' AS Motivo FROM fe_guias AS a
-*!*	              LEFT JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
-*!*	              WHERE LEFT(guia_ndoc,1)='T'  AND guia_fech BETWEEN '<<dfi>>' and '<<dff>>'  AND guia_moti='T' and guia_acti='A') as w
-*!*	              group by fech,ndoc,cliente,detalle,refe,Transportista,idguia,guia_arch,clie_corr,Motivo ORDER BY fech
-*!*			ENDTEXT
-
-
-*!*		Else
-*!*			Text To lC Noshow Textmerge
-*!*		          SELECT  fech,ndoc,cliente,detalle,refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt FROM(
-*!*	              SELECT guia_fech AS fech,guia_ndoc AS ndoc,c.razo AS cliente,guia_deta AS detalle,'' AS refe,
-*!*			      IFNULL(t.razon,'') AS Transportista,guia_idgui AS idguia,guia_arch,clie_corr,'V' AS motivo,guia_codt FROM
-*!*			      fe_guias AS g
-*!*			      INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
-*!*			      INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
-*!*			      LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-*!*			      WHERE LEFT(guia_ndoc,1)='T'  AND guia_fech BETWEEN '<<dfi>>' and '<<dff>>'    AND guia_moti='V' AND guia_acti='A' and guia_codt=<<nidt>>
-*!*	              UNION ALL
-*!*	              SELECT guia_fech AS fech,guia_ndoc AS ndoc,p.razo AS cliente,guia_deta AS detalle,'' AS refe,
-*!*		          IFNULL(t.razon,'') AS Transportista,guia_idgui AS idguia,guia_arch,email AS clie_corr,'D' AS motivo,guia_codt FROM
-*!*		          fe_guias AS g
-*!*			      INNER JOIN fe_prov AS p ON p.idprov=g.guia_idpr
-*!*			      LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-*!*	              WHERE LEFT(guia_ndoc,1)='T'   AND guia_fech BETWEEN '<<dfi>>' and '<<dff>>'   AND guia_moti='D'  AND guia_acti='A' and guia_codt=<<nidt>>
-*!*	              UNION ALL
-*!*	              SELECT guia_fech AS fech,guia_ndoc AS ndoc,p.razo AS cliente,guia_deta AS detalle,'' AS refe,
-*!*		          IFNULL(t.razon,'') AS Transportista,guia_idgui AS idguia,guia_arch,email AS clie_corr,'D' AS motivo,guia_codt FROM
-*!*		          fe_guias AS g
-*!*			      INNER JOIN fe_prov AS p ON p.idprov=g.guia_idpr
-*!*			      LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-*!*	              WHERE LEFT(guia_ndoc,1)='T'   AND guia_fech BETWEEN '<<dfi>>' and '<<dff>>'    AND guia_moti='C' AND guia_acti='A' and guia_codt=<<nidt>>
-*!*	              UNION ALL
-*!*	              SELECT guia_fech AS fech,guia_ndoc AS ndoc,g.empresa AS cliente,guia_deta AS detalle,'' AS refe,
-*!*	              IFNULL(t.razon,'') AS Transportista,guia_idgui AS idguia,guia_arch,g.correo AS clie_corr,'T' AS Motivo,guia_codt FROM fe_guias AS a
-*!*	              LEFT JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
-*!*	              WHERE  LEFT(guia_ndoc,1)='T'  AND guia_fech BETWEEN '<<dfi>>' and '<<dff>>' AND guia_moti='T' AND guia_acti='A' and guia_codt=<<nidt>>) AS w
-*!*	              GROUP BY fech,ndoc,cliente,detalle,refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt ORDER BY fech
-*!*			Endtext
-*!*		Endif
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif

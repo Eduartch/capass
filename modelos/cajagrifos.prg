@@ -1,10 +1,10 @@
-Define Class cajagrifos As caja  Of 'd:\capass\modelos\caja'
+Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	nturno = 0
 	nisla = 0
-	nidlectura=0
+	nidlectura = 0
 	Function listarcaja(Calias)
-	df = cfechas(This.dFecha)
-	TEXT To lc Noshow  Textmerge
+	Df = Cfechas(This.dFecha)
+	Text To lC Noshow  Textmerge
 	        SELECT cajero,isla,efectivo+credito+deposito+tarjeta+dscto+centrega as Ingresos,dscto,efectivo+credito+deposito+tarjeta+centrega as ventasnetas,
 	        tarjeta,credito,efectivo,centrega,egresos,efectivo-egresos as saldo,idusua from(
 	        SELECT usua AS Cajero,SUM(ROUND(CASE forma WHEN 'E' THEN IF(tipo='I',impo,0) ELSE 0 END,2)) AS efectivo,
@@ -32,15 +32,15 @@ Define Class cajagrifos As caja  Of 'd:\capass\modelos\caja'
 			INNER JOIN fe_usua AS c ON 	c.idusua=a.lcaj_idus
 			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau=0 and lcaj_idtu=<<this.nturno>> and LEFT(c.tipo,1)="V")
 			AS b GROUP BY lcaj_idus,lcaj_codt) as x  ORDER BY isla,cajero
-	ENDTEXT
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
+	Endtext
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarcaja1(Calias)
-	df = cfechas(This.dFecha)
-	TEXT To lc Noshow Textmerge
+	Df = Cfechas(This.dFecha)
+	Text To lC Noshow Textmerge
 		SELECT descri AS producto,u.nomb as Cajero,lect_idco AS surtidor,lect_mang AS manguera,lect_inic  as inicial,lect_cfinal as final,
 		lect_cFinal-lect_inic As Cantidad,lect_prec as Precio,Round((lect_cFinal-lect_inic)*lect_prec,2) As Ventas,
 		lect_mfinal AS montofinal,lect_inim AS montoinicial, lect_mfinal-lect_inim AS monto,
@@ -48,16 +48,16 @@ Define Class cajagrifos As caja  Of 'd:\capass\modelos\caja'
 		INNER JOIN fe_art AS a ON a.idart=l.lect_idar
 		inner join fe_usua as u on u.idusua=l.lect_idus
 		WHERE lect_acti='A' and lect_idtu=<<this.nturno>> and lect_esta='C' and lect_idle=<<this.nidlectura>> order by lect_idco,lect_mang
-	ENDTEXT
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
+	Endtext
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarcajaparacierre(Calias)
-	df = cfechas(This.dFecha)
+	Df = Cfechas(This.dFecha)
 	If This.nisla = 0 Then
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 	        SELECT cajero,isla,efectivo+credito+deposito+tarjeta+dscto as Ingresos,dscto,efectivo+credito+deposito+tarjeta as ventasnetas,
 	        tarjeta,credito,efectivo,egresos,efectivo-egresos as saldo,idusua from(
 	        SELECT usua AS Cajero,SUM(ROUND(CASE forma WHEN 'E' THEN IF(tipo='I',impo,0) ELSE 0 END,2)) AS efectivo,
@@ -85,9 +85,9 @@ Define Class cajagrifos As caja  Of 'd:\capass\modelos\caja'
 			INNER JOIN fe_usua AS c ON 	c.idusua=a.lcaj_idus
 			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau=0 and lcaj_idtu=<<this.nturno>> and LEFT(c.tipo,1)="V")
 			AS b GROUP BY lcaj_idus,lcaj_codt) as x  ORDER BY isla,cajero
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 	       SELECT cajero,isla,efectivo+credito+deposito+tarjeta+dscto as Ingresos,dscto,efectivo+credito+deposito+tarjeta as ventasnetas,
 	       tarjeta,credito,efectivo,egresos,efectivo-egresos as saldo,idusua from(
 	        SELECT usua AS Cajero,SUM(ROUND(CASE forma WHEN 'E' THEN IF(tipo='I',impo,0) ELSE 0 END,2)) AS efectivo,
@@ -115,10 +115,10 @@ Define Class cajagrifos As caja  Of 'd:\capass\modelos\caja'
 			INNER JOIN fe_usua AS c ON 	c.idusua=a.lcaj_idus
 			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau=0 and lcaj_idtu=<<this.nturno>> and LEFT(c.tipo,1)="V" and lcaj_codt=<<this.nisla>>)
 			AS b GROUP BY lcaj_idus,lcaj_codt) as x  ORDER BY isla,cajero
-		ENDTEXT
+		Endtext
 	Endif
 	This.conconexion = 1
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		This.conconexion = 0
 		Return 0
 	Endif
@@ -126,232 +126,272 @@ Define Class cajagrifos As caja  Of 'd:\capass\modelos\caja'
 	Return 1
 	Endfunc
 	Function resumencajasipan(Calias)
-	f1=cfechas(This.dfi)
-	f2=cfechas(This.dff)
-	If This.nisla = 0 Then
-		TEXT TO lc NOSHOW TEXTMERGE
-	    SELECT "Total Ventas" as detalle, SUM(lect_mfinal-lect_inim) AS impo,'I' AS tipo,'E' AS lcaj_form,'' as isla  FROM fe_lecturas
-		WHERE lect_idin=<<this.nidlectura>>  and   lect_acti='A' and lect_mfinal>0
-		UNION ALL
-		SELECT "Vtas al Crédito" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'C' as lcaj_form,'' As isla FROM
-		fe_lcaja AS a
-		INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-		WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0  AND LEFT(c.tipo,1)="V" AND lcaj_form='C'
-		UNION ALL
-		SELECT "Vtas C/Tarjeta" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'T' as lcaj_form,'' As isla FROM
-		fe_lcaja AS a
-		INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-		WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" AND lcaj_form='T'
-		UNION ALL
-		SELECT "Vtas C/Depósito" As detalle,IFNULL(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'D' AS lcaj_form,'' As isla  FROM
-		fe_lcaja AS a
-		INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-		WHERE  lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 AND  LEFT(c.tipo,1)="V" AND lcaj_form='D'
-		UNION ALL
-		SELECT "Descuentos" as detalle,IFNULL(SUM(lcaj_dsct),0) AS impo,'E' AS tipo,'S' AS lcaj_form,'' As isla  FROM
-		fe_lcaja AS a
-		INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-		WHERE  lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" AND lcaj_dsct>0
-		ENDTEXT
+	f1 = Cfechas(This.dfi)
+	f2 = Cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select "Total Ventas" As detalle, Sum(lect_mfinal-lect_inim) As Impo,'I' As tipo,'E' As lcaj_form,
+	If This.nisla > 0 Then
+	      \'' As isla
 	Else
+	      \'1' As isla
+	Endif
+	    \ From fe_lecturas
+		\Where lect_idin=<<This.nidlectura>>  And lect_acti='A' And lect_mfinal>0
+	If This.nisla > 0 Then
 		Do Case
-		Case This.nisla=1
-			TEXT TO lc NOSHOW TEXTMERGE
-		    SELECT "Total Ventas" as detalle,SUM(lect_mfinal-lect_inim) AS impo,'I' AS tipo,'E' AS lcaj_form,'1' as isla  FROM fe_lecturas
-			WHERE lect_idin=<<this.nidlectura>>  and   lect_acti='A' and lect_mfinal>0 and lect_idco in(1,2) AND lect_mfinal>0
-			UNION ALL
-			SELECT "Vtas al Crédito" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'C' as lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0  AND LEFT(c.tipo,1)="V" and lcaj_form='C' and lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Vtas C/Tarjeta" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'T' as lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" AND  lcaj_form='T' and lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Vtas C/Depósito" As detalle, IFNULL(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'D' AS lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE  lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" AND lcaj_form='D' And  lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Descuentos" as detalle,IFNULL(SUM(lcaj_dsct),0) AS impo,'E' AS tipo,'S' AS lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" AND lcaj_dsct>0 and lcaj_codt=<<this.nisla>>
-			ENDTEXT
-		Case This.nisla=2
-			TEXT TO lc NOSHOW TEXTMERGE
-		    SELECT "Total Ventas" as detalle,SUM(lect_mfinal-lect_inim) AS impo,'I' AS tipo,'E' AS lcaj_form,'1' as isla  FROM fe_lecturas
-			WHERE lect_idin=<<this.nidlectura>>  and   lect_acti='A' and lect_mfinal>0 and lect_idco in(3,4) AND lect_mfinal>0
-			UNION ALL
-			SELECT "Vtas al Crédito" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'C' as lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0  AND LEFT(c.tipo,1)="V"  and lcaj_form='C' and lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Vtas C/Tarjeta" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'T' as lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V"  and lcaj_form='T' and lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Vtas C/Depósito" As detalle, IFNULL(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'D' AS lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE  lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0  and LEFT(c.tipo,1)="V" AND lcaj_form='D' And  lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Descuentos" as detalle,IFNULL(SUM(lcaj_dsct),0) AS impo,'E' AS tipo,'S' AS lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" AND lcaj_dsct>0 and lcaj_codt=<<this.nisla>>
-			ENDTEXT
-		Case This.nisla=3
-			TEXT TO lc NOSHOW TEXTMERGE
-		    SELECT "Total Ventas" as detalle,SUM(lect_mfinal-lect_inim) AS impo,'I' AS tipo,'E' AS lcaj_form,'1' as isla  FROM fe_lecturas
-			WHERE lect_idin=<<this.nidlectura>>  and   lect_acti='A' and lect_mfinal>0 and lect_idco in(5,6,7,8) AND lect_mfinal>0
-			UNION ALL
-			SELECT "Vtas al Crédito" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'C' as lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0  AND LEFT(c.tipo,1)="V" and lcaj_form='C' and lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Vtas C/Tarjeta" as detalle,ifnull(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'T' as lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" and lcaj_form='T' and lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Vtas C/Depósito" As detalle, IFNULL(SUM(lcaj_deud),0) AS impo,'E' AS tipo,'D' AS lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE  lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0  and LEFT(c.tipo,1)="V" AND lcaj_form='D' And  lcaj_codt=<<this.nisla>>
-			UNION ALL
-			SELECT "Descuentos" as detalle,IFNULL(SUM(lcaj_dsct),0) AS impo,'E' AS tipo,'S' AS lcaj_form,'1' as isla FROM
-			fe_lcaja AS a
-			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 AND LEFT(c.tipo,1)="V" AND lcaj_dsct>0 and lcaj_codt=<<this.nisla>>
-			ENDTEXT
-		Case This.nisla=4
+		Case This.nisla = 1
+		        \ And lect_idco In(1,2)
+		Case This.nisla = 2
+		        \ And lect_idco In(3,4)
+		Case This.nisla = 3
+		        \ And lect_idco In(5,6,7,8)
 		Endcase
 	Endif
-	This.conconexion = 1
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
-		This.conconexion = 0
+		\Union All
+		\Select "Vtas al Crédito" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'C' As lcaj_form,'' As isla From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0   And lcaj_form='C'
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	Endif
+		\Union All
+		\Select "Vtas C/Tarjeta" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'T' As lcaj_form,'' As isla From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form='T'
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	Endif
+		\Union All
+		\Select "Vtas C/Depósito" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'D' As lcaj_form,'' As isla  From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form='D'
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	Endif
+		\Union All
+		\Select "Descuentos" As detalle,ifnull(Sum(lcaj_dsct),0) As Impo,'E' As tipo,'S' As lcaj_form,'' As isla  From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_idau>0 And lcaj_dsct>0
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	Endif
+		\Union All
+		\Select "Retiros" As detalle,ifnull(Sum(lcaj_acre),0) As Impo,'E' As tipo,'S' As lcaj_form,'' As isla  From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_acre>0
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	Endif
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
-	This.conconexion = 0
 	Return 1
 	Endfunc
-	Function listatarjetas(nidus,Calias)
-	fi=cfechas(This.dfi)
-	ff=cfechas(This.dff)
-	If nidus=0 Then
-		If This.nisla=0 Then
-			TEXT TO lc TEXTMERGE NOSHOW
-			 select lcaj_dcto AS dcto,lcaj_deud AS Importe,lcaj_btar AS banco,lcaj_ttar AS tipo,lcaj_rtar AS referencia,lcaj_deta as Detalle,u.nomb AS Cajero,
-			 lcaj_fope
-			 FROM fe_lcaja AS l INNER JOIN fe_usua AS u ON u.idusua=lcaj_idus
-			 WHERE lcaj_fech between '<<fi>>' and '<<ff>>'
-			 AND lcaj_form='T' AND lcaj_acti='A' AND lcaj_idau>0 ORDER BY u.nomb,lcaj_dcto
-			ENDTEXT
-		Else
-			TEXT TO lc TEXTMERGE NOSHOW
-			 select lcaj_dcto AS dcto,lcaj_deud AS Importe,lcaj_btar AS banco,lcaj_ttar AS tipo,lcaj_rtar AS referencia,lcaj_deta as Detalle,u.nomb AS Cajero,
-			 lcaj_fope
-			 FROM fe_lcaja AS l INNER JOIN fe_usua AS u ON u.idusua=lcaj_idus
-			 WHERE lcaj_fech between '<<fi>>' and '<<ff>>'
-			 AND lcaj_form='T' AND lcaj_acti='A' AND lcaj_idau>0 and lcaj_codt=<<this.nisla>>  ORDER BY u.nomb,lcaj_dcto
-			ENDTEXT
-		Endif
-	Else
-		If This.nisla=0 Then
-			TEXT TO lc TEXTMERGE NOSHOW
-			 select lcaj_dcto AS dcto,lcaj_deud AS Importe,lcaj_btar AS banco,lcaj_ttar AS tipo,lcaj_rtar AS referencia,lcaj_deta as Detalle,u.nomb AS Cajero,
-			 lcaj_fope
-			 FROM fe_lcaja AS l INNER JOIN fe_usua AS u ON u.idusua=lcaj_idus
-			 WHERE lcaj_fech between '<<fi>>' and '<<ff>>' and lcaj_idus=<<nidus>>
-			 AND lcaj_form='T' AND lcaj_acti='A' AND lcaj_idau>0 ORDER BY u.nomb,lcaj_dcto
-			ENDTEXT
-		Else
-			TEXT TO lc TEXTMERGE NOSHOW
-			 select lcaj_dcto AS dcto,lcaj_deud AS Importe,lcaj_btar AS banco,lcaj_ttar AS tipo,lcaj_rtar AS referencia,lcaj_deta as Detalle,u.nomb AS Cajero,
-			 lcaj_fope
-			 FROM fe_lcaja AS l INNER JOIN fe_usua AS u ON u.idusua=lcaj_idus
-			 WHERE lcaj_fech between '<<fi>>' and '<<ff>>' and lcaj_idus=<<nidus>>
-			 AND lcaj_form='T' AND lcaj_acti='A' AND lcaj_idau>0  and lcaj_codt=<<this.nisla>> ORDER BY u.nomb,lcaj_dcto
-			ENDTEXT
-		Endif
+	Function listatarjetas(nidus, Calias)
+	fi = Cfechas(This.dfi)
+	ff = Cfechas(This.dff)
+*lcaj_fech Between '<<fi>>' And '<<ff>>'
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+		\	 Select lcaj_dcto As dcto,lcaj_deud As Importe,lcaj_btar As banco,lcaj_ttar As tipo,lcaj_rtar As referencia,lcaj_deta As detalle,u.nomb As cajero,
+		\	 lcaj_fope
+		\	 From fe_lcaja As l INNER Join fe_usua As u On u.idusua=lcaj_idus
+		\	 Where lcaj_form='T' And lcaj_acti='A' And lcaj_idau>0
+	If This.nisla > 0 Then
+	\ And lcaj_codt=<<This.nisla>>
 	Endif
-	If This.EjecutaConsulta(lc,Calias)<1 Then
+	If nidus > 0 Then
+	\ And lcaj_idus=<<nidus>>
+	Endif
+	If This.nidlectura > 0 Then
+	   \ And lcaj_idle=<<This.nidlectura>>
+	Endif
+	\Order By u.nomb,lcaj_dcto
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function resumencaja(Ccursor)
+	fi = Cfechas(This.dFecha)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\     Select "Total Ventas " As detalle,ifnull(Sum(a.lcaj_deud),Cast(0 As Decimal(12,2))) As Total_Ventas,'' As producto,'' As unid,
+	\     Cast(0 As Decimal(12,2)) As Cantidad,
+    \	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'I' As tipo From fe_lcaja  As a
+	\	  Where a.lcaj_acti='A' And lcaj_idau>0 And lcaj_fech='<<fi>>' And lcaj_acti='A'  And lcaj_idus>0
+	If goApp.conectasucursales = 'S' Then
+	\ And lcaj_codt=<<goApp.tienda>>
+	Endif
+	\	  Union All
+	\	  Select "Ventas Crédito" As detalle,ifnull(Sum(a.lcaj_deud),Cast(0 As Decimal(12,2))) As Total_Ventas,'' As producto,'' As unid,
+	\	  Cast(0 As Decimal(12,2)) As Cantidad,
+	\	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'S' As tipo From fe_lcaja  As a
+	\	  Where a.lcaj_acti='A' And lcaj_form='C'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_deud>0 And lcaj_idau>0 And lcaj_idus>0
+	If goApp.conectasucursales = 'S' Then
+	\ And lcaj_codt=<<goApp.tienda>>
+	Endif
+	\	  Union All
+	\	  Select "Ventas C/Tarjeta" As detalle,ifnull(Sum(a.lcaj_deud),Cast(0 As Decimal(12,2))) As Total_Ventas,'' As producto,'' As unid,
+	\	  Cast(0 As Decimal(12,2)) As Cantidad,
+	\	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'S' As tipo From fe_lcaja  As a
+	\	  Where a.lcaj_acti='A' And lcaj_form='T'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_deud>0 And lcaj_idau>0  And lcaj_idus>0
+	If goApp.conectasucursales = 'S' Then
+	\ And lcaj_codt=<<goApp.tienda>>
+	Endif
+	\	  Union All
+	\	  Select "Otros Ingresos" As detalle,ifnull(Sum(a.lcaj_deud),Cast(0 As Decimal(12,2))) As Total_Ventas,'' As producto,'' As unid,
+	\	  Cast(0 As Decimal(12,2)) As Cantidad,
+	\	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'I' As tipo From fe_lcaja  As a
+	\	  Where a.lcaj_acti='A' And lcaj_form='E'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_idau=0 And lcaj_deud>0 And lcaj_idtra=0
+	If goApp.conectasucursales = 'S' Then
+	\ And lcaj_codt=<<goApp.tienda>>
+	Endif
+	\	  Union All
+	\	  Select "Vales Consumo" As detalle,ifnull(Sum(a.lcaj_acre),Cast(0 As Decimal(12,2))) As  Total_Ventas,'' As producto,'' As unid,
+	\	  Cast(0 As Decimal(12,2)) As Cantidad,
+	\	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'S' As tipo From fe_lcaja  As a
+	\	  Where a.lcaj_acti='A' And lcaj_form='E'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_idtra<=0  And lcaj_acre>0 And (lcaj_idau=0 Or lcaj_clpr=0)
+	If goApp.conectasucursales = 'S' Then
+	\ And lcaj_codt=<<goApp.tienda>>
+	Endif
+	\	  Union All
+	\	  Select '' As detalle,Cast(0 As Decimal(12,2)) As  Total_Ventas,Descri As producto,unid,Cast(Sum(k.cant/a.prod_equi) As Decimal(12,2)) As Cantidad,
+	\	  Cast(Sum(k.cant*k.Prec)/Sum(k.cant) As Decimal(12,2)) As Precio,Cast(Sum(k.cant*k.Prec) As Decimal(12,2)) As venta,"" As tipo
+	\	  From
+	\	  (Select lcaj_idau From fe_lcaja Where lcaj_acti='A' And lcaj_fech='<<fi>>'  And lcaj_deud>0
+	If goApp.conectasucursales = 'S' Then
+	\ And lcaj_codt=<<goApp.tienda>>
+	Endif
+	\ Group By lcaj_idau) As  lC
+	\	  INNER Join fe_rcom As r On r.idauto=lC.lcaj_idau
+	\	  INNER Join fe_kar As k On  k.idauto=r.idauto
+	\	  INNER Join fe_art As a On a.idart=k.idart
+	\	  Where k.Acti='A' And r.Acti='A'   And idcliente>0 And r.rcom_ccaj<>'C'
+	If goApp.conectasucursales = 'S' Then
+	\ And r.codt=<<goApp.tienda>>
+	Endif
+	\ Group By k.idart
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Saldoinicialcajaefectivo()
+	dfecha1 = Cfechas(This.dfi)
+	dfecha2 = Cfechas(This.dff)
+	Ccursor = 'c_' + Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\ Select Cast(Sum(If(a.lcaj_deud<>0,If(lcaj_mone='S',lcaj_deud,lcaj_deud*lcaj_dola),If(lcaj_mone='S',-lcaj_acre,-lcaj_acre*lcaj_dola)))  As Decimal(12,2)) As saldo
+    \ From fe_lcaja  As a Where
+	If goApp.ConectaControlador = 'S' And  Left(goApp.tipousuario, 1) <> 'A' Then
+       \ a.lcaj_fech='<<dfecha2>>'
+	Else
+    \ a.lcaj_fech = '<<dfecha2>>'
+	Endif
+    \ And a.lcaj_acti='A' And a.lcaj_form='E' And lcaj_idus=<<This.idusuario>> Group By lcaj_idus
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		This.conerror = 1
+		Return 0
+	Endif
+	Select (Ccursor)
+	nsaldo = Iif(Isnull(saldo), 0, saldo)
+	Return nsaldo
+	Endfunc
+	Function ImprimeTransferenciaBoveda(nidx)
+	Text To lC Noshow
+	SELECT lcaj_fope AS fope,lcaj_fech AS fecha,lcaj_acre AS importe,lcaj_deta as refe FROM
+    fe_lcaja AS l INNER JOIN fe_usua AS u ON u.idusua=l.lcaj_idus
+    WHERE lcaj_idca=?nidx AND lcaj_acti='A' AND lcaj_form='E' AND lcaj_acre>0
+	Endtext
+	If This.EJECutaconsulta(lC, 'tr') < 1 Then
+		Return 0
+	Endif
+	Select tr
+	Go Top
+	Report Form Transfer To Printer Prompt Noconsole
+	Return 1
+	Endfunc
+	Function reportecajaliq(Ccursor)
+	F = Cfechas(This.dFecha)
+	Set Textmerge On
+	Set Textmerge To Memvar lC  Noshow Textmerge
+	\ Select Deta,ndoc,
+	\		Round(Case Forma When 'E' Then If(tipo='I',Impo,0) Else 0 End,2) As efectivo,
+	\		Round(Case Forma When 'C' Then If(tipo='I',Impo,0) Else 0 End,2) As credito,
+	\		Round(Case Forma When 'D' Then If(tipo='I',Impo,0) Else 0 End,2) As deposito,
+	\	    lcaj_dsct As dscto,
+	\		Round(Case Forma When 'T' Then If(tipo='I',Impo,0) Else 0 End,2) As tarjeta,
+	\		Round(Case Forma When 'A' Then If(tipo='I',Impo,0) Else 0 End,2) As centrega,
+	\		Round(Case tipo When 'S' Then If(Forma='E',Impo,0) Else 0 End,2) As egresos,Cast(0 As Decimal(12,2)) As saldo,
+	\		usua,fechao,lcaj_idtu,lcaj_codt,lcaj_rtar As rtarjeta,usuavtas,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,Impo,
+	\       0 As cheque
+	\		From(
+	\		Select a.lcaj_tdoc As tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I',If(lcaj_acre=0,'I','S')) As tipo,lcaj_dcto As ndoc,
+	\		If(lcaj_deud<>0,lcaj_deud,If(lcaj_acre=0,lcaj_deud,lcaj_acre)) As Impo,
+    \        lcaj_deta As Deta,lcaj_mone As  mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
+	\		c.nomb As usua,a.lcaj_fope As fechao,'' As usuavtas,a.lcaj_mone As tmon1,lcaj_dola As dola,
+	\		If(lcaj_deud<>0,lcaj_deud,If(lcaj_acre=0,lcaj_deud,lcaj_acre)) As nimpo,lcaj_idtu,lcaj_codt,lcaj_dsct,lcaj_rtar From
+	\		fe_lcaja As a
+	\		INNER Join fe_usua As c On c.idusua=a.lcaj_idus Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau>0 And lcaj_idus=<<This.idusuario>>
+	If This.nisla > 1 Then
+	   \And lcaj_codt=<<This.nisla>>
+	Endif
+	\		Union All
+	\		Select a.lcaj_tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I','S') As tipo,a.lcaj_ndoc As ndoc,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As Impo,
+    \        a.lcaj_deta As Deta,a.lcaj_mone As mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
+	\		c.nomb As usua,a.lcaj_fope As fechao,'' As usuavtas,a.lcaj_mone As tmon1,a.lcaj_dola As dola,a.lcaj_deud As nimpo,lcaj_idtu,lcaj_codt,lcaj_dsct,lcaj_rtar From
+	\		fe_lcaja As a
+	\		INNER Join fe_usua As c On c.idusua=a.lcaj_idus Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau=0 And lcaj_idus=<<This.idusuario>>
+	If This.nisla > 1 Then
+	   \And lcaj_codt=<<This.nisla>>
+	Endif
+	\)
+    \		As b Order By fechao,lcaj_codt,ndoc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return
 	Endif
 	Return 1
 	ENDFUNC
-	FUNCTION resumencaja(ccursor)
-	fi=cfechas(this.dfecha)
-	SET TEXTMERGE on
-	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
-	\     select "Total Ventas " AS detalle,IFNULL(SUM(a.lcaj_deud),CAST(0 AS DECIMAL(12,2))) as Total_Ventas,'' AS producto,'' AS unid,
-	\     CAST(0 AS DECIMAL(12,2)) AS cantidad,
-    \	  CAST(0 AS DECIMAL(9,4)) AS precio,CAST(0 AS DECIMAL(12,2)) AS  venta,'I' as tipo FROM fe_lcaja  AS a
-	\	  WHERE a.lcaj_acti='A' AND lcaj_idau>0 AND lcaj_fech='<<fi>>' AND lcaj_acti='A'  and lcaj_idus>0
-	If goApp.conectasucursales='S' THEN 
-	\ and lcaj_codt=<<goapp.tienda>> 
-	ENDIF 
-	\	  union All
-	\	  SELECT "Ventas Crédito" AS detalle,IFNULL(SUM(a.lcaj_deud),CAST(0 AS DECIMAL(12,2))) as Total_Ventas,'' AS producto,'' AS unid,
-	\	  CAST(0 AS DECIMAL(12,2)) AS cantidad,
-	\	  CAST(0 AS DECIMAL(9,4)) AS precio,CAST(0 AS DECIMAL(12,2)) AS  venta,'S' as tipo FROM fe_lcaja  AS a
-	\	  WHERE a.lcaj_acti='A' AND lcaj_form='C'  AND lcaj_fech='<<fi>>' AND lcaj_acti='A' and lcaj_deud>0 and lcaj_idau>0 and lcaj_idus>0
-	If goApp.conectasucursales='S' THEN 
-	\ and lcaj_codt=<<goapp.tienda>> 
-	ENDIF 
-	\	  UNION ALL
-	\	  SELECT "Ventas C/Tarjeta" AS detalle,IFNULL(SUM(a.lcaj_deud),CAST(0 AS DECIMAL(12,2))) as Total_Ventas,'' AS producto,'' AS unid,
-	\	  CAST(0 AS DECIMAL(12,2)) AS cantidad,
-	\	  CAST(0 AS DECIMAL(9,4)) AS precio,CAST(0 AS DECIMAL(12,2)) AS  venta,'S' as tipo FROM fe_lcaja  AS a
-	\	  WHERE a.lcaj_acti='A' AND lcaj_form='T'  AND lcaj_fech='<<fi>>' AND lcaj_acti='A' and lcaj_deud>0 and lcaj_idau>0  and lcaj_idus>0
-	If goApp.conectasucursales='S' THEN 
-	\ and lcaj_codt=<<goapp.tienda>> 
-	ENDIF 
-	\	  union all
-	\	  SELECT "Otros Ingresos" AS detalle,IFNULL(SUM(a.lcaj_deud),CAST(0 AS DECIMAL(12,2))) as Total_Ventas,'' AS producto,'' AS unid,
-	\	  CAST(0 AS DECIMAL(12,2)) AS cantidad,
-	\	  CAST(0 AS DECIMAL(9,4)) AS precio,CAST(0 AS DECIMAL(12,2)) AS  venta,'I' as tipo FROM fe_lcaja  AS a
-	\	  WHERE a.lcaj_acti='A' AND lcaj_form='E'  AND lcaj_fech='<<fi>>' AND lcaj_acti='A' and lcaj_idau=0 and lcaj_deud>0 and lcaj_idtra=0 
-	If goApp.conectasucursales='S' THEN 
-	\ and lcaj_codt=<<goapp.tienda>> 
-	ENDIF 
-	\	  UNION ALL
-	\	  SELECT "Vales Consumo" AS detalle,IFNULL(SUM(a.lcaj_acre),CAST(0 AS DECIMAL(12,2))) AS  Total_Ventas,'' AS producto,'' AS unid,
-	\	  CAST(0 AS DECIMAL(12,2)) AS cantidad,
-	\	  CAST(0 AS DECIMAL(9,4)) AS precio,CAST(0 AS DECIMAL(12,2)) AS  venta,'S' as tipo FROM fe_lcaja  AS a
-	\	  WHERE a.lcaj_acti='A' AND lcaj_form='E'  AND lcaj_fech='<<fi>>' AND lcaj_acti='A' AND lcaj_idtra<=0  AND lcaj_acre>0 AND (lcaj_idau=0 OR lcaj_clpr=0)
-	If goApp.conectasucursales='S' THEN 
-	\ and lcaj_codt=<<goapp.tienda>> 
-	ENDIF 
-	\	  UNION ALL
-	\	  SELECT '' AS detalle,CAST(0 as decimal(12,2)) as  Total_ventas,descri AS Producto,unid,CAST(SUM(k.cant/a.prod_equi) AS DECIMAL(12,2)) AS cantidad,
-	\	  CAST(SUM(k.cant*k.prec)/SUM(k.cant) AS DECIMAL(12,2)) AS precio,CAST(SUM(k.cant*k.prec) AS DECIMAL(12,2)) AS Venta,"" as tipo
-	\	  FROM
-	\	  (SELECT lcaj_idau FROM fe_lcaja WHERE lcaj_acti='A' AND lcaj_fech='<<fi>>'  AND lcaj_deud>0 
-	If goApp.conectasucursales='S' THEN 
-	\ and lcaj_codt=<<goapp.tienda>> 
-	ENDIF 
-	\ GROUP BY lcaj_idau) AS  lc 
-	\	  INNER JOIN fe_rcom AS r ON r.idauto=lc.lcaj_idau
-	\	  INNER JOIN fe_kar AS k ON  k.idauto=r.idauto
-	\	  INNER JOIN fe_art AS a ON a.idart=k.idart
-	\	  WHERE k.acti='A' AND r.acti='A'   AND idcliente>0 and r.rcom_ccaj<>'C'
-	If goApp.conectasucursales='S' THEN 
-	\ and lcaj_codt=<<goapp.tienda>> 
-	ENDIF 
-	\ GROUP BY k.idart
-	SET TEXTMERGE off
-	SET TEXTMERGE to
-	If This.EjecutaConsulta(lc,ccursor)<1 Then
+	Function Saldoinicialcajaefectivoxdia()
+	Ccursor = 'c_' + Sys(2015)
+	f = Cfechas(This.dFecha)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\ Select Cast(Sum(If(a.lcaj_deud<>0,If(lcaj_mone='S',lcaj_deud,lcaj_deud*lcaj_dola),If(lcaj_mone='S',-lcaj_acre,-lcaj_acre*lcaj_dola)))  As Decimal(12,2)) As saldo
+    \ From fe_lcaja  As a Where
+	\ a.lcaj_fech='<<f>>'  And a.lcaj_acti='A' And a.lcaj_form='E' And lcaj_idus=<<This.idusuario>> Group By lcaj_idus
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		This.conerror = 1
 		Return 0
 	Endif
-	Return 1
-	ENDFUNC 
+	Select (Ccursor)
+	nsaldo = Iif(Isnull(saldo), 0, saldo)
+	Return nsaldo
+	Endfunc
 Enddefine
+
+
+
+
+
 

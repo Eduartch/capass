@@ -214,20 +214,20 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To  Memvar lC Noshow Textmerge
-	\Select `x`.`idclie`,`x`.`razo`      As `razo`,
+	\Select `x`.`idclie`,`x`.`razo`,
 	\v.importe,v.fevto,`v`.`rcre_idrc` As `rcre_idrc`,`rr`.`rcre_fech` As `fech`,
 	\`rr`.`rcre_idau` As `Idauto`,rcre_codv As idven,`vv`.`nomv`      As `nomv`,
 	\ ifnull(`cc`.`ndoc`,"") As `docd`, ifnull(`cc`.`tdoc`,'') As `tdoc`, a.`ndoc`,
 	\`a`.`mone`      As `mone`,`a`.`banc`      As `banc`,
-	\`a`.`tipo`      As `tipo`,`a`.`dola`      As `dola`,
+	\`a`.`tipo` ,`a`.`dola`      As `dola`,
 	\`a`.`nrou`      As `nrou`,`a`.`banco`     As `banco`,
 	\`a`.`idcred`    As `idcred`,a.fech As fepd,v.Ncontrol,a.estd,a.ndoc,
-	\v.rcre_idrc,rr.rcre_form,a.Impo As impoo
+	\v.rcre_idrc,rr.rcre_form,a.Impo As impoo,s.nomb as tienda
 	\From (
 	\Select Ncontrol,rcre_idrc,rcre_idcl,Max(`c`.`fevto`) As `fevto`,Round(Sum((`c`.`Impo` - `c`.`acta`)),2) As `importe` From
 	\fe_rcred As r
 	\INNER Join fe_cred As c On c.`cred_idrc`=r.`rcre_idrc` Where r.`rcre_Acti`='A' And c.`Acti`='A' And r.rcre_idcl=<<nidclie>>
-	If This.chkTIENDA > 0 Then
+	If This.tienda > 0 Then
 	   \ And rcre_codt=<<This.Tienda>>
 	Endif
 	If Len(Alltrim(This.cformapago)) > 0 Then
@@ -239,6 +239,7 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 		\INNER Join fe_vend As vv On vv.`idven`=rr.`rcre_codv`
 		\Left Join  (Select tdoc,ndoc,Idauto From fe_rcom Where idcliente>0 And Acti='A') As cc On cc.Idauto=rr.`rcre_idau`
 		\INNER Join fe_cred As a On a.idcred=v.Ncontrol
+		\inner join fe_sucu as s on s.idalma=rr.rcre_codt order by Tipo,fevto
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
@@ -249,11 +250,10 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	Function registraanticipos(nidclie, dFech, npago, cndoc, cdetalle, ndolar, Cmoneda)
 	Set Procedure To d:\capass\modelos\cajae Additive
 	ocaja = Createobject('cajae')
-	If This.sintransaccion <> 'S'
+	If This.contransaccion= 'S' then
 		If  This.IniciaTransaccion() < 1 Then
 			Return 0
 		Endif
-		This.CONTRANSACCION = 'S'
 	Endif
 	ur = This.IngresaCabeceraAnticipo(This.Idauto, nidclie, dFech, This.Codv, npago, goApp.nidusua, goApp.Tienda, 0, Id())
 	If ur < 1
@@ -261,7 +261,7 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 			This.DEshacerCambios()
 		Endif
 		Return 0
-	Endif
+	ENDIF
 	nidanti = This.CancelaCreditosanticipos(cndoc, npago, 'P', Cmoneda, cdetalle, dFech, dFech, 'F', -1, "", ur, Id(), goApp.nidusua, ur)
    If nidanti < 1 Then
 		If This.contrasaccion = 'S'
@@ -269,6 +269,7 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 		Endif
 		Return 0
 	Endif
+
 	nmp = Iif(Cmoneda = 'D', Round(npago * ndolar, 2), npago)
 	conerrorcaja = ''
 	If This.tipopago = 'N' Then

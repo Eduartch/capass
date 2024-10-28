@@ -909,6 +909,8 @@ Define Class cpesisven As Odata Of 'd:\capass\database\data'
 	Return 1
 	ENDFUNC
 	FUNCTION consultarcpexenviarpsysu(ccursor)
+	f1 = cfechas(This.dfi)
+	f2 = cfechas(This.dff)
 	SET TEXTMERGE on
 	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
     \select a.ndoc as dcto,a.fech,b.razo,IF(a.mone='S','Soles','Dólares') as moneda,a.valor,a.rcom_exon,rcom_otro,
@@ -922,7 +924,10 @@ Define Class cpesisven As Odata Of 'd:\capass\database\data'
 	Endif
 	If Len(Alltrim(This.cTdoc)) > 0 Then
 	 \ And a.Tdoc='<<this.ctdoc>>'
-	Endif
+	ENDIF
+	IF This.codt>0 then
+	\  And a.codt=<<this.codt>>
+	ENDIF 
     \union all
     \SELECT a.ndoc as dcto,a.fech,b.razo,IF(a.mone='S','Soles','Dólares') as moneda,a.valor,a.rcom_exon,CAST(0 as decimal(12,2)) as inafecto,
     \a.igv,a.impo,a.rcom_mens,a.rcom_arch,a.mone,a.tdoc,a.ndoc,a.dolar,a.idauto,b.ndni,a.idcliente,b.clie_corr,
@@ -936,7 +941,10 @@ Define Class cpesisven As Odata Of 'd:\capass\database\data'
 	Endif
     If Len(Alltrim(This.cTdoc)) > 0 Then
 	 \ And a.Tdoc='<<this.ctdoc>>'
-	Endif
+	ENDIF
+	IF This.codt>0 then
+	\  And a.codt=<<this.codt>>
+	ENDIF 
     \order by fech,ndoc
 	SET TEXTMERGE off
 	SET TEXTMERGE TO 
@@ -1066,7 +1074,43 @@ Define Class cpesisven As Odata Of 'd:\capass\database\data'
 	\ Order By fech,ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 0
+	If This.EjecutaConsulta(lC, Ccursor) < 1 
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function consultarcpexenviarxsys5(Ccursor)
+	f1 = cfechas(This.dfi)
+	f2 = cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+    \select  a.ndoc as dcto,a.fech,b.razo,a.valor,a.rcom_exon,CAST(0 as decimal(12,2)) as inafecto,
+	\	    a.igv,a.impo,rcom_hash,rcom_mens,rcom_arch,mone,a.tdoc,a.ndoc,dolar,idauto,b.ndni,a.idcliente,b.clie_corr,
+	\	    ndo2,b.fono,nruc,concat(TRIM(b.dire),' ',TRIM(b.ciud)) as direccion,tcom,tdoc
+	\	    FROM fe_rcom as a 
+	\	    inner JOIN fe_clie as b ON (a.idcliente=b.idclie)
+	\	    where  a.acti<>'I' and LEFT(ndoc,1) in ('F') and left(rcom_mens,1)<>'0'
+	\	    and valor<>0 and igv<>0 and impo<>0 and a.tdoc='01' and a.codt=<<this.codt>>
+	\	    union all
+	\	    SELECT a.ndoc as dcto,a.fech,b.razo,a.valor,a.rcom_exon,CAST(0 as decimal(12,2)) as inafecto,
+	\	    a.igv,a.impo,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.tdoc,a.ndoc,a.dolar,a.idauto,b.ndni,a.idcliente,b.clie_corr,
+	\	    a.ndo2,b.fono,nruc,concat(TRIM(b.dire),' ',TRIM(b.ciud)) as direccion,a.tcom,w.tdoc
+	\	    FROM fe_rcom as a 
+	\	    inner jOIN fe_clie as b ON (a.idcliente=b.idclie)
+	\	    inner join fe_ncven g on g.ncre_idan=a.idauto 
+	\	    inner join fe_rcom as w on w.idauto=g.ncre_idau
+	\       where a.acti<>'I' AND LEFT(a.ndoc,1) in ('F') and left(a.rcom_mens,1)<>'0'
+	\	    and a.impo<>0  and w.tdoc='01' and a.tdoc in("07","08") and a.codt=<<this.codt>> 
+	If This.confechas = 1 Then
+	   \ And  a.fech Between '<<f1>>' And '<<f2>>'
+	Endif
+	If Len(Alltrim(This.cTdoc)) > 0 Then
+	    \ And a.Tdoc='<<this.ctdoc>>'
+	Endif
+	\ Order By fech,ndoc 
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EjecutaConsulta(lC, Ccursor) < 1 THEN 
 		Return 0
 	Endif
 	Return 1
@@ -1266,6 +1310,9 @@ Define Class cpesisven As Odata Of 'd:\capass\database\data'
 	\Where  a.Acti<>'I' And Left(ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'   And a.Tdoc='01'  And  (Impo<>0 Or rcom_otro>0)
 	If goApp.Cdatos = 'S' Then
 	   \And  a.codt=<<This.codt>>
+	ENDIF
+	If This.confechas = 1 Then
+		\ And  a.fech Between '<<f1>>' And '<<f2>>'
 	Endif
 	If Len(Alltrim(This.cTdoc)) > 0 Then
 	   \ And a.Tdoc='<<this.ctdoc>>'

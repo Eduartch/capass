@@ -10,28 +10,36 @@ Define Class Tienda As Odata Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	If Alltrim(goApp.datostdas) <> 'S' Then
-		lC = "PROMUESTRAALMACENES"
-		If This.EJECUTARP(lC, "", Ccursor) < 1 Then
+		If This.consultardata(Ccursor) < 1 Then
 			Return 0
 		Endif
-		Select (Ccursor)
-		nCount = Afields(cfieldsfesucu)
-		Select * From (Ccursor) Into Cursor a_tdas
-		cdata = nfcursortojson(.T.)
-		rutajson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
-		Strtofile (cdata, rutajson)
-		goApp.datostdas = 'S'
 	Else
 		If Type("cfieldsfesucu") <> 'U' Then
 *!*		       wait WINDOW cfieldsfesucu[1,1]
 		Endif
 		Create Cursor b_tdas From Array cfieldsfesucu
-		responseType1 = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
-		oResponse = nfJsonRead( m.responseType1 )
-		For Each oRow In  oResponse.Array
-			Insert Into b_tdas From Name oRow
-		Endfor
-		Select * From b_tdas Into Cursor (Ccursor)
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
+		conerror = 0
+		If File(m.cfilejson) Then
+			responseType1 = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
+			If Vartype(m.oResponse) = 'O' Then
+				For Each oRow In  oResponse.Array
+					Insert Into a_tdas From Name oRow
+				Endfor
+				Select * From a_tdas Into Cursor (Ccursor)
+			Else
+				If This.consultardata(Ccursor) < 1 Then
+					conerror = 1
+				Endif
+			Endif
+		Else
+			If This.consultardata(Ccursor) < 1 Then
+				conerror = 1
+			Endif
+		Endif
+		If conerror = 1 Then
+			Return 0
+		Endif
 	Endif
 	Return 1
 	Endfunc
@@ -59,7 +67,34 @@ Define Class Tienda As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return  1
 	Endfunc
+	Function consultardata(Ccursor)
+	lC = "PROMUESTRAALMACENES"
+	If This.EJECUTARP(lC, "", Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	nCount = Afields(cfieldsfesucu)
+	Select * From (Ccursor) Into Cursor a_tdas
+	cdata = nfcursortojson(.T.)
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	If File(m.rutajson) Then
+		Delete File (m.rutajson)
+	Endif
+	Strtofile (cdata, rutajson)
+	goApp.datostdas = 'S'
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
 
 
 
