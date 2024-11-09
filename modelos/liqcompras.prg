@@ -165,7 +165,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 		Set DataSession To This.Idsesion
 	Endif
 	Set Textmerge On
-	Set Textmerge To memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lC Noshow Textmerge
     \Select  Tdoc,Ndoc,fech,b.Razo,Mone,valor,igv,Impo,Idauto,a.idprov As cod,fecr From
     \fe_rcom As a
     \INNER Join fe_prov As b On b.idprov=a.idprov Where  Tdoc='04' And a.Acti<>'I'
@@ -182,6 +182,164 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
+	Return 1
+	Endfunc
+	Function Actualizarliqcompra()
+	Set Procedure To d:\capass\modelos\ctasxpagar, d:\capass\modelos\cajae, d:\capass\modelos\regkardex, d:\capass\Imprimir.prg Additive
+	okardex = Createobject("regkardex")
+	ocaja = Createobject("cajae")
+	oimp = Createobject("imprimir")
+	oxpagar = Createobject("ctasporpagar")
+	nmp = Iif(This.Cmoneda = 'S', This.nimpo8 + This.npercepcion, This.nimpo8 + This.npercepcion * This.ndolar)
+	ocaja.dFecha = This.dfechar
+	ocaja.codt = This.codt
+	ocaja.Ndoc = This.cndoc
+	ocaja.cdetalle = This.cdetalle
+	ocaja.nidcta = This.nidctat
+	ocaja.ndebe = 0
+	ocaja.nhaber = nmp
+	ocaja.ndolar = This.ndolar
+	ocaja.nidusua = goApp.nidusua
+	ocaja.nidclpr = This.nidprov
+	ocaja.Cmoneda = This.Cmoneda
+	ocaja.cTdoc = This.cTdoc
+	ocaja.cforma = This.cforma
+	ocaja.codt = This.codt
+	lC = 'ProActualizacabliqCompras'
+	cur = ""
+	swk = 1
+	If IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	Text To lp Noshow Textmerge
+     ('<<This.cTdoc>>', '<<Left(This.cforma, 1)>>', '<<This.cndoc>>', '<<cfechas(This.dFecha)>>',<<this.nreg>>', '<<This.cdetalle>>',<<This.nimpo1>>, <<This.nimpo6>>, <<This.nimpo8>>,'<<This.clugar>>', '<<This.Cmoneda>>', '<<this.ndolar>>', <<this.vigv>>, '<<1>>', <<This.nidprov>>, '<<1>>', <<goApp.nidusua>>, <<this.nirta>>,<<This.codt>>, <<this.nidcta1>>, <<this.nidctai>>, <<this.nidctat>>, <<this.nimpo5>>, <<This.npercepcion>>)
+	Endtext
+	If This.ejecutarp(lC, lp, '') < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	ocaja.NAuto = This.Nreg
+	If Left(This.cforma, 1) = 'E'  Then
+		ocaja.NAuto = NAuto
+		If ocaja.IngresaDatosLCajaEFectivo11() < 1 Then
+			This.Cmensaje = ocaja.Cmensaje
+			This.DEshacerCambios()
+			Return 0
+		Endif
+	Endif
+	If This.FormaRegistrada = 'C' And Left(This.cforma, 1) = 'E'
+		If oxpagar.ACtualizaDeudas(This.Nreg, goApp.nidusua) < 1 Then
+			This.Cmensaje = oxpagar.Cmensaje
+			This.DEshacerCambios()
+			Return
+		Endif
+	Endif
+	If  Left(This.cforma, 1) = 'C' Then
+		If This.Nreg > 0 Then
+			If oxpagar.ACtualizaDeudas(This.Nreg, goApp.nidusua) < 1 Then
+				This.Cmensaje = oxpagar.Cmensaje
+				This.DEshacerCambios()
+				Return 0
+			Endif
+		Endif
+		oxpagar.codt = This.codt
+		oxpagar.cdcto = This.cndoc
+		oxpagar.Ctipo = This.Ctipo
+		oxpagar.dFech = This.dFecha
+		oxpagar.nimpo = This.nimpo8
+		oxpagar.nidprov = This.nidprov
+		oxpagar.NAuto = This.Nreg
+		oxpagar.ccta = This.nidctat
+		oxpagar.Cmoneda = This.Cmoneda
+		oxpagar.ndolar = This.ndolar
+		oxpagar.Calias = "tmpd"
+		If  oxpagar.registramasmas() < 1 Then
+			This.DEshacerCambios()
+			Return 0
+		Endif
+	Endif
+	Sw = 1
+	Select tmpc
+	Set Deleted Off
+	Go Top
+	Do While !Eof()
+		okardex.niDAUTO = NAuto
+		okardex.ncant = tmpc.cant
+		okardex.nprec = tmpc.Prec
+		okardex.cincl = 'I'
+		okardex.ctmvto = 'K'
+		okardex.Ctipo = 'C'
+		okardex.nidtda = This.codt
+		okardex.ncosto = tmpc.Prec
+		okardex.ntigv = tmpc.Tigv
+		okardex.ncoda = tmpc.Coda
+		okardex.nirta = Iif(tmpc.Tirta > 1, Round(tmpc.cant * tmpc.Prec * tmpc.Tirta, 2), 0)
+		nidk = okardex.registrakardexcompras()
+		If Deleted()
+			If tmpc.Nreg > 0 Then
+				okardex.nidkar = tmpc.Nreg
+				okardex.nopcion = 0
+				If okardex.ActualizaKardexcompras5() < 1 Then
+					Cmensaje = okardex.Cmensaje
+					Sw = 0
+					Exit
+				Endif
+			Endif
+		Else
+			If tmpc.Nreg = 0   Then
+				nidk = okardex.registrakardexcompras()
+				If nidk < 1 Then
+					Cmensaje = okardex.Cmensaje
+					Sw = 0
+					Exit
+				Endif
+			Else
+				okardex.nidkar = tmpc.Nreg
+				okardex.nopcion = 1
+				If okardex.ActualizaKardexcompras5() < 1 Then
+					Cmensaje = okardex.Cmensaje
+					Sw = 0
+					Exit
+				Endif
+			Endif
+			If ActualizaStock11(tmpc.Coda, This.codt, tmpc.cant, 'C', tmpc.caant) = 0 Then
+				Sw = 0
+				Exit
+			Endif
+			If tmpc.swcosto = 1 And This.cgrabaprecios = 'S' Then
+				If ActualizaCostos(tmpc.Coda, This.dFecha, tmpc.Prec, This.Nreg, This.nidprov, This.Cmoneda, tmpc.Tigv, This.ndolar, nidcosto) = 0 Then
+					Sw = 0
+					Exit
+				Endif
+			Endif
+		Endif
+		Select tmpc
+		Skip
+	Enddo
+	Set Deleted On
+	If Sw = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If  This.GRabarCambios() = 0 Then
+		Return 0
+	Endif
+	ccletras =	Diletras(This.nneto, 'S')
+	Select Count(*) As Ti From tmpc Into Cursor xitems
+	Select * From tmpc Into Cursor tmpv Readwrite
+	Select tmpv
+	For x = 1 To This.Items  - xitems.Ti
+		Insert Into tmpv(Ndoc)Values(This.Ndoc)
+	Next
+	Replace  All cletras With  ccletras, dni With This.Cndni, exonerado With This.nimpo5, ;
+		irta With This.nirta, neto With This.nneto, valor With This.nimpo1, exonerado With This.nimpo5, ;
+		igv With This.nimpo6, Total With This.nimpo8, Mone With This.Cmoneda,  ;
+		razon With This.Crazon, Direccion With This.Cdireccion, fech With This.dFecha, ;
+		lugar With This.clugar, Detalle With This.cdetalle, Ndoc With This.cndoc  In tmpv
+	Select tmpv
+	Go Top
+	oimp.Tdoc = '04'
+	oimp.ImprimeComprobanteM('S')
 	Return 1
 	Endfunc
 Enddefine

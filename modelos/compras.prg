@@ -839,7 +839,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Function  creartmppsysl(Calias)
 	Create Cursor (Calias) (Coda N(5), Desc c(150), Unid c(4), cant N(10, 2), Prec N(13, 8), ;
 		  alma N(10, 2), dsnc N(6, 4), dsnd N(6, 4), gast N(6, 4), Peso N(9, 4), d1 N(6, 4), d2 N(6, 4), d3 N(6, 4), Ndoc c(12), ;
-		  Nitem N(3), tipro c(1), costosf N(8, 2), costoAnt N(8, 2), costoact N(8, 2), flete N(10, 5), swcosto N(1), Nreg N(10), ;
+		  Nitem N(3), tipro c(1), costosf N(8, 2), costoAnt N(8, 2), costoact N(8, 2), flete N(10, 5), swcosto N(1), Nreg N(10) DEFAULT 0, ;
 		  Impo N(12, 2), Valida c(1), swpromedio N(1), Moneda c(1), preccosto N(15, 8), caant N(10, 2), idcosto N(10), Tigv N(8, 2), ;
 		  swafecto N(1) Default 1, dni c(10), cletras c(150), irta N(10, 2), neto N(10, 2), valor N(12, 2), igv N(10, 2), Total N(12, 2), ;
 		  swirta N(1), exonerado N(12, 2), Tirta N(8, 5), razon c(200), Direccion c(200), fech d, lugar c(200), Mone c(1), Detalle c(200))
@@ -1228,6 +1228,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Set Procedure To d:\capass\modelos\ctasxpagar, d:\capass\modelos\cajae  Additive
 	nmp = Iif(This.Cmoneda = 'S', This.nimpo8 + This.npercepcion, This.nimpo8 + This.npercepcion * This.ndolar)
 	ocaja = Createobject("cajae")
+		oxpagar =CREATEOBJECT("ctasporpagar")
 	ocaja.dFecha = This.dfechar
 	ocaja.codt = This.codt
 	ocaja.Ndoc = This.cndoc
@@ -1257,13 +1258,13 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Endif
 	If  This.cforma = 'C' Then
 		If This.Nreg > 0 Then
-			If ACtualizaDeudas(This.Nreg, goApp.nidusua) = 0
+			If oxpagar.ACtualizaDeudas(This.Nreg, goApp.nidusua) <1 then
 				This.DEshacerCambios()
+				this.cmensaje=oxpagar.cmensaje
 				Return 0
 			Endif
 		Endif
-		oxpagar = Newobject("ctasporpagar")
-		oxpagar.codt = This.codt
+	    oxpagar.codt = This.codt
 		oxpagar.cdcto = This.cndoc
 		oxpagar.Ctipo = This.Ctipo
 		oxpagar.dFech = This.dFecha
@@ -1276,6 +1277,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		oxpagar.Calias = "tmpd"
 		If  oxpagar.registramasmas() < 1 Then
 			This.DEshacerCambios()
+			this.cmensaje=oxpagar.cmensaje
 			Return 0
 		Endif
 	Endif
@@ -2029,7 +2031,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	If Left(This.cforma, 1) = 'E' And This.cTdoc <> 'II'  And  This.cTdoc <> '09'  Then
+	If Left(This.cforma, 1) = 'E'  Then
 		ocaja.NAuto = NAuto
 		If ocaja.IngresaDatosLCajaEFectivo11() < 1 Then
 			This.Cmensaje = ocaja.Cmensaje

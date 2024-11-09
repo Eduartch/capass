@@ -235,7 +235,6 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-******************************
 	Function ACtualizaDeudas(NAuto, nu)
 	lC = "ProActualizaDeudas"
 	Text To lC Noshow

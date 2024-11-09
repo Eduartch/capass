@@ -84,7 +84,7 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	FUNCTION ActualizaKardexcompras5()
 	lC = "ProActualizaKardex5"
 	Text To lp Noshow Textmerge
-	 (<<this.nidauto>>,<<this.ncoda>>,'<<this.ctipo>>',<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.nidkar>>,<<this.nopcion>>,<<this.ncom>>,<<this.ntigv>>)
+	 (<<this.nidauto>>,<<this.ncoda>>,'<<this.ctipo>>',<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.nidkar>>,<<this.nopcion>>,<<this.nirta>>,<<this.ntigv>>)
 	Endtext
 	If This.ejecutarp(lC, lp, '') < 1 Then
 		Return 0
