@@ -69,7 +69,6 @@ Define Class Preciosproductos As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endproc
-
 	Procedure ListarPreciosclientes
 	Lparameters	np1,ccursor
 	lc='ProListarPrecioxCliente'
@@ -123,21 +122,18 @@ Define Class Preciosproductos As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endproc
 	Function listarprecios20(np,ccursor)
-	If np=0 Then
-		TEXT TO lc NOSHOW TEXTMERGE
-		SELECT a.descri,c.razo,l.prec_plac,l.prec_prec,l.prec_idpr FROM fe_preciocliente AS l
-		INNER JOIN fe_clie AS c ON c.idclie=l.`prec_idcl`
-		INNER JOIN fe_art AS a ON a.`idart`=l.`prec_idar`
-		WHERE l.`prec_acti`='A' ORDER BY descri,razo
-		ENDTEXT
-	Else
-		TEXT TO lc NOSHOW TEXTMERGE
-		SELECT a.descri,c.razo,l.prec_plac,l.prec_prec,l.prec_idpr FROM fe_preciocliente AS l
-		INNER JOIN fe_clie AS c ON c.idclie=l.`prec_idcl`
-		INNER JOIN fe_art AS a ON a.`idart`=l.`prec_idar`
-		WHERE l.`prec_acti`='A' and l.prec_idar=<<np>> ORDER BY descri,razo
-		ENDTEXT
-	Endif
+	SET TEXTMERGE on
+	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
+	\	SELECT a.descri,c.razo,l.prec_plac,l.prec_prec,l.prec_idpr FROM fe_preciocliente AS l
+	\	INNER JOIN fe_clie AS c ON c.idclie=l.`prec_idcl`
+	\	INNER JOIN fe_art AS a ON a.`idart`=l.`prec_idar`
+	\	WHERE l.`prec_acti`='A' 
+	If np>0 Then
+	\ and l.prec_idar=<<np>>
+	ENDIF 
+	\ORDER BY descri,razo
+	SET TEXTMERGE off
+	SET TEXTMERGE TO 
 	If This.EjecutaConsulta(lc,ccursor)<1 Then
 		Return 0
 	Endif

@@ -8,6 +8,7 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	ndola = 0
 	Cmoneda = ""
 	cndoc = ""
+	ctipo=""
 	dFech = Date()
 	cdetalle = ""
 	Fechavto = Date()
@@ -442,22 +443,34 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	Function listardctosparacancelar(Ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
-	Endif
-	Text To lC Noshow Textmerge
-	    select e.ndoc,e.fech,xx.fevto,xx.saldo,
-	    b.rcre_impc,'C' as situa,b.rcre_idau,xx.ncontrol,e.tipo,rcre_idav,e.banco,ifnull(c.ndoc,'') as docd,ifnull(c.tdoc,'' ) as tdoc,e.nrou,
-	    e.mone,0 as dscto,rcre_codt as codt,xxx.razo,b.rcre_impc as importec,b.rcre_idau as idauto,e.mone as moneda,b.rcre_idrc as idrc,xxx.idclie,
-	    d.idven,d.nomv,xx.rcre_idrc FROM
-	    (select ncontrol,ROUND(SUM(a.impo-a.acta),2) as saldo,MAX(fevto) as fevto,rcre_idrc from fe_cred as a
-	    inner join fe_rcred as b ON(b.rcre_idrc=a.cred_idrc)
-	    where a.acti='A' and b.rcre_acti='A'
-	    GROUP BY ncontrol,rcre_idrc HAVING saldo<>0) as xx
-	    inner join fe_rcred as b on b.rcre_idrc=xx.rcre_idrc
-	    INNER JOIN fe_cred AS e ON e.idcred=xx.ncontrol
-	    inner join fe_vend as d ON(d.idven=b.rcre_codv)
-	    inner join fe_clie as xxx on xxx.idclie=b.rcre_idcl
-	    LEFT JOIN (SELECT ndoc,tdoc,fech,idauto FROM fe_rcom WHERE acti='A' AND idcliente>0) AS c ON(c.idauto=b.rcre_idau)  ORDER BY fevto
-	Endtext
+	ENDIF
+	SET TEXTMERGE on
+	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
+	   \ select e.ndoc,e.fech,xx.fevto,xx.saldo,
+	   \ b.rcre_impc,'C' as situa,b.rcre_idau,xx.ncontrol,e.tipo,rcre_idav,e.banco,ifnull(c.ndoc,'') as docd,ifnull(c.tdoc,'' ) as tdoc,e.nrou,
+	   \ e.mone,0 as dscto,rcre_codt as codt,xxx.razo,b.rcre_impc as importec,b.rcre_idau as idauto,e.mone as moneda,b.rcre_idrc as idrc,xxx.idclie,
+	   \ d.idven,d.nomv,xx.rcre_idrc,ifnull(u.nomb,'') as usuario FROM
+	   \ (select ncontrol,ROUND(SUM(a.impo-a.acta),2) as saldo,MAX(fevto) as fevto,rcre_idrc from fe_cred as a
+	   \ inner join fe_rcred as b ON(b.rcre_idrc=a.cred_idrc)
+	   \ where a.acti='A' and b.rcre_acti='A'
+	    IF this.nidclie>0 then
+	    \ and b.rcre_idcl=<<this.nidclie>>
+	    ENDIF   
+	    IF LEN(ALLTRIM(this.Cmoneda))>0 then
+	    \ and a.mone='<<this.cmoneda>>'
+	    ENDIF
+	    IF LEN(ALLTRIM(this.ctipo))>0 then
+	    \ and a.tipo='<<this.ctipo>>' 
+	    ENDIF  
+	    \GROUP BY ncontrol,rcre_idrc HAVING saldo<>0) as xx
+	    \inner join fe_rcred as b on b.rcre_idrc=xx.rcre_idrc
+	    \INNER JOIN fe_cred AS e ON e.idcred=xx.ncontrol
+	    \inner join fe_vend as d ON(d.idven=b.rcre_codv)
+	    \inner join fe_clie as xxx on xxx.idclie=b.rcre_idcl
+	    \left join fe_usua as u on u.idusua=b.rcre_idus
+	    \LEFT JOIN (SELECT ndoc,tdoc,fech,idauto FROM fe_rcom WHERE acti='A' AND idcliente>0) AS c ON(c.idauto=b.rcre_idau)  ORDER BY fevto
+	SET TEXTMERGE off
+	SET TEXTMERGE TO 
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -494,7 +507,7 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
-	Endif
+	ENDIF
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select e.ndoc,e.fech,xx.fevto,xx.saldo,
@@ -517,7 +530,7 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	\   INNER Join fe_cred As e On e.idcred=xx.Ncontrol
 	\   INNER Join fe_vend As d On(d.idven=b.rcre_codv)
 	\   INNER Join fe_clie As xxx On xxx.idclie=b.rcre_idcl
-	\   INNER  Join (Select tdoc,ndoc,Idauto From fe_rcom Where idcliente>0 And Acti='A') As c On(c.Idauto=b.rcre_idau)
+	\   left  Join (Select tdoc,ndoc,Idauto From fe_rcom Where idcliente>0 And Acti='A') As c On(c.Idauto=b.rcre_idau)
 	If goApp.Clienteconproyectos = 'S' Then
 	   \  Left Join fe_proyectos As p On p.proy_idpr=b.rcre_idsu
 	Endif

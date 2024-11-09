@@ -13,14 +13,28 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	cTdoc = ""
 	cincl = ""
 	ntigv = 0
+	nidkar=0
+	nopcion=0
+	nirta=0
 	dfi = Date()
 	dff = Date()
 	cfechaanulacion = ''
+	Function registrakardexcompras()
+	lC = "FunIngresaKardexcompras"
+	Text To lp Noshow Textmerge
+	 (<<this.nidauto>>,<<this.ncoda>>,'<<this.ctipo>>',<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.ntigv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.nirta>>)
+	Endtext
+	m.nid = This.EJECUTARf(lC, lp,'kk')
+	If m.nid < 1 Then
+		Return 0
+	Endif
+	Return m.nid
+	Endfunc
 	Function registrakardex5()
 	lC = "proregistraKardex"
-	TEXT TO lp NOSHOW TEXTMERGE 
+	Text To lp Noshow Textmerge
 	 (<<this.nidauto>>,<<this.ncoda>>,'<<this.ctipo>>',<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.ncomi>>,<<this.ntigv>>)
-	ENDTEXT 
+	Endtext
 	If This.ejecutarp(lC, lp, '') < 1 Then
 		Return 0
 	Endif
@@ -42,7 +56,8 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
     \ Select a.lres_fech As fechahora,b.nomb As Usuario,c.ndoc,d.nomb As Autorizo,
-    \ e.razo As referencia,c.fech,c.Impo,p.Descri As producto,p.unid,k.cant As cantidad,k.Prec As precio,a.lres_idau From fe_aresumen As a
+    \ e.razo As referencia,c.fech,c.Impo,p.Descri As producto,p.unid,k.cant As cantidad,k.Prec As precio,
+    \if(lres_tipo='A','Actualización','Eliminación') as estadoa,lres_idau From fe_aresumen As a
     \ inner Join fe_usua As b On b.idusua=a.lres_idus
     \ inner Join fe_rcom As c On c.idauto=a.lres_idau
     \ inner Join fe_kar As k On k.idauto=a.lres_idau
@@ -53,11 +68,11 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	Else
 	 \  inner Join fe_clie As e On e.idclie=c.idcliente
 	Endif
-	     \Where
+	 \Where
 	If This.cfechaanulacion = 'S' Then
 	     \ a.lres_fech Between '<<f1>>' And '<<f2>>'
 	Else
-	     \ Where c.fech    Between '<<f1>>' And '<<f2>>'
+	     \  c.fech    Between '<<f1>>' And '<<f2>>'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
@@ -65,6 +80,17 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION ActualizaKardexcompras5()
+	lC = "ProActualizaKardex5"
+	Text To lp Noshow Textmerge
+	 (<<this.nidauto>>,<<this.ncoda>>,'<<this.ctipo>>',<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.nidkar>>,<<this.nopcion>>,<<this.ncom>>,<<this.ntigv>>)
+	Endtext
+	If This.ejecutarp(lC, lp, '') < 1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC 
 Enddefine
+
 

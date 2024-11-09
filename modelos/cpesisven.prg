@@ -1056,6 +1056,9 @@ Define Class cpesisven As Odata Of 'd:\capass\database\data'
     \From fe_rcom As a
     \INNER Join fe_clie As b On (a.idcliente=b.idclie)
     \Where  a.Acti<>'I' And Left(ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'  And (Impo<>0 Or rcom_otro>0)  And a.Tdoc='01'
+    If This.confechas = 1 Then
+	   \ And  a.fech Between '<<f1>>' And '<<f2>>'
+	Endif
     \Union All
     \Select a.ndoc As dcto,a.fech,b.razo,a.mone,a.valor,a.rcom_exon,a.rcom_otro,a.rcom_inaf As inafecto,
     \a.igv,a.Impo,a.rcom_arch,a.Tdoc,a.ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,

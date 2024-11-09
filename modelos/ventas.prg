@@ -1,4 +1,4 @@
-Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
+Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Fecha = Date()
 	Fechavto = Date()
 	foperacion = Datetime()
@@ -102,7 +102,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
             where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=a.idauto
 	        where a.idauto=<<np1>> and a.acti='A' and w.acti='A'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -121,7 +121,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
             where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=a.idauto
 	        where a.idauto=<<np1>> and a.acti='A' and w.acti='A'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -138,7 +138,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	        inner join fe_clie as b on b.idclie=a.idcliente
 	        where a.idauto=<<np1>> and w.acti='A'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -149,7 +149,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 		    inner JOIN fe_clie as b  on(b.idcliE=a.idcliente)
 		    where a.ndoc='<<np1>>' and a.tdoc='<<np2>>' and acti<>'I'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -162,7 +162,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 		    inner join fe_rcom as z on z.idauto=r.rcom_idan2
 		    where r.idauto=<<this.Idauto>>
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -172,34 +172,28 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 				  SELECT q.detv_desc,q.detv_item,q.detv_ite1,q.detv_ite2,detv_prec,detv_cant FROM fe_detallevta as q
 				  where detv_acti='A' and detv_idau=<<np1>> order by detv_idvt
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function mostrarventasxzonas(dfi, dff, nidzona, Ccursor)
-	If nidzona = 0 Then
-		Text To lC Noshow Textmerge
-	    SELECT descri as producto,p.unid,CAST(t.importe AS DECIMAL(12,2)) as importe,z.`zona_nomb` as zona,c.razo as cliente FROM
-		(SELECT SUM(k.cant*k.prec) AS importe,idart,idcliente FROM fe_rcom  AS r
-		INNER JOIN fe_kar AS k ON k.idauto=r.idauto
-		WHERE fech='<<dfi>>' AND '<<dff>>'  AND r.acti='A' AND k.acti='A' GROUP BY k.idart,r.`idcliente` ) AS t
-		INNER JOIN fe_clie AS c ON c.idclie=t.`idcliente`
-		INNER JOIN fe_art AS p  ON p.`idart`=t.`idart`
-		INNER JOIN fe_zona AS z ON z.`zona_idzo`=c.`clie_idzo` ORDER BY zona_nomb
-		Endtext
-	Else
-		Text To lC Noshow Textmerge
-	    SELECT descri as producto,p.unid,CAST(t.importe AS DECIMAL(12,2)) as importe,z.`zona_nomb` as zona,c.razo as cliente FROM
-		(SELECT SUM(k.cant*k.prec) AS importe,idart,idcliente FROM fe_rcom  AS r
-		INNER JOIN fe_kar AS k ON k.idauto=r.idauto
-		WHERE fech='<<dfi>>' AND '<<dff>>'  AND r.acti='A' AND k.acti='A' GROUP BY k.idart,r.`idcliente` ) AS t
-		INNER JOIN fe_clie AS c ON c.idclie=t.`idcliente`
-		INNER JOIN fe_art AS p  ON p.`idart`=t.`idart`
-		INNER JOIN fe_zona AS z ON z.`zona_idzo`=c.`clie_idzo`  where clie_idzo=<<nidzona>> ORDER BY zona_nomb
-		Endtext
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\    Select Descri As producto,p.Unid,Cast(T.Importe As Decimal(12,2)) As Importe,z.`zona_nomb` As zona,c.Razo As cliente From
+	\	(Select Sum(k.cant*k.Prec) As Importe,idart,idcliente From fe_rcom  As r
+	\	inner Join fe_kar As k On k.Idauto=r.Idauto
+	\	Where fech='<<dfi>>' And '<<dff>>'  And r.Acti='A' And k.Acti='A'
+	If nidzona > 0 Then
+		   \ And clie_idzo=<<nidzona>>
 	Endif
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	\Group By k.idart,r.`idcliente` ) As T
+	\	inner Join fe_clie As c On c.idclie=T.`idcliente`
+	\	inner Join fe_art As p  On p.`idart`=T.`idart`
+	\	inner Join fe_zona As z On z.`zona_idzo`=c.`clie_idzo` Order By zona_nomb
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -218,7 +212,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 		\Order By u.nomb,T.nomb
 	Set Textmerge Off
 	Set Textmerge To
-	If  This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If  This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -245,7 +239,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	    INNER JOIN fe_art AS p ON p.idart=k.idart
 	    INNER JOIN fe_cat AS c ON c.idcat=p.idcat  ORDER BY descri
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -263,7 +257,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	   INNER JOIN fe_art AS p ON p.idart=k.idart
 	   INNER JOIN fe_cat AS c ON c.idcat=p.idcat  GROUP BY c.dcat  ORDER BY dcat
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -275,7 +269,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	LEFT JOIN (SELECT dctos_idau FROM fe_ldctos WHERE dctos_idau=<<np1>> and dctos_acti='A') AS l ON l.dctos_idau=r.vend_idau
 	WHERE vend_idau=<<np1>>
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -496,7 +490,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
        inner join fe_dseries g on g.dser_idre=f.rser_idse
        where g.dser_acti='A' and rser_acti='A') as s ON s.dser_idka=a.idkar WHERE a.idauto=<<np1>>
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -542,7 +536,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	   INNER JOIN fe_art AS a ON a.idart=k.idart
 	   order by descri
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -557,7 +551,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	   INNER JOIN fe_usua AS u  ON u.idusua=r.idusua
 	   WHERE r.idauto=<<np1>> AND k.acti='A'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -641,7 +635,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
        SELECT  idauto FROM fe_rcom WHERE ndoc='<<cdcto>>' AND tdoc='<<ctdoc>>' and acti<>'I' AND idcliente>0
 	Endtext
 	Ccursor = Alltrim(Sys(2015))
-	If This.EjecutaConsulta (lC, (Ccursor)) < 1 Then
+	If This.EJECutaconsulta (lC, (Ccursor)) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -679,7 +673,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 		    where numero1 between <<ndesde>> and <<nhasta>> and serie='<<cserie>>'
 		Endtext
 	Endif
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -705,7 +699,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 			inner join fe_cat as f on f.idcat=c.idcat
 			where a.acti='A' and b.acti='A' and  a.idauto=<<rid.idauto>> order by b.idkar
 		Endtext
-		If This.EjecutaConsulta(lC, 'xtmpv') < 1 Then
+		If This.EJECutaconsulta(lC, 'xtmpv') < 1 Then
 			Sw = 0
 			Exit
 		Endif
@@ -878,7 +872,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	   inner join fe_art as a on a.idart=k.idart
 	   WHERE r.idauto=<<np1>> and k.acti='A' order By  idkar
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -907,7 +901,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	INNER JOIN fe_rcom  AS c ON(c.idauto=a.idauto)
 	WHERE idart=<<ccoda>>  AND c.acti='A' AND a.acti='A' AND idcliente>0 AND c.fech between '<<dfi>>' and '<<dff>>') AS xx GROUP BY mes,nromes order by nromes
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -917,7 +911,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
 	SELECT MAX(lcaj_fope) AS fope,lcaj_deud as monto FROM fe_lcaja WHERE lcaj_deud>0 AND lcaj_acti='A' AND lcaj_idau>0 GROUP BY lcaj_fope,lcaj_deud  ORDER BY lcaj_fope DESC LIMIT 1
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -951,7 +945,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	  WHERE r.fech BETWEEN '<<fi>>' AND '<<ff>>' AND r.acti='A' AND k.`acti`='A' and r.idcliente>0
 	  GROUP BY idart,mes) AS xx) AS yy GROUP BY idart ORDER BY idart
 	Endtext
-	If This.EjecutaConsulta(lC, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -986,7 +980,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 			\ And x.Acti='A' And Y.Acti='A' Order By fech,x.Tdoc,x.Ndoc
 	Set Textmerge To
 	Set Textmerge Off
-	If This.EjecutaConsulta(lcc, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lcc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1033,7 +1027,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	  \ Order By Serie,fech,Ndoc
 	Set Textmerge To
 	Set Textmerge Off
-	If This.EjecutaConsulta(lC, 'registro1') < 1 Then
+	If This.EJECutaconsulta(lC, 'registro1') < 1 Then
 		Return 0
 	Endif
 	If This.Listarnotascreditoydebito('xnotas') < 1 Then
@@ -1114,7 +1108,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	      \Order By a.Codv,a.Idauto,e.Mone
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1142,7 +1136,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	      \Order By e.idusua,a.Idauto,e.Mone
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1167,7 +1161,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
     \Order By fecr,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1203,7 +1197,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\Order By fecr,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, 'facturas') < 1
+	If This.EJECutaconsulta(lC, 'facturas') < 1
 		Return 0
 	Endif
 	nfilas = fe_gene.lrven
@@ -1297,7 +1291,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\Order By fecr,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, 'facturas') < 1
+	If This.EJECutaconsulta(lC, 'facturas') < 1
 		Return 0
 	Endif
 	If This.Listarnotascreditoydebito('xnotas') < 1 Then
@@ -1379,7 +1373,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
        where  r.fech BETWEEN '<<f1>>'  AND '<<f2>>'  AND r.acti='A' and ncre_acti='A' ) as b
        INNER JOIN fe_rcom as a on a.idauto=b.ncre_idau
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1402,7 +1396,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 		inner join fe_detallevta k on k.detv_idau=r.idauto
 		where k.detv_acti='A' and r.acti='A' and r.idauto=<<nid>>  order by idkar
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1449,7 +1443,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	   WHERE rcre_acti='A' AND acti='A' AND rcre_idau=<<nidauto>> GROUP BY rcre_idau) AS p ON p.rcre_idau=c.idauto
 	WHERE `c`.`tipom` = 'V'       AND `c`.`acti` <> 'I' AND c.idauto=<<nidauto>>    AND `a`.`acti` <> 'I'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1611,7 +1605,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
       \Where r.Idauto=<<This.Idauto>> And r.Acti='A' And detv_item>0 And detv_acti='A'
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lcx, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lcx, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1637,7 +1631,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\      Where r.Idauto=<<This.Idauto>> And r.Acti='A' And k.Acti='A'
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return  1
@@ -1670,7 +1664,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
       where rcre_acti='A' and acti='A' and rcre_idau=<<nidauto>> group by rcre_idau) as p on p.rcre_idau=a.idauto
 	  WHERE c.acti <> 'I'    and c.idauto=<<nidauto>>  AND a.acti <> 'I'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1701,7 +1695,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	  LEFT JOIN (SELECT fe_rvendedor.vend_idau AS vend_idau, fe_rvendedor.vend_idrv AS vend_idrv FROM fe_rvendedor WHERE fe_rvendedor.vend_acti = 'A') z   ON z.vend_idau = c.idauto
 	  WHERE c.acti <> 'I'  AND a.acti <> 'I' and c.idauto=<<nidauto>> order by idkar
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1830,7 +1824,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 		INNER JOIN fe_detallevta k ON k.detv_idau=r.idauto
 		WHERE k.detv_acti='A' AND r.acti='A' AND r.idauto=<<nid>> ORDER BY idkar
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return  1
@@ -1840,7 +1834,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
 	SELECT detv_desc FROM fe_detallevta WHERE detv_idau=<<pk>> AND detv_ite2=<<ncoda>> and detv_acti='A' order BY detv_idvt
 	Endtext
-	If This.EjecutaConsulta(lC, 'ddd') < 1 Then
+	If This.EJECutaconsulta(lC, 'ddd') < 1 Then
 		Obj.AddProperty("mensaje", "")
 		Obj.AddProperty("valor", 0)
 		Return Obj
@@ -1875,7 +1869,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	INNER JOIN fe_cat AS c ON c.idcat=xx.idcat
 	INNER JOIN fe_clie AS d ON d.idclie=xx.idcliente order by v.nomv
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1886,7 +1880,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
      SELECT idauto  FROM fe_rcom WHERE ndoc='<<cndoc>>' AND tdoc='<<this.tdoc>>' AND acti<>'I' AND idauto<><<this.idauto>> AND idcliente>0 LIMIT 1;
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -1928,7 +1922,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\Group By a.idrven,e.idrefe
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -2076,7 +2070,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\Order By fech,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2110,7 +2104,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\Order By fech) As x Group By fech
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2145,7 +2139,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	     \Group By b.idart,b.Descri,b.Unid) As z Order By z.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2180,7 +2174,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\Order By a.fech,a.Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2216,7 +2210,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\Order By a.fech,a.Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2283,7 +2277,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2294,7 +2288,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	f1 = Cfechas(This.fechai)
 	f2 = Cfechas(This.fechaf)
-	If This.Idsesion > 0 Then
+	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	Set Textmerge On
@@ -2311,14 +2305,17 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	If Len(Alltrim(This.Tdoc)) > 0 Then
 	\ And a.Tdoc='<<this.Tdoc>>'
-	Endif
+	ENDIF
+	IF this.Usuario>0 THEN 
+	\ and a.idusua=<<this.Usuario>>
+	ENDIF 
 	If Left(goApp.tipousuario, 1) = 'V'  And goApp.Proyecto = 'psystr' Then
 	   \And a.idusua=<<goApp.nidusua>>
 	Endif
 	\Order By fech,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2356,7 +2353,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	\ Order By Ndoc,fech Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2373,7 +2370,7 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
 	  inner join fe_art as a on a.idart=k.idart
 	  WHERE r.idauto=<<this.Idauto>> and k.acti='A' 
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2587,15 +2584,15 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
     \ Order By fech
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function buscarxidpsystr(Ccursor)
-	IF this.idsesion>1 then
-	  SET DATASESSION TO this.idsesion
-	ENDIF   
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\ Select  `c`.`rcom_icbper` As `rcom_icbper`, `a`.`kar_icbper`  As `kar_icbper`, `c`.`rcom_mens`   As `rcom_mens`,ifnull(m.fevto,c.fech) As fvto,
@@ -2626,12 +2623,13 @@ Define Class Ventas As Odata Of 'd:\capass\database\data.prg'
     \  Where `c`.`Acti` <> 'I'  And `a`.`Acti` <> 'I' And a.Idauto=<<This.Idauto>>
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

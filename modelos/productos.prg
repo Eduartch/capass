@@ -1,4 +1,4 @@
-Define Class Producto As Odata Of 'd:\capass\database\data'
+Define Class Producto As OData Of 'd:\capass\database\data'
 	cdesc	   = ""
 	cUnid	   = ""
 	nprec	   = 0
@@ -54,7 +54,7 @@ Define Class Producto As Odata Of 'd:\capass\database\data'
 	ncaant = 0
 	nequi = 0
 	ntigv = 0
-************************************
+	nirta = 0
 	Function MuestraProductosJ1(np1, np2, np3, np4, Ccursor)
 	lC = 'PROMUESTRAPRODUCTOSJx'
 	goApp.npara1 = np1
@@ -651,7 +651,7 @@ Define Class Producto As Odata Of 'd:\capass\database\data'
 	SELECT c.razo,r.fech,ndoc,ifnull(k.prec*z.igv,0) as prec,r.mone FROM fe_kar AS k
 	INNER JOIN fe_rcom AS r ON r.idauto=k.idauto
 	INNER JOIN fe_prov AS c ON c.idprov=r.idprov,fe_gene as z
-	WHERE idart=<<ncoda>> AND k.acti='A' AND r.acti='A' and k.tipo='C' order by r.fech desc  LIMIT 1
+	WHERE idart=<<ncoda>> AND k.acti='A' AND r.acti='A' and k.tipo='C' and tdoc='01' order by r.fech desc  LIMIT 1
 	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -1150,8 +1150,6 @@ Define Class Producto As Odata Of 'd:\capass\database\data'
 	Return  1
 	Endfunc
 	Function Creaproductolopez()
-*!*		cdesc, cunid, nprec, ncosto, np1, np2, np3, npeso, ccat, cmar,
-*!*		 ctipro, nflete, cm, cidpc, ncome, ncomc, nutil1, nutil2, nutil3, nidusua, nsmax, nsmin, nidcosto, ndolar, nutil0
 	lC = 'FUNCREAPRODUCTOS'
 	cur = "Xn"
 	goApp.npara1 = This.cdesc
@@ -1460,10 +1458,11 @@ Define Class Producto As Odata Of 'd:\capass\database\data'
 	goApp.npara24 = This.ndolar
 	goApp.npara25 = This.nutil0
 	goApp.npara26 = This.ntigv
+	goApp.npara27 =this.nirta
 	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
-      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
+      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
 	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
@@ -1502,10 +1501,11 @@ Define Class Producto As Odata Of 'd:\capass\database\data'
 	goApp.npara26 = This.Cestado
 	goApp.npara27 = This.nutil0
 	goApp.npara28 = This.ntigv
+	goApp.npara29=this.nirta
 	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
-      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27,?goapp.npara28)
+      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29)
 	Endtext
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
@@ -1513,6 +1513,7 @@ Define Class Producto As Odata Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

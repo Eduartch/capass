@@ -1,4 +1,4 @@
-Define Class proveedor As Odata Of 'd:\capass\database\data'
+Define Class proveedor As OData Of 'd:\capass\database\data'
 	Codigo	   = 0
 	nruc	   = ""
 	nombre	   = ""
@@ -18,7 +18,11 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Rpm		   = ""
 	zona	   = 0
 	idsegmento = 0
+	cubigeo = ""
 	Cmensaje   = ""
+	distrito   = ""
+	provincia = ""
+	departamento = ""
 	Procedure AsignaValores
 	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
 	This.Codigo	   = m.Codigo
@@ -42,7 +46,6 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Endproc
 	Function Creaproveedor
 	Local lC, lp
-*:Global Cmensaje, cur
 	m.lC		  = 'funcreaproveedor'
 	cur			  = "xt"
 	goApp.npara1  = This.nruc
@@ -74,7 +77,6 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Endfunc
 	Procedure Actualizaproveedor
 	Local lC, lp
-*:Global cur
 	m.lC		  = 'proactualizaproveedor'
 	cur			  = ""
 	goApp.npara1  = This.Codigo
@@ -111,6 +113,9 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	goApp.npara1 = m.np1
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
 	Text To m.lparametros Noshow
           (?goapp.npara1,?goapp.npara2,?goapp.npara3)
 	Endtext
@@ -132,7 +137,7 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, "ya") < 1
+	If This.EJECutaconsulta(lC, "ya") < 1
 		Return 0
 	Endif
 	If ya.nruc = Cruc
@@ -156,7 +161,7 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	\ limit 1
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -203,7 +208,33 @@ Define Class proveedor As Odata Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function Creaproveedorliqcompra
+	Local lC, lp
+	m.lC		  = 'funcreaproveedor'
+	cur			  = "xt"
+	Text To lp Noshow Textmerge
+     ('<<this.nruc>>','<<this.nombre>>','<<This.Direccion>>','<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.Rpm>>','<<This.correo>>','<<This.Refe>>','<<This.Celular>>',<<This.Usuario>>,'<<ID()>>', '<<this.ndni>>','<<this.cubigeo>>','<<this.distrito>>','<<this.provincia>>','<<this.departamento>>')
+	Endtext
+	nid = This.EJECUTARf(m.lC, m.lp, cur)
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function EditaProveedorliqcompra()
+	lC = 'PROACTUALIZAPROVEEDOR'
+	Text To lp Noshow Textmerge
+     (<<this.Codigo>>,'<<this.nruc>>','<<this.nombre>>','<<This.Direccion>>','<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.correo>>',<<This.Usuario>>,
+     '<<This.Celular>>','<<This.Refe>>','<<This.Rpm>>','<<this.ndni>>','<<this.cubigeo>>','<<this.distrito>>','<<this.provincia>>','<<this.departamento>>')
+	Endtext
+	If This.EJECUTARP(lC, lp, "") < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 
