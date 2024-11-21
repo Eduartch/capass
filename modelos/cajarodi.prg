@@ -602,25 +602,32 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	Endfunc
 	Function reportecajapsysrx(Ccursor)
 	dFecha = Cfechas(This.dFecha)
+	*		if(lcaj_acre<>0,0,if(lcaj_form='E',if(lcaj_efec>0,lcaj_efec,ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0))) as ingresos,
+	*IF(lcaj_acre<>0,0,IF(lcaj_form='E',IF(lcaj_efec>0,lcaj_efec,IFNULL(ROUND(k.cant*k.prec,2),a.lcaj_deud)),0)) AS ingresos,
+*!*		if(a.lcaj_form='T',ROUND(k.cant*k.prec,2),0) as tarjeta1,
+*!*	    	if(a.lcaj_form='D',ROUND(k.cant*k.prec,2),0) as deposito,
+*!*	    	if(a.lcaj_form='Y',ROUND(k.cant*k.prec,2),0) as yape,
 	Text To lC Noshow Textmerge
-	    select if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(k.prec,0))) as prec,
-	    if(lcaj_acre<>0,0,if(lcaj_ttar='.','',ifnull(k.idart,''))) as coda,day(a.lcaj_fech) as dia,
-	    if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(k.cant,0))) as cant,
+	    select if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,if(lcaj_efec>0,0,ifnull(k.prec,0)))) as prec,
+	    IF(lcaj_acre<>0,0,IF(lcaj_ttar='.','',IF(lcaj_efec>0,'',IFNULL(k.idart,'')))) AS coda,day(a.lcaj_fech) as dia,
+	    if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,if(lcaj_efec>0,0,ifnull(k.cant,0)))) as cant,
 		if(a.lcaj_form='E','Efectivo',if(a.lcaj_form='C','Crédito','Tarjeta')) as forma,a.lcaj_deta as deta,
-		ifnull(if(tdoc='01',if(left(b.ndoc,1)='F',b.ndoc,concat('F/.',b.ndoc)),
-        if(left(b.ndoc,1)='B',b.ndoc,concat('B/.',b.ndoc))),a.lcaj_dcto) as ndoc,
+		IFNULL(IF(tdoc='01',IF(LEFT(b.ndoc,1)='F',b.ndoc,CONCAT('F/.',b.ndoc)),
+        IF(LEFT(b.ndoc,1)='B',b.ndoc,CONCAT('B/.',b.ndoc))),a.lcaj_dcto) AS ndoc,
         ifnull(b.tdoc,'99') as tdoc,
-		if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(ROUND(k.cant*k.prec,2),0))) as Np,
-		if(lcaj_acre<>0,0,if(lcaj_form='E',ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0)) as ingresos,
+		if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,if(lcaj_efec>0,0,ifnull(ROUND(k.cant*k.prec,2),0)))) as Np,
+        IF(lcaj_acre<>0,0,IF(lcaj_form='E',IF(lcaj_efec>0,lcaj_efec,IFNULL(ROUND(k.cant*k.prec,2),a.lcaj_deud)),0)) AS ingresos,
 		if(lcaj_acre<>0,0,if(lcaj_form='C',ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0)) as credito,
 		if(lcaj_deud>0,'I','S') as tipo,
-    	if(a.lcaj_form='T',ROUND(k.cant*k.prec,2),if(lcaj_form='D',ROUND(k.cant*k.prec,2),0)) as tarjeta1,
+    	if(a.lcaj_form='T',ROUND(k.cant*k.prec,2),0) as  tarjeta1,
+    	if(a.lcaj_form='D',ROUND(k.cant*k.prec,2),0) as deposito,
+    	if(a.lcaj_form='Y',ROUND(k.cant*k.prec,2),0) as yape,
 		if(a.lcaj_acre>0,if(a.lcaj_form='E',a.lcaj_acre,0),0) as gastos,lcaj_fope,'a' as orden,lcaj_idau as idauto,ifnull(c.nruc,'') as nruc,ifnull(c.ndni,'') as ndni from
 		fe_lcaja as a 
 		left join fe_rcom as b on b.idauto=a.lcaj_idau 
 		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k  on k.idauto=b.idauto 
 		LEFT join fe_clie as c on c.idclie=b.idcliente
-		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form<>'T' and left(a.lcaj_ttar,1)<>'.'
+		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form not in('T','Y','D') and left(a.lcaj_ttar,1)<>'.'
 		union all
 		select cast(0 as decimal(5))as prec,
 	    '' as coda,day(a.lcaj_fech) as dia,0 as cant,
@@ -633,9 +640,12 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		0 as credito,
 		if(lcaj_deud>0,'I','S') as tipo,
         0 as tarjeta1,
+        0 AS deposito,
+        0 as yape,
 		0 as gastos,lcaj_fope,'b' as orden,lcaj_idau as idauto,'' as nruc,'' as ndni from
-		fe_lcaja as a left join fe_rcom as b
-		on b.idauto=a.lcaj_idau where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and left(a.lcaj_ttar,1)='.' 
+		fe_lcaja as a 
+		left join fe_rcom as b on b.idauto=a.lcaj_idau 
+		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and left(a.lcaj_ttar,1)='.' 
 		union all
 		SELECT if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(k.prec,0))) as prec,
 	    if(lcaj_acre<>0,0,if(lcaj_ttar='.','',ifnull(k.idart,''))) as coda,day(a.lcaj_fech) as dia,
@@ -648,14 +658,16 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		if(lcaj_acre<>0,0,if(lcaj_form='E',ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0)) as ingresos,
 		if(lcaj_acre<>0,0,if(lcaj_form='C',ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0)) as credito,
 		if(lcaj_deud>0,'I','S') as tipo,
-    	if(a.lcaj_form='T',ROUND(k.cant*k.prec,2),if(lcaj_form='D',ROUND(k.cant*k.prec,2),0)) as tarjeta1,
+    	if(a.lcaj_form='T',lcaj_deud-lcaj_efec,0) as tarjeta1,
+    	if(a.lcaj_form='D',lcaj_deud-lcaj_efec,0) as deposito,
+    	if(a.lcaj_form='Y',lcaj_deud-lcaj_efec,0) as yape,
 		0 as gastos,lcaj_fope,'a' as orden,lcaj_idau as idauto,ifnull(c.nruc,'') as nruc,ifnull(c.ndni,'') as ndni  from
 		fe_lcaja as a 
 		left join fe_rcom as b on b.idauto=a.lcaj_idau 
 		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k
 		on k.idauto=b.idauto 
 		LEFT join fe_clie as c on c.idclie=b.idcliente
-		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form='T' and left(a.lcaj_ttar,1)<>'.'
+		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form in('T','D','Y') and left(a.lcaj_ttar,1)<>'.'
 		order by tdoc,ndoc
 	Endtext
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then

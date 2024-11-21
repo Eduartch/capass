@@ -185,10 +185,9 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Return 1
 	Endfunc
 	Function Actualizarliqcompra()
-	Set Procedure To d:\capass\modelos\ctasxpagar, d:\capass\modelos\cajae, d:\capass\modelos\regkardex, d:\capass\Imprimir.prg Additive
+	Set Procedure To d:\capass\modelos\ctasxpagar, d:\capass\modelos\cajae, d:\capass\modelos\regkardex Additive
 	okardex = Createobject("regkardex")
 	ocaja = Createobject("cajae")
-	oimp = Createobject("imprimir")
 	oxpagar = Createobject("ctasporpagar")
 	nmp = Iif(This.Cmoneda = 'S', This.nimpo8 + This.npercepcion, This.nimpo8 + This.npercepcion * This.ndolar)
 	ocaja.dFecha = This.dfechar
@@ -207,12 +206,11 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	ocaja.codt = This.codt
 	lC = 'ProActualizacabliqCompras'
 	cur = ""
-	swk = 1
 	If IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	Text To lp Noshow Textmerge
-     ('<<This.cTdoc>>', '<<Left(This.cforma, 1)>>', '<<This.cndoc>>', '<<cfechas(This.dFecha)>>',<<this.nreg>>', '<<This.cdetalle>>',<<This.nimpo1>>, <<This.nimpo6>>, <<This.nimpo8>>,'<<This.clugar>>', '<<This.Cmoneda>>', '<<this.ndolar>>', <<this.vigv>>, '<<1>>', <<This.nidprov>>, '<<1>>', <<goApp.nidusua>>, <<this.nirta>>,<<This.codt>>, <<this.nidcta1>>, <<this.nidctai>>, <<this.nidctat>>, <<this.nimpo5>>, <<This.npercepcion>>)
+     ('<<This.cTdoc>>', '<<Left(This.cforma, 1)>>', '<<This.cndoc>>', '<<cfechas(This.dFecha)>>',<<this.nreg>>, '<<This.cdetalle>>',<<This.nimpo1>>, <<This.nimpo6>>, <<This.nimpo8>>,'<<This.clugar>>', '<<This.Cmoneda>>', '<<this.ndolar>>', <<this.vigv>>, '<<1>>', <<This.nidprov>>, '<<1>>', <<goApp.nidusua>>, <<this.nirta>>,<<This.codt>>, <<this.nidcta1>>, <<this.nidctai>>, <<this.nidctat>>, <<this.nimpo5>>, <<This.npercepcion>>)
 	Endtext
 	If This.ejecutarp(lC, lp, '') < 1 Then
 		This.DEshacerCambios()
@@ -220,14 +218,13 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Endif
 	ocaja.NAuto = This.Nreg
 	If Left(This.cforma, 1) = 'E'  Then
-		ocaja.NAuto = NAuto
 		If ocaja.IngresaDatosLCajaEFectivo11() < 1 Then
 			This.Cmensaje = ocaja.Cmensaje
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
-	If This.FormaRegistrada = 'C' And Left(This.cforma, 1) = 'E'
+	If This.cFormaRegistrada = 'C' And Left(This.cforma, 1) = 'E'
 		If oxpagar.ACtualizaDeudas(This.Nreg, goApp.nidusua) < 1 Then
 			This.Cmensaje = oxpagar.Cmensaje
 			This.DEshacerCambios()
@@ -263,7 +260,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Set Deleted Off
 	Go Top
 	Do While !Eof()
-		okardex.niDAUTO = NAuto
+		okardex.niDAUTO = This.Nreg
 		okardex.ncant = tmpc.cant
 		okardex.nprec = tmpc.Prec
 		okardex.cincl = 'I'
@@ -273,8 +270,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 		okardex.ncosto = tmpc.Prec
 		okardex.ntigv = tmpc.Tigv
 		okardex.ncoda = tmpc.Coda
-		okardex.nirta = Iif(tmpc.Tirta > 1, Round(tmpc.cant * tmpc.Prec * tmpc.Tirta, 2), 0)
-		nidk = okardex.registrakardexcompras()
+		okardex.nirta = tmpc.Tirta
 		If Deleted()
 			If tmpc.Nreg > 0 Then
 				okardex.nidkar = tmpc.Nreg
@@ -286,17 +282,17 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 				Endif
 			Endif
 		Else
-			If tmpc.Nreg = 0   Then
-				nidk = okardex.registrakardexcompras()
-				If nidk < 1 Then
+			If tmpc.Nreg > 0   Then
+				okardex.nidkar = tmpc.Nreg
+				okardex.nopcion = 1
+				If okardex.ActualizaKardexcompras5() < 1 Then
 					Cmensaje = okardex.Cmensaje
 					Sw = 0
 					Exit
 				Endif
 			Else
-				okardex.nidkar = tmpc.Nreg
-				okardex.nopcion = 1
-				If okardex.ActualizaKardexcompras5() < 1 Then
+				nidk = okardex.registrakardexcompras()
+				If nidk < 1 Then
 					Cmensaje = okardex.Cmensaje
 					Sw = 0
 					Exit
@@ -324,12 +320,18 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	If  This.GRabarCambios() = 0 Then
 		Return 0
 	Endif
+	This.Imprimir()
+	Return 1
+	Endfunc
+	Function Imprimir()
+	Set Procedure To, d:\capass\Imprimir.prg  Additive
+	oimp = Createobject("imprimir")
 	ccletras =	Diletras(This.nneto, 'S')
 	Select Count(*) As Ti From tmpc Into Cursor xitems
 	Select * From tmpc Into Cursor tmpv Readwrite
 	Select tmpv
 	For x = 1 To This.Items  - xitems.Ti
-		Insert Into tmpv(Ndoc)Values(This.Ndoc)
+		Insert Into tmpv(Ndoc)Values(This.cndoc)
 	Next
 	Replace  All cletras With  ccletras, dni With This.Cndni, exonerado With This.nimpo5, ;
 		irta With This.nirta, neto With This.nneto, valor With This.nimpo1, exonerado With This.nimpo5, ;
@@ -340,6 +342,132 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Go Top
 	oimp.Tdoc = '04'
 	oimp.ImprimeComprobanteM('S')
+	Endfunc
+	Function Grabarliqcompra()
+	Set Procedure To d:\capass\modelos\ctasxpagar, d:\capass\modelos\cajae, d:\capass\modelos\regkardex, d:\capass\Imprimir.prg Additive
+	okardex = Createobject("regkardex")
+	ocaja = Createobject("cajae")
+	oimp = Createobject("imprimir")
+	nmp = Iif(This.Cmoneda = 'S', This.nimpo8 + This.npercepcion, This.nimpo8 + This.npercepcion * This.ndolar)
+	ocaja.dFecha = This.dfechar
+	ocaja.codt = This.codt
+	ocaja.Ndoc = This.cndoc
+	ocaja.cdetalle = This.cdetalle
+	ocaja.nidcta = This.nidctat
+	ocaja.ndebe = 0
+	ocaja.nhaber = nmp
+	ocaja.ndolar = This.ndolar
+	ocaja.nidusua = goApp.nidusua
+	ocaja.nidclpr = This.nidprov
+	ocaja.Cmoneda = This.Cmoneda
+	ocaja.cTdoc = This.cTdoc
+	ocaja.cforma = This.cforma
+	ocaja.codt = This.codt
+	lC = 'FunIngresacabliqCompras'
+	cur = "Xn"
+	swk = 1
+	_Screen.ocorrelativo.Idserie = This.Idserie
+	_Screen.ocorrelativo.Nsgte = This.Nsgte
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	Text To lp Noshow Textmerge
+     ('<<This.cTdoc>>', '<<Left(This.cforma, 1)>>', '<<This.cndoc>>', '<<cfechas(This.dFecha)>>','<<cfechas(This.dfechar)>>', '<<This.cdetalle>>',  <<This.nimpo1>>, <<This.nimpo6>>, <<This.nimpo8>>,'<<This.clugar>>', '<<This.Cmoneda>>', '<<this.ndolar>>', <<this.vigv>>, '<<1>>', <<This.nidprov>>, '<<1>>', <<goApp.nidusua>>, <<this.nirta>>,<<This.codt>>, <<this.nidcta1>>, <<this.nidctai>>, <<this.nidctat>>, <<this.nimpo5>>, <<This.npercepcion>>)
+	Endtext
+	NAuto = This.EJECUTARf(lC, lp, cur)
+	If NAuto < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If Left(This.cforma, 1) = 'E'  Then
+		ocaja.NAuto = NAuto
+		If ocaja.IngresaDatosLCajaEFectivo11() < 1 Then
+			This.Cmensaje = ocaja.Cmensaje
+			This.DEshacerCambios()
+			Return 0
+		Endif
+	Endif
+	If  This.cforma = 'C' Then
+		oxpagar = Newobject("ctasporpagar")
+		oxpagar.codt = This.codt
+		oxpagar.cdcto = This.cndoc
+		oxpagar.Ctipo = This.Ctipo
+		oxpagar.dFech = This.dFecha
+		oxpagar.nimpo = This.nimpo8
+		oxpagar.nidprov = This.nidprov
+		oxpagar.NAuto = NAuto
+		oxpagar.ccta = This.nidctat
+		oxpagar.Cmoneda = This.Cmoneda
+		oxpagar.ndolar = This.ndolar
+		oxpagar.Calias = "tmpd"
+		If  oxpagar.registramasmas() < 1 Then
+			This.DEshacerCambios()
+			This.Cmensaje = oxpagar.Cmensaje
+			Return 0
+		Endif
+	Endif
+	Select tmpc
+	Go Top
+	Do While !Eof()
+		okardex.niDAUTO = NAuto
+		okardex.ncant = tmpc.cant
+		okardex.nprec = tmpc.Prec
+		okardex.cincl = 'I'
+		okardex.ctmvto = 'K'
+		okardex.Ctipo = 'C'
+		okardex.nidtda = This.codt
+		okardex.ncosto = tmpc.Prec
+		okardex.ntigv = tmpc.Tigv
+		okardex.ncoda = tmpc.Coda
+		okardex.nirta = tmpc.Tirta
+		nidk = okardex.registrakardexcompras()
+		If nidk < 1 Then
+			Cmensaje = okardex.Cmensaje
+			swk = 0
+			Exit
+		Endif
+		If ActualizaStock(tmpc.Coda, This.codt, tmpc.cant, 'C') = 0 Then
+			swk = 0
+			Exit
+		Endif
+		If tmpc.swcosto = 1 And This.cgrabaprecios = 'S' And tmpc.Prec > 0 Then
+			If ActualizaCostos(tmpc.Coda, This.dFecha, tmpc.Prec, NAuto, This.nidprov, This.Cmoneda, tmpc.Tigv, This.ndolar, 0) = 0 Then
+				swk = 0
+				Exit
+			Endif
+		Endif
+		Select tmpc
+		Skip
+	Enddo
+	If swk = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If _Screen.ocorrelativo.GeneraCorrelativo1() < 1 Then
+		This.DEshacerCambios()
+		This.Cmensaje = _Screen.ocorrelativo.Cmensaje
+		Return 0
+	Endif
+	If This.GRabarCambios() = 0 Then
+		Return 0
+	Endif
+	This.Imprimir()
+*!*		ccletras =	Diletras(This.nneto, 'S')
+*!*		Select Count(*) As Ti From tmpc Into Cursor xitems
+*!*		Select * From tmpc Into Cursor tmpv Readwrite
+*!*		Select tmpv
+*!*		For x = 1 To This.Items  - xitems.Ti
+*!*			Insert Into tmpv(Ndoc)Values(This.Ndoc)
+*!*		Next
+*!*		Replace  All cletras With  ccletras, dni With This.Cndni, exonerado With This.nimpo5, ;
+*!*			irta With This.nirta, neto With This.nneto, valor With This.nimpo1, exonerado With This.nimpo5, ;
+*!*			igv With This.nimpo6, Total With This.nimpo8, Mone With This.Cmoneda,  ;
+*!*			razon With This.Crazon, Direccion With This.Cdireccion, fech With This.dFecha, ;
+*!*			lugar With This.clugar, Detalle With This.cdetalle, Ndoc With This.cndoc  In tmpv
+*!*		Select tmpv
+*!*		Go Top
+*!*		oimp.Tdoc = '04'
+*!*		oimp.ImprimeComprobanteM('S')
 	Return 1
 	Endfunc
 Enddefine

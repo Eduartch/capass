@@ -1,4 +1,4 @@
-Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
+Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 	Placa = ""
 	nombre = ""
 	Direccion = ""
@@ -14,7 +14,8 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	npropio = 0
 	activofijo = ""
 	dni = ""
-	cmodo=""
+	cmodo = ""
+	Yaregistrado = ""
 	Function listarTransportistax(np1, np2, ccur)
 	Local lC, lp
 	m.lC		 = 'ProMuestraTransportista'
@@ -39,11 +40,11 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Case !Empty(This.Placa) And Len(Alltrim(This.Placa)) < 5
 		This.Cmensaje = 'Placa No Válida'
 		Return 0
-	Case This.cmodo = 'N' And !Empty(This.Placa) 
+	Case This.cmodo = 'N' And !Empty(This.Placa)
 		If This.buscarplaca() < 1 Then
 			Return 0
-		ENDIF
-		RETURN 1
+		Endif
+		Return 1
 	Otherwise
 		Return 1
 	Endcase
@@ -124,15 +125,17 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Endfunc
 	Function quitar(Idtran, opt)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\ Update fe_tra
 	If opt = 0 Then
-		Text To lC Noshow Textmerge
-	        UPDATE fe_tra SET tran_acti='I'  WHERE idtra=<<idtran>>
-		Endtext
+	    \Set tran_acti='I'
 	Else
-		Text To lC Noshow Textmerge
-	        UPDATE fe_tra SET tran_acti='A'  WHERE idtra=<<idtran>>
-		Endtext
+	    \Set tran_acti='A'
 	Endif
+	\Where idtra=<<Idtran>>
+	Set Textmerge Off
+	Set Textmerge To
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -143,12 +146,13 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
         select placa FROM fe_tra WHERE placa='<<This.Placa>>' AND ructr='<<this.ruc>>' limit 1
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Select (Ccursor)
 	If Reccount() > 0
 		This.Cmensaje = "NÚMERO  de Placa Ya Registrada"
+		This.Yaregistrado = 'S'
 		Return 0
 	Endif
 	Return 1
@@ -166,16 +170,19 @@ Define Class Transportista As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, "ya") < 1
+	If This.EJECutaconsulta(lC, "ya") < 1
 		Return 0
 	Endif
 	If ya.nruc = Cruc
 		This.Cmensaje = "Nº de Ruc Ya Registrado"
+		This.Yaregistrado = 'S'
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
 
 
 

@@ -1,4 +1,4 @@
-Define Class cliente As Odata Of 'd:\capass\database\data.prg'
+Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Codigo	   = 0
 	nruc	   = ""
 	nombre	   = ""
@@ -19,36 +19,36 @@ Define Class cliente As Odata Of 'd:\capass\database\data.prg'
 	zona	   = 0
 	idsegmento = 0
 	Cmensaje   = ""
-	encontrado = ""
-	Function Validar()
+	Encontrado = ""
+	Function VAlidar()
 	Do Case
 	Case Empty(This.nombre)
 		This.Cmensaje = "Ingrese Nombre del Cliente"
 		Return .F.
-	Case This.encontrado = 'S'
+	Case This.Encontrado = 'S'
 		This.Cmensaje = "El RUC o El Nombre del Cliente Ya Estan Registrados"
-		Return .F.
-	Case !Empty(This.nruc) And !ValidaRuc(This.nruc)
-		This.Cmensaje = "El RUC es Inválido"
 		Return .F.
 	Case Len(Alltrim(This.ndni)) > 1 And Len(Alltrim(This.ndni)) <> 8
 		This.Cmensaje = "DNI es Inválido"
+		Return .F.
+	CASE LEN(ALLTRIM(this.nruc))=11 AND !validaruc(this.nruc) 
+		This.Cmensaje = "RUC NO Válido"
 		Return .F.
 	Otherwise
 		Return .T.
 	Endcase
 	Endfunc
 	Procedure AsignaValores
-	Lparameters Codigo, cnruc, crazo, cdire, cciud, cfono, cfax, cdni, ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
+	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
 	This.Codigo	   = m.Codigo
-	This.nruc	   = m.cnruc
+	This.nruc	   = m.Cnruc
 	This.nombre	   = m.crazo
 	This.Direccion = m.cdire
 	This.ciudad	   = m.cciud
-	This.fono	   = m.cfono
+	This.fono	   = m.Cfono
 	This.fax	   = m.cfax
 	This.ndni	   = m.cdni
-	This.Tipo	   = m.ctipo
+	This.Tipo	   = m.Ctipo
 	This.correo	   = m.cemail
 	This.Vendedor  = m.nidven
 	This.Usuario   = m.cusua
@@ -86,20 +86,19 @@ Define Class cliente As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	If goApp.clientesconsegmento = 'S' Then
 		goApp.npara18 = This.idsegmento
-		TEXT To m.lp Noshow
+		Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To m.lp Noshow
+		Text To m.lp Noshow
 	    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-		ENDTEXT
+		Endtext
 	Endif
 	nidc = This.EJECUTARf(m.lC, m.lp, cur)
 	If nidc < 1 Then
 		Return 0
-	Else
-		Return nidc
-	Endif
+	ENDIF 
+	Return nidc
 	Endfunc
 	Procedure ActualizaCliente
 	Local lC, lp
@@ -128,13 +127,13 @@ Define Class cliente As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	If goApp.clientesconsegmento = 'S' Then
 		goApp.npara18 = This.idsegmento
-		TEXT To m.lp Noshow
+		Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To m.lp Noshow
+		Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-		ENDTEXT
+		Endtext
 	Endif
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
@@ -147,9 +146,9 @@ Define Class cliente As Odata Of 'd:\capass\database\data.prg'
 	goApp.npara1 = m.np1
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
-	TEXT To m.lparametros Noshow
+	Text To m.lparametros Noshow
     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP10(cproc, m.lparametros, m.nombrecursor) < 1 Then
 		Return 0
 	Endif
@@ -157,29 +156,30 @@ Define Class cliente As Odata Of 'd:\capass\database\data.prg'
 	Endproc
 	Function ActualizaClienteRetenedor(np1, np2)
 	Local lC
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
          UPDATE fe_clie SET clie_rete='<<np2>>' where idclie=<<np1>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(m.lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function buscardni(Cruc, nid, modo)
-	If modo = "N"
-		TEXT To lC Noshow Textmerge
-        SELECT idclie FROM fe_clie WHERE tRIM(ndni)='<<cruc>>' AND clie_acti<>'I' limit 1
-		ENDTEXT
-	Else
-		TEXT To lC Noshow Textmerge
-        SELECT idclie FROM fe_clie WHERE TRIM(ndni)='<<cruc>>' AND idclie<><<nid>> AND clie_acti<>'I' limit 1
-		ENDTEXT
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+    \ Select idcliE From fe_clie Where Trim(ndni)='<<cruc>>' And clie_acti<>'I'
+	If modo <> "N" Then
+		\ And idcliE<><<nid>>
 	Endif
-	If This.EjecutaConsulta(lC, "ya") < 1
+	\limit 1
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, "ya") < 1
 		Return 0
 	Endif
-	If ya.idclie > 0 Then
+	If ya.idcliE > 0 Then
 		This.Cmensaje = 'DNI Ya está Registrado '
+		This.Encontrado = 'S'
 		Return 0
 	Endif
 	Return 1
@@ -193,77 +193,82 @@ Define Class cliente As Odata Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lC  Noshow
 	\Select nruc From fe_clie Where nruc='<<cruc>>' And clie_acti<>'I'
 	If cmodo <> "N"
-	 \And idclie<><<nidclie>>
+	 \And idcliE<><<nidclie>>
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, "ya") < 1
+	If This.EJECutaconsulta(lC, "ya") < 1
 		Return 0
 	Endif
 	If ya.nruc = Cruc
 		This.Cmensaje = "Nº de Ruc Ya Registrado"
+		This.Encontrado = 'S'
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function buscanombre(cmodo, Cruc, nidclie)
-	ccursor='c_'+Sys(2015)
+	Ccursor = 'c_' + Sys(2015)
 	If Len(Alltrim(Cruc)) <= 3 Then
 		This.Cmensaje = 'Nombre de Cliente NO Válido'
 		Return 0
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC  Noshow
-	\Select razo From fe_clie Where TRIM(razo)='<<cruc>>' And clie_acti<>'I'
+	\Select Razo From fe_clie Where Trim(Razo)='<<cruc>>' And clie_acti<>'I'
 	If cmodo <> "N"
-	 \And idclie<><<nidclie>>
+	 \And idcliE<><<nidclie>>
 	Endif
 	\ limit 1
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
-	Select (ccursor)
-	If Len(Alltrim(razo))>0
+	Select (Ccursor)
+	If Len(Alltrim(Razo)) > 0
 		This.Cmensaje = "Nombre Ya Registrado"
+		This.Encontrado = 'S'
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listarclientesy(np1, np2, np3, ccursor)
+	Function listarclientesy(np1, np2, np3, Ccursor)
 	lC = 'PROMUESTRACLIENTES1'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
-	TEXT To lp Noshow
+	IF this.idsesion>1 then
+	   SET DATASESSION TO this.idsesion
+	ENDIF    
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	ENDTEXT
-	If This.EJECUTARP(lC, lp, ccursor) < 1 Then
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
 ***************************************
-Define Class clientex As cliente
+Define Class clientex As Cliente
 	dias			  = 0
-	contacto		  = ""
+	Contacto		  = ""
 	direccion1		  = ""
 	Codigov			  = 0
 	Usuario			  = 0
 	AutorizadoCredito = 0
 	Procedure AsignaValores
-	Lparameters Codigo, cnruc, crazo, cdire, cciud, cfono, cfax, cdni, ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz, ndias, cContacto, cdireccion1, nidsegmento
+	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz, ndias, cContacto, cdireccion1, nidsegmento
 	This.Codigo		= m.Codigo
-	This.nruc		= m.cnruc
+	This.nruc		= m.Cnruc
 	This.nombre		= m.crazo
 	This.Direccion	= m.cdire
 	This.ciudad		= m.cciud
-	This.fono		= m.cfono
+	This.fono		= m.Cfono
 	This.fax		= m.cfax
 	This.ndni		= m.cdni
-	This.Tipo		= m.ctipo
+	This.Tipo		= m.Ctipo
 	This.correo		= m.cemail
 	This.Vendedor	= m.nidven
 	This.Usuario	= m.cusua
@@ -274,7 +279,7 @@ Define Class clientex As cliente
 	This.Rpm		= m.crpm
 	This.zona		= m.nidz
 	This.dias		= m.ndias
-	This.contacto	= m.cContacto
+	This.Contacto	= m.cContacto
 	This.direccion1	= m.cdireccion1
 	This.idsegmento	= m.nidsegmento
 	Endproc
@@ -301,14 +306,14 @@ Define Class clientex As cliente
 	goApp.npara16 = This.Rpm
 	goApp.npara17 = This.zona
 	goApp.npara18 = This.dias
-	goApp.npara19 = This.contacto
+	goApp.npara19 = This.Contacto
 	goApp.npara20 = This.direccion1
 	goApp.npara21 = This.idsegmento
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21)
-	ENDTEXT
+	Endtext
 	nidcliente = This.EJECUTARf(m.lC, m.lp, cur)
 	If  nidcliente < 1 Then
 		Return 0
@@ -339,15 +344,15 @@ Define Class clientex As cliente
 	goApp.npara16 = This.Rpm
 	goApp.npara17 = This.zona
 	goApp.npara18 = This.dias
-	goApp.npara19 = This.contacto
+	goApp.npara19 = This.Contacto
 	goApp.npara20 = This.direccion1
 	goApp.npara21 = This.idsegmento
 
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,
 	      ?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Else
@@ -361,9 +366,9 @@ Define Class clientex As cliente
 	cur			 = ""
 	goApp.npara1 = This.Codigo
 	goApp.npara2 = This.Codigov
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) = 0 Then
 		Return 0
 	Else
@@ -376,9 +381,9 @@ Define Class clientex As cliente
 	m.lC		 = 'ProEditaVinculoCliente'
 	cur			 = ""
 	goApp.npara1 = This.Codigo
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
 	     (?goapp.npara1)
-	ENDTEXT
+	Endtext
 	If EJECUTARP(m.lC, m.lp, cur) = 0 Then
 *	errorbd(ERRORPROC+ ' Actualizando Clientes con Otros Clientes')
 		Return 0
@@ -391,7 +396,7 @@ Define Class clientex As cliente
 	Local lC
 	m.lC		 = ''
 	goApp.npara1 = This.Codigov
-	TEXT To m.lC Noshow Textmerge Pretext 7
+	Text To m.lC Noshow Textmerge Pretext 7
 		Select  c.razo,	ifnull(Sum(v.saldo), 0) As saldo,c.idclie,clie_idvi	From fe_clie c
 		            Left Join	(Select  Sum(Impo - acta) As saldo, rcre_idcl As idclie
 					 From fe_cred x
@@ -399,8 +404,8 @@ Define Class clientex As cliente
 					 inner Join fe_clie As c  On c.idclie=Y.rcre_idcl
 					 Where x.Acti='A'  And Y.rcre_acti = 'A'  And clie_idvi =<<goapp.npara1>>  Group By idclie, x.ncontrol) As v On v.idclie = c.idclie
 			         Where c.clie_idvi= <<goapp.npara1>> Group By c.idclie 	Order By razo
-	ENDTEXT
-	If This.EjecutaConsulta(m.lC, m.ccur) < 1  Then
+	Endtext
+	If This.EJECutaconsulta(m.lC, m.ccur) < 1  Then
 		Return 0
 	Else
 		Return  1
@@ -414,9 +419,9 @@ Define Class clientex As cliente
 	goApp.npara1 = This.Codigo
 	goApp.npara2 = This.Usuario
 	goApp.npara3 = This.AutorizadoCredito
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) = 0 Then
 		Return 0
 	Else
@@ -430,12 +435,12 @@ Define Class clientex As cliente
 	Lparameters ccur
 	Local lC
 	goApp.npara1 = This.Codigo
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
 		   Select  nomb, logc_fope From fe_acrecli F
 			   inner Join fe_usua u   On u.idusua=F.logc_idus
 			   Where logc_idcl =<<goapp.npara1>>   Order By logc_fope Desc;
-	ENDTEXT
-	If This.EjecutaConsulta(m.lC, m.ccur) < 1 Then
+	Endtext
+	If This.EJECutaconsulta(m.lC, m.ccur) < 1 Then
 		Return 0
 	Else
 		Return  1
@@ -446,10 +451,10 @@ Define Class clientex As cliente
 	Local lC
 	m.lC		 = ''
 	goApp.npara1 = This.Codigo
-	TEXT To m.lC Noshow Textmerge Pretext 7
+	Text To m.lC Noshow Textmerge Pretext 7
 		Select  proy_nomb,proy_idcl,proy_idpr From fe_proyectos Where proy_idcl= <<goapp.npara1>> 		And proy_acti = 'A'
-	ENDTEXT
-	If This.EjecutaConsulta(m.lC, m.ccur) < 1  Then
+	Endtext
+	If This.EJECutaconsulta(m.lC, m.ccur) < 1  Then
 		Return 0
 	Endif
 	Return  1
@@ -459,10 +464,10 @@ Define Class clientex As cliente
 	Local lC
 	m.lC		 = ''
 	goApp.npara1 = This.Codigo
-	TEXT To m.lC Noshow Textmerge Pretext 7
+	Text To m.lC Noshow Textmerge Pretext 7
 		 Select  succ_nomb, succ_dire, succ_ciud, succ_idcl, succ_id From fe_succliente	 Where succ_idcl= <<goapp.npara1>>	 And succ_acti = 'A'
-	ENDTEXT
-	If This.EjecutaConsulta(m.lC, m.ccur) < 1  Then
+	Endtext
+	If This.EJECutaconsulta(m.lC, m.ccur) < 1  Then
 		Return 0
 	Endif
 	Return  1
@@ -470,9 +475,9 @@ Define Class clientex As cliente
 
 	Function CreaSucursalcliente(np1, np2, np3, np4)
 	Local lC
-	TEXT To m.lC Noshow Textmerge Pretext 7
+	Text To m.lC Noshow Textmerge Pretext 7
 	   INSERT INTO fe_succliente(succ_nomb,succ_dire,succ_ciud,succ_idcl)values('<<np1>>','<<np2>>','<<np3>>',<<np4>>)
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(m.lC) < 1 Then
 		Return 0
 	Endif
@@ -482,13 +487,13 @@ Define Class clientex As cliente
 	Function EditaSucursalcliente(np1, np2, np3, np4, np5, np6)
 	Local lC
 	If m.np6 = 0 Then
-		TEXT To m.lC Noshow Textmerge Pretext 7
+		Text To m.lC Noshow Textmerge Pretext 7
 	   		UPDATE  fe_succliente  SET succ_acti='I' WHERE succ_id=<<np5>>
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To m.lC Noshow Textmerge Pretext 7
+		Text To m.lC Noshow Textmerge Pretext 7
 	   		UPDATE  fe_succliente  SET succ_nomb='<<np1>>',succ_dire='<<np2>>',succ_ciud='<<np3>>' WHERE succ_id=<<np5>>
-		ENDTEXT
+		Endtext
 	Endif
 	If This.Ejecutarsql(m.lC) < 1 Then
 		Return 0
@@ -498,9 +503,9 @@ Define Class clientex As cliente
 	Endfunc
 	Function ActualizaSegmentoCliente(np1, np2)
 	Local lC
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
 	      UPDATE fe_clie SET clie_idse=<<np2>> WHERE idclie=<<np1>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(m.lC) < 1 Then
 		Return 0
 	Else
@@ -509,6 +514,8 @@ Define Class clientex As cliente
 	Endfunc
 Enddefine
 *****************************************
+
+
 
 
 

@@ -198,7 +198,6 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	Function listatarjetas(nidus, Calias)
 	fi = Cfechas(This.dfi)
 	ff = Cfechas(This.dff)
-*lcaj_fech Between '<<fi>>' And '<<ff>>'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 		\	 Select lcaj_dcto As dcto,lcaj_deud As Importe,lcaj_btar As banco,lcaj_ttar As tipo,lcaj_rtar As referencia,lcaj_deta As detalle,u.nomb As cajero,

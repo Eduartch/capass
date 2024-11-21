@@ -145,7 +145,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function BuscarSeries(ns, cTdoc, Ccursor)
-	If This.Idsesion > 0 Then
+	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	If This.conletras = 'S' Then

@@ -23,6 +23,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	distrito   = ""
 	provincia = ""
 	departamento = ""
+	Yaregistrado = ""
 	Procedure AsignaValores
 	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
 	This.Codigo	   = m.Codigo
@@ -124,6 +125,26 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endproc
+	Function buscardni(Cruc, nid, modo)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select idprov From fe_prov Where Trim(ndni)='<<cruc>>' And prov_acti<>'I'
+	If modo <> "N" Then
+		\And idprov<><<nid>>
+	Endif
+	\ limit 1
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, "ya") < 1
+		Return 0
+	Endif
+	If ya.idprov > 0 Then
+		This.Cmensaje = 'DNI Ya está Registrado '
+		this.Yaregistrado='S'
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 	Function buscaruc(cmodo, Cruc, nidclie)
 	If Len(Alltrim(Cruc)) <> 11 Or  !ValidaRuc(Cruc) Then
 		This.Cmensaje = 'RUC NO Válido'
@@ -142,6 +163,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	If ya.nruc = Cruc
 		This.Cmensaje = "Nº de Ruc Ya Registrado"
+		This.Yaregistrado = "S"
 		Return 0
 	Endif
 	Return 1
@@ -166,36 +188,23 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	Select (Ccursor)
 	If Len(Alltrim(Razo)) > 0
-		This.Cmensaje = "Nº de Ruc Ya Registrado"
+		This.Cmensaje = "Nombre Ya Registrado"
+		this.Yaregistrado=""
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function Creaproveedor1
-	Local lC, lp
-*:Global Cmensaje, cur
 	m.lC		  = 'funcreaproveedor'
 	cur			  = "xt"
-	goApp.npara1  = This.nruc
-	goApp.npara2  = This.nombre
-	goApp.npara3  = This.Direccion
-	goApp.npara4  = This.ciudad
-	goApp.npara5  = This.fono
-	goApp.npara6  = This.fax
-	goApp.npara7  = This.Refe
-	goApp.npara8  = This.correo
-	goApp.npara9 = This.Celular
-	goApp.npara10 = This.Rpm
-	goApp.npara11 = This.Usuario
-	goApp.npara12 = Id()
-	Text To m.lp Noshow
-	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-	      ?goapp.npara10,?goapp.npara11,?goapp.npara12)
+	Text To lp Noshow Textmerge
+     ('<<this.nruc>>','<<this.nombre>>','<<This.Direccion>>','<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.Rpm>>','<<This.correo>>','<<This.Refe>>','<<This.Celular>>',<<This.Usuario>>,'<<ID()>>')
 	Endtext
-	If This.EJECUTARf(m.lC, m.lp, cur) = 0 Then
+	nid = This.EJECUTARf(m.lC, m.lp, cur)
+	If nid < 1 Then
 		Return 0
 	Endif
-	Return Xt.Id
+	Return nid
 	Endfunc
 	Function EditaProveedor1()
 	lC = 'PROACTUALIZAPROVEEDOR'
@@ -233,6 +242,8 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 Enddefine
+
+
 
 
 

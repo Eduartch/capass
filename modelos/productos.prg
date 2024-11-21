@@ -1065,13 +1065,13 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
 	Endtext
-	If  This.EJECUTARP(lC, lp, Ccursor) < 0 Then
+	If  This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarCostosYpreciosconofertas(Ccursor)
-	If This.Idsesion > 0 Then
+	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	cwhere = ""
@@ -1458,7 +1458,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara24 = This.ndolar
 	goApp.npara25 = This.nutil0
 	goApp.npara26 = This.ntigv
-	goApp.npara27 =this.nirta
+	goApp.npara27 = This.nirta
 	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
@@ -1501,7 +1501,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara26 = This.Cestado
 	goApp.npara27 = This.nutil0
 	goApp.npara28 = This.ntigv
-	goApp.npara29=this.nirta
+	goApp.npara29 = This.nirta
 	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
@@ -1512,7 +1512,27 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function PermitirVentasProductosconpreciobajo(np1, np2)
+	Text To lp Noshow Textmerge
+	  update fe_art SET prod_perx=<<np2>> WHERE idart=<<np1>>
+	Endtext
+	If This.Ejecutarsql(lp) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function perimitirventasconporcentajeminimo(nid, opt)
+	Text To lC Noshow Textmerge
+	   UPDATE fe_art SET prod_perm=<<opt>> WHERE idart=<<nid>>
+	Endtext
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 
