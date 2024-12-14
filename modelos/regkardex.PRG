@@ -68,7 +68,7 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	Else
 	 \  inner Join fe_clie As e On e.idclie=c.idcliente
 	Endif
-	 \Where
+	\Where
 	If This.cfechaanulacion = 'S' Then
 	     \ a.lres_fech Between '<<f1>>' And '<<f2>>'
 	Else

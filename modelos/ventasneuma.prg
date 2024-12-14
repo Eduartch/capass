@@ -1,6 +1,10 @@
 Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
+	tcvta = 0
+	tcaja = 0
+	nimp1 = 0
+	cm1 = ""
 	Function registrarxservicios()
-	Set Procedure To d:\capass\modelos\correlativos,capadatos,rnneumaticos Additive
+	Set Procedure To d:\capass\modelos\correlativos, CapaDatos, RnNeumaticos Additive
 	ocorr = Createobject("correlativo")
 	If This.IniciaTransaccion() < 1  Then
 		Return 0
@@ -33,7 +37,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 			Return 0
 		Endif
 	Endif
-	If IngresaCaja(NAuto, This.Fecha, This.Monto, 'I', Left(This.formaPago, 1), Left(This.Moneda, 1), This.Serie + This.numero, nidcon, goApp.nidusua, This.Detallecaja, 'CK', 0, Left(This.Moneda, 1), This.ndolar, goApp.Tienda, '', 0, 1) < 1
+	If IngresaCaja(NAuto, This.Fecha, This.Monto, 'I', Left(This.formaPago, 1), Left(This.Moneda, 1), This.Serie + This.numero, nidcon, goApp.nidusua, This.DetalleCaja, 'CK', 0, Left(This.Moneda, 1), This.ndolar, goApp.Tienda, '', 0, 1) < 1
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -109,9 +113,9 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Endfunc
 	Function consultarvtasxreimprimir(Ccursor)
 	Do Case
-	Case This.Tdoc = '01' Or this.tdoc = '03' Or This.Tdoc = '00'
-		If  Vartype(This.ctipovta) = 'C' Then
-			cx = This.ctipovta
+	Case This.Tdoc = '01' Or This.Tdoc = '03' Or This.Tdoc = '00'
+		If  Vartype(This.Ctipovta) = 'C' Then
+			cx = This.Ctipovta
 		Endif
 		If cx = 'S' Then
 			Text To lC Noshow Textmerge
@@ -122,7 +126,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
           		c.pimpo,u.nomb AS usuario,c.deta,c.tcom AS tipovta,
 			    c.tdoc,c.ndoc,c.dolar AS dola,c.mone,m.detv_desc AS descri,detv_unid AS Unid,
           		c.rcom_hash,'Oficina' AS nomv,c.valor,c.rcom_otro AS gratuita,c.igv,c.impo,c.rcom_arch,IFNULL(x.dpto_nomb,'') AS dpto,d.clie_dist AS distrito,
-          		c.rcom_mdet,c.rcom_detr,tipom
+          		c.rcom_mdet,c.rcom_detr,tipom,c.rcom_ocom,c.rcom_deta
           		FROM fe_rcom as c
           		inner join fe_clie as d on(d.idclie=c.idcliente)
 			    inner join fe_usua as u on u.idusua=c.idusua
@@ -138,7 +142,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 			    c.fech,c.fecr,c.form,c.deta,c.exon,c.ndo2,a.idclie,d.razo,d.nruc,d.dire,d.ciud,d.ndni,
 			    c.pimpo,ifnull(x.dpto_nomb,'') as dpto,d.clie_dist as distrito,
 			    c.tdoc,c.ndoc,a.dola,c.mone,b.descri,b.unid,c.rcom_hash,v.nomv,c.valor,c.rcom_otro As gratuita,c.igv,c.impo,c.tcom AS tipovta,
-			    c.rcom_mdet,c.rcom_detr,c.tipom
+			    c.rcom_mdet,c.rcom_detr,c.tipom,c.rcom_ocom,c.rcom_deta
 			    FROM fe_rcom  as c
 			    inner join fe_kar as a on a.idauto=c.idauto
 			    inner join fe_art as b on b.idart=a.idart
@@ -158,10 +162,10 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		       ifnull(k.prec,ABS(r.impo)) as prec,LEFT(r.ndoc,4) as serie,SUBSTR(r.ndoc,5) as numero,
 		       ifnull(a.unid,'') as unid,ifnull(a.descri,r.deta) as descri,r.deta,ifnull(k.idart,CAST(0 as decimal(8))) as idart,f.ndoc as dcto,
 		       f.fech as fech1,w.tdoc as tdoc1,rcom_hash,rcom_arch,r.fech as fvto,'' as tipovta,
-		       r.rcom_mdet,r.rcom_detr,r.tipom
+		       r.rcom_mdet,r.rcom_detr,r.tipom,r.rcom_ocom,r.rcom_deta
 		       from fe_rcom r
 		       inner join fe_clie c on c.idclie=r.idcliente
-		       left join fe_kar k on k.idauto=r.idauto 
+		       left join fe_kar k on k.idauto=r.idauto
 		       left join fe_art a on a.idart=k.idart
 		       inner join fe_rven as rv on rv.idauto=r.idauto
 		       inner join fe_refe f on f.idrven=rv.idrven
@@ -177,8 +181,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		       ifnull(kar_cost,CAST(0 as decimal(12,5))) as costo,
 		       ifnull(k.prec,ABS(r.impo)) as prec,LEFT(r.ndoc,4) as serie,SUBSTR(r.ndoc,5) as numero,
 		       ifnull(a.unid,'') as unid,ifnull(a.descri,r.deta) as descri,r.deta,ifnull(k.idart,CAST(0 as decimal(8))) as idart,f.ndoc as dcto,
-		       f.fech as fech1,w.tdoc as tdoc1,rcom_hash,rcom_arch,r.fech as fvto,'' As tipovta,
-		       r.rcom_mdet,r.rcom_detr,r.tipom
+		       f.fech as fech1,w.tdoc as tdoc1,rcom_hash,rcom_arch,r.fech as fvto,'' As tipovta,r.rcom_mdet,r.rcom_detr,r.tipom,r.rcom_ocom,r.rcom_deta
 		       from fe_rcom r
 		       inner join fe_clie c on c.idclie=r.idcliente
 		       left join fe_kar k on k.idauto=r.idauto
@@ -190,12 +193,105 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		       where r.idauto=<<this.idauto>> and r.acti='A' and r.tdoc='07'
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
+	Function registrarvtasmercancias()
+	Set Procedure To d:\capass\modelos\correlativos, CapaDatos, RnNeumaticos Additive
+	This.tipoCredito = ""
+	ocorr = Createobject("correlativo")
+	If This.Concaja = 1
+		If Left(This.formaPago, 1) = "E"
+			If This.Tdoc <> '01' Or This.Tdoc = '03' Or This.Tdoc <> '20' Then
+				cconcepto = '01E'
+			Else
+				cconcepto = This.Tdoc + "E"
+			Endif
+		Else
+			If  Left(This.formaPago, 1) = "D"
+				cconcepto = "XT" + "C"
+			Else
+				cconcepto = This.Tdoc + "C"
+			Endif
+		Endif
+	Else
+		cconcepto = "XTC"
+	Endif
+	nidcon = RetConcepto(cconcepto, 'I')
+	If This.IniciaTransaccion() < 1  Then
+		Return 0
+	Endif
+	lsql = "FunIngresaDocumentoElectronico"
+	Text To lp Noshow Textmerge
+	('<<This.Tdoc>>', '<<Left(This.formaPago, 1)>>', '<<This.Serie + This.numero>>', '<<cfechas(This.Fecha)>>', '<<This.cordendecompra>>',
+    '<<This.Detalle>>', <<This.valor>>, <<This.igv>>, <<This.Monto>>, '<<this.nroguia>>', '<<Left(This.Moneda, 1)>>',
+	<<This.ndolar>>, <<This.vigv>>, 'V', <<This.Codigo>>, "<<this.observacion>>", <<goApp.nidusua>>, <<This.Vendedor>>, <<This.codt>>, <<This.cta1>>, <<This.cta2>>,<<This.cta3>>, <<This.exonerado>>,
+	<<this.gratuita>>,<<this.montopercepcion>>)
+	Endtext
+	NAuto = This.EJECUTARf(lsql, lp, 'ii')
+	If NAuto < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If (Left(This.formaPago, 1) = 'C' Or Left(This.formaPago, 1) = 'F')
+		xcr = RegistraCreditosNeumaticos(NAuto, This.Serie + This.numero, Left(This.Moneda, 1), This.Fecha, This.Monto, This.ndolar, This.Vendedor)
+		If xcr.Vdvto = 0
+			This.DEshacerCambios()
+			Return 0
+		Endif
+		This.tipoCredito = xcr.tipox
+	Endif
+*            .NAuto, dFecha, ntcaja, 'I', cformapago, cm1, cndoc, 0, goApp.nidusua, cdetalle1, 'CK', nimp1, cm2, tcvta, goApp.Tienda, '', 0, 0, .cmbcaja.ListIndex
+	If IngresaCaja(NAuto, This.Fecha, This.tcaja, 'I', Left(This.formaPago, 1), This.cm1, This.Serie + This.numero, nidcon, goApp.nidusua, This.DetalleCaja, 'CK', This.nimp1, Left(This.Moneda, 1), This.tcvta, goApp.Tienda, '', 0, 0) < 1
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Sw = 1
+	Select tmpv
+	Go Top
+	Do While !Eof()
+		If tmpv.Coda = 0
+			Select tmpv
+			Skip
+			Loop
+		Endif
+		If INGRESAKARDEXPer(NAuto, tmpv.Coda, 'V', tmpv.Prec, tmpv.cant, 'I', 'K', This.Vendedor, goApp.Tienda, tmpv.costo, 0, tmpv.perc) = 0 Then
+			Sw		 = 0
+			Cmensaje = "Al Registrar Detalle de Item"
+			Exit
+		Endif
+		If _Screen.oproducto.ActualizaStock(tmpv.Coda, goApp.Tienda, tmpv.cant, 'V') < 1 Then
+			Sw		 = 0
+			Cmensaje = _Screen.oproducto.Cmensaje
+			Exit
+		Endif
+		Select tmpv
+		Skip
+	Enddo
+	If Sw = 0  Then
+		This.DEshacerCambios()
+		This.Cmensaje = Cmensaje
+		Return 0
+	Endif
+	ocorr.Idserie = This.Idserie
+	ocorr.Nsgte = This.Nsgte
+	If Val(This.numero) >= This.Nsgte Then
+		If ocorr.GeneraCorrelativo1() < 1 Then
+			This.Cmensaje = ocorr.Cmensaje
+			Return 0
+		Endif
+	Endif
+	If This.GRabarCambios() < 1  Then
+		Return 0
+	Endif
+	Return NAuto
+	Endfunc
 Enddefine
+
+
+
 
 
 

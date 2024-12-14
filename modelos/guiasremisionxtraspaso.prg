@@ -148,9 +148,13 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	Endfunc
 	Function Grabardetalleguiatraspaso(NAuto)
 	Local Obj As SerieProducto
-	rn = "d:\reglasnegocio\rnw.prg"
-	Set Procedure To CapaDatos, (rn) Additive
-	Obj = Createobject("serieproducto")
+	If  This.Conseries = 'S'
+		rn = "d:\reglasnegocio\rnw.prg"
+		Set Procedure To CapaDatos, (rn) Additive
+		Obj = Createobject("serieproducto")
+	Else
+		Set Procedure To CapaDatos Additive
+	Endif
 	Select tmpv
 	Go Top
 	Sw = 1
@@ -174,7 +178,6 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 				Exit
 			Endif
 		Endif
-
 		If This.Conseries = 'S' Then
 			nidk = IngresaDtraspasos(NAuto, tmpv.Coda, 'V', tmpv.Prec, tmpv.cant, 'I', 0, 'T', This.Detalle, This.sucursal1, This.sucursal2, 0)
 			If nidk < 1 Then
@@ -388,7 +391,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	   inner join fe_art as a on a.idart=k.idart
 	   left join fe_tra as t on t.idtra=g.guia_idtr,fe_gene as v where guia_idgui=<<nids>> and tipo='V' and k.acti='A'
 	Endtext
-	If This.EjecutaConsulta(lC, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -981,7 +984,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	Text To lC Noshow Textmerge
     SELECT idauto FROM fe_rcom WHERE idauto=<<nid>> AND rcom_reci='E' AND acti='A'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -997,6 +1000,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	Report Form traspasostrans To Printer Prompt Noconsole
 	Endfunc
 Enddefine
+
 
 
 

@@ -190,7 +190,6 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	dfi = Cfechas(f1)
 	dff = Cfechas(f2)
 	nmargen = (nm / 100) + 1
-	Set DataSession To This.Idsesion
 	If This.formaPago = 'E' Then
 		Text To lC Noshow Textmerge
 		SELECT a.idart,descri,unid,cant as cantidad,importe,
@@ -205,7 +204,6 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		INNER JOIN fe_art AS a ON a.idart=s.idart
 		INNER JOIN fe_fletes AS  f ON f.idflete=a.idflete,fe_gene AS g
 		Endtext
-*!*	    Para Filtrar los Id de los Pedidos
 		Text To lcx Noshow Textmerge
 		SELECT r.idauto FROM fe_rcom AS r
 		INNER JOIN fe_kar AS k ON k.idauto=r.idauto
@@ -254,7 +252,9 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Return 1
 	Endfunc
 	Function generatmpcanjes(Ccursor)
+	IF this.idsesion>1 then
 	Set DataSession To This.Idsesion
+	ENDIF 
 	Create Cursor vtas2(Descri c(80), Unid c(4), cant N(10, 2), Prec N(13, 5), Coda N(8), idco N(13, 5), Auto N(5), ;
 		  Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), valor N(12, 2), igv N(12, 2), Total N(12, 2))
 	Create Cursor vtas3(Descri c(80), Unid c(4), cant N(10, 2), Prec N(10, 2), Coda N(8), codt N(10), IDautoP N(10), valor N(12, 2), igv N(12, 2), Total N(12, 2))
@@ -602,22 +602,6 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		Return 0
 	Endif
 	Return nida
-	Endfunc
-	Function listarcanjesvtas(Ccursor)
-	Set DataSession To This.Idsesion
-	dfi = Cfechas(This.fechai)
-	dff = Cfechas(This.fechaf)
-	Text To lC Noshow Textmerge
-	SELECT canj_fech,canj_vtas,canj_impo,canj_feci,canj_fecf,u.nomb as usuario,canj_fope,r.ndoc,r.impo,r.idauto,canj_idcan,tdoc
-	FROM fe_canjesvtas AS c
-	inner join fe_usua as u  on u.idusua=c.canj_idus
-	INNER JOIN fe_rcom AS r ON r.rcom_idtr=c.canj_idcan
-	WHERE canj_fech BETWEEN '<<dfi>>' AND '<<dff>>' AND canj_acti='A'  AND r.acti='A'  ORDER BY canj_fech
-	Endtext
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
-		Return 0
-	Endif
-	Return 1
 	Endfunc
 	Function mostrarventaporid(niDAUTO, Ccursor)
 	If This.Idsesion > 1 Then

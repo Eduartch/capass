@@ -1,4 +1,4 @@
-#Define Url "http://app88.test/"
+#Define Url "http://compania-sysven.com/app88/"
 Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	urlenvio = Url + 'envioliqcompra.php'
 	Function informeliqcompra(Ccursor)
@@ -98,7 +98,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 		  cletras c(120), Precio N(13, 8), hash c(30), fech d, codc N(5), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
 		  neto N(12, 2), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Form c(30), valor N(12, 2), exonerado N(12, 2), igv N(12, 2), Total N(12, 2), caant N(10, 2), ;
 		  Detalle c(200), valida1 c(1), Archivo c(120), Tdoc c(2), Peso N(10, 2), valido c(1), costoRef N(13, 8), ;
-		  fechav d, retencion N(8, 2), como N(7, 3), copia c(1), ptop c(150), Idauto N(8), comi N(5, 3), ;
+		  fechav d, Retencion N(8, 2), como N(7, 3), copia c(1), ptop c(150), Idauto N(8), comi N(5, 3), ;
 		  detraccion N(8, 2), coddetrac c(10), Tigv N(8, 2), irta N(8, 5), lugar c(200), Usuario c(100))
 	Endfunc
 	Function listarxinformarsunat(Ccursor)
@@ -111,7 +111,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	\a.igv, a.Impo, rcom_hash, rcom_mens, Mone, a.Tdoc, a.Ndoc, Idauto, rcom_arch, b.email As clie_corr, b.ndni, b.fono
 	\From fe_rcom As a
 	\Join fe_prov As b On (a.idprov = b.idprov)
-	\Where a.Acti <> 'I' And Tdoc='04' And Left(a.rcom_mens,1)<>'A'
+	\Where a.Acti <> 'I' And Tdoc='04' And Left(a.rcom_mens,1)<>'A' And Left(Ndoc,1)='L' and LEFT(rcom_mens,1)<>'0'
     \Order By fech,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
@@ -136,7 +136,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
     "empresa":"<<goapp.empresanube>>"
     }
 	Endtext
-	Messagebox(cdata)
+*!*		Messagebox(cdata)
 	Set Procedure To d:\Librerias\nfcursortojson, d:\Librerias\nfcursortoobject, d:\Librerias\nfJsonRead.prg Additive
 	oHTTP = Createobject("MSXML2.XMLHTTP")
 	oHTTP.Open("post", This.urlenvio, .F.)
@@ -147,7 +147,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 		Return 0
 	Endif
 	lcHTML = oHTTP.responseText
-	Messagebox(lcHTML)
+*!*		Messagebox(lcHTML)
 	orpta = nfJsonRead(lcHTML)
 	If  Vartype(orpta.rpta) <> 'U' Then
 		This.Cmensaje = orpta.rpta
@@ -366,6 +366,9 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	lC = 'FunIngresacabliqCompras'
 	cur = "Xn"
 	swk = 1
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
 	_Screen.ocorrelativo.Idserie = This.Idserie
 	_Screen.ocorrelativo.Nsgte = This.Nsgte
 	If This.IniciaTransaccion() < 1 Then

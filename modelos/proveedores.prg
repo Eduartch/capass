@@ -24,6 +24,8 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	provincia = ""
 	departamento = ""
 	Yaregistrado = ""
+	contacto1 = ""
+	contacto2 = ""
 	Procedure AsignaValores
 	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
 	This.Codigo	   = m.Codigo
@@ -140,7 +142,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	If ya.idprov > 0 Then
 		This.Cmensaje = 'DNI Ya está Registrado '
-		this.Yaregistrado='S'
+		This.Yaregistrado = 'S'
 		Return 0
 	Endif
 	Return 1
@@ -152,9 +154,9 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC  Noshow
-	\Select nruc From fe_clie Where nruc='<<cruc>>' And clie_acti<>'I'
+	\Select nruc From fe_prov Where nruc='<<cruc>>' And prov_acti<>'I'
 	If cmodo <> "N"
-	 \And idclie<><<nidclie>>
+	 \And idprov<><<nidclie>>
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
@@ -176,9 +178,9 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC  Noshow
-	\Select Razo From fe_clie Where Trim(Razo)='<<cruc>>' And clie_acti<>'I'
+	\Select Razo From fe_prov Where Trim(Razo)='<<cruc>>' And clie_acti<>'I'
 	If cmodo <> "N"
-	 \And idclie<><<nidclie>>
+	 \And idprov<><<nidclie>>
 	Endif
 	\ limit 1
 	Set Textmerge Off
@@ -189,7 +191,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Select (Ccursor)
 	If Len(Alltrim(Razo)) > 0
 		This.Cmensaje = "Nombre Ya Registrado"
-		this.Yaregistrado=""
+		This.Yaregistrado = ""
 		Return 0
 	Endif
 	Return 1
@@ -241,7 +243,32 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function Creaproveedor2()
+	m.lC		  = 'funcreaproveedor'
+	cur			  = "xt"
+	Text To lp Noshow Textmerge
+     ('<<this.nruc>>','<<this.nombre>>','<<This.Direccion>>','<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.Rpm>>','<<This.correo>>','<<This.Refe>>','<<This.Celular>>',<<This.Usuario>>,'<<ID()>>','<<this.contacto1>>','<<this.contacto2>>')
+	Endtext
+	nid = This.EJECUTARf(m.lC, m.lp, cur)
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function EditaProveedor2()
+	lC = 'PROACTUALIZAPROVEEDOR'
+	Text To lp Noshow Textmerge
+     (<<this.Codigo>>,'<<this.nruc>>','<<this.nombre>>','<<This.Direccion>>','<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.correo>>',<<This.Usuario>>,
+     '<<This.Celular>>','<<This.Refe>>','<<This.Rpm>>','<<this.contacto1>>','<<this.contacto2>>')
+	Endtext
+	If This.EJECUTARP(lC, lp, "") < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 

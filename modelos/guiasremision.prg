@@ -1,5 +1,5 @@
 #Define Url "http://companiasysven.com/"
-Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
+Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Fecha				= ""
 	fechat				= .F.
 	Referencia			= ""
@@ -53,7 +53,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Calias				= ""
 	idvendedor			= 0
 	Tpeso               = 0
-	mensajerptasunat    = ""
+	Mensajerptasunat    = ""
 	ubigeocliente       = ""
 	urlenvio            = Url + "app88/envioguia.php"
 	urlenviod           =  Url + "app88/envioguiadesktop.php"
@@ -76,15 +76,15 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	sinstock = ""
 	motivootros = ''
 	ticket = ""
-	condsctostock=""
-	dfi=DATE()
-	dff=DATE()
+	condsctostock = ""
+	dfi = Date()
+	dff = Date()
 	Function VerificaSiguiaVtaEstaIngresada(np1)
 	Local lC
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
 	   Select  guia_idgui As idauto   From fe_guias  Where guia_ndoc='<<np1>>'   And guia_acti = 'A' limit 1
-	ENDTEXT
-	If This.EjecutaConsulta(m.lC, 'Ig') < 1 Then
+	Endtext
+	If This.EJECutaconsulta(m.lC, 'Ig') < 1 Then
 		Return 0
 	Endif
 	If ig.Idauto > 0 Then
@@ -112,9 +112,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	goApp.npara11 = m.np11
 	goApp.npara12 = m.np12
 	goApp.npara13 = This.ubigeocliente
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?this.idautog,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Else
@@ -133,9 +133,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	goApp.npara5 = m.np5
 	goApp.npara6 = m.np6
 	goApp.npara7 = m.np7
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Else
@@ -145,19 +145,19 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Function ActualizaDetalleGuiasVtas(Ccursor)
 	Sw = 1
 	Select (m.Ccursor)
-	Set Filter To coda <> 0
+	Set Filter To Coda <> 0
 	Set Deleted Off
 	Go Top
 	Do While !Eof()
 		cdesc = Alltrim(tmpvg.Descri)
 		If Deleted()
 			If Nreg > 0 Then
-				If ActualizaKardexUAl(This.Idauto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, tmpvg.alma, 0, tmpvg.Nreg, 0, tmpvg.equi, tmpvg.Unid, tmpvg.idepta, 0, tmpvg.pos, tmpvg.costo, tmpvg.Tigv) = 0 Then
+				If ActualizaKardexUAl(This.Idauto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, tmpvg.alma, 0, tmpvg.Nreg, 0, tmpvg.equi, tmpvg.Unid, tmpvg.idepta, 0, tmpvg.pos, tmpvg.costo, tmpvg.Tigv) = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Desactivar Ingreso de Item - " + Alltrim(cdesc)
 					Exit
 				Endif
-				If This.ActualizaDetalleGuiaCons1(tmpvg.coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 0, '') = 0 Then
+				If This.ActualizaDetalleGuiaCons1(tmpvg.Coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 0, '') = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Desactivar Ingreso (Guia)  de Item  - " + Alltrim(cdesc)
 					Exit
@@ -165,7 +165,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 			Endif
 		Else
 			If fe_gene.alma_nega = 0 And tmpvg.tipro = 'K' Then
-				If DevuelveStocks2(tmpvg.coda, calma, "st") < 1 Then
+				If DevuelveStocks2(tmpvg.Coda, calma, "st") < 1 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Obtener Stock - " + Alltrim(cdesc)
 					Exit
@@ -177,7 +177,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 				Endif
 			Endif
 			If tmpvg.Nreg = 0 Then
-				nidkar = INGRESAKARDEXUAl(This.Idauto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, 0, tmpvg.equi, tmpvg.Unid, tmpvg.idepta, tmpvg.pos, tmpvg.costo, tmpvg.Tigv)
+				nidkar = INGRESAKARDEXUAl(This.Idauto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, 0, tmpvg.equi, tmpvg.Unid, tmpvg.idepta, tmpvg.pos, tmpvg.costo, tmpvg.Tigv)
 				If nidkar = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Registrar Producto - " + Alltrim(cdesc)
@@ -189,18 +189,18 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 					Exit
 				Endif
 			Else
-				If ActualizaKardexUAl(This.Idauto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, tmpvg.Nreg, 1, tmpvg.equi, tmpvg.Unid, tmpvg.idepta, 0, tmpvg.pos, tmpvg.costo, tmpvg.Tigv) < 1 Then
+				If ActualizaKardexUAl(This.Idauto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, tmpvg.Nreg, 1, tmpvg.equi, tmpvg.Unid, tmpvg.idepta, 0, tmpvg.pos, tmpvg.costo, tmpvg.Tigv) < 1 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Actualizar Kardex  - " + Alltrim(cdesc)
 					Exit
 				Endif
-				If This.ActualizaDetalleGuiaCons1(tmpvg.coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 1, '') < 1 Then
+				If This.ActualizaDetalleGuiaCons1(tmpvg.Coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 1, '') < 1 Then
 					Sw			  = 0
 					This.Cmensaje = Alltrim(This.Cmensaje) + " Al Actualizar Ingreso (Guia)  de Item  - " + Alltrim(cdesc)
 					Exit
 				Endif
 			Endif
-			If ActualizaStock12(tmpvg.coda, goApp.Tienda, tmpvg.cant, 'V', tmpvg.equi, tmpvg.caant) = 0 Then
+			If ActualizaStock12(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V', tmpvg.equi, tmpvg.caant) = 0 Then
 				Sw			  = 0
 				This.Cmensaje = "Al Actualizar Stock " + Alltrim(cdesc)
 				Exit
@@ -254,11 +254,11 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	goApp.npara23 = m.np23
 	goApp.npara24 = m.np24
 	goApp.npara25 = m.np25
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Else
@@ -267,9 +267,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Endfunc
 	Function Imprimir(cestilo)
 	Local obji As "Imprimir"
-	Select Count(*) As ti From tmpvg Into Cursor xitems
+	Select Count(*) As Ti From tmpvg Into Cursor xitems
 	Select tmpvg
-	For x = 1 To This.Items - xitems.ti
+	For x = 1 To This.Items - xitems.Ti
 		Insert Into tmpvg(Ndoc)Values(This.Ndoc)
 	Next
 	Replace All fech With This.Fecha, Ndoc With This.Ndoc, ;
@@ -334,10 +334,10 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 *:Global cdesc, nidkar, s, sw
 	Sw = 1
 	Select (m.Ccursor)
-	If Vartype(coda)='N' Then
-		Set Filter To coda <> 0
+	If Vartype(Coda) = 'N' Then
+		Set Filter To Coda <> 0
 	Else
-		Set Filter To Len(Alltrim(coda)) > 0
+		Set Filter To Len(Alltrim(Coda)) > 0
 	Endif
 	Set Deleted Off
 	Go Top
@@ -345,7 +345,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 		cdesc = Alltrim(tmpvg.Descri)
 		If Deleted()
 			If Nreg > 0 Then
-				If This.ActualizaDetalleGuiaCons1(tmpvg.coda, tmpvg.cant, tmpvg.idem, tmpvg.nidkar, This.Idautog, 0, '') = 0 Then
+				If This.ActualizaDetalleGuiaCons1(tmpvg.Coda, tmpvg.cant, tmpvg.idem, tmpvg.nidkar, This.Idautog, 0, '') = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Desactivar Ingreso (Guia)  de Item  - " + Alltrim(cdesc)
 					Exit
@@ -359,7 +359,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 					Exit
 				Endif
 			Else
-				If This.ActualizaDetalleGuiaCons1(tmpvg.coda, tmpvg.cant, tmpvg.idem, tmpvg.nidkar, This.Idautog, 1, '') = 0 Then
+				If This.ActualizaDetalleGuiaCons1(tmpvg.Coda, tmpvg.cant, tmpvg.idem, tmpvg.nidkar, This.Idautog, 1, '') = 0 Then
 					Sw			  = 0
 					This.Cmensaje = Alltrim(This.Cmensaje) + " Al Actualizar Ingreso (Guia)  de Item  - " + Alltrim(cdesc)
 					Exit
@@ -402,24 +402,24 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Function ActualizaDetalleGuiasVtasGrifos(Ccursor)
 	Sw = 1
 	Select (m.Ccursor)
-	Set Filter To coda <> 0
+	Set Filter To Coda <> 0
 	Set Deleted Off
 	Go Top
 	Do While !Eof()
 		cdesc = Alltrim(tmpvg.Descri)
 		If Deleted()
 			If Nreg > 0 Then
-				If ActualizaStock11(tmpvg.coda, tmpvg.alma, tmpvg.cant, 'C', tmpvg.caant) = 0 Then
+				If ActualizaStock11(tmpvg.Coda, tmpvg.alma, tmpvg.cant, 'C', tmpvg.caant) = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Actualizar Stock -  " + Alltrim(cdesc)
 					Exit
 				Endif
-				If Actualizakardex1(This.Idauto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, tmpvg.alma, 0, tmpvg.Nreg, 0, 0) = 0 Then
+				If Actualizakardex1(This.Idauto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, tmpvg.alma, 0, tmpvg.Nreg, 0, 0) = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Desactivar Ingreso de Item - " + Alltrim(cdesc)
 					Exit
 				Endif
-				If This.ActualizaDetalleGuiaCons1(tmpvg.coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 0, '') = 0 Then
+				If This.ActualizaDetalleGuiaCons1(tmpvg.Coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 0, '') = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Desactivar Ingreso (Guia)  de Item  - " + Alltrim(cdesc)
 					Exit
@@ -427,7 +427,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 			Endif
 		Else
 			If tmpvg.Nreg = 0 Then
-				nidkar = IngresaKardexGrifo(This.Idauto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, 0)
+				nidkar = IngresaKardexGrifo(This.Idauto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, 0)
 				If nidkar = 0 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Registrar Producto - " + Alltrim(cdesc)
@@ -439,18 +439,18 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 					Exit
 				Endif
 			Else
-				If Actualizakardex1(This.Idauto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, tmpvg.Nreg, 1, 1) < 1 Then
+				If Actualizakardex1(This.Idauto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', This.idvendedor, goApp.Tienda, 0, tmpvg.Nreg, 1, 1) < 1 Then
 					Sw			  = 0
 					This.Cmensaje = "Al Actualizar Kardex  - " + Alltrim(cdesc)
 					Exit
 				Endif
-				If This.ActualizaDetalleGuiaCons1(tmpvg.coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 1, '') = 0 Then
+				If This.ActualizaDetalleGuiaCons1(tmpvg.Coda, tmpvg.cant, tmpvg.idem, tmpvg.Nreg, This.Idautog, 1, '') = 0 Then
 					Sw			  = 0
 					This.Cmensaje = Alltrim(This.Cmensaje) + " Al Actualizar Ingreso (Guia)  de Item  - " + Alltrim(cdesc)
 					Exit
 				Endif
 			Endif
-			If ActualizaStock11(tmpvg.coda, goApp.Tienda, tmpvg.cant, 'V', tmpvg.caant) = 0 Then
+			If ActualizaStock11(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V', tmpvg.caant) = 0 Then
 				Sw			  = 0
 				This.Cmensaje = "Al Actualizar Stock " + Alltrim(cdesc)
 				Exit
@@ -466,10 +466,10 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function VAlidar()
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
      select guia_idgui as idauto FROM fe_guias WHERE guia_ndoc='<<this.ndoc>>' AND guia_acti='A' limit 1
-	ENDTEXT
-	If This.EjecutaConsulta(lC, 'ig') < 1 Then
+	Endtext
+	If This.EJECutaconsulta(lC, 'ig') < 1 Then
 		Return 0
 	Endif
 	If ig.Idauto > 0 Then
@@ -532,7 +532,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Case This.tref = '01' And !ValidaRuc(This.nruc)
 		This.Cmensaje = "Ingrese el documento del Destinatario"
 		Return 0
-	Case Left(This.mensajerptasunat, 1) = '0'
+	Case Left(This.Mensajerptasunat, 1) = '0'
 		This.Cmensaje = "Este Documento Ya esta Informado a SUNAT no es posible Actualizar"
 		Return 0
 	Case This.Tpeso = 0 And This.Tdoc = '09'
@@ -623,10 +623,10 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Go Top
 	s = 1
 	Do While !Eof()
-		If This.Proyecto = 'psysw' Or This.Proyecto = 'xmsys' OR this.Proyecto='psysm' Then
-			nidkar = INGRESAKARDEX1(NAuto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0)
+		If This.Proyecto = 'psysw' Or This.Proyecto = 'xmsys' Or This.Proyecto = 'psysm' Then
+			nidkar = INGRESAKARDEX1(NAuto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0)
 		Else
-			nidkar = IngresaKardexGrifo(NAuto, tmpvg.coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0, 0, 0)
+			nidkar = IngresaKardexGrifo(NAuto, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0, 0, 0)
 		Endif
 		If nidkar < 1 Then
 			s = 0
@@ -639,7 +639,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 			Exit
 		Endif
 		If VerificaAlias("tramos") = 1
-			Select * From tramos Where idart = tmpvg.coda  And Cantidad > 0  And Nitem = tmpvg.Nitem Into Cursor strasalidas
+			Select * From tramos Where idart = tmpvg.Coda  And Cantidad > 0  And Nitem = tmpvg.Nitem Into Cursor strasalidas
 			If REgdvto("strasalidas") > 0 Then
 				Select strasalidas
 				Scan All
@@ -650,7 +650,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 				Endscan
 			Endif
 		Endif
-		If ActualizaStock(tmpvg.coda, goApp.Tienda, tmpvg.cant, 'V') = 0 Then
+		If ActualizaStock(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V') = 0 Then
 			s = 0
 			This.Cmensaje = "Al Actualizar Stock "
 			Exit
@@ -688,9 +688,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	goApp.npara9  = np9
 	goApp.npara10 = np10
 	goApp.npara11 = np11
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
-	ENDTEXT
+	Endtext
 	nidgg = This.EJECUTARf(lC, lp, cur)
 	If nidgg < 1 Then
 		Return 0
@@ -717,9 +717,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 		Cmulti = 'N'
 	Else
 		Cruc = Oempresa.nruc
-		Cmulti = Iif(goApp.empresanube = 'rgm', 'S', '')
+		Cmulti = Iif(goApp.Empresanube = 'rgm', 'S', '')
 	Endif
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	"ruc":"<<cruc>>",
 	"idauto":<<this.idautog>>,
@@ -727,7 +727,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	"multiempresa":"<<cmulti>>",
 	"empresa":"<<goapp.empresanube>>"
 	}
-	ENDTEXT
+	Endtext
 	oHTTP = Createobject("MSXML2.XMLHTTP")
 	oHTTP.Open("post", This.urlenvio, .F.)
 	oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -761,7 +761,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Do Case
 	Case This.Motivo = 'V'
 		If goApp.Cdatos <> 'S' Then
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 		    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
 	        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
 	        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
@@ -781,9 +781,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	        INNER JOIN fe_art AS a ON a.idart=k.idart
 	        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
 	        LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
-			ENDTEXT
+			Endtext
 		Else
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 		    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
 	        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
 	        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
@@ -804,10 +804,10 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
 	        LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr
 	        INNER JOIN fe_sucu AS v ON v.idalma=g.guia_codt WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
-			ENDTEXT
+			Endtext
 		Endif
 	Case This.Motivo = 'C'
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
         LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
         a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
@@ -825,9 +825,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
         INNER JOIN fe_art AS a ON a.idart=e.`entr_idar`
         LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
-		ENDTEXT
+		Endtext
 	Case This.Motivo = 'T'
-		TEXT To lC Noshow  Textmerge
+		Text To lC Noshow  Textmerge
 	    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
         LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
         a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
@@ -850,9 +850,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
         INNER JOIN fe_sucu AS ttt ON ttt.idalma=r.ndo2
         LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
-		ENDTEXT
+		Endtext
 	Case This.Motivo = 'D'
-		TEXT To lC Noshow  Textmerge
+		Text To lC Noshow  Textmerge
             SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
             LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
             a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
@@ -871,9 +871,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
             INNER JOIN fe_art AS a ON a.idart=k.`idart`
             LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
             INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
-		ENDTEXT
+		Endtext
 	Case This.Motivo = 'O'
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
 	        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
 	        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
@@ -893,9 +893,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
 	        INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
 	        INNER JOIN fe_sucu AS v ON v.idalma=g.guia_codt WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
-		ENDTEXT
+		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 *Select * From (Calias) Into Table Addbs(Sys(5)+Sys(2003))+'guia.dbf'
@@ -916,7 +916,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 		.Dire = Dire
 		.direcciont = direcciont
 		.distrito = distrito
-		.empresa = empresa
+		.Empresa = Empresa
 		.fech = fech
 		.fechat = fechat
 		.gene_cert = gene_cert
@@ -963,7 +963,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 				.Unid = Unid
 				.Peso = Peso
 				.Descri = Descri
-				.coda = coda
+				.Coda = Coda
 				.cant = cant
 			Endwith
 		Endscan
@@ -992,21 +992,21 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 			If Left(orpta.rpta, 1) = '0' Then
 				XML = orpta.XML
 				cdr = orpta.cdr
-				cqr=orpta.qr
+				cqr = orpta.qr
 				crpta = orpta.rpta
 				cticket = orpta.ticket
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 		         update fe_guias set guia_feen=curdate(),guia_arch='<<cqr>>',guia_xml='<<xml>>',guia_cdr='<<cdr>>',guia_mens='<<crpta>>',guia_tick='<<cticket>>' where guia_idgui=<<this.idautog>>
-				ENDTEXT
+				Endtext
 				If This.Ejecutarsql(lC) < 1 Then
 					Return 0
 				Endif
 			Else
 				If Left(Trim(orpta.rpta), 5) = ' 1033' Then
 					crpta = '0 ' + orpta.rpta
-					TEXT To lC Noshow Textmerge
+					Text To lC Noshow Textmerge
 		             update fe_guias set guia_feen=curdate(),guia_arch='<<nxml>>',guia_mens='<<crpta>>' where guia_idgui=<<this.idautog>>
-					ENDTEXT
+					Endtext
 					If This.Ejecutarsql(lC) < 1 Then
 						Return 0
 					Endif
@@ -1028,7 +1028,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Else
 		Cruc = Oempresa.nruc
 	Endif
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
     "ticket":"<<TRIM(this.ticket)>>",
     "ruc":"<<cruc>>",
@@ -1037,7 +1037,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
     "gene_csol":"<<TRIM(fe_gene.gene_csol)>>",
     "ndoc":"<<this.ndoc>>"
     }
-	ENDTEXT
+	Endtext
 *!*	    MESSAGEBOX(cdata)
 	Set Procedure To d:\Librerias\nfcursortojson, d:\Librerias\nfcursortoobject, d:\Librerias\nfJsonRead.prg Additive
 	oHTTP = Createobject("MSXML2.XMLHTTP")
@@ -1056,9 +1056,9 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 		If Left(orpta.rpta, 1) = '0' Then
 			cdr = orpta.cdr
 			crpta = orpta.rpta
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 		       update fe_guias set guia_feen=curdate(),guia_cdr='<<cdr>>',guia_mens='<<crpta>>' where guia_idgui=<<this.idautog>>
-			ENDTEXT
+			Endtext
 			If This.Ejecutarsql(lC) < 1 Then
 				Return 0
 			Endif
@@ -1075,14 +1075,14 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Else
 		Cruc = Oempresa.nruc
 	Endif
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
      "ticket":"<<TRIM(this.ticket)>>",
      "idauto":<<this.idautog>>,
       "ruc":"<<cruc>>",
      "ndoc":"<<this.ndoc>>"
     }
-	ENDTEXT
+	Endtext
 * MESSAGEBOX(cdata)
 	Set Procedure To d:\Librerias\nfcursortojson, d:\Librerias\nfcursortoobject, d:\Librerias\nfJsonRead.prg Additive
 	oHTTP = Createobject("MSXML2.XMLHTTP")
@@ -1105,36 +1105,36 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Endfunc
 	Function CreaTemporalGuiasElectronicasRodi(Calias)
 	Set DataSession To This.Idsesion
-	Create Cursor (Calias)(coda c(15), Descri c(80), Unid c(6), cant N(10, 2), Prec N(10, 2), uno N(10, 2), Dos N(10, 2), lote c(15), ;
-		Peso N(10, 2), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(12), fecr d, fechafactura d, ;
-		calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ptoll c(120), Archivo c(120), Codigo c(15), ;
-		razon c(120), nruc c(11), ndni c(8), conductor c(120), marca c(100), Placa c(20), placa1 c(20), Constancia c(20), brevete c(20), razont c(120), ructr c(11), ;
-		Motivo c(1), Detalle c(100), tipotra c(15))
+	Create Cursor (Calias)(Coda c(15), Descri c(80), Unid c(6), cant N(10, 2), Prec N(10, 2), uno N(10, 2), Dos N(10, 2), lote c(15), ;
+		  Peso N(10, 2), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(12), fecr d, fechafactura d, ;
+		  calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ptoll c(120), Archivo c(120), Codigo c(15), ;
+		  razon c(120), nruc c(11), ndni c(8), conductor c(120), marca c(100), Placa c(20), placa1 c(20), Constancia c(20), brevete c(20), razont c(120), ructr c(11), ;
+		  Motivo c(1), Detalle c(100), tipotra c(15))
 	Select (Calias)
 	Index On Descri Tag Descri
 	Index On Nitem Tag Items
 	Endfunc
 	Function CreaTemporalGuiasElectronicas(Calias)
 	Create Cursor unidades(uequi N(7, 4), ucoda N(8), uunid c(60), uitem N(4), uprecio N(12, 6), ucosto N(8, 4), uidepta N(8), ucomi N(6, 3))
-	Create Cursor (Calias)(coda N(8), duni c(20), Descri c(120), Unid c(20), cant N(10, 2), Prec N(10, 5), uno N(10, 2), Dos N(10, 2), lote c(15), ;
-		Peso N(10, 2), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(20), fecr d, Detalle c(120), fechafactura d, costo N(10, 3), Item N(8), ;
-		calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ptoll c(120), Archivo c(120), valida1 c(1), ;
-		razon c(120), nruc c(11), ndni c(8), conductor c(120), marca c(100), Placa c(15), placa1 c(15), Constancia c(30), equi N(8, 4), prem N(10, 4), pos N(3), idepta N(5), ;
-		brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), comi N(5, 3), idem N(8), Tigv N(5, 3), caant N(12, 2), nlote c(20), Fechavto d, tipotra c(15), Codigo1 c(30))
+	Create Cursor (Calias)(Coda N(8), duni c(20), Descri c(120), Unid c(20), cant N(10, 2), Prec N(10, 5), uno N(10, 2), Dos N(10, 2), lote c(15), ;
+		  Peso N(10, 2), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(20), fecr d, Detalle c(120), fechafactura d, costo N(10, 3), Item N(8), ;
+		  calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ptoll c(120), Archivo c(120), valida1 c(1), ;
+		  razon c(120), nruc c(11), ndni c(8), conductor c(120), marca c(100), Placa c(15), placa1 c(15), Constancia c(30), equi N(8, 4), prem N(10, 4), pos N(3), idepta N(5), ;
+		  brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), comi N(5, 3), idem N(8), Tigv N(5, 3), caant N(12, 2), nlote c(20), Fechavto d, tipotra c(15), Codigo1 c(30))
 	Select (Calias)
 	Index On Descri Tag Descri
 	Index On Nitem Tag Items
 	Endfunc
 	Function listarguias(dfi, dff, nidt, Ccursor)
-	dfi = cfechas(dfi)
-	dff = cfechas(dff)
+	dfi = Cfechas(dfi)
+	dff = Cfechas(dff)
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	    \      Select  fech,Ndoc,cliente,Detalle,Refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt From(
-        \      Select guia_fech As fech,guia_ndoc As Ndoc,c.Razo As cliente,guia_deta As Detalle,r.ndoc As Refe,
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,c.Razo As cliente,guia_deta As Detalle,r.Ndoc As Refe,
 		\      IFNULL(T.razon,'') As Transportista,guia_idgui As idguia,guia_arch,clie_corr,'V' As Motivo,guia_codt From
 		\      fe_guias As g
 		\      INNER Join fe_rcom As r On r.Idauto=g.guia_idau
@@ -1176,7 +1176,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
         \      Group By fech,Ndoc,cliente,Detalle,Refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt Order By fech
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1189,7 +1189,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 		goApp.mensajeApp = 'No  esta  Activo el Temporal de Guias'
 		Return 0
 	Endif
-	Select Sum(coda)  As cant From (This.Calias) Where cant = 0 Into Cursor sincant
+	Select Sum(Coda)  As cant From (This.Calias) Where cant = 0 Into Cursor sincant
 	If _Tally > 0 Then
 		tcant = 0
 	Else
@@ -1201,7 +1201,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	ccodi = Space(3)
 	Store 0 To m.nprec, m.tcant, m.Nitem
 	CreaTemporalGuiasElectronicas('imp')
-	Select Left(Codigo1, 5) As codi, Substr(Codigo1, 6, 5) As Color, Descri, Prec, cant,;
+	Select Left(Codigo1, 5) As codi, Substr(Codigo1, 6, 5) As Color, Descri, Prec, cant, ;
 		Unid, Peso From (Calias) Where cant > 0 Into Cursor imprime Order By Descri, Prec, Color
 	Sele imprime
 	Go Top
@@ -1218,7 +1218,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 			tcant = tcant + cant
 			If x = 1
 				Insert Into imp(Descri, cant, Prec, Ndoc, Unid, Peso)Values(imprime.codi + ' ' + imprime.Color + "(" + Ltrim(Str(imprime.cant, 3)) + ")", ;
-					tcant, imprime.Prec, This.Ndoc, imprime.Unid, imprime.Peso)
+					  tcant, imprime.Prec, This.Ndoc, imprime.Unid, imprime.Peso)
 				ni = ni + 1
 			Else
 				If x <= 7
@@ -1229,7 +1229,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 					Sele imp
 					Repla cant With 0, Prec With 0
 					Insert Into imp(Descri, cant, Prec, Ndoc, Unid, Peso)Values(imprime.codi + ' ' + imprime.Color + "(" + Ltrim(Str(imprime.cant, 3)) + ")", ;
-						tcant, imprime.Prec, This.Ndoc, imprime.Unid, imprime.Peso)
+						  tcant, imprime.Prec, This.Ndoc, imprime.Unid, imprime.Peso)
 					ni = ni + 1
 					x = 1
 				Endif
@@ -1266,7 +1266,7 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 	Do Form ka_ldctosg To Verdad
 	If cestilo = 'S' Then
 		If This.ticket = 'S' Then
-			m.obji.ImprimeComprobanteComoticketM('S','09')
+			m.obji.ImprimeComprobanteComoticketM('S', '09')
 		Else
 			m.obji.ImprimeComprobanteM('S')
 		Endif
@@ -1279,7 +1279,34 @@ Define Class GuiaRemision As Odata Of 'd:\capass\database\data'
 		Endif
 	Endif
 	Endfunc
+	Function logneumaticos(cfechaanulacion, Ccursor)
+	f1 = Cfechas(This.dfi)
+	f2 = Cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select lgui_fech As hora, u.`nomb` As Usuario,rgui_ndoc As NroGuia, rgui_fech As Fecha,  s.`nomb` As Tienda,
+	\p.`Descri` As Producto, d.`dgui_cane` As Cantidad, rgui_idrg From fe_aguias As a
+	\INNER Join fe_rguias As r On r.`rgui_idrg` = a.`lgui_idga`
+	\INNER Join fe_sucu As s On s.`idalma` = r.`rgui_codt`
+	\INNER Join fe_usua As u On u.`Idusua` = a.`lgui_idus`
+	\INNER Join fe_dguias As d On d.`dgui_idrg` = r.`rgui_idrg`
+	\INNER Join fe_art As p On p.`idart` = d.`dgui_idart`
+	\Where
+	If cfechaanulacion = 'S' Then
+	     \ a.lgui_fech Between '<<f1>>' And '<<f2>>'
+	Else
+	     \  rgui_fech  Between '<<f1>>' And '<<f2>>'
+	Endif
+    \ Order By lgui_fech
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

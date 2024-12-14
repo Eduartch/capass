@@ -20,6 +20,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	nutil2   = 0
 	nutil3   = 0
 	nutil0    = 0
+	ncantoferta=0
 	ncome	   = 0
 	ncomc	   = 0
 	nsmax	   = 0
@@ -517,20 +518,16 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function ActualizaStock(ncoda, nalma, ncant, Ctipo)
-	lC = "ASTOCK"
-	goApp.npara1  = ncoda
-	goApp.npara2  = nalma
-	goApp.npara3  = ncant
-	goApp.npara4  = Ctipo
-	Text To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
+	lC = "astock"
+	Text To lpstock Noshow Textmerge
+     (<<ncoda>>,<<nalma>>,<<ncant>>,'<<ctipo>>')
 	Endtext
-	If This.EJECUTARP(lC, lp) < 1 Then
+	If This.EJECUTARP(lC, lpstock) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function consultarkardexproducto(ccoda, dfechai, dfechaf, Calmacen, Ccursor)
+	Function consultarkardexproducto(ccoda, dfechaI, dfechaf, Calmacen, Ccursor)
 	Text To lC Noshow Textmerge
 	   SELECT ifnull(e.ndoc,'')  as nped,d.ndo2,d.fech,d.ndoc,d.tdoc,a.tipo,d.mone as cmoneda,a.cant,d.fusua,ifnull(g.nomb,'') as usua1,
 	   a.prec,d.vigv as igv,d.dolar,f.nomb as usua,d.idcliente as codc,b.razo AS cliente,d.idprov as codp,c.razo AS proveedor,d.deta,a.alma
@@ -1027,7 +1024,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		cdeta = xlpr.prod_deta
 		Text To lC Noshow Textmerge
 		    UPDATE fe_art SET prod_deta='<<cdeta>>',prod_ubi1='<<xlpr.prod_ubi1>>',prod_ubi2='<<xlpr.prod_ubi2>>',prod_ubi3='<<xlpr.prod_ubi3>>',
-		    prod_ubi4='<<xlpr.prod_ubi4>>',prod_ubi5='<<xlpr.prod_ubi5>>',prod_codb='<<xlpr.prod_codb>>' WHERE idart=<<nidart>>
+		    prod_ubi4='<<xlpr.prod_ubi4>>',prod_ubi5='<<xlpr.prod_ubi5>>',prod_codb='<<xlpr.prod_codb>>',
+		    prod_umin=<<xlpr.prod_umin>>,prod_umax=<<xlpr.prod_umax>>,prod_dmin=<<xlpr.prod_dmin>>,prod_dmax=<<xlpr.prod_dmax>>,
+		    prod_tmin=<<xlpr.prod_tmin>>,prod_tmax=<<xlpr.prod_tmax>>  WHERE idart=<<nidart>>
 		Endtext
 		If This.Ejecutarsql(lC) < 1 Then
 			Ab = 0
@@ -1048,15 +1047,16 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Function Actualizadetalleyotrosxproducto(nidart)
 	cdeta = lpr.prod_deta
 	Text To lC Noshow Textmerge
-		    UPDATE fe_art SET prod_deta='<<cdeta>>',prod_ubi1='<<lpr.prod_ubi1>>',prod_ubi2='<<lpr.prod_ubi2>>',prod_ubi3='<<lpr.prod_ubi3>>',
-		    prod_ubi4='<<lpr.prod_ubi4>>',prod_ubi5='<<lpr.prod_ubi5>>',prod_codb='<<lpr.prod_codb>>' WHERE idart=<<nidart>>
+    UPDATE fe_art SET prod_deta='<<cdeta>>',prod_ubi1='<<lpr.prod_ubi1>>',prod_ubi2='<<lpr.prod_ubi2>>',prod_ubi3='<<lpr.prod_ubi3>>',
+	prod_ubi4='<<lpr.prod_ubi4>>',prod_ubi5='<<lpr.prod_ubi5>>',prod_codb='<<lpr.prod_codb>>',
+	prod_umin=<<lpr.prod_umin>>,prod_umax=<<lpr.prod_umax>>,prod_dmin=<<lpr.prod_dmin>>,prod_dmax=<<lpr.prod_dmax>>,
+	prod_tmin=<<lpr.prod_tmin>>,prod_tmax=<<lpr.prod_tmax>>  WHERE idart=<<nidart>>
 	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return  1
 	Endfunc
-*********************************
 	Function MuestraProductospsysr(np1, np2, np3, Ccursor)
 	lC = 'PROMUESTRAPRODUCTOS'
 	goApp.npara1 = np1
@@ -1088,7 +1088,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
     \If(a.prod_uti3>0,(a.prod_uti3*100)-100,Cast(0 As Decimal(10,6))) As uti3,
     \IFNULL(Round(If(tmon='S',Round(a.Prec*b.igv+c.Prec,2)*prod_uti3,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti3),2),0) As pre3,
     \If(a.prod_uti0>0,(a.prod_uti0*100)-100,Cast(0 As Decimal(10,6))) As uti0,
-    \IFNULL(Round(If(tmon='S',Round(a.Prec*b.igv+c.Prec,2)*prod_uti0,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti0),2),0) As pre0,
+    \If(a.prod_acti>0,Round(If(tmon='S',Round(a.Prec*b.igv+c.Prec,2)*prod_uti0,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti0),2),0) As pre0,
     \ulfc,a.idmar,a.idcat,'N' As Modi,idart,prod_ocan,prod_cmay
     \From fe_art  As a
     \INNER Join fe_fletes As c On c.idflete=a.idflete
@@ -1354,35 +1354,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Function Creaproductopsystr()
 	lC = 'FUNCREAPRODUCTOS'
 	cur = "Xn"
-	goApp.npara1 = This.cdesc
-	goApp.npara2 = This.cUnid
-	goApp.npara3 = This.nprec
-	goApp.npara4 = This.ncosto
-	goApp.npara5 = This.np1
-	goApp.npara6 = This.np2
-	goApp.npara7 = This.np3
-	goApp.npara8 = This.npeso
-	goApp.npara9 = This.ccat
-	goApp.npara10 = This.cmar
-	goApp.npara11 = This.ctipro
-	goApp.npara12 = This.nflete
-	goApp.npara13 = This.Moneda
-	goApp.npara14 = Id()
-	goApp.npara15 = This.ncome
-	goApp.npara16 = This.ncomc
-	goApp.npara17 = This.nutil1
-	goApp.npara18 = This.nutil2
-	goApp.npara19 = This.nutil3
-	goApp.npara20 = This.nidusua
-	goApp.npara21 = This.nsmax
-	goApp.npara22 = This.nsmin
-	goApp.npara23 = This.ccodigo1
-	goApp.npara24 = This.ndolar
-	Text To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
-      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
-	Endtext
+	TEXT TO lp NOSHOW TEXTMERGE
+	  ('<<This.cdesc>>','<<This.cUnid>>',<<This.nprec>>,<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,
+      <<This.cmar>>,'<<This.ctipro>>',<<This.nflete>>,'<<This.Moneda>>','<<id()>>',<<This.ncome>>,<<This.ncomc>>,<<This.nutil1>>,
+      <<This.nutil2>>,<<This.nutil3>>,<<This.nidusua>>,<<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>)
+	ENDTEXT 
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -1424,7 +1400,6 @@ Define Class Producto As OData Of 'd:\capass\database\data'
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
 	Endtext
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
-		This.DEshacerCambios()
 		Return 0
 	Endif
 	Return 1
@@ -1530,7 +1505,82 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function listarmenosrotados(dfi, df1, df2, Ccursor)
+	f1 = Cfechas(df1)
+	ff = Cfechas(df2)
+	fi = Cfechas(dfi)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select prod_cod1,Descri,unid,dmar,sfinal,ulfecha,stocki,tingresos,tegresos,coda From(
+	\Select b.stocki,b.tingresos,b.tegresos,(b.stocki+b.tingresos-b.tegresos) As sfinal,
+	\0 As reposicion,b.idart As coda,ulfecha
+    \From (Select Sum(If(d.fech<'<<fi>>',If(tipo='C',cant,-cant),0)) As stocki,
+    \Sum(If(d.fech Between '<<f1>>' And '<<ff>>',If(tipo='C',cant,0),0)) As tingresos,
+    \Sum(If(d.fech Between '<<f1>>' And '<<ff>>',If(tipo='V',cant,0),0)) As tegresos,c.idart,maX(fech)as ulfecha From
+    \fe_rcom As d
+    \INNER Join fe_kar As c On(c.idauto=d.idauto)
+    \Where c.Acti='A' And d.Acti='A' And c.alma=<<This.nidtda>>
+	If This.cmar > 0 Then
+	 \And a.idmar=<<This.cmar>>
+	Endif
+	If This.ccat > 0 Then
+     \And a.idcat=<<This.ccat>>
+	Endif
+	\Group By c.idart) As b ) As x
+	\INNER Join fe_art As a On a.idart=x.coda
+	\INNER Join fe_mar As m On m.idmar=a.idmar
+	\Where tegresos=0 And sfinal>0 And tingresos=0 Order By Descri;
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function listarstockminmaxlyg(Ccursor)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow  Textmerge
+	\Select  idart, prod_cod1 As codigo, Descri, unid, m.dmar As marca, c.dcat As categoria,
+	\g.desgrupo As grupo, uno, Dos, tre, cua, uno + Dos + tre + cua As Tstock,prod_umin,prod_umax,prod_dmin,prod_dmax,prod_tmin,prod_tmax
+	If 	This.nsmin	   = 1 Then
+	    \,prod_smin, prod_smin - (uno + Dos + tre + cua) As Dife1
+	Endif
+	If This.nsmax = 1  Then
+	   \,prod_smax, prod_smax - (uno + Dos + tre + cua) As Dife2
+	Endif
+	If This.cdetalle = 'S' Then
+	  \ ,prod_deta,prod_ubi1,prod_ubi2,prod_ubi3,prod_ubi4,prod_ubi5,prod_codb
+	Endif
+	\ From fe_art As a
+	\INNER Join fe_mar As m On m.idmar = a.idmar
+	\INNER Join fe_cat As c On c.idcat = a.idcat
+	\INNER Join fe_grupo As g On g.idgrupo = c.idgrupo
+	\Where prod_acti <> 'I'
+	If This.cmar > 0 Then
+	    \ And a.idmar=<<This.cmar>>
+	Endif
+	If This.ccat > 0 Then
+	    \ And a.idcat=<<This.ccat>>
+	Endif
+	If 	This.nsmin	   = 1 Then
+	    \ And prod_smin - (uno + Dos + tre + cua)>0
+	Endif
+	If This.nsmax = 1  Then
+	    \ And prod_smax - (uno + Dos + tre + cua)>0
+	Endif
+	\ Order By Descri
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

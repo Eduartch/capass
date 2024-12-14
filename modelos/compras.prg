@@ -660,7 +660,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	\			Sum(Case c.Nitem When 8 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As Impo
 	\			From fe_rcom As a
 	\			INNER Join fe_ectasc As c On(c.idrcon=a.idauto)
-	\			Where  fecr Between '<<f1>>' And '<<f2>>'  And Tdoc Not In ('09','II')  And Acti='A' And ecta_acti='A'
+	\			Where  fecr Between '<<f1>>' And '<<f2>>'  And Tdoc Not In ('09','II','GI')  And Acti='A' And ecta_acti='A'
 	If goApp.Cdatos = 'S' Then
 	   \ And a.codt=<<goApp.Tienda>>
 	Endif

@@ -539,19 +539,3 @@ Define Class OrdendeCompra As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

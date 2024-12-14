@@ -36,8 +36,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Select (Calias)
 	Go Top
 	Scan All
-		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', dFecha, tmpd.fevto, tmpd.Tipo, ndolar, tmpd.Impo, ;
-				  goApp.nidusua, Id(), goApp.Tienda, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
+		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', dFecha, tmpd.fevto, tmpd.Tipo, ndolar, tmpd.Impo,  goApp.nidusua, Id(), goApp.Tienda, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
 			Sw = 0
 			This.Cmensaje = 'Al Registrar Detalle'
 			Exit
@@ -65,8 +64,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Select (This.Calias)
 	Go Top
 	Scan All
-		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', This.dFech, tmpd.fevto, tmpd.Tipo, This.ndolar, tmpd.Impo, ;
-				  goApp.nidusua, Id(), This.codt, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
+		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', This.dFech, tmpd.fevto, tmpd.Tipo, This.ndolar, tmpd.Impo, goApp.nidusua, Id(), This.codt, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
 			Sw = 0
 			This.Cmensaje = 'Al Registrar Detalle de Cuentas por Pagar'
 			Exit
@@ -237,8 +235,8 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function ACtualizaDeudas(NAuto, nu)
 	lC = "ProActualizaDeudas"
-	Text To lC Noshow
-     <<nauto>>,<<nu>>
+	Text To lp Noshow
+     (<<nauto>>,<<nu>>)
 	Endtext
 	If  This.ejecutarp(lC, lp, '') < 1
 		Return 0

@@ -105,7 +105,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function mostrarcotizacion(nid, cndoc, Ccursor)
-	Set Textmerge On
+	set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 		        \Select  a.idart,a.Descri,a.Unid,a.cant,a.idven,a.Vendedor,a.Prec,a.premay,a.premen,a.fech,a.idautop,a.Impo,a.Ndoc,a.aten,
 				\a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,a.idclie,a.razo,a.nruc,a.Dire,a.ciud,a.fono,a.rped_mone,a.Nreg,
@@ -481,7 +481,6 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return nid
 	Endfunc
-**********************************
 	Function IngresaDCotizacionIaisac(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15)
 	lC = 'FuningresaDCotizacion1'
 	cur = ""

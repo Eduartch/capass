@@ -1,4 +1,4 @@
-Define Class dctos As Odata Of "d:\capass\database\data.prg"
+Define Class dctos As OData Of "d:\capass\database\data.prg"
 	Function mostrarvtasf(Ccursor)
 	Dimension dct[3, 3]
 	dct[1, 1] = 'FACTURA     '
@@ -9,6 +9,21 @@ Define Class dctos As Odata Of "d:\capass\database\data.prg"
 	dct[2, 3] = 2
 	dct[3, 1] = 'NOTAS-VENTAS'
 	dct[3, 2] = '20'
+	dct[3, 3] = 3
+	Create Cursor (Ccursor) (nomb c(10), Tdoc c(2), idtdoc N(2))
+	Insert Into (Ccursor) From Array dct
+	Return 1
+	Endfunc
+	Function mostrarvtasf2(Ccursor)
+	Dimension dct[3, 3]
+	dct[1, 1] = 'FACTURA     '
+	dct[1, 2] = '01'
+	dct[1, 3] = 1
+	dct[2, 1] = 'BOLETA      '
+	dct[2, 2] = '03'
+	dct[2, 3] = 2
+	dct[3, 1] = 'OTROS'
+	dct[3, 2] = '00'
 	dct[3, 3] = 3
 	Create Cursor (Ccursor) (nomb c(10), Tdoc c(2), idtdoc N(2))
 	Insert Into (Ccursor) From Array dct
@@ -146,6 +161,7 @@ Define Class dctos As Odata Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 
