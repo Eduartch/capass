@@ -380,16 +380,18 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	\		Round(Case Forma When 'R' Then If(tipo='I',Impo,0) Else 0 End,2) As Centrega,
 	\		Round(Case Forma When 'Y' Then If(tipo='I',Impo,0) Else 0 End,2) As Yape,
 	\		Round(Case tipo When 'S' Then If(Forma='E',Impo,0) Else 0 End,2) As egresos,
-	\		usuavtas,fechao,lcaj_fech,usua,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,orden
+	\		usuavtas,fechao,vendedor,lcaj_fech,usua,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,orden
 	\		From(
 	\		Select a.lcaj_tdoc As tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I',If(lcaj_acre=0,'I','S')) As tipo,lcaj_dcto As Ndoc,
 	\		If(lcaj_deud<>0,lcaj_deud,If(lcaj_acre=0,lcaj_deud,lcaj_acre)) As Impo,
     \        lcaj_deta As Deta,lcaj_mone As  mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
 	\		c.nomb As usua,a.lcaj_fope As fechao,ifnull(u.nomb,'') As usuavtas,a.lcaj_mone As tmon1,lcaj_dola As dola,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As nimpo,lcaj_fech,
-	\		'1' As orden From 	fe_lcaja As a
+	\		'1' As orden,ifnull(z.nomv,'') as vendedor From fe_lcaja As a
 	\		inner Join fe_usua As c On 	c.idusua=a.lcaj_idus
 	\		Left Join fe_rcom As r On r.idauto=a.lcaj_idau
 	\		Left Join fe_usua As u  On u.idusua=r.idusua
+	\       Left Join (select idauto,codv from fe_kar group by idauto,codv)  As p On p.idauto=a.lcaj_idau
+	\       Left Join fe_vend As z On z.idven=p.codv
 	\		Where
 	If This.confechas = 0 Then
 	     \ lcaj_fech='<<f>>'
@@ -404,7 +406,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	\		Select a.lcaj_tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I','S') As tipo,a.lcaj_ndoc As Ndoc,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As Impo,
     \       a.lcaj_deta As Deta,a.lcaj_mone As mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
 	\		c.nomb As usua,a.lcaj_fope As fechao,ifnull(u.nomb,'') As usuavtas,a.lcaj_mone As tmon1,a.lcaj_dola As dola,a.lcaj_deud As nimpo,a.lcaj_fech,
-	\		If(lcaj_deud>0,'2','3') As orden  From  fe_lcaja As a
+	\		If(lcaj_deud>0,'2','3') As orden ,'' as vendedor From  fe_lcaja As a
 	\		inner Join fe_usua As c On c.idusua=a.lcaj_idus
 	\		Left Join fe_rcom As r On r.idauto=a.lcaj_idau
 	\		Left Join fe_usua As u  On u.idusua=r.idusua

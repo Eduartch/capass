@@ -25,6 +25,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	nidautop = 0
 	nvalor = 0
 	nigv = 0
+	ndscto=0
 	Tigv = ""
 	vigv = 0
 	npor = 0

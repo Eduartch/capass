@@ -20,7 +20,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	nutil2   = 0
 	nutil3   = 0
 	nutil0    = 0
-	ncantoferta=0
+	ncantoferta = 0
 	ncome	   = 0
 	ncomc	   = 0
 	nsmax	   = 0
@@ -56,6 +56,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	nequi = 0
 	ntigv = 0
 	nirta = 0
+	nsmin1 = 0
+	nsmax1 = 0
+	nsmin2 = 0
+	nsmax2 = 0
+	nsmin3 = 0
+	nsmax3 = 0
 	Function MuestraProductosJ1(np1, np2, np3, np4, Ccursor)
 	lC = 'PROMUESTRAPRODUCTOSJx'
 	goApp.npara1 = np1
@@ -1354,11 +1360,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Function Creaproductopsystr()
 	lC = 'FUNCREAPRODUCTOS'
 	cur = "Xn"
-	TEXT TO lp NOSHOW TEXTMERGE
+	Text To lp Noshow Textmerge
 	  ('<<This.cdesc>>','<<This.cUnid>>',<<This.nprec>>,<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,
       <<This.cmar>>,'<<This.ctipro>>',<<This.nflete>>,'<<This.Moneda>>','<<id()>>',<<This.ncome>>,<<This.ncomc>>,<<This.nutil1>>,
       <<This.nutil2>>,<<This.nutil3>>,<<This.nidusua>>,<<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>)
-	ENDTEXT 
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -1519,7 +1525,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	\0 As reposicion,b.idart As coda,ulfecha
     \From (Select Sum(If(d.fech<'<<fi>>',If(tipo='C',cant,-cant),0)) As stocki,
     \Sum(If(d.fech Between '<<f1>>' And '<<ff>>',If(tipo='C',cant,0),0)) As tingresos,
-    \Sum(If(d.fech Between '<<f1>>' And '<<ff>>',If(tipo='V',cant,0),0)) As tegresos,c.idart,maX(fech)as ulfecha From
+    \Sum(If(d.fech Between '<<f1>>' And '<<ff>>',If(tipo='V',cant,0),0)) As tegresos,c.idart,Max(fech)As ulfecha From
     \fe_rcom As d
     \INNER Join fe_kar As c On(c.idauto=d.idauto)
     \Where c.Acti='A' And d.Acti='A' And c.alma=<<This.nidtda>>
@@ -1533,13 +1539,13 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	\INNER Join fe_art As a On a.idart=x.coda
 	\INNER Join fe_mar As m On m.idmar=a.idmar
 	\Where tegresos=0 And sfinal>0 And tingresos=0 Order By Descri;
-	Set Textmerge Off
+		Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function listarstockminmaxlyg(Ccursor)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow  Textmerge
@@ -1579,7 +1585,37 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function Creaproductopsystrlyg()
+	lC = 'FUNCREAPRODUCTOS'
+	cur = "Xn"
+	Text To lp Noshow Textmerge
+	  ('<<This.cdesc>>','<<This.cUnid>>',<<This.nprec>>,<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,
+      <<This.cmar>>,'<<This.ctipro>>',<<This.nflete>>,'<<This.Moneda>>','<<id()>>',<<This.ncome>>,<<This.ncomc>>,<<This.nutil1>>,
+      <<This.nutil2>>,<<This.nutil3>>,<<This.nidusua>>,<<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>,<<this.nutil0>>,<<this.ncantoferta>>,
+      <<this.nsmin1>>,<<this.nsmax1>>,<<this.nsmin2>>,<<this.nsmax2>>,<<this.nsmin3>>,<<this.nsmax3>>)
+	Endtext
+	nid = This.EJECUTARf(lC, lp, cur)
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	ENDFUNC
+	Function editarproductolyg()
+	Local cur As String
+	lC = 'PROACTUALIZAPRODUCTOS'
+    Text To lp NOSHOW TEXTMERGE 
+	  ('<<This.cdesc>>','<<This.cUnid>>',<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,<<This.cmar>>,'<<This.ctipro>>',
+	  <<This.nflete>>,'<<This.Moneda>>',<<This.nprec>>,0,<<This.nutil1>>,<<This.nutil2>>,<<This.nutil3>>,<<This.ncome>>,<<This.ncomc>>,<<This.nidusua>>,<<This.nidart>>,
+	  <<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>,'<<This.Cestado>>',<<this.nutil0>>,<<this.ncantoferta>>,
+      <<this.nsmin1>>,<<this.nsmax1>>,<<this.nsmin2>>,<<this.nsmax2>>,<<this.nsmin3>>,<<this.nsmax3>>)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

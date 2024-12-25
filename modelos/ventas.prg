@@ -1003,6 +1003,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
 	Endif
+	If !Pemstatus(goApp, 'tiendas', 5) Then
+		AddProperty(goApp, 'tiendas', '')
+	Endif
 	f1 = Cfechas(This.fechai)
 	f2 = Cfechas(This.fechaf)
 	If This.Idsesion > 0 Then
@@ -1024,7 +1027,11 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	   \inner Join fe_clie  As b On(b.idclie=a.idcliente)
 	   \Where fecr Between '<<f1>>' And '<<f2>>'   And Tdoc In ('01','03','07','08') And Acti='A'
 	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.tiendas) Then
 	      \And a.codt=<<goApp.tienda>>
+		Else
+	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
 	Endif
 	If Len(Alltrim(This.Serie)) > 0 Then
 	   \ And Left(a.Ndoc,4)='<<this.serie>>'
@@ -1032,15 +1039,13 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If Len(Alltrim(This.Tdoc)) > 0 Then
     	\  And  a.Tdoc='<<this.tdoc>>'
 	Endif
-	If goApp.Cdatos = 'S' Then
-	      \And z.codt=<<goApp.tienda>>
-	Endif
 	If This.Serie <> '' Then
 	   \ And Left(a.Ndoc,4)='<<this.serie>>'
 	Endif
 	  \ Order By Serie,fech,Ndoc
 	Set Textmerge To
 	Set Textmerge Off
+	STRTOFILE(lc,ADDBS(SYS(5)+SYS(2003))+'consulta.txt')
 	If This.EJECutaconsulta(lC, 'registro1') < 1 Then
 		Return 0
 	Endif
@@ -1048,7 +1053,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Create Cursor registro(Form c(1) Null, fecr d Null, fech d Null, Tdoc c(2) Null, Serie c(4), Ndoc c(8), nruc c(11)Null, ndni c(8), Razo c(100)Null, valorg N(14, 2), Exon N(12, 2), inafecta N(12, 2), ;
-		  igvg N(10, 2), Importe N(14, 2), icbper N(12, 2), pimpo N(8, 2), Detalle c(50), Mensaje c(100), tref c(2), Refe c(12), dola N(5, 3),  Mone c(1), Codigo N(5), fechn d, fevto d, ;
+		  igvg N(10, 2), Importe N(14, 2), icbper N(12, 2), pimpo N(8, 2), Detalle c(50), Mensaje c(100), tref c(2), Refe c(12), dola N(5, 3),  Mone c(1), Codigo N(5), fechn d, Fevto d, ;
 		  Auto N(15),  T N(1))
 	notas = 0
 	x = 0
@@ -1226,7 +1231,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Iif(Mone = "D", Round(Importe * dola, 2), Importe) As Importe, ;
 		Iif(Mone = 'D', Round(grati * dola, 2), grati) As tgrati, pimpo, Detalle, Mone, dola, Codigo, ndni, Idauto, vigv, icbper, Mensaje From registro Into Cursor registro1 Order By Serie, fech, Ndoc
 	Create Cursor registro(Form c(1) Null, fech d Null, fvto d, Tdoc c(2) Null, Serie c(4), Ndoc c(8), nruc c(11)Null, Razo c(40)Null, valorg N(14, 2), Exon N(12, 2), ;
-		  igvg N(10, 2), Importe N(14, 2), tgrati N(12, 2), igvgr N(12, 2), Detalle c(50), icbper N(12, 2), tref c(2), Refe c(12), dola N(5, 3), Mensaje c(100), Mone c(1), Codigo N(5), fechn d, fevto d, ;
+		  igvg N(10, 2), Importe N(14, 2), tgrati N(12, 2), igvgr N(12, 2), Detalle c(50), icbper N(12, 2), tref c(2), Refe c(12), dola N(5, 3), Mensaje c(100), Mone c(1), Codigo N(5), fechn d, Fevto d, ;
 		  Auto N(15), ndni c(8), T N(1), fecr d Null, pimpo N(8, 2), inafecta N(12, 2))
 	x = 1
 	If This.Listarnotascreditoydebito("xnotas") < 1 Then
@@ -1323,7 +1328,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Iif(Mone = 'D', Round(grati * dola, 2), grati) As grati, ;
 		Detalle, Mone, dola, Codigo, ndni, Idauto, Usuario, FUsua, rcom_icbper As icbper, rcom_mens As Mensaje, codt From registro Into Cursor registro1 Order By Serie, fecr, Ndoc
 	Create Cursor registro(Form c(2) Null, fecr d Null, fech d Null, Tdoc c(2) Null, Serie c(4), Ndoc c(8), nruc c(11)Null, Razo c(100)Null, valorg N(14, 2), Exon N(12, 2), ;
-		  igvg N(10, 2), Importe N(14, 2), pimpo N(8, 2), grati N(10, 2), Detalle c(50), Usuario c(30), FUsua T, Mensaje c(120), dola N(5, 3), Mone c(1), Codigo N(5), fechn d, tref c(2), Refe c(12), fevto d, Auto N(15), ndni c(8), ;
+		  igvg N(10, 2), Importe N(14, 2), pimpo N(8, 2), grati N(10, 2), Detalle c(50), Usuario c(30), FUsua T, Mensaje c(120), dola N(5, 3), Mone c(1), Codigo N(5), fechn d, tref c(2), Refe c(12), Fevto d, Auto N(15), ndni c(8), ;
 		  T N(1), inafecta N(12, 2), icbper N(8, 2), codt N(2))
 	x = 1
 	notas = 0
@@ -1909,9 +1914,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Select (Ccursor)
 	If Idauto > 0 Then
 		Return  0
-	Else
-		Return 1
 	Endif
+	Return 1
 	Endfunc
 	Function Registroventaspsys(Ccursor)
 	f1 = Cfechas(This.fechai)
@@ -2316,13 +2320,16 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow
-		\Select a.Ndoc As dcto,a.fech,b.nruc,b.Razo,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
-		\    a.igv,a.Impo,rcom_hash,rcom_mens,Mone,a.Tdoc,a.Ndoc,Idauto,rcom_arch,b.clie_corr,tcom,FUsua,u.nomb,b.fono,Ndo2,
-		\Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Dire,rcom_otro,b.ndni,nruc,Form,dolar,a.codt,a.tipom
-		\    From fe_rcom As a
-		\    Join fe_clie As b On (a.idcliente=b.idclie)
-		\    Join fe_usua As u On u.idusua=a.idusua
-		\    Where a.fech Between '<<f1>>' And '<<f2>>'  And a.Acti<>'I' And Left(Ndoc,1) In("F","B","P")
+	\Select a.Ndoc As dcto,a.fech,b.nruc,b.Razo,Mone,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
+	\a.igv,a.Impo,rcom_mens,rcom_fecd,u.nomb,FUsua,rcom_hash,a.Tdoc,a.Ndoc,Idauto,rcom_arch,b.clie_corr,tcom,b.fono,Ndo2,
+	\Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Dire,rcom_otro,b.ndni,nruc,Form,dolar,a.codt,a.tipom,a.idusua,Deta
+	IF goapp.Proyecto='xsysg' then
+	  \,rcom_otro
+	ENDIF   
+	\    From fe_rcom As a
+	\    Join fe_clie As b On (a.idcliente=b.idclie)
+	\    Join fe_usua As u On u.idusua=a.idusua
+	\    Where a.fech Between '<<f1>>' And '<<f2>>'  And a.Acti<>'I' And Left(Ndoc,1) In("F","B","P")
 	If This.codt > 0 Then
 		   \ And a.codt=<<This.codt>>
 	Endif
@@ -3053,7 +3060,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function registroventasxsysz(Ccursor)
+	Function Registroventasxsysz(Ccursor)
 	f1 = Cfechas(This.fechai)
 	f2 = Cfechas(This.fechaf)
 	If !Pemstatus(goApp, 'cdatos', 5) Then
@@ -3063,7 +3070,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	Set Textmerge On
-	Set Textmerge To memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select  a.Form,a.fecr,a.fech,a.Tdoc,If(Length(Trim(a.Ndoc))<=10,Left(a.Ndoc,3),Left(a.Ndoc,4)) As Serie,
 	\If(Length(Trim(a.Ndoc))<=10,mid(a.Ndoc,4,7),mid(a.Ndoc,5,8)) As Ndoc,
 	\b.nruc,b.Razo,a.valor,rcom_exon As Exon,a.igv,a.Impo As Importe,rcom_otro As grati,rcom_inaf,
@@ -3089,6 +3096,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

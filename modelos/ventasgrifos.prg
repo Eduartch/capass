@@ -1,6 +1,6 @@
 Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	nturno = 0
-	idlectura=0
+	Idlectura = 0
 	Function vtascomparativas(nidt, fi, ff, Ccursor)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
@@ -17,7 +17,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		\ Group By lcaj_fech) As F Group By Fecha
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -40,13 +40,13 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	If This.actualizardesdeguias() < 1 Then
 		This.DEshacerCambios()
 		Return 0
-	ENDIF
+	Endif
 	Sw = 1
 	Select  tmpp
 	Scan All
-		TEXT To lC Noshow  Textmerge
+		Text To lC Noshow  Textmerge
 	     UPDATE fe_kar SET prec=<<tmpp.prec>> where idkar=<<tmpp.nreg>>
-		ENDTEXT
+		Endtext
 		If This.Ejecutarsql(lC) < 1 Then
 			Sw = 0
 			Exit
@@ -99,7 +99,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		nidcta3 = 0
 	Endif
 	If This.ActualizaresumentDctoCanjeado(This.Tdoc, cform, This.Serie + This.numero, This.Fecha, This.Fecha, This.Detalle, ;
-			This.valor, This.igv, This.Monto, This.nroguia, This.Moneda, ndolar, fe_gene.igv, 'k', This.Codigo, 'V', goApp.nidusua, 1, goApp.Tienda, nidcta1, nidcta2, nidcta3, This.Iddire, This.idautoguia, This.Idauto) < 1 Then
+			  This.valor, This.igv, This.Monto, This.NroGuia, This.Moneda, ndolar, fe_gene.igv, 'k', This.Codigo, 'V', goApp.nidusua, 1, goApp.Tienda, nidcta1, nidcta2, nidcta3, This.Iddire, This.idautoguia, This.Idauto) < 1 Then
 		Return 0
 	Endif
 	If IngresaDatosLCajaEFectivo12(This.Fecha, "", This.razon, nidcta3, This.Monto, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, This.Idauto, cform, This.Serie + This.numero, This.Tdoc, goApp.Tienda) = 0 Then
@@ -190,9 +190,9 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	goApp.npara23 = np23
 	goApp.npara24 = np24
 	goApp.npara25 = np25
-	TEXT To lparms Noshow
+	Text To lparms Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lsql, lparms, "") < 1 Then
 		Return 0
 	Endif
@@ -204,18 +204,18 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Set Procedure To d:\capass\modelos\ctasxcobrar Additive
 	ctasxcobrar = Createobject('ctasporcobrar')
 	Select (This.temporal)
-	Locate For cant = 0 And !Empty(coda)
+	Locate For cant = 0 And !Empty(Coda)
 	Do Case
 	Case !esfechaValida(This.Fecha) Or Month(This.Fecha) <> goApp.mes Or Year(This.Fecha) <> Val(goApp.año)
 		This.Cmensaje = "Fecha NO Permitida Por el Sistema"
 		lo = 0
-	Case This.Monto = 0
+	Case This.Monto = 0 AND this.gratuita=0
 		This.Cmensaje = "Ingrese Cantidad y Precio"
 		lo = 0
-	Case This.Monto < 5 And This.Tdoc = '01'
+	Case This.Monto < 5 And This.Tdoc = '01' AND this.gratuita=0
 		This.Cmensaje = "Se Emite Factura a Partir de S/5.00"
 		lo = 0
-	Case This.Monto < 1 And This.Tdoc = '03'
+	Case This.Monto < 1 And This.Tdoc = '03'  AND this.gratuita=0
 		This.Cmensaje = "Se Emite Boleta a Partir de S/1.00"
 		lo = 0
 	Case This.sinstock = "S"
@@ -258,7 +258,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Endif
 	Endfunc
 	Function listardctonotascredtito(nid, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    SELECT a.idart,a.descri,a.unid,k.cant,k.prec,
 		ROUND(k.cant*k.prec,2) as importe,k.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi as comi,k.alma,
 		r.fech,r.ndoc,r.tdoc,r.dolar as dola,r.vigv,r.rcom_exon,'K' as tcom,k.idkar,if(k.prec=0,kar_cost,0) as costoref from fe_rcom r
@@ -272,24 +272,24 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		from fe_rcom r
 		inner join fe_detallevta k on k.detv_idau=r.idauto
 		where k.detv_acti='A' and r.acti='A' and r.idauto=<<nid>> order by idkar
-	ENDTEXT
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return  1
 	Endfunc
 	Function GrabarIdjornaly(np1)
-	TEXT To cupdate Noshow Textmerge
+	Text To cupdate Noshow Textmerge
         update venta  set estado=2 where idjournal=<<np1>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(cupdate) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarvtascreditocantidad(dfi, dff, nidus, nisla, nidl, Calias)
-	fi = cfechas(dfi)
-	ff = cfechas(dff)
+	fi = Cfechas(dfi)
+	ff = Cfechas(dff)
 	Set Textmerge On
 	Set  Textmerge To Memvar lC Nosho Textmerge
 		\   Select a.Ndoc,a.fech,c.razo,d.Descri,d.unid,e.cant,e.Prec,F.nomb As usuario,Cast(e.cant*e.Prec As Decimal(12,2)) As Impo,
@@ -300,12 +300,12 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		\	inner Join fe_art As d On d.idart=e.idart
 	    \	inner Join fe_usua As F On F.idusua=a.idusua
 	    \	Where rcom_idis=<<nidl>> And a.Acti='A' And e.Acti='A' And a.Form='C' And kar_idco>0  And codt=<<nisla>>
-	If nidus >0 Then
+	If nidus > 0 Then
 	       \And a.idusua=<<nidus>>
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -378,7 +378,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		necaja = This.Impo
 	Endif
 	Select tmpv
-	Set Filter To coda <> 0
+	Set Filter To Coda <> 0
 	Go Top
 	calma = tmpv.Isla
 	If oconecta.consucursales = 'S' Then
@@ -393,16 +393,16 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	If This.tipoventa = 'E' Then
 		If goApp.Direcciones = 'S' Then
 			NAuto = This.ovtas.IngresaDocumentoElectronicocondirecciones(.Tdoc, .Forma, .Ndoc, .Fecha, .Detalle, 0, 0, .Impo, .Guia, ;
-				.Moneda, .dolar, 1, 'k', .Codigo, goApp.IDturno, goApp.nidusua, goApp.Tienda, nidcta1, nidcta2, nidcta3, .tgratuitas, 0, .valor, This.Tdscto, This.Iddire)
+				  .Moneda, .dolar, 1, 'k', .Codigo, goApp.IDturno, goApp.nidusua, goApp.Tienda, nidcta1, nidcta2, nidcta3, .tgratuitas, 0, .valor, This.Tdscto, This.Iddire)
 		Else
-			NAuto = IngresaDocumentoElectronico(.Tdoc, .Forma, .Ndoc, .Fecha, .Detalle, 0, 0, .Impo, .Guia, .Moneda, .dolar, 1, 'k', .Codigo, goApp.IDturno, goApp.nidusua, ncodt, nidcta1, nidcta2, nidcta3, .tgratuitas, This.idlectura, .valor, This.Tdscto)
+			NAuto = IngresaDocumentoElectronico(.Tdoc, .Forma, .Ndoc, .Fecha, .Detalle, 0, 0, .Impo, .Guia, .Moneda, .dolar, 1, 'k', .Codigo, goApp.IDturno, goApp.nidusua, ncodt, nidcta1, nidcta2, nidcta3, .tgratuitas, This.Idlectura, .valor, This.Tdscto)
 		Endif
 	Else
 		If goApp.Direcciones = 'S' Then
 			NAuto = This.ovtas.IngresaDocumentoElectronicocondirecciones(.Tdoc, .Forma, .Ndoc, .Fecha, .Detalle, .valor, .igv, .Impo, .Guia, ;
-				.Moneda, .dolar, fe_gene.igv, 'k', .Codigo, goApp.IDturno, goApp.nidusua, goApp.Tienda, nidcta1, nidcta2, nidcta3, .tgratuitas, 0, 0, This.Tdscto, This.Iddire)
+				  .Moneda, .dolar, fe_gene.igv, 'k', .Codigo, goApp.IDturno, goApp.nidusua, goApp.Tienda, nidcta1, nidcta2, nidcta3, .tgratuitas, 0, 0, This.Tdscto, This.Iddire)
 		Else
-			NAuto = IngresaDocumentoElectronico(.Tdoc, .Forma, .Ndoc, .Fecha, .Detalle, .valor, .igv, .Impo, .Guia, .Moneda, .dolar, fe_gene.igv, 'k', .Codigo, goApp.IDturno, goApp.nidusua, ncodt, nidcta1, nidcta2, nidcta3, .tgratuitas, This.idlectura, 0, This.Tdscto)
+			NAuto = IngresaDocumentoElectronico(.Tdoc, .Forma, .Ndoc, .Fecha, .Detalle, .valor, .igv, .Impo, .Guia, .Moneda, .dolar, fe_gene.igv, 'k', .Codigo, goApp.IDturno, goApp.nidusua, ncodt, nidcta1, nidcta2, nidcta3, .tgratuitas, This.Idlectura, 0, This.Tdscto)
 		Endif
 	Endif
 	If NAuto < 1 Then
@@ -432,9 +432,9 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 			Return 0
 		Endif
 	Endif
-	na = NAuto
+	Na = NAuto
 	If goApp.Promopuntos = 'S' Then
-		_Screen.opromo.nidauto = na
+		_Screen.opromo.niDAUTO = Na
 		_Screen.opromo.nidclie = This.Codigo
 		_Screen.opromo.npunto = This.puntos
 		_Screen.opromo.ndscto = 0
@@ -449,7 +449,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Select tmpv
 	Go Top
 	Do While !Eof()
-		If IngresaKardexGrifo(na, tmpv.coda, 'V', tmpv.Prec, tmpv.cant, 'I', 'K', .Codv, goApp.Tienda, tmpv.nidcontometro, tmpv.costo / fe_gene.igv, tmpv.pre1) < 1
+		If IngresaKardexGrifo(Na, tmpv.Coda, 'V', tmpv.Prec, tmpv.cant, 'I', 'K', .Codv, goApp.Tienda, tmpv.nidcontometro, tmpv.costo / fe_gene.igv, tmpv.pre1) < 1
 			swk = 0
 			Exit
 		Endif
@@ -469,7 +469,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Return 0
 	Endif
 	If swk = 1 And .GeneraNumero() = 1  Then
-		If This.GRabarCambios()<1 Then
+		If This.GRabarCambios() < 1 Then
 			Return 0
 		Endif
 		If goApp.ConectaControlador = 'S'   Then
@@ -479,84 +479,84 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Endif
 	Endfunc
 	Function GrabarVtascontroladory()
-	goApp.datosg=""
+	goApp.datosg = ""
 	dATOSGLOBALES()
-	NAuto=0
-	If This.Etarjeta>0 Then
-		necaja=This.Monto-This.Etarjeta
+	NAuto = 0
+	If This.Etarjeta > 0 Then
+		necaja = This.Monto - This.Etarjeta
 	Else
-		necaja=This.Monto
+		necaja = This.Monto
 	Endif
 	Select tmpv
-	Set Filter To coda<>0
+	Set Filter To Coda <> 0
 	Go Top
-	calma=tmpv.Isla
-	Set Procedure To CapaDatos,rngrifo,ple5 Additive
-	If This.IniciaTransaccion()<1 Then
+	calma = tmpv.Isla
+	Set Procedure To CapaDatos, rngrifo, ple5 Additive
+	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	If goApp.ConectaControlador='Y' Then
-        Nauto=this.IngresaDocumentoElectronicoy()
+	If goApp.ConectaControlador = 'Y' Then
+		NAuto = This.IngresaDocumentoElectronicoy()
 	Else
-		NAuto=IngresaDocumentoElectronico(This.Tdoc,This.formaPago,This.Serie+This.numero,This.Fecha,This.Detalle,This.valor,This.igv,This.Monto,This.nroguia,This.Moneda,This.ndolar,fe_gene.igv,'k',This.Codigo,goApp.IDturno,goApp.nidusua,This.codt,this.cta1,this.cta2,this.cta3,This.gratuita,This.idlectura,This.exonerado,This.Tdscto)
+		NAuto = IngresaDocumentoElectronico(This.Tdoc, This.formaPago, This.Serie + This.numero, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, This.NroGuia, This.Moneda, This.ndolar, fe_gene.igv, 'k', This.Codigo, goApp.IDturno, goApp.nidusua, This.codt, This.cta1, This.cta2, This.cta3, This.gratuita, This.Idlectura, This.exonerado, This.Tdscto)
 	Endif
 	If NAuto < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	If This.Tdscto>0 Then
-		If IngresaDatosLCajaEFectivoCturnos30(This.Fecha,"",This.razon,This.cta3,necaja,0,'S',fe_gene.dola,goApp.nidusua,This.Codigo,NAuto,Left(This.formaPago,1),This.Serie+This.numero,This.Tdoc,This.codt,goApp.IDturno,This.Tdscto,This.Creferencia,This.Ctarjeta,This.CtarjetaBanco,This.idlectura)=0 Then
+	If This.Tdscto > 0 Then
+		If IngresaDatosLCajaEFectivoCturnos30(This.Fecha, "", This.razon, This.cta3, necaja, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Tdscto, This.Creferencia, This.Ctarjeta, This.CtarjetaBanco, This.Idlectura) = 0 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Else
-		If IngresaDatosLCajaEFectivoCturnosTarjetas30(This.Fecha,"",This.razon,This.cta3,necaja,0,'S',fe_gene.dola,goApp.nidusua,This.Codigo,NAuto,Left(This.formaPago,1),This.Serie+This.numero,This.Tdoc,This.codt,goApp.IDturno,This.Creferencia,This.Ctarjeta,This.CtarjetaBanco,This.idlectura)=0 Then
+		If IngresaDatosLCajaEFectivoCturnosTarjetas30(This.Fecha, "", This.razon, This.cta3, necaja, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Creferencia, This.Ctarjeta, This.CtarjetaBanco, This.Idlectura) = 0 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
-	If This.Etarjeta>0 Then
-		If IngresaDatosLCajaEFectivoCturnos31(This.Fecha,"",This.razon,This.cta3,This.Etarjeta,0,'S',fe_gene.dola,goApp.nidusua,This.Codigo,NAuto,'E',This.Serie+This.numero,This.Tdoc,This.codt,goApp.IDturno,This.idlectura)=0 Then
+	If This.Etarjeta > 0 Then
+		If IngresaDatosLCajaEFectivoCturnos31(This.Fecha, "", This.razon, This.cta3, This.Etarjeta, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, 'E', This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Idlectura) = 0 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
-	If Left(This.formaPago,1)="C" Or Left(This.formaPago,1)="D" Or Left(This.formaPago,1)='A' Then
-		If This.grabacreditos(NAuto)<1 Then
+	If Left(This.formaPago, 1) = "C" Or Left(This.formaPago, 1) = "D" Or Left(This.formaPago, 1) = 'A' Then
+		If This.grabacreditos(NAuto) < 1 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
-	If goApp.Promopuntos='S' Then
-		_Screen.opromo.nidauto=NAuto
-		_Screen.opromo.nidclie=This.Codigo
-		_Screen.opromo.npunto=This.puntos
-		_Screen.opromo.ndscto=0
-		_Screen.opromo.dFecha=This.Fecha
-		_Screen.opromo.nidprom=_Screen.idpromo
-		If _Screen.opromo.registrarpuntos()<1 Then
-			This.Cmensaje=_Screen.opromo.Cmensaje
+	If goApp.Promopuntos = 'S' Then
+		_Screen.opromo.niDAUTO = NAuto
+		_Screen.opromo.nidclie = This.Codigo
+		_Screen.opromo.npunto = This.puntos
+		_Screen.opromo.ndscto = 0
+		_Screen.opromo.dFecha = This.Fecha
+		_Screen.opromo.nidprom = _Screen.idpromo
+		If _Screen.opromo.registrarpuntos() < 1 Then
+			This.Cmensaje = _Screen.opromo.Cmensaje
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
-	swk=1
-	Cmensaje=""
+	swk = 1
+	Cmensaje = ""
 	Select tmpv
 	Go Top
 	Do While !Eof()
-		cdesc=tmpv.Desc
-		If IngresaKardexGrifo(NAuto,tmpv.coda,'V',tmpv.Prec,tmpv.cant,'I','K',This.vendedor,goApp.Tienda,tmpv.nidcontometro,tmpv.costo/fe_gene.igv,tmpv.pre1)<1
-			swk=0
-			Cmensaje="El Item:"+Alltrim(cdesc)+" NO Tiene Stock Disponible Para Venta O no se ha fijado El valor del Contometro"
-			This.Cmensaje=Cmensaje
+		cdesc = tmpv.Desc
+		If IngresaKardexGrifo(NAuto, tmpv.Coda, 'V', tmpv.Prec, tmpv.cant, 'I', 'K', This.Vendedor, goApp.Tienda, tmpv.nidcontometro, tmpv.costo / fe_gene.igv, tmpv.pre1) < 1
+			swk = 0
+			Cmensaje = "El Item:" + Alltrim(cdesc) + " NO Tiene Stock Disponible Para Venta O no se ha fijado El valor del Contometro"
+			This.Cmensaje = Cmensaje
 			Exit
 		Endif
-		If goApp.ConectaControlador='Y' Then
-			If tmpv.Idjournal>0 Then
-				If _Screen.oventasg.GrabarIdjornaly(tmpv.Idjournal)<1 Then
-					This.Cmensaje=Screen.oventasg.Cmensaje
-					swk=0
+		If goApp.ConectaControlador = 'Y' Then
+			If tmpv.Idjournal > 0 Then
+				If _Screen.oventasg.GrabarIdjornaly(tmpv.Idjournal) < 1 Then
+					This.Cmensaje = Screen.oventasg.Cmensaje
+					swk = 0
 					Exit
 				Endif
 			Endif
@@ -564,109 +564,309 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Select tmpv
 		Skip
 	Enddo
-	If swk=0 Then
+	If swk = 0 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	If This.GeneraCorrelativovtas()<1  Then
+	If This.GeneraCorrelativovtas() < 1  Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	If This.GRabarCambios()<1  Then
+	If This.GRabarCambios() < 1  Then
 		Return 0
 	Endif
 	Return NAuto
 	Endfunc
 	Function IngresaDocumentoElectronicoy()
-	lC='FuningresaDocumentoElectronicoy'
-	cur="Xn"
-	goApp.npara1=This.Tdoc
-	goApp.npara2=This.formapago
-	goApp.npara3=This.Serie+This.numero
-	goApp.npara4=This.Fecha
-	goApp.npara5=This.Detalle
-	goApp.npara6=This.valor
-	goApp.npara7=This.igv
-	goApp.npara8=This.Monto
-	goApp.npara9=""
-	goApp.npara10=This.Moneda
-	goApp.npara11=This.ndolar
-	goApp.npara12=fe_gene.igv
-	goApp.npara13='k'
-	goApp.npara14=This.Codigo
-	goApp.npara15=goApp.IDturno
-	goApp.npara16=goApp.nidusua
-	goApp.npara17=This.codt
-	goApp.npara18=This.cta1
-	goApp.npara19=This.cta2
-	goApp.npara20=This.cta3
-	goApp.npara21=This.gratuita
-	goApp.npara22=This.idlectura
-	goApp.npara23=This.exonerado
-	goApp.npara24=This.Tdscto
-	goApp.npara25=This.foperacion
-	TEXT to lp NOSHOW
+	lC = 'FuningresaDocumentoElectronicoy'
+	cur = "Xn"
+	goApp.npara1 = This.Tdoc
+	goApp.npara2 = This.formaPago
+	goApp.npara3 = This.Serie + This.numero
+	goApp.npara4 = This.Fecha
+	goApp.npara5 = This.Detalle
+	goApp.npara6 = This.valor
+	goApp.npara7 = This.igv
+	goApp.npara8 = This.Monto
+	goApp.npara9 = ""
+	goApp.npara10 = This.Moneda
+	goApp.npara11 = This.ndolar
+	goApp.npara12 = fe_gene.igv
+	goApp.npara13 = 'k'
+	goApp.npara14 = This.Codigo
+	goApp.npara15 = goApp.IDturno
+	goApp.npara16 = goApp.nidusua
+	goApp.npara17 = This.codt
+	goApp.npara18 = This.cta1
+	goApp.npara19 = This.cta2
+	goApp.npara20 = This.cta3
+	goApp.npara21 = This.gratuita
+	goApp.npara22 = This.Idlectura
+	goApp.npara23 = This.exonerado
+	goApp.npara24 = This.Tdscto
+	goApp.npara25 = This.foperacion
+	Text To lp Noshow
 	(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	ENDTEXT
-	nid=This.EJECUTARF(lC,lp,cur)
-	If nid<1 Then
-		Return 0
-	ENDIF 
-	Return nid
-	Endfunc
-	Function grabacreditos(nauto)
-	Set Procedure To d:\capass\modelos\ctasxcobrar Additive
-    ocreditos= Createobject("ctasporcobrar")
-	nimpo=this.monto-this.nacta
-	idcredito=ocreditos.IngresaCreditosNormal(NAuto,this.Codigo,this.serie+this.numero,'C','S',"VENTA AL CREDITO",this.Fecha,this.Fechavto ,Left(this.tipodcto ,1),this.serie+this.numero,nimpo,0,this.vendedor,This.monto,goApp.nidusua,this.codt,Id())
-	If idcredito<1 Then
+	Endtext
+	nid = This.EJECUTARf(lC, lp, cur)
+	If nid < 1 Then
 		Return 0
 	Endif
-	If LEFT(This.Formapago,1)='A' Then
-		x=1
-		If ocreditos.consultaranticipos(This.Codigo,'lanti')<1 Then
+	Return nid
+	Endfunc
+	Function grabacreditos(NAuto)
+	Set Procedure To d:\capass\modelos\ctasxcobrar Additive
+	ocreditos = Createobject("ctasporcobrar")
+	nimpo = This.Monto - This.nacta
+	idcredito = ocreditos.IngresaCreditosNormal(NAuto, This.Codigo, This.Serie + This.numero, 'C', 'S', "VENTA AL CREDITO", This.Fecha, This.Fechavto, Left(This.tipodcto, 1), This.Serie + This.numero, nimpo, 0, This.Vendedor, This.Monto, goApp.nidusua, This.codt, Id())
+	If idcredito < 1 Then
+		Return 0
+	Endif
+	If Left(This.formaPago, 1) = 'A' Then
+		x = 1
+		If ocreditos.consultaranticipos(This.Codigo, 'lanti') < 1 Then
 			Return 0
 		Endif
-		If regdvto('lanti')>0 Then
-			nidrc=DevuelveIdCtrlCredito(idcredito)
-			If nidrc<1 Then
+		If REgdvto('lanti') > 0 Then
+			nidrc = DevuelveIdCtrlCredito(idcredito)
+			If nidrc < 1 Then
 				Return 0
 			Endif
 			Select * From lanti Into Cursor lanti Readwrite
 			Select lanti
 			Go Top
 			Scan All
-				If nimpo<=lanti.acta Then
-					nacta=nimpo
+				If nimpo <= lanti.Acta Then
+					nacta = nimpo
 				Else
-					nacta=lanti.acta
+					nacta = lanti.Acta
 				Endif
-				If ocreditos.CancelaCreditosanticipos(this.serie+this.numero,nacta,'P','S','Aplicado con Anticipo '+Alltrim(Str(lanti.acta,12,2)),This.Fecha,This.Fecha,Left(this.tipodcto ,1),idcredito,'',nidrc,Id(),goApp.nidusua,lanti.rcre_idrc)<1
-					x=0
+				If ocreditos.CancelaCreditosanticipos(This.Serie + This.numero, nacta, 'P', 'S', 'Aplicado con Anticipo ' + Alltrim(Str(lanti.Acta, 12, 2)), This.Fecha, This.Fecha, Left(This.tipodcto, 1), idcredito, '', nidrc, Id(), goApp.nidusua, lanti.rcre_idrc) < 1
+					x = 0
 					Exit
 				Endif
-				nid=lanti.idcred
-				TEXT TO lc noshow
+				nid = lanti.idcred
+				Text To lC Noshow
                      UPDATE fe_cred as f SET acta=f.acta-?nacta WHERE idcred=?nid
-				ENDTEXT
-				If this.ejecutarsql(lC)<1 Then
-					x=0
+				Endtext
+				If This.Ejecutarsql(lC) < 1 Then
+					x = 0
 					Exit
 				Endif
-				Update lanti Set acta=acta-nacta  Where idcred=nid
+				Update lanti Set Acta = Acta - nacta  Where idcred = nid
 			Endscan
 		Endif
-		If x=0 Then
+		If x = 0 Then
 			Return 0
-		ENDIF 
+		Endif
 		Return 1
 	Else
 		Return 1
 	Endif
 	Endfunc
+	Function consultardctovta(np2)
+*!*		Do Case
+*!*		Case np2 = '01' Or np2 = '03' Or np2 = '20'
+*!*			cx = ""
+*!*			If  Vartype(np3) = 'C' Then
+*!*				cx = np3
+*!*			Endif
+*!*			If cx = 'S' Then
+*!*				If goApp.vtascondetraccion = 'S' Then
+*!*					SET TEXTMERGE on
+*!*					SET TEXTMERGE TO menvar lc NOSHOW TEXTMERGE 
+*!*				  	select 4 as codv,c.idauto,0 as idart,m.cant,m.prec as prec,c.codt as alma,
+*!*	          		c.tdoc as tdoc1,c.ndoc as dcto,c.fech as fech1,c.vigv,CAST(0 as unsigned) as puntos,
+*!*				    c.fech,c.fecr,c.form,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,
+*!*				    If goApp.Direcciones = 'S' Then
+*!*				        \ifnull(dd.dire_dire,d.dire) as dire,IF(!ISNULL(dd.dire_dire),'',d.ciud) AS ciud,
+*!*				      ELSE
+*!*				         \d.dire,d.ciud,
+*!*				    ENDIF 
+*!*				    d.ndni,c.pimpo,u.nomb as usuario,c.deta,rcom_mdet as detraccion, c.tdoc,c.ndoc,c.dolar as dola,c.mone,m.detv_desc as descri,m.detv_unid as Unid,
+*!*	          		c.rcom_hash,'Oficina' as nomv,c.impo,ifnull(p.fevto,c.fech) as fvto,c.rcom_dsct,c.valor,c.igv,if(detv_item=1,impo,0) as preciolista,rcom_detr,c.fusua
+*!*	          		FROM fe_rcom as c
+*!*	          		inner join fe_clie as d on(d.idclie=c.idcliente)
+*!*				    inner join fe_usua as u on u.idusua=c.idusua
+*!*				    inner join (select detv_item,detv_desc,detv_cant AS cant,detv_prec AS prec,detv_ite1,detv_idau,detv_unid from fe_detallevta where detv_acti='A' and detv_idau=<<np1>>) as m on m.detv_idau=c.idauto
+*!*				    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
+*!*	                where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
+*!*	                If goApp.Direcciones = 'S' Then
+*!*	                  \left join fe_direcciones as dd on dd.dire_iddi=c.alma
+*!*	                ENDIF 
+*!*				 	where c.idauto=<<np1>> order by detv_ite1
+*!*				    SET TEXTMERGE off
+*!*				    SET TEXTMERGE TO 
+*!*				
+*!*					Else
+*!*						Text To lC Noshow Textmerge Pretext 7
+*!*				  	4 as codv,c.idauto,0 as idart,m.cant,m.prec as prec,c.codt as alma,
+*!*	          		c.tdoc as tdoc1,c.ndoc as dcto,c.fech as fech1,c.vigv,CAST(0 as unsigned) as puntos,
+*!*				    c.fech,c.fecr,c.form,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,
+*!*	          		c.pimpo,u.nomb as usuario,c.deta,rcom_mdet as detraccion,
+*!*				    c.tdoc,c.ndoc,c.dolar as dola,c.mone,m.detv_desc as descri,m.detv_unid as Unid,
+*!*	          		c.rcom_hash,'Oficina' as nomv,c.impo,ifnull(p.fevto,c.fech) as fvto,c.rcom_dsct,c.valor,c.igv,if(detv_item=1,impo,0) as preciolista,rcom_detr,c.fusua
+*!*	          		FROM fe_rcom as c
+*!*	          		inner join fe_clie as d on(d.idclie=c.idcliente)
+*!*				    inner join fe_usua as u on u.idusua=c.idusua
+*!*				    inner join (select detv_item,detv_desc,detv_cant AS cant,detv_prec AS prec,detv_ite1,detv_idau,detv_unid from fe_detallevta where detv_acti='A' and detv_idau=<<np1>>) as m on m.detv_idau=c.idauto
+*!*				    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
+*!*	                where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
+*!*				 	where c.idauto=<<np1>> order by detv_ite1
+*!*						Endtext
+*!*					Endif
+*!*				Else
+*!*					If goApp.Direcciones = 'S' Then
+*!*						Text To lC Noshow Textmerge Pretext 7
+*!*				  	4 as codv,c.idauto,0 as idart,CAST(1  as decimal(12,2)) as cant,if(detv_item=1,impo,0) as prec,c.codt as alma,CAST(0 as unsigned) as puntos,
+*!*	          		c.tdoc as tdoc1, c.ndoc as dcto,c.fech as fech1,c.vigv, c.fech,c.fecr,c.form,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,
+*!*	          		ifnull(dd.dire_dire,d.dire) as dire,IF(!ISNULL(dd.dire_dire),'',d.ciud) AS ciud,d.ndni,
+*!*	          		c.pimpo,u.nomb as usuario,c.deta, c.tdoc,c.ndoc,c.dolar as dola,c.mone,m.detv_desc as descri,'' as Unid,CAST(0 as decimal(12,2)) as detraccion,
+*!*	          		c.rcom_hash,'Oficina' as nomv,c.impo,ifnull(p.fevto,c.fech) as fvto,c.rcom_dsct,c.valor,c.igv,if(detv_item=1,impo,0) as preciolista,rcom_detr,c.fusua
+*!*	          		FROM fe_rcom as c
+*!*	          		inner join fe_clie as d on(d.idclie=c.idcliente)
+*!*				    inner join fe_usua as u on u.idusua=c.idusua
+*!*				    inner join (select detv_item,detv_desc,detv_ite1,detv_idau,detv_cant AS cant,detv_prec AS prec from fe_detallevta where detv_acti='A' and detv_idau=<<np1>>) as m on m.detv_idau=c.idauto
+*!*				    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
+*!*	                where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
+*!*	                left join fe_direcciones as dd on dd.dire_iddi=c.alma
+*!*				 	where c.idauto=<<np1>> order by detv_ite1
+*!*						Endtext
+*!*					Else
+*!*						Text To lC Noshow Textmerge Pretext 7
+*!*				  	4 as codv,c.idauto,0 as idart,CAST(1  as decimal(12,2)) as cant,if(detv_item=1,impo,0) as prec,c.codt as alma,
+*!*	          		c.tdoc as tdoc1, c.ndoc as dcto,c.fech as fech1,c.vigv, c.fech,c.fecr,c.form,c.rcom_exon,c.ndo2,c.igv,c.idcliente,
+*!*	          		d.razo,d.nruc,d.dire,d.ciud,d.ndni,c.pimpo,u.nomb as usuario,c.deta,CAST(0 as unsigned) as puntos,
+*!*				    c.tdoc,c.ndoc,c.dolar as dola,c.mone,m.detv_desc as descri,'' as Unid,CAST(0 as decimal(12,2)) as detraccion,
+*!*	          		c.rcom_hash,'Oficina' as nomv,c.impo,ifnull(p.fevto,c.fech) as fvto,c.rcom_dsct,c.valor,c.igv,if(detv_item=1,impo,0) as preciolista,rcom_detr,c.fusua
+*!*	          		FROM fe_rcom as c
+*!*	          		inner join fe_clie as d on(d.idclie=c.idcliente)
+*!*				    inner join fe_usua as u on u.idusua=c.idusua
+*!*				    inner join (select detv_item,detv_desc,detv_ite1,detv_idau,detv_cant AS cant,detv_prec AS prec from fe_detallevta where detv_acti='A' and detv_idau=<<np1>>) as m on m.detv_idau=c.idauto
+*!*				    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
+*!*	                where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
+*!*				 	where c.idauto=<<np1>> order by detv_ite1
+*!*						Endtext
+*!*					Endif
+*!*				Endif
+
+*!*			Else
+*!*				If goApp.Direcciones = 'S' Then
+*!*					Text To lC Noshow Textmerge Pretext 7
+*!*				    a.codv,a.idauto,a.alma,a.idkar,a.idauto,a.idart,a.cant,a.prec,a.alma,c.tdoc as tdoc1,c.ndoc as dcto,c.fech as fech1,c.vigv,a.kar_prel as preciolista,CAST(0 as decimal(12,2)) as detraccion,
+*!*				    c.fech,c.fecr,c.form,c.deta,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,ifnull(dd.dire_dire,d.dire) as dire,IF(!ISNULL(dd.dire_dire),'',d.ciud) AS ciud,d.ndni,c.pimpo,u.nomb as usuario,
+*!*				    c.tdoc,c.ndoc,c.dolar as dola,c.mone,b.descri,b.unid,c.rcom_hash,u.nomb as nomv,c.impo,ifnull(p.fevto,c.fech) as fvto,c.rcom_dsct,c.valor,c.igv,CAST(0 as unsigned) as puntos,rcom_detr,c.fusua
+*!*				    FROM fe_rcom as c
+*!*				    inner join fe_kar As a on a.idauto=c.idauto
+*!*				    inner join fe_clie as d on(c.idcliente=d.idclie)
+*!*				    inner join fe_art As b on(b.idart=a.idart)
+*!*				    inner join fe_usua as u on u.idusua=c.idusua
+*!*				    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
+*!*	                where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
+*!*	                left join fe_direcciones as dd on dd.dire_iddi=c.alma
+*!*				    where c.idauto=<<np1>> and a.acti='A';
+*!*					Endtext
+*!*				Else
+*!*					If goApp.Promopuntos = 'S' Then
+*!*						Text To lC Noshow Textmerge Pretext 7
+*!*				    a.codv,a.idauto,a.alma,a.idkar,a.idauto,a.idart,a.cant,a.prec,a.alma,c.tdoc as tdoc1,CAST(ifnull(dpro_acum,0) as unsigned )as puntos,
+*!*				    c.ndoc as dcto,c.fech as fech1,c.vigv,a.kar_prel as preciolista,CAST(0 as decimal(12,2)) as detraccion,
+*!*				    c.fech,c.fecr,c.form,c.deta,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,c.pimpo,u.nomb as usuario,
+*!*				    c.tdoc,c.ndoc,c.dolar as dola,c.mone,b.descri,b.unid,c.rcom_hash,u.nomb as nomv,c.impo,ifnull(p.fevto,c.fech) as fvto,c.rcom_dsct,c.valor,c.igv,rcom_detr,c.fusua
+*!*				    FROM fe_rcom as c
+*!*				    inner join fe_kar As a on a.idauto=c.idauto
+*!*				    inner join fe_clie as d on(c.idcliente=d.idclie)
+*!*				    inner join fe_art As b on(b.idart=a.idart)
+*!*				    inner join fe_usua as u on u.idusua=c.idusua
+*!*				    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
+*!*	                where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
+*!*	                left join (select dpro_idau,dpro_acum from fe_dpromo where dpro_idau=<<np1>> and dpro_acti='A') as pt on pt.dpro_idau=c.idauto
+*!*				    where c.idauto=<<np1>> and a.acti='A';
+*!*						Endtext
+*!*					Else
+*!*						Text To lC Noshow Textmerge Pretext 7
+*!*				    a.codv,a.idauto,a.alma,a.idkar,a.idauto,a.idart,a.cant,a.prec,a.alma,c.tdoc as tdoc1,
+*!*				    c.ndoc as dcto,c.fech as fech1,c.vigv,a.kar_prel as preciolista,CAST(0 as decimal(12,2)) as detraccion,CAST(0 as unsigned) as puntos,
+*!*				    c.fech,c.fecr,c.form,c.deta,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,c.pimpo,u.nomb as usuario,
+*!*				    c.tdoc,c.ndoc,c.dolar as dola,c.mone,b.descri,b.unid,c.rcom_hash,u.nomb as nomv,c.impo,ifnull(p.fevto,c.fech) as fvto,c.rcom_dsct,c.valor,c.igv,rcom_detr,c.fusua
+*!*				    FROM fe_rcom as c
+*!*				    inner join fe_kar As a on a.idauto=c.idauto
+*!*				    inner join fe_clie as d on(c.idcliente=d.idclie)
+*!*				    inner join fe_art As b on(b.idart=a.idart)
+*!*				    inner join fe_usua as u on u.idusua=c.idusua
+*!*				    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
+*!*	                where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
+*!*				    where c.idauto=<<np1>> and a.acti='A';
+*!*						Endtext
+*!*					Endif
+*!*				Endif
+*!*			Endif
+*!*		Case np2 = '08'
+*!*			Text To lC Noshow Textmerge Pretext 7
+*!*				   r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,abs(r.valor) as valor,r.ndo2,r.rcom_exon,
+*!*			       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,u.nomb as nomv,r.form,CAST(0 as decimal(12,2)) as detraccion,
+*!*			       abs(r.igv) as igv,abs(r.impo) as impo,ifnull(IF(k.cant=0,1,k.cant),CAST(1 as decimal(12,2))) as cant,
+*!*			       ifnull(k.prec,ABS(r.impo)) as prec,LEFT(r.ndoc,4) as serie,SUBSTR(r.ndoc,5) as numero,CAST(0 as unsigned) as puntos,
+*!*			       ifnull(a.unid,'') as unid,ifnull(a.descri,r.deta) as descri,r.deta,ifnull(k.idart,CAST(0 as decimal(8))) as idart,w.ndoc as dcto,
+*!*			       w.fech as fech1,w.tdoc as tdoc1,r.rcom_hash,u.nomb as usuario,r.fech as fvto,r.rcom_dsct,ifnull(k.prec,ABS(r.impo)) as preciolista,r.rcom_detr,r.fusua
+*!*			       from fe_rcom r
+*!*			       inner join fe_clie c on c.idclie=r.idcliente
+*!*			       left join fe_kar k on k.idauto=r.idauto
+*!*			       left join fe_art a on a.idart=k.idart
+*!*			       inner join fe_ncven f on f.ncre_idan=r.idauto
+*!*			       inner join fe_rcom as w on w.idauto=f.ncre_idau
+*!*			       inner join fe_usua as u on u.idusua=r.idusua
+*!*			       where r.idauto=<<np1>> and r.acti='A' and r.tdoc='08'
+*!*			Endtext
+*!*		Case np2 = '07'
+*!*			cx = ""
+*!*			If  Vartype(np3) = 'C' Then
+*!*				cx = np3
+*!*			Endif
+*!*			If cx = 'S' Then
+*!*				Text To lC Noshow Textmerge Pretext 7
+*!*				4 as codv,c.idauto,detv_idvt as idart,ABS(cant) as cant,prec,c.codt as alma,
+*!*				c.fech as fech1,c.vigv,
+*!*				c.fech,c.fecr,c.form,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,
+*!*				c.pimpo,u.nomb as usuario,c.deta,LEFT(c.ndoc,4) as serie,SUBSTR(c.ndoc,5) as numero,
+*!*				c.tdoc,c.ndoc,c.dolar as dola,c.mone,m.detv_desc as descri,'' as Unid,CAST(0 as unsigned) as puntos,
+*!*				c.rcom_hash,'Oficina' as nomv,abs(c.impo) as impo,w.ndoc as dcto,CAST(0 as decimal(12,2)) as detraccion,
+*!*				w.fech as fech1,w.tdoc as tdoc1,c.fech as fvto,c.rcom_dsct,abs(c.valor) as valor,ABS(c.igv) as igv,prec as preciolista,c.rcom_detr,c.fusua
+*!*				FROM fe_rcom as c
+*!*				inner join fe_clie as d on(d.idclie=c.idcliente)
+*!*				inner join fe_usua as u on u.idusua=c.idusua
+*!*			    inner join (select detv_idvt,detv_item,detv_desc,detv_cant AS cant,detv_prec AS prec,detv_ite1,detv_idau,detv_unid from fe_detallevta where detv_acti='A' and detv_idau=<<np1>>) as m on m.detv_idau=c.idauto
+*!*		     	inner join fe_ncven f on f.ncre_idan=c.idauto
+*!*				inner join fe_rcom as w on w.idauto=f.ncre_idau
+*!*				where c.idauto=<<np1>> order by detv_ite1
+*!*				Endtext
+*!*			Else
+*!*				Text To lC Noshow Textmerge Pretext 7
+*!*				   r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,abs(r.valor) as valor,r.ndo2,
+*!*			       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,u.nomb as nomv,r.form,u.nomb as usuario,r.rcom_exon,
+*!*			       abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(0 as decimal(12,2))) as cant,CAST(0 as decimal(12,2)) as detraccion,
+*!*			       ifnull(k.prec,ABS(r.impo)) as prec,LEFT(r.ndoc,4) as serie,SUBSTR(r.ndoc,5) as numero,CAST(0 as unsigned) as puntos,
+*!*			       ifnull(a.unid,'') as unid,ifnull(a.descri,r.deta) as descri,r.deta,ifnull(k.idart,CAST(0 as decimal(8))) as idart,w.ndoc as dcto,
+*!*			       w.fech as fech1,w.tdoc as tdoc1,r.rcom_hash,r.fech as fvto,r.rcom_dsct,ifnull(k.prec,ABS(r.impo)) as preciolista,r.rcom_detr,r.fusua
+*!*			       from fe_rcom r
+*!*			       inner join fe_clie c on c.idclie=r.idcliente
+*!*			       left join fe_kar k on k.idauto=r.idauto
+*!*			       left join fe_art a on a.idart=k.idart
+*!*			       inner join fe_ncven f on f.ncre_idan=r.idauto
+*!*			       inner join fe_rcom as w on w.idauto=f.ncre_idau
+*!*			       inner join fe_usua as u on u.idusua=r.idusua
+*!*			       where r.idauto=<<np1>> and r.acti='A' and r.tdoc='07'
+*!*				Endtext
+*!*			Endif
+*!*		Endcase
+*!*		If EJECutaconsulta(lC, 'kardex') < 1 Then
+*!*			Return
+*!*		Endif
+	Endfunc
 Enddefine
+
 
 
 

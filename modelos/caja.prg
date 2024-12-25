@@ -98,42 +98,41 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	F = cfechas(This.dFecha)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	        \Select Deta,ndoc,
-			\Round(Case Forma When 'E' Then If(tipo='I',Impo,0) Else 0 End,2) As efectivo,
-			\Round(Case Forma When 'C' Then If(tipo='I',Impo,0) Else 0 End,2) As credito,
-			\Round(Case Forma When 'D' Then If(tipo='I',Impo,0) Else 0 End,2) As deposito,
-			\Round(Case Forma When 'H' Then If(tipo='I',Impo,0) Else 0 End,2) As cheque,
-			\Round(Case Forma When 'T' Then If(tipo='I',Impo,0) Else 0 End,2) As tarjeta,
-			\Round(Case Forma When 'A' Then If(tipo='I',Impo,0) Else 0 End,2) As antic,
-			\Round(Case tipo When 'S' Then If(Forma='E',Impo,0) Else 0 End,2) As egresos,
-			\usua,fechao,usuavtas,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,Refe
-			\From(
-			\Select a.lcaj_tdoc As tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I',If(lcaj_acre=0,'I','S')) As tipo,
-			\If(Left(lcaj_dcto,1)='0',Concat(If(lcaj_tdoc='01','F/.',If(lcaj_tdoc='03','B/.','P/.')),lcaj_dcto),lcaj_dcto) As ndoc,
-			\If(lcaj_deud<>0,lcaj_deud,If(lcaj_acre=0,lcaj_deud,lcaj_acre)) As Impo,
-            \lcaj_deta As Deta,lcaj_mone As  mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
-			\c.nomb As usua,a.lcaj_fope As fechao,ifnull(z.nomv,'') As usuavtas,a.lcaj_mone As tmon1,lcaj_dola As dola,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As nimpo,lcaj_ndoc As Refe From
-			\fe_lcaja As a
-			\inner Join fe_usua As c On c.idusua=a.lcaj_idus
-			\Left Join rvendedores As p On p.idauto=a.lcaj_idau
-			\Left Join fe_vend As z On z.idven=p.codv
-			\Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_mone='<<this.cmoneda>>'
+    \Select Deta,ndoc,
+	\Round(Case Forma When 'E' Then If(tipo='I',Impo,0) Else 0 End,2) As efectivo,
+	\Round(Case Forma When 'C' Then If(tipo='I',Impo,0) Else 0 End,2) As credito,
+	\Round(Case Forma When 'D' Then If(tipo='I',Impo,0) Else 0 End,2) As deposito,
+	\Round(Case Forma When 'H' Then If(tipo='I',Impo,0) Else 0 End,2) As cheque,
+	\Round(Case Forma When 'T' Then If(tipo='I',Impo,0) Else 0 End,2) As tarjeta,
+	\Round(Case Forma When 'A' Then If(tipo='I',Impo,0) Else 0 End,2) As antic,
+	\Round(Case tipo When 'S' Then If(Forma='E',Impo,0) Else 0 End,2) As egresos,
+	\usua,fechao,usuavtas,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,Refe
+	\From(
+	\Select a.lcaj_tdoc As tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I',If(lcaj_acre=0,'I','S')) As tipo,
+	\If(Left(lcaj_dcto,1)='0',Concat(If(lcaj_tdoc='01','F/.',If(lcaj_tdoc='03','B/.','P/.')),lcaj_dcto),lcaj_dcto) As ndoc,
+	\If(lcaj_deud<>0,lcaj_deud,If(lcaj_acre=0,lcaj_deud,lcaj_acre)) As Impo,
+    \lcaj_deta As Deta,lcaj_mone As  mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
+	\c.nomb As usua,a.lcaj_fope As fechao,ifnull(z.nomv,'') As usuavtas,a.lcaj_mone As tmon1,lcaj_dola As dola,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As nimpo,lcaj_ndoc As Refe From
+	\fe_lcaja As a
+	\inner Join fe_usua As c On c.idusua=a.lcaj_idus
+	\Left Join rvendedores As p On p.idauto=a.lcaj_idau
+	\Left Join fe_vend As z On z.idven=p.codv
+	\Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_mone='<<this.cmoneda>>'
 	If This.conusuario > 0 Then
 	    \And a.lcaj_idus=<<This.nidusua>>
-
 	Endif
 	If This.ntienda > 0 Then
 		\And a.lcaj_codt =<< This.ntienda >>
 	Endif
-			\Union All
-			\Select a.lcaj_tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I','S') As tipo,a.lcaj_dcto As ndoc,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As Impo,
-            \a.lcaj_deta As Deta,a.lcaj_mone As mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
-			\c.nomb As usua,a.lcaj_fope As fechao,ifnull(z.nomv,'') As usuavtas,a.lcaj_mone As tmon1,a.lcaj_dola As dola,a.lcaj_deud As nimpo,lcaj_ndoc As Refe From
-			\fe_lcaja As a
-			\inner Join fe_usua As c On c.idusua=a.lcaj_idus
-			\Left Join rvendedores As p On p.idauto=a.lcaj_idau
-			\Left Join fe_vend As z On z.idven=p.codv
-			\Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau=0  And lcaj_mone='<<this.cmoneda>>'
+	\Union All
+	\Select a.lcaj_tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I','S') As tipo,a.lcaj_dcto As ndoc,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As Impo,
+    \a.lcaj_deta As Deta,a.lcaj_mone As mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
+	\c.nomb As usua,a.lcaj_fope As fechao,ifnull(z.nomv,'') As usuavtas,a.lcaj_mone As tmon1,a.lcaj_dola As dola,a.lcaj_deud As nimpo,lcaj_ndoc As Refe From
+	\fe_lcaja As a
+	\inner Join fe_usua As c On c.idusua=a.lcaj_idus
+	\Left Join rvendedores As p On p.idauto=a.lcaj_idau
+	\Left Join fe_vend As z On z.idven=p.codv
+	\Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau=0  And lcaj_mone='<<this.cmoneda>>'
 	If This.conusuario > 0 Then
 		\And a.lcaj_idus=<<This.nidusua>>
 	Endif

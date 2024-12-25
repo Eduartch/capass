@@ -1,11 +1,11 @@
-Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
+Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	estado = ""
 	cdcto = ""
-	ctipo = ""
+	Ctipo = ""
 	cdeta = ""
 	dFech = Date()
 	dfevto = Date()
-	nreg = 0
+	Nreg = 0
 	Idcaja = 0
 	nimpo = 0
 	nacta = 0
@@ -36,7 +36,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Select (Calias)
 	Go Top
 	Scan All
-		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', dFecha, tmpd.fevto, tmpd.Tipo, ndolar, tmpd.Impo,  goApp.nidusua, Id(), goApp.Tienda, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
+		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', dFecha, tmpd.Fevto, tmpd.Tipo, ndolar, tmpd.Impo,  goApp.nidusua, Id(), goApp.Tienda, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
 			Sw = 0
 			This.Cmensaje = 'Al Registrar Detalle'
 			Exit
@@ -64,7 +64,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Select (This.Calias)
 	Go Top
 	Scan All
-		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', This.dFech, tmpd.fevto, tmpd.Tipo, This.ndolar, tmpd.Impo, goApp.nidusua, Id(), This.codt, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
+		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', This.dFech, tmpd.Fevto, tmpd.Tipo, This.ndolar, tmpd.Impo, goApp.nidusua, Id(), This.codt, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
 			Sw = 0
 			This.Cmensaje = 'Al Registrar Detalle de Cuentas por Pagar'
 			Exit
@@ -90,7 +90,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Select (Calias)
 	Go Top
 	Scan All
-		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', dFecha, tmpd.fevto, tmpd.Tipo, ndolar, tmpd.Impo, ;
+		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', dFecha, tmpd.Fevto, tmpd.Tipo, ndolar, tmpd.Impo, ;
 				  goApp.nidusua, Id(), goApp.Tienda, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
 			Sw = 0
 			Exit
@@ -124,7 +124,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 		goApp.AddProperty("cdatos", "")
 	Endif
 	Set Textmerge On
-	Set Textmerge To Memvar lc Noshow Textmerge
+	Set Textmerge To Memvar lC Noshow Textmerge
 	    \  Select a.idpr As idprov,a.Ndoc,a.saldo As importe,a.moneda As mone,a.banc,a.fech,a.fevto,a.Tipo,
 	    \   a.dola,a.docd,a.nrou,a.banco,a.iddeu,a.idauto,a.ncontrol From vpdtespago As a  Where idpr=<<nid>>
 	If goApp.Cdatos = 'S' Then
@@ -133,9 +133,9 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	    \Order By a.fevto,a.Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1  Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1  Then
 		Return 0
-	ENDIF 
+	Endif
 	Return 1
 	Endfunc
 ********************
@@ -155,7 +155,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	     ON a.ncontrol=b.ncontrol) AS w INNER JOIN fe_rdeu AS r ON r.`rdeu_idrd`=w.deud_idrd INNER JOIN fe_prov
 	    as p ON p.idprov=r.rdeu_idpr left join fe_plan as cta on cta.idcta=r.rdeu_idct
 	Endtext
-	If  This.EjecutaConsulta(lC, Calias) < 1 Then
+	If  This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -182,7 +182,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	    \ Order By a.ncontrol,a.fech,c.Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If  This.EjecutaConsulta(lC, Calias) < 1 Then
+	If  This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -199,13 +199,13 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	\ Order By fevto
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function obtenersaldosTproveedoresx(Df, Ccursor)
-	F = cfechas(Df)
+	F = Cfechas(Df)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 		\Select p.rdeu_idpr As codp,b.razo As proveedor,b.nruc,p.rdeu_idct As idcta,p.rdeu_mone As mone,tsoles,tdolar,
@@ -228,7 +228,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 		\Left Join fe_rcom As T On T.idauto=p.rdeu_idau Left Join fe_plan As q On q.idcta=p.rdeu_idct
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -244,7 +244,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function MuestraSaldosDctos(Ccursor)
-	F = cfechas(This.dFecha)
+	F = Cfechas(This.dFecha)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
@@ -271,7 +271,7 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 			\Order By a.fevto
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1  Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1  Then
 		Return 0
 	Endif
 	Return 1
@@ -282,8 +282,8 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Else
 		nacta = This.nimpo
 	Endif
-	Df = cfechas(This.dFech)
-	dfv = cfechas(This.dfevto)
+	Df = Cfechas(This.dFech)
+	dfv = Cfechas(This.dfevto)
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -317,12 +317,12 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 		If This.IniciaTransaccion() < 1 Then
 			Return 0
 		Endif
-		If This.DesactivaDDeudas(This.nreg) < 1 Then
+		If This.DesactivaDDeudas(This.Nreg) < 1 Then
 			This.DEshacerCambios()
 			Return 0
 		Else
 			If This.Idcaja > 0 Then
-				If  ocaja.DesactivaCajaEfectivoDe(This.nreg) < 1 Then
+				If  ocaja.DesactivaCajaEfectivoDe(This.Nreg) < 1 Then
 					This.Cmensaje = ocaja.Cmensaje
 					This.DEshacerCambios()
 					Return 0
@@ -360,8 +360,8 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function editaregistro1()
-	Df = cfechas(This.dFech)
-	dfv = cfechas(This.dfevto)
+	Df = Cfechas(This.dFech)
+	dfv = Cfechas(This.dfevto)
 	Text To lC Noshow Textmerge Pretext 7
          UPDATE fe_deu SET nrou='<<this.cnrou>>',banc='<<this.cdeta>>',fevto='<<dfv>>',fech='<<df>>' WHERE iddeu=<<this.nreg>>
 	Endtext
@@ -371,10 +371,10 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listardetalle(Ccursor)
-	Df = cfechas(This.dFech)
+	Df = Cfechas(This.dFech)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\   Select razo,ndoc,fech,tsoles,tdolar,mone,idprov From (
+	\   Select razo,Ndoc,fech,tsoles,tdolar,mone,idprov From (
 	\	Select p.rdeu_idpr As idprov,b.razo,p.rdeu_mone As mone,ifnull(T.Ndoc,'') As Ndoc,ifnull(T.fech,p.rdeu_fech) As fech,
 	\	If(p.rdeu_mone='S',Sum(a.Impo-a.acta),0) As tsoles,
 	\	If(p.rdeu_mone='D',Sum(a.Impo-a.acta),0) As tdolar
@@ -390,12 +390,33 @@ Define Class ctasporpagar As Odata Of 'd:\capass\database\data.prg'
 	\	As T Where T.tsoles<>0 Or T.tdolar<>0 Order By razo
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listarparacancelar(Ccursor)
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select a.Ndoc,a.fech,a.fevto,a.saldo,a.moneda,a.Importec,tdoc,a.idpr,
+	\situa,idauto,ncontrol,Tipo,banco,docd,tdoc,codt,dola,idrd,x.razo,rdeu_idct,nrou From vpdtespago As a
+	\INNER Join fe_prov As x On x.idprov=a.idpr
+	If goApp.cdatos = 'S' Then
+	  \Where a.codt=<<goApp.Tienda>>
+	Endif
+	\Order By fevto
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

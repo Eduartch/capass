@@ -633,6 +633,9 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Function registrocompras(Ccursor)
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
+	ENDIF
+		If !Pemstatus(goApp, 'tiendas', 5) Then
+		AddProperty(goApp, 'tiendas', '')
 	Endif
 	f1 = Cfechas(This.fechai)
 	f2 = Cfechas(This.fechaf)
@@ -648,7 +651,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	\			If(Tdoc='07',a.Ndoc,If(Tdoc='08',a.Ndoc,' ')) As Refe,
 	\			ndni,Cast('0' As unsigned) As T,
 	\			ifnull(rcom_detr,'')  As detra,rcom_fecd As fechad,
-	\			vigv,tipom As Tipo,fech As fevto,a.rcom_icbper As icbper,'M002' As cuo From fe_rcom As a INNER Join
+	\			vigv,tipom As Tipo,fech As fevto,a.rcom_icbper As icbper,'M002' As cuo,ifnull(p.ncta,'') as ncta From fe_rcom As a INNER Join
 	\			(Select a.idauto,
 	\			Sum(Case c.Nitem When 1 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As v1,
 	\			Sum(Case c.Nitem When 2 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As v2,
@@ -657,22 +660,35 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	\   		Sum(Case c.Nitem When 5 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As igv,
 	\			Sum(Case c.Nitem When 6 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As Exon,
 	\			Sum(Case c.Nitem When 7 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As otros,
-	\			Sum(Case c.Nitem When 8 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As Impo
-	\			From fe_rcom As a
-	\			INNER Join fe_ectasc As c On(c.idrcon=a.idauto)
-	\			Where  fecr Between '<<f1>>' And '<<f2>>'  And Tdoc Not In ('09','II','GI')  And Acti='A' And ecta_acti='A'
+	\			Sum(Case c.Nitem When 8 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As Impo,
+	\        CASE WHEN c.impo<>0 THEN
+	\	idcta
+	\	WHEN SUM(CASE c.Nitem WHEN 7 THEN IF(a.Mone='S',c.Impo,ROUND(c.Impo*a.dolar,2)) ELSE 0 END)>0   THEN
+	\	SUM(CASE c.Nitem WHEN 7 THEN c.`idcta` END)
+	\	ELSE 
+	\	SUM(CASE c.Nitem WHEN 6 THEN c.`idcta` END)
+	\	END AS ctav
+	\	From fe_rcom As a
+	\	INNER Join fe_ectasc As c On(c.idrcon=a.idauto)
+	\	where  fecr Between '<<f1>>' And '<<f2>>'  And Tdoc Not In ('09','II','GI')  And Acti='A' And ecta_acti='A'
 	If goApp.Cdatos = 'S' Then
-	   \ And a.codt=<<goApp.Tienda>>
+	 	If Empty(goApp.tiendas) Then
+	      \And a.codt=<<goApp.tienda>>
+		Else
+	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
 	Endif
 	If Len(Alltrim(This.Ctipo)) > 0 Then
-	\ And a.tipom='<<this.ctipo>>'
+	   \ And a.tipom='<<this.ctipo>>'
 	Endif
 	If Len(Alltrim(This.cTdoc)) > 0 Then
-	\And Tdoc='<<this.ctdoc>>'
+	  \ And Tdoc='<<this.ctdoc>>'
 	Endif
 	\Group By idauto)
 	\As c  On(c.idauto=a.idauto)
-	\Join fe_prov  As b On(b.idprov=a.idprov) Order By fech,Serie,Ndoc
+	\Join fe_prov  As b On(b.idprov=a.idprov)
+	\left join fe_plan as p on p.idcta=c.ctav
+	\ Order By fech,Serie,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, 'registro1') < 1 Then
@@ -691,7 +707,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Create Cursor registro(Auto N(15), Form c(1) Null, fecr d Null, fech d Null, Tdoc c(2) Null, Serie c(4), Ndoc c(10), nruc c(11)Null, Razo c(120)Null, valorg N(14, 2), Exon N(12, 2), ;
-		  igvg N(10, 2), otros N(12, 2), Importe N(14, 2), pimpo N(8, 2), Deta c(80), dola N(5, 3), detra c(24), fechad d, Mone c(1), Codigo N(5), fechn d, tref c(2), Refe c(12), fevto d, ;
+		  igvg N(10, 2), otros N(12, 2), Importe N(14, 2), pimpo N(8, 2), Deta c(80), dola N(5, 3), detra c(24), fechad d, fechn d, tref c(2), Refe c(12), ncta c(10), Mone c(1), Codigo N(5), fevto d, ;
 		  ndni c(8), T N(1), Tipo c(1), icbper N(8, 2), vigv N(5, 3))
 	x = 1
 	notas = 0
@@ -711,12 +727,12 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 			nfech = Xn.fech
 		Endif
 		Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, valorg, Exon, igvg, otros, Importe, pimpo, Deta,  dola, Mone, detra, Codigo, ;
-			  Auto,  tref, Refe,  Tipo, icbper, fechn, fechad, T, vigv);
+			  Auto,  tref, Refe,  Tipo, icbper, fechn, fechad, T, vigv,ncta);
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
 			  registro1.nruc, registro1.Razo, registro1.valorg, registro1.Exon, registro1.igvg, registro1.otros, registro1.Importe, registro1.pimpo, registro1.Deta, ;
 			  registro1.dola,  registro1.Mone, registro1.detra,  ;
 			  registro1.Codigo, registro1.Auto,  ntdoc, nndoc, registro1.Tipo, registro1.icbper, registro1.fechn, ;
-			  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv)
+			  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv,registro1.ncta)
 
 		If notas = 1 Then
 			Y = 1
