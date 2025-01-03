@@ -1094,7 +1094,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
     \If(a.prod_uti3>0,(a.prod_uti3*100)-100,Cast(0 As Decimal(10,6))) As uti3,
     \IFNULL(Round(If(tmon='S',Round(a.Prec*b.igv+c.Prec,2)*prod_uti3,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti3),2),0) As pre3,
     \If(a.prod_uti0>0,(a.prod_uti0*100)-100,Cast(0 As Decimal(10,6))) As uti0,
-    \If(a.prod_acti>0,Round(If(tmon='S',Round(a.Prec*b.igv+c.Prec,2)*prod_uti0,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti0),2),0) As pre0,
+    \If(a.prod_uti0>0,Round(If(tmon='S',Round(a.Prec*b.igv+c.Prec,2)*prod_uti0,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti0),2),0) As pre0,
     \ulfc,a.idmar,a.idcat,'N' As Modi,idart,prod_ocan,prod_cmay
     \From fe_art  As a
     \INNER Join fe_fletes As c On c.idflete=a.idflete

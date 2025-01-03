@@ -188,6 +188,9 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function obtenersaldosTproveedores(Ccursor)
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\     Select a.Ndoc,a.fech,a.fevto,a.saldo,a.Importec,x.razo,
@@ -196,6 +199,9 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	\     INNER Join fe_prov As x On x.idprov=a.idpr
 	\     INNER Join fe_rdeu As r On r.rdeu_idrd=a.idrd
 	\     Left Join fe_usua As u On u.idusua=r.rdeu_idus
+	If goApp.cdatos = 'S' Then
+	  \Where a.codt=<<goApp.Tienda>>
+	Endif
 	\ Order By fevto
 	Set Textmerge Off
 	Set Textmerge To
@@ -216,7 +222,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 		\From fe_deu As a INNER Join fe_rdeu As p On p.rdeu_idrd=a.deud_idrd
 		\Where a.Acti<>'I' And p.rdeu_acti='A' And a.fech<='<<f>>'
 	If  This.codt > 0 Then
-			\ And p.rdeu_codt=<<ltdas.idalma>>
+	   \ And p.rdeu_codt=<<ltdas.idalma>>
 	Endif
 	If This.cmodo = 'C' Then
 	\  And rdeu_idct>0

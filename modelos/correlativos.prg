@@ -351,7 +351,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	\INNER Join fe_rcom As a  On(a.idauto=b.lcaj_idau)
 	\Where a.Acti<>'I' And b.lcaj_fech<'<<dfecha>>' And b.lcaj_acti='A' And idcliente>0
 	If goApp.Cdatos = 'S' Then
-	  \ And a.codt=<<goApp.nidtda>>
+	  \ And a.codt=<<goApp.tienda>>
 	Endif
 	\ Group By a.tdoc
 	Set Textmerge Off

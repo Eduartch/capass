@@ -580,36 +580,44 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Function IngresaDocumentoElectronicoy()
 	lC = 'FuningresaDocumentoElectronicoy'
 	cur = "Xn"
-	goApp.npara1 = This.Tdoc
-	goApp.npara2 = This.formaPago
-	goApp.npara3 = This.Serie + This.numero
-	goApp.npara4 = This.Fecha
-	goApp.npara5 = This.Detalle
-	goApp.npara6 = This.valor
-	goApp.npara7 = This.igv
-	goApp.npara8 = This.Monto
-	goApp.npara9 = ""
-	goApp.npara10 = This.Moneda
-	goApp.npara11 = This.ndolar
-	goApp.npara12 = fe_gene.igv
-	goApp.npara13 = 'k'
-	goApp.npara14 = This.Codigo
-	goApp.npara15 = goApp.IDturno
-	goApp.npara16 = goApp.nidusua
-	goApp.npara17 = This.codt
-	goApp.npara18 = This.cta1
-	goApp.npara19 = This.cta2
-	goApp.npara20 = This.cta3
-	goApp.npara21 = This.gratuita
-	goApp.npara22 = This.Idlectura
-	goApp.npara23 = This.exonerado
-	goApp.npara24 = This.Tdscto
-	goApp.npara25 = This.foperacion
-	Text To lp Noshow
-	(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-	?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
-	?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	Endtext
+	wait WINDOW cfechastime(This.foperacion)
+	TEXT TO lp NOSHOW TEXTMERGE 
+	('<<This.Tdoc>>','<<LEFT(This.formaPago,1)>>','<<This.Serie + This.numero>>','<<cfechas(This.Fecha)>>',
+	'<<This.Detalle>>',<<This.valor>>,<<This.igv>>,<<This.Monto>>,'','<<This.Moneda>>',
+	<<This.ndolar>>,<<fe_gene.igv>>,'k',<<This.Codigo>>,<<goApp.IDturno>>,<<goApp.nidusua>>,
+	<<This.codt>>,<<This.cta1>>,<<This.cta2>>,<<This.cta3>>,<<This.gratuita>>,<<This.Idlectura>>,
+	<<This.exonerado>>,<<This.Tdscto>>,'<<cfechastime(This.foperacion)>>')
+	ENDTEXT 
+*!*		goApp.npara1 = 
+*!*		goApp.npara2 = 
+*!*		goApp.npara3 = 
+*!*		goApp.npara4 = 
+*!*		goApp.npara5 = 
+*!*		goApp.npara6 = 
+*!*		goApp.npara7 = 
+*!*		goApp.npara8 =
+*!*		goApp.npara9 = ""
+*!*		goApp.npara10 = 
+*!*		goApp.npara11 = 
+*!*		goApp.npara12 = 
+*!*		goApp.npara13 = 'k'
+*!*		goApp.npara14 = 
+*!*		goApp.npara15 =
+*!*		goApp.npara16 = 
+*!*		goApp.npara17 = 
+*!*		goApp.npara18 = 
+*!*		goApp.npara19 = 
+*!*		goApp.npara20 = 
+*!*		goApp.npara21 = 
+*!*		goApp.npara22 = 
+*!*		goApp.npara23 = 
+*!*		goApp.npara24 = 
+*!*		goApp.npara25 = 
+*!*		Text To lp Noshow
+*!*		(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+*!*		?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
+*!*		?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
+*!*		Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0

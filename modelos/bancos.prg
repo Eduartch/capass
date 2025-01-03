@@ -1,4 +1,4 @@
-Define Class bancos As Odata Of  'd:\capass\database\data.prg'
+Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	idcta = 0
 	dFecha = Date()
 	cope = ""
@@ -14,8 +14,8 @@ Define Class bancos As Odata Of  'd:\capass\database\data.prg'
 	Function ReporteBancos(dfi, dff, ccta, Calias)
 	Local lC
 *:Global f1, f2
-	f1 = cfechas(dfi)
-	f2 = cfechas(dff)
+	f1 = Cfechas(dfi)
+	f2 = Cfechas(dff)
 	Local lC
 	Text To lC Noshow Textmerge
 	   SELECT a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,if(a.cban_debe>0,ifnull(m.razo,''),ifnull(n.razo,'')) as razon,
@@ -28,25 +28,23 @@ Define Class bancos As Odata Of  'd:\capass\database\data.prg'
 	   inner join fe_plan as c on c.idcta=a.cban_idct
 	   where a.cban_acti='A' AND a.cban_fech between '<<f1>>' and '<<f2>>'  and a.cban_idba=<<cta>> order by a.cban_fech,tipo,a.cban_ndoc
 	Endtext
-	If This.EjecutaConsulta(lC, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-
-	Function Saldoinicialbancos(df, cta)
-	F = cfechas(df)
+	Function Saldoinicialbancos(Df, cta)
+	F = Cfechas(Df)
 	Text To lC Noshow Textmerge Pretext 7
        SELECT CAST(ifnull(SUM(a.cban_debe)-SUM(a.cban_haber),0) AS DECIMAL(12,2)) AS si
 	   FROM fe_cbancos AS a
 	   WHERE a.cban_acti='A' AND a.cban_fech<='<<F>>'  AND a.cban_idba=<<cta>> AND a.cban_idct>0
 	Endtext
-	If This.EjecutaConsulta(lC, 'iniciobancos') < 1 Then
+	If This.EJECutaconsulta(lC, 'iniciobancos') < 1 Then
 		Return 0
 	Endif
 	Return iniciobancos.si
 	Endfunc
-**************************
 	Function MuestraLCaja(np1, Ccursor)
 	lC = 'PROMUESTRALCAJA'
 	goApp.npara1 = np1
@@ -59,12 +57,32 @@ Define Class bancos As Odata Of  'd:\capass\database\data.prg'
 		Return 1
 	Endif
 	Endfunc
-*******************************
 	Function MuestraCtasBancos(Ccursor)
-	lC = 'PROmuestraCtasBancos'
-	If This.EJECUTARP(lC, "", Ccursor) < 1 Then
-		Return 0
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
 	Endif
+	If !Pemstatus(goApp, 'tiendas', 5) Then
+		AddProperty(goApp, 'tiendas', '')
+	Endif
+	Set Textmerge On
+	Set Textmerge To memvar lC Noshow Textmerge
+    \Select a.ctas_ctas,b.banc_nomb,a.ctas_mone,a.ctas_deta,a.ctas_idct,a.ctas_idba,a.ctas_ncta,ctas_seri
+    \From fe_ctasb As a
+    \inner Join fe_bancos As b On b.banc_idba=a.ctas_idba
+    \Where a.ctas_acti='A'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And a.ctas_codt=<<goApp.tienda>>
+		Else
+	      \And a.ctas_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+    \Order By a.ctas_ctas
+	Set Textmerge Off
+	Set Textmerge To
+	IF this.ejecutaconsulta(lc,Ccursor)<1 then
+	   RETURN 0
+	ENDIF    
 	Return 1
 	Endfunc
 ***************************************
@@ -135,10 +153,10 @@ Define Class bancos As Odata Of  'd:\capass\database\data.prg'
 	left join (select sum(acta) as acta,cred_idcb from fe_cred where acti='A' and acta>0 and cred_idcb>0 group by cred_idcb )as x on
 	x.cred_idcb=d.cban_idco where cban_acti='A'  and cban_tipo='P' and cban_idcl=<<this.idclpr>>;
 	Endtext
-	If This.EjecutaConsulta(lC, Calias) < 1
+	If This.EJECutaconsulta(lC, Calias) < 1
 		Return 0
 	Endif
-	Select banco, numerocta, cban_fech, cban_nume, Impo, acta, 000000.00 As apagar, cban_idcl, cban_idco, Impo - acta As saldo, cban_ndoc;
+	Select banco, numerocta, cban_fech, cban_nume, Impo, Acta, 000000.00 As Apagar, cban_idcl, cban_idco, Impo - Acta As saldo, cban_ndoc;
 		From (Calias) Into Cursor (Ccursor)  Readwrite
 	Return 1
 	Endfunc
@@ -170,6 +188,7 @@ Define Class bancos As Odata Of  'd:\capass\database\data.prg'
 	Return nid
 	Endfunc
 Enddefine
+
 
 
 

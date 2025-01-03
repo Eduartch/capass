@@ -1037,7 +1037,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	   \ And Left(a.Ndoc,4)='<<this.serie>>'
 	Endif
 	If Len(Alltrim(This.Tdoc)) > 0 Then
-    	\  And  a.Tdoc='<<this.tdoc>>'
+    	\ And  a.Tdoc='<<this.tdoc>>'
 	Endif
 	If This.Serie <> '' Then
 	   \ And Left(a.Ndoc,4)='<<this.serie>>'
@@ -1045,7 +1045,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	  \ Order By Serie,fech,Ndoc
 	Set Textmerge To
 	Set Textmerge Off
-	STRTOFILE(lc,ADDBS(SYS(5)+SYS(2003))+'consulta.txt')
+*!*		STRTOFILE(lc,ADDBS(SYS(5)+SYS(2003))+'consulta.txt')
 	If This.EJECutaconsulta(lC, 'registro1') < 1 Then
 		Return 0
 	Endif
@@ -2637,7 +2637,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	\  `b`.`Unid`        As `Unid`, `b`.`pre1`        As `pre1`, `b`.`peso`        As `peso`, `b`.`pre2`        As `pre2`,
 	\  `c`.`vigv`        As `vigv`, `a`.`dsnc`        As `dsnc`, `a`.`dsnd`        As `dsnd`, `a`.`gast`        As `gast`,
 	\  `c`.`idcliente`   As `idcliente`, `c`.`codt`        As `codt`, `b`.`pre3`        As `pre3`, `b`.`cost`        As `costo`,
-	\  `b`.`uno`         As `uno`, `b`.`Dos`         As `Dos`, (`b`.`uno` + `b`.`Dos`) As `TAlma`, `c`.`FUsua`       As `FUsua`,
+	\  `b`.`uno`         As `uno`, `b`.`Dos`         As `Dos`, (`b`.`uno` + `b`.`Dos`) As `TAlma`, `c`.`FUsua`       As `FUsua`,rcom_otro,
 	\  `p`.`nomv`        As `Vendedor`, `q`.`nomb`        As `Usuario`, `c`.`rcom_idtr`   As `rcom_idtr`, `c`.`rcom_tipo`   As `rcom_tipo`
 	If goApp.Clienteconproyectos = 'S' Then
 	\ , `c`.`alma`        As `codproyecto`

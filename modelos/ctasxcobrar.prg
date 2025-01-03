@@ -176,6 +176,9 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listactasxcobrar(Df, Ccursor)
+	If !Pemstatus(goApp, 'cdatos', 5)
+		AddProperty(goApp, 'cdatos', '')
+	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\		Select c.nruc,c.razo As proveedor,c.idclie As codp,a.mone,If(a.mone='S',saldo,0) As tsoles,If(a.mone='D',saldo,0) As tdolar,
@@ -510,8 +513,8 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 	ENDIF
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\Select e.ndoc,e.fech,xx.fevto,xx.saldo,
-	\b.rcre_impc,'C' As situa,b.rcre_idau,xx.Ncontrol,e.tipo,rcre_idav,e.banco,ifnull(c.ndoc,'0') As docd,ifnull(c.tdoc,'0' ) As tdoc,e.nrou,
+	\Select ifnull(c.ndoc,e.ndoc) As ndoc,e.fech,xx.fevto,xx.saldo,
+	\b.rcre_impc,'C' As situa,b.rcre_idau,xx.Ncontrol,e.tipo,rcre_idav,e.banco,ifnull(c.ndoc,' ') As docd,ifnull(c.tdoc,' ' ) As tdoc,e.nrou,
 	\e.mone,0 As dscto,rcre_codt As codt,xxx.razo,b.rcre_impc As importec,b.rcre_idau As Idauto,e.mone As moneda,b.rcre_idrc As idrc,xxx.idclie,
 	\ d.idven,d.nomv,xx.rcre_idrc,
 	If goApp.Clienteconproyectos = 'S' Then

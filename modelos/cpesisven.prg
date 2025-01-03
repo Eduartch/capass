@@ -1312,7 +1312,11 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\Join fe_clie As b On (a.idcliente=b.idclie)
 	\Where  a.Acti<>'I' And Left(ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'   And a.Tdoc='01'  And  (Impo<>0 Or rcom_otro>0)
 	If goApp.Cdatos = 'S' Then
-	   \And  a.codt=<<This.codt>>
+		If Empty(goApp.Tiendas) Then
+	      \And a.codt=<<goapp.Tienda>>
+		Else
+	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
 	Endif
 	If This.confechas = 1 Then
 		\ And  a.fech Between '<<f1>>' And '<<f2>>'
@@ -1330,7 +1334,11 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 	\Where a.Acti<>'I' And Left(a.ndoc,1) In ('F') And Left(a.rcom_mens,1)<>'0'  And w.Tdoc='01' And a.Tdoc In("07","08") And nruc<>'***********'
 	If goApp.Cdatos = 'S' Then
-	  \ And  a.codt=<<This.codt>>
+	  If Empty(goApp.Tiendas) Then
+	      \And a.codt=<<goapp.Tienda>>
+		Else
+	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
 	Endif
 	If This.confechas = 1 Then
 		\ And  a.fech Between '<<f1>>' And '<<f2>>'

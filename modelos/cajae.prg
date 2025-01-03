@@ -48,21 +48,36 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function ReporteCajaEfectivo10(dfi, dff, Calias)
-	Local lC
 	fi = Cfechas(dfi)
 	ff = Cfechas(dff)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
-	    Select a.lcaj_ndoc,a.lcaj_fech,a.lcaj_deta,
-	    c.ncta,c.nomb,If(lcaj_mone='S',a.lcaj_deud,Round(a.lcaj_deud*a.lcaj_dola,2)) As debe,
-	    If(a.lcaj_mone='S',a.lcaj_acre,Round(a.lcaj_acre*a.lcaj_dola,2)) As haber,
-	    a.lcaj_idct As idcta,lcaj_tran,If(lcaj_deud>0,'I','S') As tipomvto,lcaj_idca,lcaj_dcto
-		From fe_lcaja As a
-		inner Join fe_plan As c On c.idcta=a.lcaj_idct
-		Where a.lcaj_acti='A' And a.lcaj_fech Between '<<fi>>' And '<<ff>>'  And lcaj_form='E' Order By a.lcaj_fech
-	Endtext
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	If !Pemstatus(goApp, 'tiendas', 5) Then
+		AddProperty(goApp, 'tiendas', '')
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\    Select a.lcaj_ndoc,a.lcaj_fech,a.lcaj_deta,
+	\    c.ncta,c.nomb,If(lcaj_mone='S',a.lcaj_deud,Round(a.lcaj_deud*a.lcaj_dola,2)) As debe,
+	\    If(a.lcaj_mone='S',a.lcaj_acre,Round(a.lcaj_acre*a.lcaj_dola,2)) As haber,
+	\    a.lcaj_idct As idcta,lcaj_tran,If(lcaj_deud>0,'I','S') As tipomvto,lcaj_idca,lcaj_dcto
+    \	 From fe_lcaja As a
+	\	inner Join fe_plan As c On c.idcta=a.lcaj_idct
+	\	Where a.lcaj_acti='A' And a.lcaj_fech Between '<<fi>>' And '<<ff>>'  And lcaj_form='E'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And a.lcaj_codt=<<goapp.tienda>>
+		Else
+	      \And a.lcaj_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+	\Order By a.lcaj_fech
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, (Calias)) < 1 Then
 		Return 0
 	Endif
@@ -70,12 +85,27 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Endfunc
 	Function Saldoinicialcajaefectivo10(Df)
 	F = Cfechas(Df)
-	Text To lC Noshow Textmerge Pretext 7
-     SELECT
-     CAST((SUM(IF(lcaj_mone='S',a.lcaj_deud,ROUND(a.lcaj_deud*a.lcaj_dola,2)))-SUM(IF(a.lcaj_mone='S',a.lcaj_acre,ROUND(a.lcaj_acre*a.lcaj_dola,2)))) as decimal(12,2)) AS si
-	 FROM fe_lcaja AS a
-	 WHERE a.lcaj_acti='A' AND a.lcaj_fech<'<<f>>'  AND lcaj_idct>0 AND lcaj_form='E'
-	Endtext
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	If !Pemstatus(goApp, 'tiendas', 5) Then
+		AddProperty(goApp, 'tiendas', '')
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+    \ Select
+    \ Cast((Sum(If(lcaj_mone='S',a.lcaj_deud,Round(a.lcaj_deud*a.lcaj_dola,2)))-Sum(If(a.lcaj_mone='S',a.lcaj_acre,Round(a.lcaj_acre*a.lcaj_dola,2)))) As Decimal(12,2)) As si
+	\ From fe_lcaja As a
+	\ Where a.lcaj_acti='A' And a.lcaj_fech<'<<f>>'  And lcaj_idct>0 And lcaj_form='E'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And a.lcaj_codt=<<goapp.tienda>>
+		Else
+	      \And a.lcaj_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, 'iniciocaja') < 1 Then
 		Return 0
 	Endif
@@ -352,14 +382,20 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	f11 = Cfechas(This.dffi)
+*!*		If goApp.Cdatos = 'S' Then
+*!*		\And lcaj_codt=<<This.codt>>
+*!*		Endif
+*!*		If goApp.Cdatos = 'S' Then
+*!*		\And lcaj_codt=<<this.codt>>
+*!*		Endif
 	f12 = Cfechas(This.dfff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select  Sum(If(a.lcaj_deud<>0,lcaj_deud,0)) As ingresoss,Sum(If(a.lcaj_acre<>0,lcaj_acre,0)) As egresoss
-	\From fe_lcaja  As a Where  a.lcaj_fech Between '<<f1>>' And '<<f2>>' And a.lcaj_acti='A' And a.lcaj_form='E' And lcaj_idus=<<This.nidusua>>
-	If goApp.Cdatos = 'S' Then
-	\And lcaj_codt=<<This.codt>>
-	Endif
+	\From fe_lcaja  As a Where  a.lcaj_fech Between '<<f1>>' And '<<f2>>' And a.lcaj_acti='A' And a.lcaj_form='E' 
+	IF this.nidusua>0 then
+	 \ And lcaj_idus=<<This.nidusua>>
+	ENDIF 
 	\Group By lcaj_idus
 	Set Textmerge Off
 	Set Textmerge To
@@ -386,11 +422,11 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	\		If(lcaj_deud<>0,lcaj_deud,If(lcaj_acre=0,lcaj_deud,lcaj_acre)) As Impo,
     \        lcaj_deta As Deta,lcaj_mone As  mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
 	\		c.nomb As usua,a.lcaj_fope As fechao,ifnull(u.nomb,'') As usuavtas,a.lcaj_mone As tmon1,lcaj_dola As dola,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As nimpo,lcaj_fech,
-	\		'1' As orden,ifnull(z.nomv,'') as vendedor From fe_lcaja As a
+	\		'1' As orden,ifnull(z.nomv,'') As vendedor From fe_lcaja As a
 	\		inner Join fe_usua As c On 	c.idusua=a.lcaj_idus
 	\		Left Join fe_rcom As r On r.idauto=a.lcaj_idau
 	\		Left Join fe_usua As u  On u.idusua=r.idusua
-	\       Left Join (select idauto,codv from fe_kar group by idauto,codv)  As p On p.idauto=a.lcaj_idau
+	\       Left Join (Select idauto,codv From fe_kar Group By idauto,codv)  As p On p.idauto=a.lcaj_idau
 	\       Left Join fe_vend As z On z.idven=p.codv
 	\		Where
 	If This.confechas = 0 Then
@@ -398,15 +434,15 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Else
 	     \ lcaj_fech Between '<<f11>>' And '<<f12>>'
 	Endif
-	\And lcaj_acti<>'I' And lcaj_idau>0 And a.lcaj_idus=<<This.nidusua>>
-	If goApp.Cdatos = 'S' Then
-	\And lcaj_codt=<<nitda>>
-	Endif
+	\And lcaj_acti<>'I' And lcaj_idau>0 
+	IF this.nidusua>0 then
+	 \ And a.lcaj_idus=<<This.nidusua>>
+	ENDIF 
 	\		Union All
 	\		Select a.lcaj_tdoc,a.lcaj_form As Forma,If(lcaj_deud<>0,'I','S') As tipo,a.lcaj_ndoc As Ndoc,If(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) As Impo,
     \       a.lcaj_deta As Deta,a.lcaj_mone As mone,lcaj_idcr As idcredito,lcaj_idde As iddeudas,lcaj_idau As idauto,
 	\		c.nomb As usua,a.lcaj_fope As fechao,ifnull(u.nomb,'') As usuavtas,a.lcaj_mone As tmon1,a.lcaj_dola As dola,a.lcaj_deud As nimpo,a.lcaj_fech,
-	\		If(lcaj_deud>0,'2','3') As orden ,'' as vendedor From  fe_lcaja As a
+	\		If(lcaj_deud>0,'2','3') As orden ,'' As vendedor From  fe_lcaja As a
 	\		inner Join fe_usua As c On c.idusua=a.lcaj_idus
 	\		Left Join fe_rcom As r On r.idauto=a.lcaj_idau
 	\		Left Join fe_usua As u  On u.idusua=r.idusua
@@ -416,7 +452,11 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Else
 	     \ lcaj_fech Between '<<f11>>' And '<<f12>>'
 	Endif
-	\And lcaj_acti<>'I' And lcaj_idau=0 And a.lcaj_idus=<<This.nidusua>>)  As b Order By orden,Ndoc,tdoc
+	\And lcaj_acti<>'I' And lcaj_idau=0 
+	IF this.nidusua>0 then
+	 \ And a.lcaj_idus=<<This.nidusua>>
+	ENDIF 
+	\)  As b Order By orden,Ndoc,tdoc
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -432,7 +472,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-		\	 Select lcaj_dcto As dcto,lcaj_deud-lcaj_efec As importe,lcaj_btar As banco,lcaj_ttar As tipo,lcaj_rtar As referencia,lcaj_deta As detalle,T.nomb As Tienda,
+		\	 Select lcaj_dcto As dcto,lcaj_deud-lcaj_efec As importe,lcaj_btar As banco,lcaj_ttar As tipo,lcaj_rtar As referencia,lcaj_deta As detalle,T.nomb As tienda,
 		\	 lcaj_fope
 		\	 From fe_lcaja As l inner Join fe_sucu As T On T.idalma=l.lcaj_codt
 		\	 Where lcaj_form='<<this.cforma>>' And lcaj_acti='A' And lcaj_idau>0 And lcaj_fech Between '<<fi>>' And '<<ff>>'
@@ -448,6 +488,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 
