@@ -13,7 +13,6 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	idb = 0
 	Function ReporteBancos(dfi, dff, ccta, Calias)
 	Local lC
-*:Global f1, f2
 	f1 = Cfechas(dfi)
 	f2 = Cfechas(dff)
 	Local lC
@@ -65,7 +64,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 		AddProperty(goApp, 'tiendas', '')
 	Endif
 	Set Textmerge On
-	Set Textmerge To memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lC Noshow Textmerge
     \Select a.ctas_ctas,b.banc_nomb,a.ctas_mone,a.ctas_deta,a.ctas_idct,a.ctas_idba,a.ctas_ncta,ctas_seri
     \From fe_ctasb As a
     \inner Join fe_bancos As b On b.banc_idba=a.ctas_idba
@@ -80,9 +79,9 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
     \Order By a.ctas_ctas
 	Set Textmerge Off
 	Set Textmerge To
-	IF this.ejecutaconsulta(lc,Ccursor)<1 then
-	   RETURN 0
-	ENDIF    
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
 	Return 1
 	Endfunc
 ***************************************
@@ -187,7 +186,18 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Endif
 	Return nid
 	Endfunc
+	Function listarBancos(cb, Ccursor)
+	lC = "ProMuestraBancos"
+	Text To lp NOSHOW TEXTMERGE 
+	    ('<<cb>>')
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return  1
+	Endfunc
 Enddefine
+
 
 
 

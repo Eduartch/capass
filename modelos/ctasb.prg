@@ -11,15 +11,16 @@ Define Class ctasbancos As OData Of  'd:\capass\database\data.prg'
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
 	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lp Noshow Textmerge
+        \('<<this.cta>>',<<This.idb1>>,'<<this.cmone>>','<<this.cdeta>>',<<This.nidctap>>
 	If goApp.Cdatos = 'S' Then
-		Text To lp Noshow Textmerge
-        ('<<this.cta>>',<<this.idb1>>,<<this.cmone>>',<<this.cdeta>>',<<this.nidctap>>,<<this.ncodt>>)
-		Endtext
+           \,<<This.ncodt>>)
 	Else
-		Text To lp Noshow Textmerge
-        ('<<this.cta>>',<<this.idb1>>,<<this.cmone>>',<<this.cdeta>>',<<this.nidctap>>)
-		Endtext
+           \)
 	Endif
+	Set Textmerge Off
+	Set Textmerge To
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1  Then
 		Return 0

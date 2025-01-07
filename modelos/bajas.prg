@@ -16,7 +16,7 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 		     \Select baja_fech,baja_tdoc,baja_serie,baja_nume,baja_moti,baja_arch,baja_hash,baja_tick,baja_mens,baja_idau
 		     \From fe_bajas F Where F.baja_fech Between '<<fi>>' And '<<ff>>'  And  F.baja_acti='A'   Order By baja_fech,baja_serie,baja_nume
 	If goApp.Cdatos = 'S' Then
-		       \ And baja_codt=<<This.codt>>
+		  \ And baja_codt=<<This.codt>>
 	Endif
 	Set Textmerge Off
 	Set Textmerge To

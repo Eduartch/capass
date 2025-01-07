@@ -1019,7 +1019,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	   \Round(If(Mone='D',rcom_exon*dolar,rcom_exon),2) As Exon,Cast(0 As Decimal(12,2)) As inafecta,
 	   \Round(If(Mone="D",Impo*dolar-(Impo*dolar)/vigv,igv),2) As igvg,
 	   \Round(If(Mone="D",Impo*dolar,Impo),2) As Importe,
-	   \Cast(a.rcom_icbper As Decimal(5,2)) As icbper,a.pimpo,a.Deta As Detalle,rcom_mens As Mensaje,Cast(a.dolar As Decimal(8,3))As dola,a.Mone,a.idcliente As Codigo,fech As fevto,
+	   \Cast(a.rcom_icbper As Decimal(5,2)) As icbper,a.pimpo,a.Deta As Detalle,rcom_mens As Mensaje,Cast(a.dolar As Decimal(8,3))As dola,a.Mone,a.idcliente As Codigo,fech As Fevto,
 	   \If(Tdoc='07',fech,If(Tdoc='08',fech,Cast("0001-01-01" As Date))) As fechn,
    	   \If(Tdoc='07',Tdoc,If(Tdoc='08',Tdoc,' ')) As tref,
 	   \If(Tdoc='07',Ndoc,If(Tdoc='08',Ndoc,' ')) As Refe,a.vigv,
@@ -1027,7 +1027,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	   \inner Join fe_clie  As b On(b.idclie=a.idcliente)
 	   \Where fecr Between '<<f1>>' And '<<f2>>'   And Tdoc In ('01','03','07','08') And Acti='A'
 	If goApp.Cdatos = 'S' Then
-		If Empty(goApp.tiendas) Then
+		If Empty(goApp.Tiendas) Then
 	      \And a.codt=<<goApp.tienda>>
 		Else
 	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
@@ -1200,9 +1200,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	\If(Length(Trim(a.Ndoc))<=10,mid(a.Ndoc,4,7),mid(a.Ndoc,5,8)) As Ndoc,
 	\b.nruc,b.Razo,a.valor,rcom_exon As Exon,a.igv,a.Impo As Importe,rcom_otro As grati,a.pimpo,rcom_icbper As icbper,
 	\a.Mone,a.dolar As dola,a.vigv,a.idcliente As Codigo,
-	\a.Deta As Detalle,a.Idauto,b.ndni,rcom_mens As Mensaje,ifnull(p.fevto,a.fech) As fvto From fe_rcom As a
+	\a.Deta As Detalle,a.Idauto,b.ndni,rcom_mens As Mensaje,ifnull(p.Fevto,a.fech) As fvto From fe_rcom As a
 	\inner Join fe_clie  As b On(b.idclie=a.idcliente)
-	\Left Join (Select rcre_idau,Min(c.fevto) As fevto From fe_rcred As r inner Join fe_cred As c On c.cred_idrc=r.rcre_idrc Where rcre_acti='A' And Acti='A' And fech Between '<<f1>>' And '<<f2>>' Group By rcre_idau)  As p On p.rcre_idau=a.Idauto
+	\Left Join (Select rcre_idau,Min(c.Fevto) As Fevto From fe_rcred As r inner Join fe_cred As c On c.cred_idrc=r.rcre_idrc Where rcre_acti='A' And Acti='A' And fech Between '<<f1>>' And '<<f2>>' Group By rcre_idau)  As p On p.rcre_idau=a.Idauto
 	\Where fech Between '<<f1>>' And '<<f2>>'  And Tdoc In('01','07','08','03') And Acti<>'I'
 	If Len(Alltrim(This.Serie)) > 0 Then
 	   \And Left(a.Ndoc,4)='<<this.serie>>'
@@ -1925,7 +1925,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To  Memvar lC Noshow
-	 \Select a.Auto,a.fech,a.fevto,b.Tdoc,If(Length(Trim(a.Ndoc))<=10,Left(a.Ndoc,3),Left(a.Ndoc,4)) As Serie,
+	 \Select a.Auto,a.fech,a.Fevto,b.Tdoc,If(Length(Trim(a.Ndoc))<=10,Left(a.Ndoc,3),Left(a.Ndoc,4)) As Serie,
      \If(Length(Trim(a.Ndoc))<=10,mid(a.Ndoc,4,7),mid(a.Ndoc,5,8)) As Ndoc,
 	 \      d.nruc,d.Razo,
 	 \      Sum(Case c.Nitem When 1 Then If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End) As valor,
@@ -2323,9 +2323,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	\Select a.Ndoc As dcto,a.fech,b.nruc,b.Razo,Mone,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
 	\a.igv,a.Impo,rcom_mens,rcom_fecd,u.nomb,FUsua,rcom_hash,a.Tdoc,a.Ndoc,Idauto,rcom_arch,b.clie_corr,tcom,b.fono,Ndo2,
 	\Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Dire,rcom_otro,b.ndni,nruc,Form,dolar,a.codt,a.tipom,a.idusua,Deta
-	IF goapp.Proyecto='xsysg' then
+	If goApp.Proyecto = 'xsysg' Then
 	  \,rcom_otro
-	ENDIF   
+	Endif
 	\    From fe_rcom As a
 	\    Join fe_clie As b On (a.idcliente=b.idclie)
 	\    Join fe_usua As u On u.idusua=a.idusua
@@ -2351,12 +2351,18 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarventasresumidas(Ccursor)
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	If !Pemstatus(goApp, 'tiendas', 5) Then
+		AddProperty(goApp, 'tiendas', '')
+	Endif
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
-	Endif
+	ENDIF
 	Set Textmerge On
 	Set Textmerge To  Memvar lC Noshow Textmerge
-    \ Select Ndoc,fech,b.Razo,Mone,valor,igv,Impo,Idauto,Tdoc,a.idcliente As cod,rcom_hash,rcom_arch,rcom_mens,a.idusua As idusuav  From fe_rcom As a
+    \ Select tdoc,Ndoc,fech,b.Razo,Mone,valor,igv,Impo,Idauto,Tdoc,a.idcliente As cod,rcom_hash,rcom_arch,rcom_mens,a.idusua As idusuav,clie_corr  From fe_rcom As a
     \ inner Join fe_clie As b On b.idclie=a.idcliente
     \ Where a.Acti<>'I'
 	If This.Codigo > 0 Then
@@ -2372,13 +2378,21 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	   \ And Tdoc="20"
 	Endif
 	If This.Naño > 0 Then
-	\ And Month(a.fech)=<<This.Naño>>
+	\ And year(a.fech)=<<This.Naño>>
 	Endif
 	If This.nmes > 0 Then
-	\ And Month(a.fech)=<<This.Nmess>>
+	\ And Month(a.fech)=<<This.Nmes>>
 	Endif
-	If This.codt > 0 Then
-	\ And a.codt=<<This.codt>>
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And a.codt=<<This.ncodt>>
+		Else
+	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Else
+		If This.codt > 0 Then
+	    \ And a.codt=<<This.codt>>
+		Endif
 	Endif
 	\ Order By Ndoc,fech Desc
 	Set Textmerge Off
@@ -2625,7 +2639,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\ Select  `c`.`rcom_icbper` As `rcom_icbper`, `a`.`kar_icbper`  As `kar_icbper`, `c`.`rcom_mens`   As `rcom_mens`,ifnull(m.fevto,c.fech) As fvto,
+	\ Select  `c`.`rcom_icbper` As `rcom_icbper`, `a`.`kar_icbper`  As `kar_icbper`, `c`.`rcom_mens`   As `rcom_mens`,ifnull(m.Fevto,c.fech) As fvto,
 	\  `c`.`idusua`      As `idusua`, `a`.`kar_comi`    As `kar_comi`, `a`.`Codv`        As `Codv`,`a`.`Idauto`      As `Idauto`,
 	\  `a`.`alma`        As `alma`, `a`.`kar_idco`    As `idcosto`, `a`.`idkar`       As `idkar`, `a`.`idart`       As `Coda`,
 	\  `a`.`cant`        As `cant`, `a`.`Prec`        As `Prec`, `c`.`valor`       As `valor`, `c`.`igv`         As `igv`,
@@ -2648,7 +2662,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
     \  Join `fe_clie` `d`  On ((`d`.`idclie` = `c`.`idcliente`))
     \  Left Join `fe_vend` `p`  On ((`p`.`idven` = `a`.`Codv`))
     \  Join `fe_usua` `q`  On ((`q`.`idusua` = `c`.`idusua`))
-    \  Left Join (Select rcre_idau,Min(c.fevto) As fevto From fe_rcred As r inner Join fe_cred As c On c.cred_idrc=r.rcre_idrc
+    \  Left Join (Select rcre_idau,Min(c.Fevto) As Fevto From fe_rcred As r inner Join fe_cred As c On c.cred_idrc=r.rcre_idrc
     \  Where rcre_acti='A' And Acti='A' And rcre_idau=<<This.Idauto>> Group By rcre_idau) As m On m.rcre_idau=c.Idauto
     \  Where `c`.`Acti` <> 'I'  And `a`.`Acti` <> 'I' And a.Idauto=<<This.Idauto>>
 	Set Textmerge Off
@@ -3096,6 +3110,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
+
+
 
 
 
