@@ -957,7 +957,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		If Ejecutarsql(lcr) < 1 Then
 			Return 0
 		Endif
-		This.Cmensaj = "Proceso Culminado Correctamente"
+		This.Cmensaje = "Proceso Culminado Correctamente"
 		Return 1
 	Else
 		Return 0

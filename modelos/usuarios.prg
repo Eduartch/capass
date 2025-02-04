@@ -1,11 +1,11 @@
 #Define URLP "http://companiasysven.com"
-Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
+Define Class usuarios As OData Of 'd:\capass\database\data.prg'
 	idusuario = 0
 	Function mostrarusuarios(Ccursor)
 	Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo,idalma FROM fe_usua WHERE activo="S"  ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -14,7 +14,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo,idalma,usua_idven FROM fe_usua WHERE activo="S"  ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -23,7 +23,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
       SELECT idusua,nomb,clave,activo,tipo,idalma,usua_idven,usua_serp FROM fe_usua WHERE activo="S"  ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -32,7 +32,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
         select  nomb,tipo,activo,idusua,clave,idalma,usua_tran,usua_scre FROM fe_usua WHERE activo='S' ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -41,7 +41,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
         select idusua,nomb,clave,activo,tipo,idalma,usua_prin,usua_cont FROM fe_usua WHERE activo="S"  ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -50,7 +50,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
       SELECT  idusua,nomb,clave,activo,tipo,idalma FROM fe_usua WHERE activo="S" ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -65,7 +65,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
           SELECT idusua FROM fe_usua WHERE TRIM(nomb)='<<cnombre>>' AND idusua<><<nidsus>> AND activo<>'S'
 		Endtext
 	Endif
-	If This.EjecutaConsulta(lC, 'ya') < 1
+	If This.EJECutaconsulta(lC, 'ya') < 1
 		Return 0
 	Endif
 	If ya.Idusua > 0 Then
@@ -80,7 +80,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
-	If This.Idsesion > 0 Then
+	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	Text To lp Noshow
@@ -124,7 +124,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
         SELECT idusua,nomb,clave FROM fe_usua WHERE idusua=<<np1>>  AND activo='S'
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -169,7 +169,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
         select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_super=1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -197,7 +197,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_apro=1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -229,7 +229,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_grat=1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -277,7 +277,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
          select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,2)='Ad'  and usua_cont>1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta( lC, Ccursor) < 1
+	If This.EJECutaconsulta( lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -321,7 +321,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
         SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_super=1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -345,7 +345,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
                  SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S"  ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -377,7 +377,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
         select  idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_super=1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta( lC, Ccursor) < 1
+	If This.EJECutaconsulta( lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -421,7 +421,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
         select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_comi=1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -461,7 +461,7 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
       SELECT idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND usua_cont=1 ORDER BY nomb
 		Endtext
 	Endcase
-	If This.EjecutaConsulta(lC, Ccursor) < 1
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -482,12 +482,31 @@ Define Class usuarios As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge Pretext 7
       select nomb,idusua FROM fe_usua WHERE activo='S' AND LEFT(tipo,1) NOT in('A','G') ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
+	Function loginxuser()
+	Text To lC Noshow Textmerge
+       INSERT INTO fe_husua(hisu_idus,hisu_fechain) VALUES (<<goapp.nidusua>>,NOW())
+	Endtext
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function closexuser()
+	Text To lC Noshow Textmerge
+        INSERT INTO fe_husua(hisu_idus,hisu_fechault) VALUES (<<goapp.nidusua>>,NOW())
+	Endtext
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

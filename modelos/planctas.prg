@@ -41,7 +41,21 @@ Define Class planctas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function MuestraPlanCuentasz(np1, np2, cur)
+	lC = "PROMUESTRACUENTASx"
+	goApp.npara1 = np1
+	goApp.npara2 = np2
+	Text To lp Noshow
+       (?goapp.npara1,?goapp.npara2)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 

@@ -23,15 +23,15 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 			IF(lcaj_deud<>0,lcaj_deud,IF(lcaj_acre=0,lcaj_deud,lcaj_acre)) AS nimpo,lcaj_idtu,lcaj_codt,lcaj_dsct,lcaj_idus FROM
 			fe_lcaja AS a
 			INNER JOIN fe_usua AS c ON c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 and lcaj_idtu=<<this.nturno>> and LEFT(c.tipo,1)="V"
+			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau>0 and LEFT(c.tipo,1)="V"
 			UNION ALL
 			SELECT a.lcaj_tdoc,a.lcaj_form AS forma,IF(lcaj_deud<>0,'I','S') AS tipo,a.lcaj_ndoc AS ndoc,IF(a.lcaj_deud<>0,lcaj_deud,lcaj_acre) AS impo,
             a.lcaj_deta AS deta,a.lcaj_mone AS mone,lcaj_idcr AS idcredito,lcaj_idde AS iddeudas,lcaj_idau AS idauto,
 			c.nomb AS usua,a.lcaj_fope AS fechao,a.lcaj_mone AS tmon1,a.lcaj_dola AS dola,a.lcaj_deud AS nimpo,lcaj_idtu,lcaj_codt,lcaj_dsct,lcaj_idus FROM
 			fe_lcaja AS a
 			INNER JOIN fe_usua AS c ON 	c.idusua=a.lcaj_idus
-			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau=0 and lcaj_idtu=<<this.nturno>> and LEFT(c.tipo,1)="V")
-			AS b GROUP BY lcaj_idus,lcaj_codt) as x  ORDER BY isla,cajero
+			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau=0 and LEFT(c.tipo,1)="V")
+			AS b GROUP BY lcaj_idus,lcaj_codt,usua,lcaj_idtu) as x  ORDER BY isla,cajero
 	Endtext
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
@@ -47,7 +47,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		lect_idtu as Turno,lect_fope as InicioTurno,lect_fope1 as FinTurno,lect_idar AS codigo,lect_idle as Idlecturas,lect_fech as fecha FROM fe_lecturas AS l
 		INNER JOIN fe_art AS a ON a.idart=l.lect_idar
 		inner join fe_usua as u on u.idusua=l.lect_idus
-		WHERE lect_acti='A' and lect_idtu=<<this.nturno>> and lect_esta='C' and lect_idle=<<this.nidlectura>> order by lect_idco,lect_mang
+		WHERE lect_acti='A' and lect_idtu=<<this.nturno>> and lect_esta='C' and lect_idin=<<this.nidlectura>> order by lect_idco,lect_mang
 	Endtext
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
@@ -139,6 +139,14 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	    \ From fe_lecturas
 		\Where lect_idin=<<This.nidlectura>>  And lect_acti='A' And lect_mfinal>0
 	If This.nisla > 0 Then
+		If fe_gene.nruc = '20609310902' Then
+		   Do Case
+		Case This.nisla = 1
+		        \ And lect_idco In(1,2,3,4)
+		Case This.nisla = 2
+		        \ And lect_idco In(5,6,7,8)
+		ENDCASE
+		ELSE 
 		Do Case
 		Case This.nisla = 1
 		        \ And lect_idco In(1,2)
@@ -146,7 +154,8 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		        \ And lect_idco In(3,4)
 		Case This.nisla = 3
 		        \ And lect_idco In(5,6,7,8)
-		Endcase
+		ENDCASE
+		ENDIF 
 	Endif
 		\Union All
 		\Select "Vtas al Crédito" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'C' As lcaj_form,'' As isla From
@@ -160,7 +169,15 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\Select "Vtas C/Tarjeta" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'T' As lcaj_form,'' As isla From
 		\fe_lcaja As a
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
-		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form='T'
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form in('T')
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	ENDIF
+		\Union All
+		\Select "Vtas C/Yape-Plin" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'Y' As lcaj_form,'' As isla From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form in('Y','P')
 	If This.nisla > 0 Then
 		\ And lcaj_codt=<<This.nisla>>
 	Endif
@@ -265,7 +282,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	\ And lcaj_codt=<<goApp.tienda>>
 	Endif
 	\	  Union All
-	\	  Select '' As detalle,Cast(0 As Decimal(12,2)) As  Total_Ventas,Descri As producto,unid,Cast(Sum(k.cant/a.prod_equi) As Decimal(12,2)) As Cantidad,
+	\	  Select '' As detalle,Cast(0 As Decimal(12,2)) As  Total_Ventas,Descri As producto,unid,Cast(Sum(k.cant) As Decimal(12,2)) As Cantidad,
 	\	  Cast(Sum(k.cant*k.Prec)/Sum(k.cant) As Decimal(12,2)) As Precio,Cast(Sum(k.cant*k.Prec) As Decimal(12,2)) As venta,"" As tipo
 	\	  From
 	\	  (Select lcaj_idau From fe_lcaja Where lcaj_acti='A' And lcaj_fech='<<fi>>'  And lcaj_deud>0

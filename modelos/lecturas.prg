@@ -1,51 +1,50 @@
-Define Class lecturas As Odata Of 'd:\capass\database\data.prg'
-	nturno=0
-	nisla=0
-	motivocierre=""
-	nidlectura=0
+Define Class lecturas As OData Of 'd:\capass\database\data.prg'
+	nturno = 0
+	nisla = 0
+	motivocierre = ""
+	nidlectura = 0
 	Function ConsultarLecturas(Calias)
-	df = cfechas(fe_gene.fech - 2)
+	Df = Cfechas(fe_gene.fech - 2)
 	Do Case
 	Case goApp.Isla = 1
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 			SELECT gradename AS descri,amount AS monto,price AS precio,volume AS cantidad,
 			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
 			totalamount AS totalmonto,idjournal as nId_Journal,fecreg_inicio,a.idart,a.unid
 			FROM venta  AS v
             INNER JOIN fe_art AS a ON a.`prod_idar`=v.`idgrade`
             WHERE estado=1 AND fecreg_inicio >='<<df>>' AND pump IN('1','2') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		ENDTEXT
+		Endtext
 	Case goApp.Isla = 2
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    SELECT gradename AS descri,amount AS monto,price AS precio,volume AS cantidad,
 			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
 			totalamount AS totalmonto,idjournal as nId_Journal,fecreg_inicio,a.idart,a.unid
 			FROM venta AS v
             INNER JOIN fe_art AS a ON a.`prod_idar`=v.`idgrade`
             WHERE estado=1 AND fecreg_inicio >='<<df>>' AND pump IN('3','4') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		ENDTEXT
+		Endtext
 	Case goApp.Isla = 3
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    SELECT gradename AS descri,amount AS monto,price AS precio,volume AS cantidad,
 			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
 			totalamount AS totalmonto,idjournal as nId_Journal,fecreg_inicio,a.idart,a.unid
 			FROM venta AS v
             INNER JOIN fe_art AS a ON a.`prod_idar`=v.`idgrade`
             WHERE estado=1 AND fecreg_inicio >='<<df>>' AND pump IN('5','6','7','8') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		ENDTEXT
+		Endtext
 	Endcase
 	This.conconexion = 1
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		This.conconexion = 0
 		Return 0
 	Endif
 	This.conconexion = 0
 	Return 1
 	Endfunc
-
 	Function IngresalecturasContometros20(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10)
 	Local cur As String
-	lc = 'PROINGRESALECTURA'
+	lC = 'PROINGRESALECTURA'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
@@ -56,111 +55,77 @@ Define Class lecturas As Odata Of 'd:\capass\database\data.prg'
 	goApp.npara8 = np8
 	goApp.npara9 = np9
 	goApp.npara10 = np10
-	TEXT To lp Noshow
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-	ENDTEXT
-	If This.EJECUTARP(lc, lp, "") < 1 Then
+	Endtext
+	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function registralecturas(Calias)
-	nsgtelectura=goApp.idlecturas+1
+	nsgtelectura = goApp.Idlecturas + 1
 	Do Case
-	Case goApp.Isla=1
-		TEXT TO lc NOSHOW TEXTMERGE
+	Case goApp.Isla = 1
+		Text To lC Noshow Textmerge
           UPDATE fe_gene  SET idle1=nsgtelectura
-		ENDTEXT
-	Case goApp.Isla=2
-		TEXT TO lc NOSHOW TEXTMERGE
+		Endtext
+	Case goApp.Isla = 2
+		Text To lC Noshow Textmerge
           UPDATE fe_gene  SET idle2=nsgtelectura
-		ENDTEXT
-	Case goApp.Isla=3
-		TEXT TO lc NOSHOW TEXTMERGE
+		Endtext
+	Case goApp.Isla = 3
+		Text To lC Noshow Textmerge
           UPDATE fe_gene   SET idle3=nsgtelectura
-		ENDTEXT
-	Case goApp.Isla=4
-		TEXT TO lc NOSHOW TEXTMERGE
+		Endtext
+	Case goApp.Isla = 4
+		Text To lC Noshow Textmerge
           UPDATE fe_gene SET idle4=nsgtelectura
-		ENDTEXT
+		Endtext
 	Endcase
-	q=1
-	If This.IniciaTransaccion()<1 Then
+	q = 1
+	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	This.contransaccion='S'
+	This.contransaccion = 'S'
 	Select listaci
 	Scan All
-		If This.IngresalecturasContometros20(listaci.surtidor,goApp.idturno,listaci.lectura,listaci.monto,fe_gene.fech,goApp.nidusua,listaci.codigo,listaci.lado,listaci.precio,nsgtelectura)<1 Then
-			q=0
+		If This.IngresalecturasContometros20(listaci.Surtidor, goApp.IDturno, listaci.lectura, listaci.Monto, fe_gene.fech, goApp.nidusua, listaci.Codigo, listaci.lado, listaci.Precio, nsgtelectura) < 1 Then
+			q = 0
 			Exit
 		Endif
 	Endscan
-	If q=1 Then
-		If This.GrabarCambios()<1 Then
+	If q = 1 Then
+		If This.GRabarCambios() < 1 Then
 			Return 0
 		Endif
 		Return 1
 	Else
-		This.DeshacerCambios()
+		This.DEshacerCambios()
 		Return 0
 	Endif
 	Endfunc
 	Function consultarxislaturno(Calias, nisla, nturno)
-	Do Case
-	Case nisla = 1
-		TEXT To lc Noshow Textmerge
-	     SELECT CAST(LEFT(idgrade,5) AS VARCHAR) AS idgrade,CAST(LEFT(gradename,20) AS VARCHAR)AS producto,estado FROM venta WHERE pump=1 AND idgrade=1 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1
-		ENDTEXT
-	Case nisla = 2
-		TEXT To lc Noshow Textmerge
-		   (SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-			fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,2 as codigo FROM venta WHERE pump=3 AND idgrade=1 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-			UNION
-			(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-			fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,2 as codigo FROM venta WHERE pump=4 AND idgrade=1  AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-			UNION
-			(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-			fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,5 as codigo  FROM venta WHERE pump=3 AND idgrade=2 AND nozzle=2 ORDER BY fecreg_inicio DESC LIMIT 1)
-			UNION
-			(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-			fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,5 as codigo FROM venta WHERE pump=4 AND idgrade=2  AND nozzle=2 ORDER BY fecreg_inicio DESC LIMIT 1)
-			UNION
-			(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-			fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,1 as codigo  FROM venta WHERE pump=3 AND idgrade=4 AND nozzle=3 ORDER BY fecreg_inicio DESC LIMIT 1)
-			UNION
-			(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-			fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,1 as codigo FROM venta WHERE pump=4 AND idgrade=4  AND nozzle=3 ORDER BY fecreg_inicio DESC LIMIT 1)
-		ENDTEXT
-	Case nisla = 3
-		TEXT To lc Noshow Textmerge
-		 (SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		 fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,3 as codigo  FROM venta WHERE pump=5 AND idgrade=5 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-		 UNION
-		 (SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		 fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,3 As codigo  FROM venta WHERE pump=6 AND idgrade=5 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-		ENDTEXT
-	Endcase
-	lc = 'ProListarlecturasrealesxisla'
-	goApp.npara1=nisla
-	TEXT To lp Noshow
+	lC = 'ProListarlecturasrealesxisla'
+	goApp.npara1 = nisla
+	Text To lp Noshow
 	     (?goapp.npara1)
-	ENDTEXT
-	If This.EJECUTARP10(lc, lp,Calias) < 1 Then
+	Endtext
+	If This.EJECUTARP10(lC, lp, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function ConsultarLecturasxfechas(dfi,dff,nisla,Calias)
-	If (dff-dfi)>31 Then
-		This.cmensaje='Máximo a consultar es 30 Días'
+	Function ConsultarLecturasxfechas(dfi, dff, nisla, Calias)
+	If (dff - dfi) > 31 Then
+		This.Cmensaje = 'Máximo a consultar es 30 Días'
 		Return 0
 	Endif
-	fi=cfechas(dfi)
-	ff=cfechas(dff)
+	fi = Cfechas(dfi)
+	ff = Cfechas(dff)
 	Do Case
 	Case nisla = 1
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    SELECT gradename AS producto,amount AS monto,price AS precio,volume AS cantidad,
 			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
 			totalamount AS totalmonto,fecreg_inicio,dcto,cliente,impo as importe,idjournal AS nId_Journal
@@ -170,9 +135,9 @@ Define Class lecturas As Odata Of 'd:\capass\database\data.prg'
             INNER JOIN fe_clie ON fe_clie.idclie=fe_rcom.idcliente
             WHERE fe_kar.acti='A' AND fe_rcom.acti='A' AND kar_idco>0 AND fe_rcom.fech BETWEEN '<<fi>>'  AND '<<ff>>' GROUP BY idauto,kar_idco,ndoc,razo) AS k ON k.kar_idco=v.idjournal
             WHERE CAST(fecreg_inicio AS DATE)  BETWEEN '<<fi>>'  AND '<<ff>>'  AND pump IN('1','2') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		ENDTEXT
+		Endtext
 	Case nisla = 2
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    SELECT gradename AS producto,amount AS monto,price AS precio,volume AS cantidad,
 			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
 			totalamount AS totalmonto,fecreg_inicio,dcto,cliente,impo as importe,idjournal AS nId_Journal
@@ -182,9 +147,9 @@ Define Class lecturas As Odata Of 'd:\capass\database\data.prg'
             INNER JOIN fe_clie ON fe_clie.idclie=fe_rcom.idcliente
             WHERE fe_kar.acti='A' AND fe_rcom.acti='A' AND kar_idco>0 AND fe_rcom.fech BETWEEN '<<fi>>'  AND '<<ff>>' GROUP BY idauto,kar_idco,ndoc,razo) AS k ON k.kar_idco=v.idjournal
             WHERE CAST(fecreg_inicio AS DATE)  BETWEEN '<<fi>>'  AND '<<ff>>'  AND pump IN('3','4') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		ENDTEXT
+		Endtext
 	Case nisla = 3
-		TEXT To lc Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    SELECT gradename AS producto,amount AS monto,price AS precio,volume AS cantidad,
 			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
 			totalamount AS totalmonto,fecreg_inicio,dcto,cliente,impo AS importe,idjournal AS nId_Journal
@@ -194,28 +159,35 @@ Define Class lecturas As Odata Of 'd:\capass\database\data.prg'
             INNER JOIN fe_clie ON fe_clie.idclie=fe_rcom.idcliente
             WHERE fe_kar.acti='A' AND fe_rcom.acti='A' AND kar_idco>0 AND fe_rcom.fech BETWEEN '<<fi>>'  AND '<<ff>>' GROUP BY idauto,kar_idco,ndoc,razo) AS k ON k.kar_idco=v.idjournal
             WHERE CAST(fecreg_inicio AS DATE)  BETWEEN '<<fi>>'  AND '<<ff>>'  AND pump IN('5','6') ORDER BY fecreg_inicio DESC,nozzle ASC,pump Asc
-		ENDTEXT
+		Endtext
 	Endcase
 	This.conconexion = 1
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
+	If fe_gene.nruc = '20609310902' Then
+	    lc="ProListarDespachosh"
+	    TEXT TO lp NOSHOW  TEXTMERGE 
+	        ('<<fi>>','<<ff>>',<<nisla>>)
+	    ENDTEXT 
+	ELSE 
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		This.conconexion = 0
 		Return 0
-	Endif
+	ENDIF
+	ENDIF 
 	This.conconexion = 0
 	Return 1
 	Endfunc
-	Function listarlecturasincio(df,nturno,Calias)
-	F=cfechas(df)
-	TEXT To lc Noshow Textmerge
+	Function listarlecturasincio(Df, nturno, Calias)
+	F = Cfechas(Df)
+	Text To lC Noshow Textmerge
 	SELECT lect_inic AS lectura_galon,lect_inim as montoi,descri AS producto,lect_mang AS manguera,lect_idco AS surtidor,
 	lect_prec as Precio,lect_idar AS codigo,u.nomb as Cajero,lect_idtu as turno,lect_idle as Idlecturas,lect_fope as InicioTurno,
 	lect_fope1 as FinTurno FROM fe_lecturas AS l
 	INNER JOIN fe_art AS a ON a.idart=l.lect_idar
 	inner join fe_usua as u on u.idusua=l.lect_idus
 	WHERE lect_acti='A' and lect_esta='A' and lect_fech='<<f>>'
-	ENDTEXT
+	Endtext
 	This.conconexion = 1
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		This.conconexion = 0
 		Return 0
 	Endif
@@ -223,171 +195,131 @@ Define Class lecturas As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function consultarlecturasreales(Calias)
-	TEXT To lc Noshow Textmerge
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,2 As codigo  FROM venta WHERE pump=1 AND idgrade=1 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,2 as codigo FROM venta WHERE pump=2 AND idgrade=1  AND nozzle=3 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price AS precio,5 as codigo  FROM venta WHERE pump=1 AND idgrade=2 AND nozzle=2 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,5 as codigo FROM venta WHERE pump=2 AND idgrade=2  AND nozzle=2 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,1 as codigo  FROM venta WHERE pump=1 AND idgrade=4 AND nozzle=3 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,1 as codigo FROM venta WHERE pump=2 AND idgrade=4  AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-		union
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,2 as codigo FROM venta WHERE pump=3 AND idgrade=1 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,2 as codigo FROM venta WHERE pump=4 AND idgrade=1  AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,5 as codigo  FROM venta WHERE pump=3 AND idgrade=2 AND nozzle=2 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,5 as codigo FROM venta WHERE pump=4 AND idgrade=2  AND nozzle=2 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,1 as codigo  FROM venta WHERE pump=3 AND idgrade=4 AND nozzle=3 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,1 as codigo FROM venta WHERE pump=4 AND idgrade=4  AND nozzle=3 ORDER BY fecreg_inicio DESC LIMIT 1)
-		union
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,3 as codigo  FROM venta WHERE pump=5 AND idgrade=5 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-		UNION
-		(SELECT idgrade,gradename AS producto,pump AS surtidor,nozzle AS lado,totalvolume AS lectura,totalamount AS monto,
-		fecreg_inicio AS inicio,fecreg_fin AS fin,price as precio,3 As codigo  FROM venta WHERE pump=6 AND idgrade=5 AND nozzle=1 ORDER BY fecreg_inicio DESC LIMIT 1)
-	ENDTEXT
-*!*		This.conconexion = 1
-*!*		If This.EjecutaConsulta(lc, Calias) < 1 Then
-*!*			This.conconexion = 0
-*!*			Return 0
-*!*		Endif
-*!*		This.conconexion = 0
-	lc = 'ProListarlecturasreales'
-	lp=""
-	If This.EJECUTARP10(lc, lp,Calias) < 1 Then
+	lC = 'ProListarlecturasreales'
+	lp = ""
+	If This.EJECUTARP10(lC, lp, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function cierrelecturas(nidt,df)
-	xq=1
-	If goApp.idturno=1 Then
-		nsgte=2
+	Function cierrelecturas(nidt, Df)
+	xq = 1
+	If goApp.IDturno = 1 Then
+		Nsgte = 2
 	Else
-		nsgte=1
+		Nsgte = 1
 	Endif
-	nsgtelectura=goApp.idlecturas+1
-	If This.IniciaTransaccion()<1 Then
+	nsgtelectura = goApp.Idlecturas + 1
+	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	Do Case
-	Case goApp.Isla=1
-		TEXT TO lcx NOSHOW TEXTMERGE
+	Case goApp.Isla = 1
+		Text To lcx Noshow Textmerge
           UPDATE fe_gene  SET idle1=<<nsgtelectura>>
-		ENDTEXT
-	Case goApp.Isla=2
-		TEXT TO lcx NOSHOW TEXTMERGE
+		Endtext
+	Case goApp.Isla = 2
+		Text To lcx Noshow Textmerge
           UPDATE fe_gene  SET idle2=<<nsgtelectura>>
-		ENDTEXT
-	Case goApp.Isla=3
-		TEXT TO lcx NOSHOW TEXTMERGE
+		Endtext
+	Case goApp.Isla = 3
+		Text To lcx Noshow Textmerge
           UPDATE fe_gene   SET idle3=<<nsgtelectura>>
-		ENDTEXT
-	Case goApp.Isla=4
-		TEXT TO lcx NOSHOW TEXTMERGE
+		Endtext
+	Case goApp.Isla = 4
+		Text To lcx Noshow Textmerge
           UPDATE fe_gene SET idle4=<<nsgtelectura>>
-		ENDTEXT
+		Endtext
 	Endcase
-	If  This.ejecutarsql(lcx)<1 Then
-		This.DeshacerCambios()
+	If  This.Ejecutarsql(lcx) < 1 Then
+		This.DEshacerCambios()
 		Return 0
 	Endif
 	Select liq
 	Go Top
 	Scan All
-		If This.IngresalecturasFinalContometros20(liq.idlecturas,liq.Final,liq.montofinal,goApp.nidusua,0)<1 Then
-			xq=0
+		If This.IngresalecturasFinalContometros20(liq.Idlecturas, liq.Final, liq.montofinal, goApp.nidusua, 0) < 1 Then
+			xq = 0
 			Exit
 		Endif
-		Do Case
-		Case liq.surtidor=1 Or  liq.surtidor=2
-			nislax=1
-		Case liq.surtidor=3 Or  liq.surtidor=4
-			nislax=2
-		Case liq.surtidor=5 Or  liq.surtidor=6 Or liq.surtidor=7 Or  liq.surtidor=8
-			nislax=3
-		Endcase
+		If fe_gene.nruc = '20609310902' Then
+			Do Case
+			Case liq.Surtidor = 1 Or  liq.Surtidor = 2 Or liq.Surtidor = 3 Or  liq.Surtidor = 4
+				nislax = 1
+			Case liq.Surtidor = 5 Or  liq.Surtidor = 6 Or liq.Surtidor = 7 Or  liq.Surtidor = 8
+				nislax = 2
+			Endcase
+		Else
+			Do Case
+			Case liq.Surtidor = 1 Or  liq.Surtidor = 2
+				nislax = 1
+			Case liq.Surtidor = 3 Or  liq.Surtidor = 4
+				nislax = 2
+			Case liq.Surtidor = 5 Or  liq.Surtidor = 6 Or liq.Surtidor = 7 Or  liq.Surtidor = 8
+				nislax = 3
+			Endcase
+		Endif
 		Select islas
-		Locate For Isla=nislax
-		nidux=islas.idusua
-		If  This.IngresalecturasContometros20(liq.surtidor,nsgte,liq.Final,liq.montofinal,df,nidux,liq.codigo,liq.manguera,liq.precio,nsgtelectura)<1 Then
-			xq=0
+		Locate For Isla = nislax
+		nidux = islas.Idusua
+		If  This.IngresalecturasContometros20(liq.Surtidor, Nsgte, liq.Final, liq.montofinal, Df, nidux, liq.Codigo, liq.Manguera, liq.Precio, nsgtelectura) < 1 Then
+			xq = 0
 			Exit
 		Endif
 		Select liq
 	Endscan
-	If xq=0 Then
-		This.DeshacerCambios()
+	If xq = 0 Then
+		This.DEshacerCambios()
 		Return 0
 	Endif
-	If This.motivocierre='C' Then
+	If This.motivocierre = 'C' Then
 		Do Case
-		Case goApp.Isla=1
-			TEXT TO lc NOSHOW TEXTMERGE
+		Case goApp.Isla = 1
+			Text To lC Noshow Textmerge
           UPDATE fe_gene SET idtu1=<<nsgte>>
-			ENDTEXT
-		Case goApp.Isla=2
-			TEXT TO lc NOSHOW TEXTMERGE
+			Endtext
+		Case goApp.Isla = 2
+			Text To lC Noshow Textmerge
           UPDATE fe_gene SET idtu2=<<nsgte>>
-			ENDTEXT
-		Case goApp.Isla=3
-			TEXT TO lc NOSHOW TEXTMERGE
+			Endtext
+		Case goApp.Isla = 3
+			Text To lC Noshow Textmerge
           UPDATE fe_gene SET idtu3=<<nsgte>>
-			ENDTEXT
+			Endtext
 		Endcase
-		If  This.ejecutarsql(lc)<1 Then
-			This.DeshacerCambios()
+		If  This.Ejecutarsql(lC) < 1 Then
+			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
-	If This.GrabarCambios()=0 Then
+	If This.GRabarCambios() = 0 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function IngresalecturasFinalContometros20(np1,np2,np3,np4,np5)
-	lc='PROINGRESALECTURAFINAL'
-	goApp.npara1=np1
-	goApp.npara2=np2
-	goApp.npara3=np3
-	goApp.npara4=np4
-	goApp.npara5=np5
-	TEXT to lp noshow
+	Function IngresalecturasFinalContometros20(np1, np2, np3, np4, np5)
+	lC = 'PROINGRESALECTURAFINAL'
+	goApp.npara1 = np1
+	goApp.npara2 = np2
+	goApp.npara3 = np3
+	goApp.npara4 = np4
+	goApp.npara5 = np5
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
-	ENDTEXT
-	If EJECUTARP(lc,lp,"")<1 Then
+	Endtext
+	If EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function ConsultarCierreslecturas(dfi,dff,Calias)
-	If (dff-dfi)>31 Then
-		This.cmensaje='Máximo a consultar es 30 Días'
+	Function ConsultarCierreslecturas(dfi, dff, Calias)
+	If (dff - dfi) > 31 Then
+		This.Cmensaje = 'Máximo a consultar es 30 Días'
 		Return 0
 	Endif
-	fi=cfechas(dfi)
-	ff=cfechas(dff)
-	TEXT To lc Noshow Textmerge
+	fi = Cfechas(dfi)
+	ff = Cfechas(dff)
+	Text To lC Noshow Textmerge
 	SELECT descri AS producto,lect_cfinal as final,lect_inic AS inicial,lect_cfinal-lect_inic as cantidad,lect_prec as Precio,
 	Round((lect_cFinal-lect_inic)*lect_prec,2) As Ventas,
 	lect_mfinal as montofinal,lect_inim as montoinicial,lect_mfinal-lect_inim as monto,lect_mang AS manguera,lect_idco AS surtidor,
@@ -396,63 +328,107 @@ Define Class lecturas As Odata Of 'd:\capass\database\data.prg'
 	INNER JOIN fe_art AS a ON a.idart=l.lect_idar
 	inner join fe_usua as u on u.idusua=l.lect_idus
 	WHERE lect_acti='A' and lect_idtu=<<this.nturno>> and lect_esta='C' and lect_fech between '<<fi>>' and '<<ff>>' order by u.nomb,descri,lect_idco
-	ENDTEXT
+	Endtext
 	This.conconexion = 1
-	If This.EjecutaConsulta(lc, Calias) < 1 Then
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		This.conconexion = 0
 		Return 0
 	Endif
 	This.conconexion = 0
 	Return 1
 	Endfunc
-	Function obteneractiva(dfecha,nturno,nisla)
-	df=cfechas(dfecha)
-	ccursor='c_'+Sys(2015)
+	Function obteneractiva(dFecha, nturno, nisla)
+	Df = Cfechas(dFecha)
+	Ccursor = 'c_' + Sys(2015)
 	Do Case
-	Case nisla=1
-		TEXT TO lc NOSHOW TEXTMERGE
-	    SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(1,2) GROUP BY lect_idin limit 1
-		ENDTEXT
-	Case nisla=2
-		TEXT TO lc NOSHOW TEXTMERGE
-	    SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(3,4) GROUP BY lect_idin limit 1
-		ENDTEXT
-	Case nisla=3
-		TEXT TO lc NOSHOW TEXTMERGE
+	Case nisla = 1
+		If fe_gene.nruc = '20609310902' Then
+			Text To lC Noshow Textmerge
+	          SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(1,2,3,4) GROUP BY lect_idin limit 1
+			Endtext
+		Else
+			Text To lC Noshow Textmerge
+	         SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(1,2) GROUP BY lect_idin limit 1
+			Endtext
+		Endif
+	Case nisla = 2
+		If fe_gene.nruc = '20609310902' Then
+			Text To lC Noshow Textmerge
+	         SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin limit 1
+			Endtext
+		Else
+			Text To lC Noshow Textmerge
+	          SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(3,4) GROUP BY lect_idin limit 1
+			Endtext
+		Endif
+	Case nisla = 3
+		Text To lC Noshow Textmerge
 	    SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin limit 1
-		ENDTEXT
+		Endtext
 	Endcase
-	If This.EjecutaConsulta(lc,ccursor)<1 Then
-		Return -1
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return - 1
 	Endif
-	Select (ccursor)
-	If idin>0 Then
+	Select (Ccursor)
+	If idin > 0 Then
 		Return idin
 	Else
-		This.cmensaje="No hay Lecturas Registradas"
+		This.Cmensaje = "No hay Lecturas Registradas"
 		Return 0
 	Endif
 	Endfunc
-	Function obtenerlecturas(dfecha,nturno,nisla,ccursor)
-	df=cfechas(dfecha)
+	Function obtenerlecturas(dFecha, nturno, nisla, Ccursor)
+	Df = Cfechas(dFecha)
 	Do Case
-	Case nisla=1
-		TEXT TO lc NOSHOW TEXTMERGE
-	    SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(1,2) GROUP BY lect_idin
-		ENDTEXT
-	Case nisla=2
-		TEXT TO lc NOSHOW TEXTMERGE
-	    SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(3,4) GROUP BY lect_idin
-		ENDTEXT
-	Case nisla=3
-		TEXT TO lc NOSHOW TEXTMERGE
-	    SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin
-		ENDTEXT
+	Case nisla = 1
+		If fe_gene.nruc = '20609310902' Then
+			Text To lC Noshow Textmerge
+	          SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(1,2,3,4) GROUP BY lect_idin,lect_idtu
+			Endtext
+		Else
+			Text To lC Noshow Textmerge
+	        SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(1,2) GROUP BY lect_idin,lect_idtu
+			Endtext
+		Endif
+	Case nisla = 2
+		If fe_gene.nruc = '20609310902' Then
+			Text To lC Noshow Textmerge
+	         SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(3,4,5,6) GROUP BY lect_idin,lect_idtu
+			Endtext
+		Else
+			Text To lC Noshow Textmerge
+	    SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(3,4) GROUP BY lect_idin,lect_idtu
+			Endtext
+		Endif
+	Case nisla = 3
+		Text To lC Noshow Textmerge
+	    SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin,lect_idtu
+		Endtext
 	Endcase
-	If This.EjecutaConsulta(lc,ccursor)<1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
-	Select (ccursor)
+	Select (Ccursor)
+	Return 1
+	Endfunc
+	Function ConsultarLecturasbrisas(Calias)
+	Df = Cfechas(fe_gene.fech - 2)
+	lC = 'ProlistarDespachos'
+	Text To lp Noshow Textmerge
+	     ('<<df>>',<<goapp.isla>>)
+	Endtext
+	This.conconexion = 1
+	If EJECUTARP(lC, lp, Calias ) < 1 Then
+		Return 0
+	Endif
+	This.conconexion = 0
 	Return 1
 	Endfunc
 Enddefine
+
+
+
+
+
+
+

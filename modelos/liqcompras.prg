@@ -303,7 +303,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 				Exit
 			Endif
 			If tmpc.swcosto = 1 And This.cgrabaprecios = 'S' Then
-				If ActualizaCostos(tmpc.Coda, This.dFecha, tmpc.Prec, This.Nreg, This.nidprov, This.Cmoneda, tmpc.Tigv, This.ndolar, nidcosto) = 0 Then
+				If ActualizaCostos(tmpc.Coda, This.dFecha, tmpc.Prec, This.Nreg, This.nidprov, This.Cmoneda, tmpc.Tigv, This.ndolar,0) = 0 Then
 					Sw = 0
 					Exit
 				Endif

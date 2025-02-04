@@ -1,4 +1,4 @@
-Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
+Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Ndoc = ""
 	Nsgte = 0
 	Idserie = 0
@@ -17,7 +17,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
      left join fe_sucu a on a.sucuidserie=s.serie
      ORDER BY serie
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -30,7 +30,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
      left join fe_sucu a on a.sucuidserie=s.serie
      ORDER BY serie
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -61,7 +61,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 		Select  serie From fe_serie Where serie=<<lista.nserie>> And codt=<<m.nidtda>> And tdoc ='<<ctdoc>>' limit 1
 		Endtext
 	Endif
-	If This.EjecutaConsulta(m.lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(m.lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -110,7 +110,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	     SELECT nume,items,idserie FROM fe_serie WHERE serie=<<lista.nserie>> AND tdoc='<<this.ctdoc>>' limit  1;
 		Endtext
 	Endif
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		This.Ndoc = ""
 		Return 0
 	Endif
@@ -157,7 +157,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
          SELECT nume,items,idserie FROM fe_serie WHERE serie=<<ns>> AND tdoc='<<ctdoc>>' limit 1
 		Endtext
 	Endif
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -250,7 +250,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	Text To lg Textmerge Noshow
 	  select gene_corc FROM fe_gene WHERE idgene=1;
 	Endtext
-	If This.EjecutaConsulta(lg, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lg, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -277,7 +277,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
 	    SELECT nume,items,idserie FROM fe_serie WHERE serie=<<this.nserie>> AND tdoc='<<this.ctdoc>>' limit  1;
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		This.Ndoc = ""
 		Return 0
 	Endif
@@ -306,7 +306,7 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
        select serie FROM fe_serie WHERE serie='<<cserie>>' AND tdoc='<<ctdoc>>'
 	Endtext
 	Ccursor = 'c_' + Sys(2015)
-	If This.EjecutaConsulta(lsql, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lsql, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
@@ -337,14 +337,14 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return m.Vdvto
 	Endfunc
-	Function AnterioresdesdeCaja(df,Ccursor)
+	Function AnterioresdesdeCaja(Df, Ccursor)
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
 	Endif
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
-	ENDIF
-	dfecha=cfechas(df)
+	Endif
+	dFecha = Cfechas(Df)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select  Max(a.Ndoc) As Ndoc,a.tdoc From fe_lcaja As b
@@ -356,12 +356,37 @@ Define Class Correlativo As Odata Of 'd:\capass\database\data.prg'
 	\ Group By a.tdoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EjecutaConsulta(lC, Ccursor) < 1  Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1  Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
+	Function BuscarSeries1(ns, cTdoc, Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC = "PROBUSCASERIES"
+	Text To lp Noshow Textmerge
+        (<<ns>>,'<<ctdoc>>')
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+************************************
+	Function GeneraCorrelativootraserie(nn, ns)
+	Text To lp NOSHOW TEXTMERGE 
+       UPDATE fe_serie  as f SET numebnotas=f.numebnotas+1 WHERE idserie=<<ns>>
+	Endtext
+	If this.ejecutarsql(lp)<1 Then
+	Return 0
+	ENDIF 
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 

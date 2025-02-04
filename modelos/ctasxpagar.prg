@@ -241,7 +241,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function ACtualizaDeudas(NAuto, nu)
 	lC = "ProActualizaDeudas"
-	Text To lp Noshow
+	Text To lp NOSHOW TEXTMERGE 
      (<<nauto>>,<<nu>>)
 	Endtext
 	If  This.ejecutarp(lC, lp, '') < 1

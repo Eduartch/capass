@@ -60,7 +60,7 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function MuestraDctos(cb, Ccursor)
-	If This.Idsesion > 0 Then
+	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	If Alltrim(goApp.datosdctos) <> 'S' Then

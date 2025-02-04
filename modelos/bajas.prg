@@ -170,7 +170,25 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 		Return  1
 	Endif
 	Endfunc
+	Function generaseriebajas()
+	Ccursor = 'c_' + Sys(2015)
+	Text To lC Noshow Textmerge
+	    UPDATE fe_gene as g SET gene_nbaj=gene_nbaj+1 WHERE idgene=1
+	Endtext
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Text To lC Noshow Textmerge
+	    select gene_nbaj FROM fe_gene WHERE idgene=1 limit 1
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	Return gene_nbaj
+	Endfunc
 Enddefine
+
 
 
 

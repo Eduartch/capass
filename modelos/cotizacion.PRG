@@ -106,24 +106,41 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function mostrarcotizacion(nid, cndoc, Ccursor)
+	IF !PEMSTATUS(goapp,'ListaPreciosPorTienda',5) then
+	   ADDPROPERTY(goapp,'ListaPreciosPorTienda','')
+	ENDIF    
+*!*		\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti1,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti1),2),0) As pre1,
+*!*		\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti2,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti2),2),0) As pre2,
+*!*		\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti3,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti3),2),0) As Pre3,
+*!*		\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti0,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti0),2),0) As pre0,
+*!*		\Round(If(tmon='S',(b.Prec*v.igv)+p.Prec,(b.Prec*v.igv*v.dola)+p.Prec),2) As costo,
 	set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-		        \Select  a.idart,a.Descri,a.Unid,a.cant,a.idven,a.Vendedor,a.Prec,a.premay,a.premen,a.fech,a.idautop,a.Impo,a.Ndoc,a.aten,
-				\a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,a.idclie,a.razo,a.nruc,a.Dire,a.ciud,a.fono,a.rped_mone,a.Nreg,
-				\b.prod_come As come,b.prod_comc As Comc,rped_dias,rped_cont,rped_dire,rped_trans,rped_fono,a.Form,
-				\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti1,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti1),2),0) As pre1,
-				\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti2,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti2),2),0) As pre2,
-				\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti3,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti3),2),0) As Pre3,
-				\ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti0,((b.Prec*v.igv*If(b.prod_dola>v.dola,prod_dola,v.dola))+p.Prec)*prod_uti0),2),0) As pre0,
-				\Round(If(tmon='S',(b.Prec*v.igv)+p.Prec,(b.Prec*v.igv*v.dola)+p.Prec),2) As costo,b.uno,b.Dos,b.tre,b.cua,b.prod_idco As idco,prod_ocan,prod_ocom
-				\From vmuestrapedidos a
-				\inner Join fe_art b On b.idart=a.idart
-				\inner Join fe_fletes p On p.idflete=b.idflete, fe_gene v
-				\Where
+    \Select  a.idart,a.Descri,a.Unid,a.cant,a.idven,a.Vendedor,a.Prec,a.premay,a.premen,a.fech,a.idautop,a.Impo,a.Ndoc,a.aten,
+	\a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,a.idclie,a.razo,a.nruc,a.Dire,a.ciud,a.fono,a.rped_mone,a.Nreg,
+	\b.prod_come As come,b.prod_comc As Comc,rped_dias,rped_cont,rped_dire,rped_trans,rped_fono,a.Form,
+	IF goapp.tienda=4  AND goapp.ListaPreciosPorTienda='S' then
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_dut1,((b.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola)))*prod_dut1)+IF(prod_dut1>0,p.flet_pre2,0),2),0) AS pre1,
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_dut2,((b.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola)))*prod_dut2)+IF(prod_dut2>0,p.flet_pre2,0),2),0) AS pre2,
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_dut3,((b.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola)))*prod_dut3)+IF(prod_dut3>0,p.flet_pre2,0),2),0) AS pre3,
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_dut0,((b.prec*v.igv*v.dola))*prod_dut0)+IF(prod_dut0>0,p.flet_pre2,0),2),0) AS pre0,      
+	   \ROUND(IF(tmon='S',(b.prec*v.igv)+p.flet_pre2,(b.prec*v.igv*v.dola)+p.flet_pre2),2) AS costo,	
+	ELSE
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_uti1,((b.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola)))*prod_uti1)+IF(prod_uti1>0,p.prec,0),2),0) AS pre1,
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_uti2,((b.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola)))*prod_uti2)+IF(prod_uti2>0,p.prec,0),2),0) AS pre2,
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_uti3,((b.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola)))*prod_uti3)+IF(prod_uti3>0,p.prec,0),2),0) AS pre3,
+	   \IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv))*prod_uti0,((b.prec*v.igv*v.dola))*prod_uti0)+IF(prod_uti0>0,p.prec,0),2),0) AS pre0,      
+	   \ROUND(IF(tmon='S',(b.prec*v.igv)+p.prec,(b.prec*v.igv*v.dola)+p.prec),2) AS costo,	
+	ENDIF 
+	\b.uno,b.Dos,b.tre,b.cua,b.prod_idco As idco,prod_ocan,prod_ocom
+	\From vmuestrapedidos a
+	\inner Join fe_art b On b.idart=a.idart
+	\inner Join fe_fletes p On p.idflete=b.idflete, fe_gene v
+	\Where
 	If nid = 0 Then
-				 \a.Ndoc='<<cndoc>>'
+	\a.Ndoc='<<cndoc>>'
 	Else
-				 \a.idautop=<<nid>>
+	\a.idautop=<<nid>>
 	Endif
 	\ Order By a.Nreg
 	Set Textmerge Off

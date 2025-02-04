@@ -3,6 +3,7 @@ Define Class OrdendeCompra As Odata Of 'd:\capass\database\data.prg'
 	Codproveedor = 0
 	Nprecio = 0
 	Ncantidad = 0
+	ndscto=0
 	Cestado = ""
 	AutoC = 0
 	Accion = ""
@@ -69,18 +70,18 @@ Define Class OrdendeCompra As Odata Of 'd:\capass\database\data.prg'
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
 			Endtext
 		Else
-			goApp.npara1 = This.AutoC
-			goApp.npara2 = This.CodProducto
-			goApp.npara3 = This.Ncantidad
-			goApp.npara4 = This.Nprecio
-			goApp.npara5 = otmpp.uno
-			goApp.npara6 = otmpp.Dos
-			goApp.npara7 = otmpp.tre
-			goApp.npara8 = otmpp.cua
-			goApp.npara9 = otmpp.cin
-			goApp.npara10 = otmpp.sei
-			Text To lp Noshow
-	        (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
+*!*				goApp.npara1 = This.AutoC
+*!*				goApp.npara2 = This.CodProducto
+*!*				goApp.npara3 = This.Ncantidad
+*!*				goApp.npara4 = This.Nprecio
+*!*				goApp.npara5 = otmpp.uno
+*!*				goApp.npara6 = otmpp.Dos
+*!*				goApp.npara7 = otmpp.tre
+*!*				goApp.npara8 = otmpp.cua
+*!*				goApp.npara9 = otmpp.cin
+*!*				goApp.npara10 = otmpp.sei
+			Text To lp NOSHOW TEXTMERGE 
+	        (<<this.AutoC>>,<<this.CodProducto>>,<<this.Ncantidad>>,<<this.Nprecio>>,<<otmpp.uno>>,<<otmpp.Dos>>,<<otmpp.tre>>,<<otmpp.cua>>,<<otmpp.cin>>,<<otmpp.sei>>,<<this.ndscto>>)
 			Endtext
 		Endif
 	Otherwise
@@ -153,14 +154,14 @@ Define Class OrdendeCompra As Odata Of 'd:\capass\database\data.prg'
 			     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
 			Endtext
 		Else
-			goApp.npara6 = otmpp.uno
-			goApp.npara7 = otmpp.Dos
-			goApp.npara8 = otmpp.tre
-			goApp.npara9 = otmpp.cua
-			goApp.npara10 = otmpp.cin
-			goApp.npara11 = otmpp.sei
-			Text To lp Noshow
-	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
+*!*				goApp.npara6 = otmpp.uno
+*!*				goApp.npara7 = otmpp.Dos
+*!*				goApp.npara8 = otmpp.tre
+*!*				goApp.npara9 = otmpp.cua
+*!*				goApp.npara10 = otmpp.cin
+*!*				goApp.npara11 = otmpp.sei
+			Text To lp NOSHOW TEXTMERGE 
+	     (<<this.idr>>,'<<this.accion>>',<<this.CodProducto>>,<<this.Ncantidad>>,<<this.Nprecio>>,<<otmpp.uno>>,<<otmpp.dos>>,<<otmpp.tre>>,<<otmpp.cua>>,<<otmpp.cin>>,<<otmpp.sei>>,<<this.ndscto>>)
 			Endtext
 		Endif
 	Endcase
@@ -307,6 +308,7 @@ Define Class OrdendeCompra As Odata Of 'd:\capass\database\data.prg'
 		This.CodProducto = otmpp.coda
 		This.Ncantidad = otmpp.cant
 		This.Nprecio = otmpp.Prec
+		this.ndscto=otmpp.d1
 		If Deleted()
 			If otmpp.nreg > 0
 				This.Idr = otmpp.nreg
@@ -395,7 +397,7 @@ Define Class OrdendeCompra As Odata Of 'd:\capass\database\data.prg'
 	 \ `a`.`ocom_idus`  As `ocom_idus`,	  `a`.`ocom_fope`  As `ocom_fope`,	  `a`.`ocom_idpc`  As `ocom_idpc`,	  `a`.`ocom_idac`  As `ocom_idac`,
 	 \ `a`.`ocom_fact`  As `ocom_fact`,	  `d`.`Razo`       As `Razo`,	  `e`.`nomb`       As `nomb`,c.Peso
 	If goApp.OrdendeCompra <> 'N' Then
-	    \ ,`b`.`doco_uno` , `b`.`doco_dos` ,`b`.`doco_tre`,`b`.`doco_cua` , `b`.`doco_cin`,`b`.`doco_sei`
+	    \ ,`b`.`doco_uno` , `b`.`doco_dos` ,`b`.`doco_tre`,`b`.`doco_cua` , `b`.`doco_cin`,`b`.`doco_sei`,b.doco_dsct
 	Endif
 	 \ From `fe_rocom` `a`
 	 \Join `fe_docom` `b`    On `b`.`doco_idro` = `a`.`ocom_idroc`

@@ -62,6 +62,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	nsmax2 = 0
 	nsmin3 = 0
 	nsmax3 = 0
+	ccoda = ""
 	Function MuestraProductosJ1(np1, np2, np3, np4, Ccursor)
 	lC = 'PROMUESTRAPRODUCTOSJx'
 	goApp.npara1 = np1
@@ -225,7 +226,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara11 = This.nflete
 	goApp.npara12 = This.Moneda
 	goApp.npara13 = This.nprec
-	goApp.npara14 = 0
+	goApp.npara14 = this.ccodigo1
 	goApp.npara15 = This.nutil1
 	goApp.npara16 = This.nutil2
 	goApp.npara17 = This.nutil3
@@ -235,7 +236,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara21 = This.nidart
 	goApp.npara22 = This.nsmax
 	goApp.npara23 = This.nsmin
-	goApp.npara24 = This.ccodigo1
+	goApp.npara24 = 0
 	goApp.npara25 = This.ndolar
 	goApp.npara26 = This.Cestado
 	goApp.npara27 = This.nutil0
@@ -650,12 +651,20 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
-	SELECT c.razo,r.fech,ndoc,ifnull(k.prec*z.igv,0) as prec,r.mone FROM fe_kar AS k
-	INNER JOIN fe_rcom AS r ON r.idauto=k.idauto
-	INNER JOIN fe_prov AS c ON c.idprov=r.idprov,fe_gene as z
-	WHERE idart=<<ncoda>> AND k.acti='A' AND r.acti='A' and k.tipo='C' and tdoc='01' order by r.fech desc  LIMIT 1
-	Endtext
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select c.razo,r.fech,ndoc,IFNULL(k.Prec*z.igv,0) As Prec,r.mone From fe_kar As k
+	\INNER Join fe_rcom As r On r.idauto=k.idauto
+	\INNER Join fe_prov As c On c.idprov=r.idprov,fe_gene As z
+	\ Where
+	If Vartype(cnoda) = 'N' Then
+	\ idart=<<ncoda>>
+	Else
+	\ idart='<<ncoda>>'
+	Endif
+	\ And k.Acti='A' And r.Acti='A' And k.tipo='C' And tdoc='01' Order By r.fech Desc  LIMIT 1
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -810,26 +819,26 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
-*********************
 	Function DesactivaProductos(np1)
+	Ccursor = 'c_' + Sys(2015)
 	Text To lC Noshow Textmerge
      SELECT SUM(IF(tipo='C',cant,-cant)) as stock FROM fe_kar WHERE acti='A' AND idart=<<np1>> GROUP BY idart
 	Endtext
-	If This.EJECutaconsulta(lC, 'vs') < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
-	If vs.stock <> 0 Then
-		This.Cmensaje = "Tiene Stock NO es Posible Desactivar " + Alltrim(Str(vs.stock, 12, 2))
+	Select (Ccursor)
+	If stock <> 0 Then
+		This.Cmensaje = "Tiene Stock NO es Posible Desactivar " + Alltrim(Str(stock, 12, 2))
 		Return 0
 	Endif
-	lC = 'PROMUESTRATPRODUCTOS'
-	goApp.npara1 = np1
-	Text To lp Noshow
-     (?goapp.npara1,?goapp.npara2)
+	Text To lp Noshow Textmerge
+         UPDATE fe_art SET prod_acti='I' WHERE idart=<<np1>>
 	Endtext
-	If This.EJECUTARP(lC, lp, "") < 1 Then
+	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
+	This.Cmensaje = 'Desactivado Ok'
 	Return 1
 	Endfunc
 	Function listarinactivos(np1, opt, Calias)
@@ -1599,11 +1608,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		Return 0
 	Endif
 	Return nid
-	ENDFUNC
+	Endfunc
 	Function editarproductolyg()
 	Local cur As String
 	lC = 'PROACTUALIZAPRODUCTOS'
-    Text To lp NOSHOW TEXTMERGE 
+	Text To lp Noshow Textmerge
 	  ('<<This.cdesc>>','<<This.cUnid>>',<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,<<This.cmar>>,'<<This.ctipro>>',
 	  <<This.nflete>>,'<<This.Moneda>>',<<This.nprec>>,0,<<This.nutil1>>,<<This.nutil2>>,<<This.nutil3>>,<<This.ncome>>,<<This.ncomc>>,<<This.nidusua>>,<<This.nidart>>,
 	  <<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>,'<<This.Cestado>>',<<this.nutil0>>,<<this.ncantoferta>>,
@@ -1614,7 +1623,23 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function devStocks(Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Local cur As String
+	lC = 'PRODSTOCKS'
+	Text To lp Noshow Textmerge
+	(<<this.nidart>>)
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 

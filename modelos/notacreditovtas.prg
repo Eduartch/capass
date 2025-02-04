@@ -1,11 +1,11 @@
-Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
+Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	nvalor			 = 0
 	Cserie			 = ""
 	cnumero			 = ""
 	nidclie			 = 0
 	dFecha			 = Date()
 	cnombrecliente	 = ""
-	cdni			 = ""
+	Cdni			 = ""
 	ctdocref		 = ""
 	ctiponotacredito = ''
 	nformapago		 = 0
@@ -26,6 +26,7 @@ Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
 	ncodigocliente = 0
 	nidven = 0
 	Cmoneda = ""
+	nidautoref = 0
 	Function VAlidar
 	If This.nformaplicar = 0 Then
 		Select Sum(devo) As tdevo From tmpn Into Cursor tdevol
@@ -41,6 +42,12 @@ Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
 			Endif
 		Endscan
 		If Sw = 0 Then
+			Return 0
+		Endif
+	Endif
+	If This.nidautoref > 0
+		If This.verificancventas(This.nidautoref) < 1 Then
+			This.Cmensaje = 'Documento Ya Referenciado con Nota de Credito'
 			Return 0
 		Endif
 	Endif
@@ -67,7 +74,7 @@ Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
 	Case !ValidaRuc(This.Cruc)  And This.ctdocref = '01'
 		This.Cmensaje = "RUC no Válido"
 		Return 0
-	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.cdni)) <> 8) And This.ctdocref = '03'
+	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.Cdni)) <> 8) And This.ctdocref = '03'
 		This.Cmensaje = "Es Necesario Ingresar el Nombre Completo de Cliente, DNI Válidos"
 		Return 0
 	Case  PermiteIngresox(This.dFecha) = 0
@@ -100,25 +107,25 @@ Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
 	Function registrarncpsysw()
 	Local Obj As SerieProducto
 	Obj = Createobject("serieproducto")
-	Create Cursor tmpv(coda N(10), Desc c(100), Unid c(4), cant N(12, 2), Prec N(12, 7), Ndoc c(12), cletras c(180), ;
-		Nitem N(5), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), Tdoc c(2), ;
-		Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', fech1 d, Tdoc1 c(2), dcto c(12), Referencia c(60), Archivo c(120))
+	Create Cursor tmpv(Coda N(10), Desc c(100), Unid c(4), cant N(12, 2), Prec N(12, 7), Ndoc c(12), cletras c(180), ;
+		  Nitem N(5), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), Tdoc c(2), ;
+		  Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', fech1 d, Tdoc1 c(2), dcto c(12), Referencia c(60), Archivo c(120))
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	If fe_gene.gene_exon = 'N' Then
 		NAuto = IngresaDocumentoElectronico(This.cTdoc, This.cformapago, This.Cserie + This.cnumero, This.dFecha, This.cmotivo, This.nvalor, This.nigv, This.nTotal, "", This.Cmoneda, ;
-			This.ndolar, fe_gene.igv, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, 0, 0)
+			  This.ndolar, fe_gene.igv, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, 0, 0)
 	Else
 		NAuto = IngresaDocumentoElectronico(This.cTdoc, This.cformapago, This.Cserie + This.cnumero, This.Cserie + This.cnumero, This.cmotivo, 0, 0, This.nTotal, "", This.Cmoneda, ;
-			This.ndolar, 1, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, This.nvalor, 0)
+			  This.ndolar, 1, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, This.nvalor, 0)
 	Endif
 	If NAuto < 1
 		This.DEshacerCambios()
 		Return 0
 	Endif
 	If IngresaDatosLCajaEFectivo12(This.dFecha, "", This.cnombrecliente, fe_gene.idctat, Nt, 0, 'S', fe_gene.dola, goApp.nidusua, This.ncodigocliente, NAuto, This.cformapago, This.Cserie + This.cnumero, ;
-			This.ctdo, goApp.Tienda) = 0 Then
+			  This.ctdo, goApp.Tienda) = 0 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -157,7 +164,7 @@ Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
 		Else
 			Insert Into tmpv(Desc, cant, Prec, Ndoc)Values(Alltrim(.txtmodifica.Value), 1, 1 * .txttOTAL.Value, cndcto)
 		Endif
-		If INGRESAKARDEX1(NAuto, tmpn.coda, 'V', 0, 0, 'I', 'K', lv.idven, goApp.Tienda, 0, ncomision) = 0 Then
+		If INGRESAKARDEX1(NAuto, tmpn.Coda, 'V', 0, 0, 'I', 'K', lv.idven, goApp.Tienda, 0, ncomision) = 0 Then
 			Cmensaje = 'Al Regitrar Descuento'
 			This.DEshacerCambios()
 			Aviso(Cmensaje)
@@ -176,36 +183,36 @@ Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
 			p = p + 1
 			Do Case
 			Case .cmbdcto.ListIndex = 2  And tmpn.dsct > 0
-				Insert Into tmpv(coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.coda, tmpn.Desc, tmpn.Unid, 1, tmpn.dsct, cndcto)
-				If INGRESAKARDEX1(.NAuto, tmpn.coda, 'V', tmpn.Prec, 0, 'I', 'K', lv.idven, tmpn.alma, 0, tmpn.comi) = 0
+				Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.Coda, tmpn.Desc, tmpn.Unid, 1, tmpn.dsct, cndcto)
+				If INGRESAKARDEX1(.NAuto, tmpn.Coda, 'V', tmpn.Prec, 0, 'I', 'K', lv.idven, tmpn.alma, 0, tmpn.comi) = 0
 					Sw = 0
 					Cmensaje = 'Al Regitrar Devolucion 1'
 					Exit
 				Endif
 			Case tmpn.devo > 0 And .cmbdcto.ListIndex = 1
-				Insert Into tmpv(coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.coda, tmpn.Desc, tmpn.Unid, - tmpn.devo, tmpn.dsct, cndcto)
-				nidkar = INGRESAKARDEX1(.NAuto, tmpn.coda, 'V', tmpn.Prec, - tmpn.devo, 'I', 'K', lv.idven, tmpn.alma, 0, tmpn.comi)
+				Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.Coda, tmpn.Desc, tmpn.Unid, - tmpn.devo, tmpn.dsct, cndcto)
+				nidkar = INGRESAKARDEX1(.NAuto, tmpn.Coda, 'V', tmpn.Prec, - tmpn.devo, 'I', 'K', lv.idven, tmpn.alma, 0, tmpn.comi)
 				If nidkar = 0
 					Sw = 0
 					Cmensaje = 'Al Regitrar Devolucion 2'
 					Exit
 				Endif
 				If !Empty(tmpn.SerieProducto)
-					Obj.AsignaValores(tmpn.SerieProducto, .NAuto, nidkar, tmpn.coda)
+					Obj.AsignaValores(tmpn.SerieProducto, .NAuto, nidkar, tmpn.Coda)
 					If Obj.RegistraDseries(tmpn.Idseriep) <= 0 Then
 						Sw = 0
 						Cmensaje = 'Al Regitrar Series '
 						Exit
 					Endif
 				Endif
-				If ActualizaStock(tmpn.coda, tmpn.alma, tmpn.devo, 'C') = 0 Then
+				If ActualizaStock(tmpn.Coda, tmpn.alma, tmpn.devo, 'C') = 0 Then
 					Cmensaje = 'Al Regitrar Stock'
 					Sw = 0
 					Exit
 				Endif
 			Case  .cmbdcto.ListIndex = 1 And tmpn.dsct > 0
-				Insert Into tmpv(coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.coda, tmpn.Desc, tmpn.Unid, 1, tmpn.dsct, cndcto)
-				If INGRESAKARDEX1(.NAuto, tmpn.coda, 'V', tmpn.Prec, 0, 'I', 'K', lv.idven, tmpn.alma, 0, tmpn.comi) = 0
+				Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.Coda, tmpn.Desc, tmpn.Unid, 1, tmpn.dsct, cndcto)
+				If INGRESAKARDEX1(.NAuto, tmpn.Coda, 'V', tmpn.Prec, 0, 'I', 'K', lv.idven, tmpn.alma, 0, tmpn.comi) = 0
 					Sw = 0
 					Cmensaje = 'Al Regitrar Devolucion 3'
 					Exit
@@ -249,7 +256,25 @@ Define Class notacreditovtas As Odata Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function verificancventas(niDAUTO)
+	Ccursor = 'c_' + Sys(2015)
+	Text To lC Noshow Textmerge Pretext 7
+    select  ncre_idau as idauto FROM fe_ncven WHERE ncre_idau=<<nidauto>> AND ncre_acti='A'
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If Idauto > 0 Then
+		Return  0
+	Endif
+	Return  1
+	Endfunc
 Enddefine
+
+
+
+
 
 
 

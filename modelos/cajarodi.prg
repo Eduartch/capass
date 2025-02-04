@@ -612,8 +612,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	    IF(lcaj_acre<>0,0,IF(lcaj_ttar='.','',IF(lcaj_efec>0,'',IFNULL(k.idart,'')))) AS coda,day(a.lcaj_fech) as dia,
 	    if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,if(lcaj_efec>0,0,ifnull(k.cant,0)))) as cant,
 		if(a.lcaj_form='E','Efectivo',if(a.lcaj_form='C','Crédito','Tarjeta')) as forma,a.lcaj_deta as deta,
-		IFNULL(IF(tdoc='01',IF(LEFT(b.ndoc,1)='F',b.ndoc,CONCAT('F/.',b.ndoc)),
-        IF(LEFT(b.ndoc,1)='B',b.ndoc,CONCAT('B/.',b.ndoc))),a.lcaj_dcto) AS ndoc,
+	    a.lcaj_dcto AS ndoc,
         ifnull(b.tdoc,'99') as tdoc,
 		if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,if(lcaj_efec>0,0,ifnull(ROUND(k.cant*k.prec,2),0)))) as Np,
         IF(lcaj_acre<>0,0,IF(lcaj_form='E',IF(lcaj_efec>0,lcaj_efec,IFNULL(ROUND(k.cant*k.prec,2),a.lcaj_deud)),0)) AS ingresos,
@@ -627,13 +626,28 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		left join fe_rcom as b on b.idauto=a.lcaj_idau 
 		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k  on k.idauto=b.idauto 
 		LEFT join fe_clie as c on c.idclie=b.idcliente
-		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form not in('T','Y','D') and left(a.lcaj_ttar,1)<>'.'
+		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form not in('T','Y','D') and left(a.lcaj_ttar,1)<>'.' and lcaj_efec=0
+		union ALL
+	    SELECT CAST(0 AS DECIMAL(5))AS prec,
+	    '' AS coda,DAY(a.lcaj_fech) AS dia,0 AS cant,
+		'Efectivo' AS forma,a.lcaj_deta AS deta,
+		a.lcaj_dcto AS ndoc,
+                tdoc,0 AS Np,
+		a.lcaj_efec AS ingresos,
+		0 AS credito,
+		'I' AS tipo,
+        0 AS tarjeta1,
+        0 AS deposito,
+        0 AS yape,
+		0 AS gastos,lcaj_fope,'a' AS orden,lcaj_idau AS idauto,'' AS nruc,'' AS ndni FROM
+		fe_lcaja AS a 
+		LEFT JOIN fe_rcom AS b ON b.idauto=a.lcaj_idau 
+		WHERE a.lcaj_fech='<<dfecha>>'  AND a.lcaj_acti='A' AND a.lcaj_codt=<<this.codt>> AND lcaj_efec>0 AND lcaj_form='E'
 		union all
 		select cast(0 as decimal(5))as prec,
 	    '' as coda,day(a.lcaj_fech) as dia,0 as cant,
 		if(a.lcaj_form='E','Efectivo',if(a.lcaj_form='C','Crédito','Tarjeta')) as forma,a.lcaj_deta as deta,
-		ifnull(if(tdoc='01',if(left(b.ndoc,1)='F',b.ndoc,concat('F/.',b.ndoc)),
-        if(left(b.ndoc,1)='B',b.ndoc,concat('B/.',b.ndoc))),a.lcaj_dcto) as ndoc,
+		a.lcaj_dcto as ndoc,
         ifnull(b.tdoc,'99') as tdoc,
 	    0 as Np,
 		a.lcaj_deud as ingresos,
@@ -650,9 +664,8 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		SELECT if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(k.prec,0))) as prec,
 	    if(lcaj_acre<>0,0,if(lcaj_ttar='.','',ifnull(k.idart,''))) as coda,day(a.lcaj_fech) as dia,
 	    if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(k.cant,0))) as cant,
-		if(a.lcaj_form='E','Efectivo',if(a.lcaj_form='C','Crédito','Tarjeta')) as forma,a.lcaj_deta as deta,
-		ifnull(if(tdoc='01',if(left(b.ndoc,1)='F',b.ndoc,concat('F/.',b.ndoc)),
-        if(left(b.ndoc,1)='B',b.ndoc,concat('B/.',b.ndoc))),a.lcaj_dcto) as ndoc,
+		if(a.lcaj_form='Y','Yape',if(a.lcaj_form='D','Depósito','Tarjeta')) as forma,a.lcaj_deta as deta,
+		a.lcaj_dcto as ndoc,
         ifnull(b.tdoc,'99') as tdoc,
 		if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(ROUND(k.cant*k.prec,2),0))) as Np,
 		if(lcaj_acre<>0,0,if(lcaj_form='E',ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0)) as ingresos,
@@ -664,8 +677,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		0 as gastos,lcaj_fope,'a' as orden,lcaj_idau as idauto,ifnull(c.nruc,'') as nruc,ifnull(c.ndni,'') as ndni  from
 		fe_lcaja as a 
 		left join fe_rcom as b on b.idauto=a.lcaj_idau 
-		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k
-		on k.idauto=b.idauto 
+		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k on k.idauto=b.idauto 
 		LEFT join fe_clie as c on c.idclie=b.idcliente
 		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form in('T','D','Y') and left(a.lcaj_ttar,1)<>'.'
 		order by tdoc,ndoc

@@ -28,11 +28,11 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara23 = np23
 	goApp.npara24 = np24
 	goApp.npara25 = np25
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lC, lp, cur)
 
 	If Vartype(nid) = 'C' Then
@@ -74,11 +74,11 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara23 = np23
 	goApp.npara24 = np24
 	goApp.npara25 = np25
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -113,11 +113,11 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara24 = np24
 	goApp.npara25 = np25
 	goApp.npara26 = np26
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-	Endtext
+	ENDTEXT
 	If EJECUTARP(lC, lp, cur) < 1
 		Return 0
 	Endif
@@ -129,9 +129,9 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
-	Text To lp Noshow
+	TEXT To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -147,15 +147,109 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lp Noshow
+	TEXT To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
+	Function CreaProductospsysrx()
+	lC = 'FUNCREAPRODUCTOS'
+	cur = 'c_' + Sys(2015)
+*!*		Thisform.Producto.cdesc = .txtdescripcion.Value
+*!*			Thisform.Producto.cUnid = .txtunidad.Value
+*!*			Thisform.Producto.nprec = .txtprecio.Value
+*!*			Thisform.Producto.ncosto = .txtcosto.Value
+*!*			Thisform.Producto.np1 = .txtpreciomayor.Value
+*!*			Thisform.Producto.np2 = .txtprecioespecial.Value
+*!*			Thisform.Producto.np3 = .txtpreciomenor.Value
+*!*
+*!*			Thisform.Producto.npeso = .txtpeso.Value
+*!*			Thisform.Producto.ccat = .txtcodc.Value
+*!*			Thisform.Producto.cmar = .txtcodm.Value
+*!*			Thisform.Producto.ctipro = Left(.Cmbtipo.Value, 1)
+*!*			Thisform.Producto.nflete = .Txtcodigof.Value
+*!*			Thisform.Producto.Moneda = Left(.cmbMONEDA.Value, 1)
+*!*			Thisform.Producto.Cestado = Left(Thisform.Cmbestado.Value, 1)
+*!*			Thisform.Producto.cidpc  = Id()
+*!*			Thisform.Producto.dFecha = Datetime()
+*!*			nidusua = goApp.nidusua
+*!*			Thisform.Producto.nutil1 = (.txtutilidad1.Value / 100) + 1
+*!*			Thisform.Producto.nutil2= (.txtutilidad2.Value / 100) + 1
+*!*			Thisform.Producto.nutil3 = (.txtutilidad3.Value / 100) + 1
+*!*			Thisform.Producto.ncome = .txtcomisione.Value / 100
+*!*			Thisform.Producto.ncomc = .txtcomisionc.Value / 100
+*!*			Thisform.Producto.nsmax = .txtstmaximo.Value
+*!*			Thisform.Producto.nsmin = .txtstminimo.Value
+*!*			Thisform.Producto.nidcosto = .txtidcosto.Value
+*!*			Thisform.Producto.ndolar = .txtdolAR.Value
+*!*			Thisform.Producto.ccoda = .txtCodigo.Value
+*!*			cft=CFECHASTIME(DATETIME())
+*!*			ccoda,cdesc,cunid,nprec,ncosto,
+*!*			np1,np2,np3,npeso,ccat,cmar,ctipro,nflete,cm,cidpc,ncome,ncomc,
+*!*			nutil1,nutil2,nutil3,nidusua,nsmax,nsmin,nidcosto,ndolar
+	Set Textmerge On
+	Set Textmerge To Memvar lp Noshow Textmerge
+	\('<<this.ccoda>>', '<<this.cdesc>>', '<<this.cunid>>', << This.nprec >>, << This.ncosto >>,
+	\<< This.np1 >>, << This.np2 >>, << This.np3 >>,
+	\<< This.npeso >>, << This.ccat >>, << This.cmar >>, '<<this.ctipro>>', << This.nflete >>,
+	\'<<this.cm>>', '<<this.cidpc>>', << This.ncome >>, << This.ncomc >>,
+	\<< This.nutil1 >>, << This.nutil2 >>, << This.nutil3 >>, << goApp.nidusua >>,
+	\<< This.nsmax >>, << This.nsmin >>, << This.nidcosto >>, << This.ndolar >>
+	If goApp.Lectorcodigobarras = 'S' Then
+	  \,'<<this.ccodigo1>>')
+	Else
+	\)
+	Endif
+	Set Textmerge Off
+	Set Textmerge To
+	nid = This.EJECUTARf(lC, lp, cur)
+	If LEN(ALLTRIM(nid)) = 0 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizaProductospsysrx(Cestado)
+	lC = 'PROACTUALIZAPRODUCTOS'
+	If Cestado = 'A' Then
+		Set Textmerge On
+		Set Textmerge To Memvar lp Noshow Textmerge
+		\('<<this.cdesc>>', '<<this.cunid>>',<<This.ncosto>>,
+		\<< This.np1 >>, << This.np2 >>, << This.np3 >>,
+		\<< This.npeso >>, << This.ccat >>, << This.cmar >>, '<<this.ctipro>>', << This.nflete >>,
+		\'<<this.cm>>',  << This.nprec >>, <<This.nidgrupo>>,
+		\<< This.nutil1 >>, << This.nutil2 >>, << This.nutil3 >>,
+		\<< This.ncome >>, << This.ncomc >>,<< goApp.nidusua >>,'<<this.ccoda>>',
+		\<< This.nsmax >>, << This.nsmin >>, << This.nidcosto >>, << This.ndolar >>
+		If goApp.Lectorcodigobarras = 'S' Then
+		  \,'<<this.ccodigo1>>')
+		Else
+			\)
+		Endif
+		Set Textmerge Off
+		Set Textmerge To
+		If This.EJECUTARP(lC, lp, "") < 1 Then
+			Return 0
+		Endif
+	Else
+		TEXT To lcu Noshow Textmerge
+	        UPDATE fe_art SET prod_acti='I',prod_uact=<<goapp.nidusua>> WHERE idart='<<this.ccoda>>'
+		ENDTEXT
+		If This.Ejecutarsql(lcu) < 1 Then
+			Return 0
+		Endif
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
 
 
 

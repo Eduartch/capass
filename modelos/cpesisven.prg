@@ -6,7 +6,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	cose = ""
 	urlcdr = ""
 	urlcdr = cweb + 'app88/consultarcdrd.php'
-	centidad = ""
+	Centidad = ""
 	nruc = ""
 	usol = ""
 	csol = ""
@@ -1313,7 +1313,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\Where  a.Acti<>'I' And Left(ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'   And a.Tdoc='01'  And  (Impo<>0 Or rcom_otro>0)
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
-	      \And a.codt=<<goapp.Tienda>>
+	      \And a.codt=<<goApp.tienda>>
 		Else
 	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
 		Endif
@@ -1334,8 +1334,8 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 	\Where a.Acti<>'I' And Left(a.ndoc,1) In ('F') And Left(a.rcom_mens,1)<>'0'  And w.Tdoc='01' And a.Tdoc In("07","08") And nruc<>'***********'
 	If goApp.Cdatos = 'S' Then
-	  If Empty(goApp.Tiendas) Then
-	      \And a.codt=<<goapp.Tienda>>
+		If Empty(goApp.Tiendas) Then
+	      \And a.codt=<<goApp.tienda>>
 		Else
 	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
 		Endif
@@ -1377,7 +1377,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			cxml = filess.guia_xml
 			Strtofile(cxml, crutaxml)
 		Else
-			This.cmensaje = "No se puede Obtener el Archivo XML de Envío"
+			This.Cmensaje = "No se puede Obtener el Archivo XML de Envío"
 		Endif
 	Endif
 	cdr = "R-" + carfile
@@ -1388,7 +1388,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			cdrxml = filess.guia_cdr
 			Strtofile(cdrxml, crutaxmlcdr)
 		Else
-			This.cmensaje = "No se puede Obtener el Archivo XML de Envío"
+			This.Cmensaje = "No se puede Obtener el Archivo XML de Envío"
 		Endif
 	Endif
 	Return 1
@@ -1407,7 +1407,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Return  1
 	Endfunc
 	Function consultarfacturaxenviar(pkid, Ccursor)
-	If !Pemstatus(goApp, 'proyecto', 5)
+	If !Pemstatus(goApp, 'proyecto', 5) Then
 		AddProperty(goApp, 'proyecto', '')
 	Endif
 	Set Textmerge On
@@ -1418,7 +1418,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	   \ 'PE' As pais,r.igv,Cast(0 As Decimal(12,2)) As tdscto,Cast(0 As Decimal(12,2)) As Tisc,Impo,Cast(0 As Decimal(12,2)) As montoper,k.Incl,
 	   \ Cast(0 As Decimal(12,2)) As totalpercepcion,k.cant,k.Prec,Left(r.ndoc,4) As serie,Substr(r.ndoc,5) As numero,a.unid,a.Descri,k.idart As coda,
 	   \ IFNULL(unid_codu,'NIU')As unid1,s.codigoestab,r.Form
-	If goApp.Proyecto = 'psys' Then
+	If Alltrim(Lower(goApp.Proyecto)) == 'psys' Then
 	      \,r.rcom_ocom
 	Endif
 	   \ From fe_rcom r
@@ -1435,7 +1435,28 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function generaCorrelativoEnvioResumenBoletas()
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	If goApp.Cdatos = 'S' Then
+		Text To lC Noshow Textmerge
+	    UPDATE fe_sucu as f SET gene_nres=f.gene_nres+1 WHERE idalma=<<goapp.tienda>>
+		Endtext
+	Else
+		Text To lC Noshow Textmerge
+	     UPDATE fe_gene  as f SET gene_nres=f.gene_nres+1 WHERE idgene=1
+		Endtext
+	Endif
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
 
 
 
