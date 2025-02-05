@@ -1004,16 +1004,81 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Return 1
 	Endfunc
 	Function flujoventasxdespacho(Ccursor)
-	Text To lC Noshow Textmerge
-	SELECT SUM(volume) AS cantidad,SUM(amount) AS importe,idgrade,gradename,CAST(fecreg_inicio AS DATE) AS fecha FROM venta WHERE CAST(fecreg_inicio AS DATE) BETWEEN '2025-1-01' AND '2025-1-31'
-    GROUP BY idgrade,gradename,fecha
-	Endtext
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If (This.fechaf - This.fechai) > 31 Then
+		This.Cmensaje = "Máximo 30 Días"
 		Return 0
 	Endif
+	dfi = Cfechas(This.fechai)
+	dff = Cfechas(This.fechaf)
+	Text To Cc Noshow Textmerge
+	SELECT SUM(volume) AS cantidad,SUM(amount) AS importe,idgrade,gradename,CAST(fecreg_inicio AS DATE) AS fecha FROM venta 
+	WHERE CAST(fecreg_inicio AS DATE) BETWEEN '<<dfi>>' AND '<<dff>>'
+    GROUP BY fecha,idgrade,gradename ORDER BY fecha,idgrade,gradename
+	Endtext
+	If This.EJECutaconsulta(Cc, 'vv') < 1 Then
+		Return 0
+	Endif
+	Create Cursor (Ccursor) (Producto  c(20))
+	Select vv
+	Go Top
+	Do While !Eof()
+		Cdia = "Dia_" + Alltrim(Str(Day(vv.Fecha)))
+		Alter Table (Ccursor) Add Column (Cdia) N(12, 2)
+		dFecha = vv.Fecha
+		Do While !Eof() And vv.Fecha = m.dFecha
+			Select (Ccursor)
+			LOCATE  For Alltrim(Producto) = Alltrim(vv.gradename)
+			If !Found()
+				Text To lC1 Noshow Textmerge
+	            INSERT INTO  <<ccursor>> (producto,<<cdia>>)values('<<ALLTRIM(vv.gradename)>>',<<vv.cantidad>>)
+				Endtext
+				Execscript(lC1)
+				Text To lC2 Noshow Textmerge
+	            INSERT INTO  <<ccursor>> (producto,<<cdia>>)values('<<ALLTRIM(vv.gradename)>>',<<vv.importe>>)
+				Endtext
+				Execscript(lC2)
+			Else
+				Text To lC3 Noshow Textmerge
+			      replace <<cdia>> with <<vv.cantidad>> in <<ccursor>>
+				Endtext
+				Execscript(lC3)
+				Select (Ccursor)
+				If !Eof()
+					Skip 1
+					Text To lC4 Noshow Textmerge
+			         replace <<cdia>> with <<vv.importe>> in <<ccursor>>
+					Endtext
+					Execscript(lC4)
+				Endif
+			Endif
+			Select vv
+			Skip
+		Enddo
+	Enddo
+	Select (Ccursor)
+	Go Top
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION flujodeventasxturnos(Ccursor)
+	TEXT TO lc NOSHOW TEXTMERGE 
+	SELECT SUM(lect_cfinal-lect_inic) AS cant,SUM(lect_mfinal-lect_inim) AS monto,lect_idar,lect_fech,lect_idin
+	FROM fe_lecturas AS l
+	WHERE lect_acti='A' AND lect_fech BETWEEN '2025-2-1' AND '2025-2-4' GROUP BY lect_fech,lect_idar,lect_idin
+	ORDER BY lect_fech,lect_idin
+	ENDTEXT 
+	ENDFUNC 
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
 
 
 

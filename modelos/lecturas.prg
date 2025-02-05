@@ -327,7 +327,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	FROM fe_lecturas AS l
 	INNER JOIN fe_art AS a ON a.idart=l.lect_idar
 	inner join fe_usua as u on u.idusua=l.lect_idus
-	WHERE lect_acti='A' and lect_idtu=<<this.nturno>> and lect_esta='C' and lect_fech between '<<fi>>' and '<<ff>>' order by u.nomb,descri,lect_idco
+	WHERE lect_acti='A'  and lect_idin=<<this.nidlectura>>  and lect_fech='<<fi>>'  order by u.nomb,descri,lect_idco
 	Endtext
 	This.conconexion = 1
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
