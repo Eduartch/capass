@@ -766,29 +766,32 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 			ntdoc = Xn.Tdoc
 			nndoc = Xn.Ndoc
 			nfech = Xn.fech
-		Endif
+		ENDIF
+		
+*!*	*!*			  IIF(notas=1,m.ntdoc,''),IIF(notas=1,m.nndoc,''),IIF(notas=1,m.nfech, Ctod("  /  /    "))
+		
 		nccostos = Iif(Vartype(registro1.rcom_ccos) = 'C', Val(registro1.rcom_ccos), registro1.rcom_ccos)
 		Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, valorg, Exon, igvg, otros, Importe, pimpo, Deta,  dola, Mone, detra, Codigo, ;
 			  Auto,  tref, Refe,  Tipo, icbper, fechn, fechad, T, vigv, ncta, Ccostos, ccost,ncta1);
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
 			  registro1.nruc, registro1.Razo, registro1.valorg, registro1.Exon, registro1.igvg, registro1.otros, registro1.Importe, registro1.pimpo, registro1.Deta, ;
 			  registro1.dola,  registro1.Mone, registro1.detra,  ;
-			  registro1.Codigo, registro1.Auto,  ntdoc, nndoc, registro1.Tipo, registro1.icbper, registro1.fechn, ;
-			  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv, registro1.ncta, registro1.centcostos, m.nccostos,registro1.ncta1)
-		If notas = 1 Then
-			Y = 1
-			Select Xn
-			Scan All
-				If Y > 1 Then
-					Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, Auto, tref, Refe, fechn, vigv);
-						Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-						  registro1.nruc, registro1.Razo, Xn.idn,  Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.vigv)
-					x = x + 1
-				Endif
-				Y = Y + 1
-			Endscan
-			notas = 0
-		Endif
+			  registro1.Codigo, registro1.Auto, IIF(notas=1,m.ntdoc,''),IIF(notas=1,m.nndoc,''), registro1.Tipo, registro1.icbper, IIF(notas=1,m.nfech, Ctod("  /  /   ")),;
+     		  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv, registro1.ncta, registro1.centcostos, m.nccostos,registro1.ncta1)
+*!*			If notas = 1 Then
+*!*				Y = 1
+*!*				Select Xn
+*!*				Scan All
+*!*					If Y > 1 Then
+*!*						Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, Auto, tref, Refe, fechn, vigv);
+*!*							Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
+*!*							  registro1.nruc, registro1.Razo, Xn.idn,  Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.vigv)
+*!*						x = x + 1
+*!*					Endif
+*!*					Y = Y + 1
+*!*				Endscan
+*!*				notas = 0
+*!*			Endif
 
 	Endscan
 	Go Top In registro

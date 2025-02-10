@@ -5,38 +5,12 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	nidlectura = 0
 	Function ConsultarLecturas(Calias)
 	Df = Cfechas(fe_gene.fech - 2)
-	Do Case
-	Case goApp.Isla = 1
-		Text To lC Noshow Textmerge
-			SELECT gradename AS descri,amount AS monto,price AS precio,volume AS cantidad,
-			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
-			totalamount AS totalmonto,idjournal as nId_Journal,fecreg_inicio,a.idart,a.unid
-			FROM venta  AS v
-            INNER JOIN fe_art AS a ON a.`prod_idar`=v.`idgrade`
-            WHERE estado=1 AND fecreg_inicio >='<<df>>' AND pump IN('1','2') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		Endtext
-	Case goApp.Isla = 2
-		Text To lC Noshow Textmerge
-		    SELECT gradename AS descri,amount AS monto,price AS precio,volume AS cantidad,
-			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
-			totalamount AS totalmonto,idjournal as nId_Journal,fecreg_inicio,a.idart,a.unid
-			FROM venta AS v
-            INNER JOIN fe_art AS a ON a.`prod_idar`=v.`idgrade`
-            WHERE estado=1 AND fecreg_inicio >='<<df>>' AND pump IN('3','4') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		Endtext
-	Case goApp.Isla = 3
-		Text To lC Noshow Textmerge
-		    SELECT gradename AS descri,amount AS monto,price AS precio,volume AS cantidad,
-			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
-			totalamount AS totalmonto,idjournal as nId_Journal,fecreg_inicio,a.idart,a.unid
-			FROM venta AS v
-            INNER JOIN fe_art AS a ON a.`prod_idar`=v.`idgrade`
-            WHERE estado=1 AND fecreg_inicio >='<<df>>' AND pump IN('5','6','7','8') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		Endtext
-	Endcase
+	lC = 'ProlistarDespachos'
+	Text To lp Noshow Textmerge
+	     ('<<df>>',<<goapp.isla>>)
+	Endtext
 	This.conconexion = 1
-	If This.EJECutaconsulta(lC, Calias) < 1 Then
-		This.conconexion = 0
+	If EJECUTARP(lC, lp, Calias ) < 1 Then
 		Return 0
 	Endif
 	This.conconexion = 0
@@ -123,56 +97,14 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	fi = Cfechas(dfi)
 	ff = Cfechas(dff)
-	Do Case
-	Case nisla = 1
-		Text To lC Noshow Textmerge
-		    SELECT gradename AS producto,amount AS monto,price AS precio,volume AS cantidad,
-			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
-			totalamount AS totalmonto,fecreg_inicio,dcto,cliente,impo as importe,idjournal AS nId_Journal
-			FROM venta  AS v
-            LEFT JOIN  (SELECT fe_rcom.idauto,kar_idco,ndoc AS dcto,razo AS cliente,impo FROM fe_kar
-            INNER JOIN fe_rcom ON fe_rcom.idauto=fe_kar.idauto
-            INNER JOIN fe_clie ON fe_clie.idclie=fe_rcom.idcliente
-            WHERE fe_kar.acti='A' AND fe_rcom.acti='A' AND kar_idco>0 AND fe_rcom.fech BETWEEN '<<fi>>'  AND '<<ff>>' GROUP BY idauto,kar_idco,ndoc,razo) AS k ON k.kar_idco=v.idjournal
-            WHERE CAST(fecreg_inicio AS DATE)  BETWEEN '<<fi>>'  AND '<<ff>>'  AND pump IN('1','2') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		Endtext
-	Case nisla = 2
-		Text To lC Noshow Textmerge
-		    SELECT gradename AS producto,amount AS monto,price AS precio,volume AS cantidad,
-			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
-			totalamount AS totalmonto,fecreg_inicio,dcto,cliente,impo as importe,idjournal AS nId_Journal
-			FROM venta  AS v
-            LEFT JOIN  (SELECT fe_rcom.idauto,kar_idco,ndoc AS dcto,razo AS cliente,impo FROM fe_kar
-            INNER JOIN fe_rcom ON fe_rcom.idauto=fe_kar.idauto
-            INNER JOIN fe_clie ON fe_clie.idclie=fe_rcom.idcliente
-            WHERE fe_kar.acti='A' AND fe_rcom.acti='A' AND kar_idco>0 AND fe_rcom.fech BETWEEN '<<fi>>'  AND '<<ff>>' GROUP BY idauto,kar_idco,ndoc,razo) AS k ON k.kar_idco=v.idjournal
-            WHERE CAST(fecreg_inicio AS DATE)  BETWEEN '<<fi>>'  AND '<<ff>>'  AND pump IN('3','4') ORDER BY fecreg_inicio DESC,nozzle ASC,pump ASC
-		Endtext
-	Case nisla = 3
-		Text To lC Noshow Textmerge
-		    SELECT gradename AS producto,amount AS monto,price AS precio,volume AS cantidad,
-			nozzle AS manguera,pump AS lado,estado,TotalVolume AS totalcantidad,
-			totalamount AS totalmonto,fecreg_inicio,dcto,cliente,impo AS importe,idjournal AS nId_Journal
-			FROM venta  AS v
-            LEFT JOIN  (SELECT fe_rcom.idauto,kar_idco,ndoc AS dcto,razo AS cliente,impo FROM fe_kar
-            INNER JOIN fe_rcom ON fe_rcom.idauto=fe_kar.idauto
-            INNER JOIN fe_clie ON fe_clie.idclie=fe_rcom.idcliente
-            WHERE fe_kar.acti='A' AND fe_rcom.acti='A' AND kar_idco>0 AND fe_rcom.fech BETWEEN '<<fi>>'  AND '<<ff>>' GROUP BY idauto,kar_idco,ndoc,razo) AS k ON k.kar_idco=v.idjournal
-            WHERE CAST(fecreg_inicio AS DATE)  BETWEEN '<<fi>>'  AND '<<ff>>'  AND pump IN('5','6') ORDER BY fecreg_inicio DESC,nozzle ASC,pump Asc
-		Endtext
-	Endcase
 	This.conconexion = 1
-	If fe_gene.nruc = '20609310902' Then
-	    lc="ProListarDespachosh"
-	    TEXT TO lp NOSHOW  TEXTMERGE 
-	        ('<<fi>>','<<ff>>',<<nisla>>)
-	    ENDTEXT 
-	ELSE 
-	If This.EJECutaconsulta(lC, Calias) < 1 Then
-		This.conconexion = 0
+	lC = "ProListarDespachosh"
+	Text To lp Noshow  Textmerge
+	('<<fi>>','<<ff>>',<<nisla>>)
+	Endtext
+	If This.EJECUTARP10(lC, lp, Calias) < 1 Then
 		Return 0
-	ENDIF
-	ENDIF 
+	Endif
 	This.conconexion = 0
 	Return 1
 	Endfunc
@@ -411,20 +343,9 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Select (Ccursor)
 	Return 1
 	Endfunc
-	Function ConsultarLecturasbrisas(Calias)
-	Df = Cfechas(fe_gene.fech - 2)
-	lC = 'ProlistarDespachos'
-	Text To lp Noshow Textmerge
-	     ('<<df>>',<<goapp.isla>>)
-	Endtext
-	This.conconexion = 1
-	If EJECUTARP(lC, lp, Calias ) < 1 Then
-		Return 0
-	Endif
-	This.conconexion = 0
-	Return 1
-	Endfunc
 Enddefine
+
+
 
 
 

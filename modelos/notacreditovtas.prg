@@ -74,7 +74,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Case !ValidaRuc(This.Cruc)  And This.ctdocref = '01'
 		This.Cmensaje = "RUC no Válido"
 		Return 0
-	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.Cdni)) <> 8) And This.ctdocref = '03'
+	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.Cdni)) <> 8 OR VAL(this.Cdni)=0) And This.ctdocref = '03'
 		This.Cmensaje = "Es Necesario Ingresar el Nombre Completo de Cliente, DNI Válidos"
 		Return 0
 	Case  PermiteIngresox(This.dFecha) = 0

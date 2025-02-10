@@ -1010,11 +1010,32 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Endif
 	dfi = Cfechas(This.fechai)
 	dff = Cfechas(This.fechaf)
-	Text To Cc Noshow Textmerge
-	SELECT SUM(volume) AS cantidad,SUM(amount) AS importe,idgrade,gradename,CAST(fecreg_inicio AS DATE) AS fecha FROM venta 
-	WHERE CAST(fecreg_inicio AS DATE) BETWEEN '<<dfi>>' AND '<<dff>>'
-    GROUP BY fecha,idgrade,gradename ORDER BY fecha,idgrade,gradename
-	Endtext
+	Set Textmerge On
+	Set Textmerge To Memvar Cc Noshow Textmerge
+	\Select Sum(Volume) As cantidad,Sum(amount) As importe,idgrade,gradename,Cast(fecreg_inicio As Date) As Fecha From venta
+	\Where Cast(fecreg_inicio As Date) Between '<<dfi>>' And '<<dff>>'
+	If This.codt > 0 Then
+		If fe_gene.nruc = '20609310902' Then
+			Do Case
+			Case This.codt = 1
+	        \ And pump In(1,2,3,4)
+			Case This.codt = 2
+	         \ And pump In(5,6,7,8)
+			Endcase
+		Else
+			Do Case
+			Case This.codt = 1
+	       \ And pump In(1,2)
+			Case This.codt = 2
+	       \ And pump In(3,4)
+			Case This.codt = 3
+	       \ And pump In(5,6)
+			Endcase
+		Endif
+	Endif
+    \Group By Fecha,idgrade,gradename Order By Fecha,idgrade,gradename
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(Cc, 'vv') < 1 Then
 		Return 0
 	Endif
@@ -1027,7 +1048,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		dFecha = vv.Fecha
 		Do While !Eof() And vv.Fecha = m.dFecha
 			Select (Ccursor)
-			LOCATE  For Alltrim(Producto) = Alltrim(vv.gradename)
+			Locate  For Alltrim(Producto) = Alltrim(vv.gradename)
 			If !Found()
 				Text To lC1 Noshow Textmerge
 	            INSERT INTO  <<ccursor>> (producto,<<cdia>>)values('<<ALLTRIM(vv.gradename)>>',<<vv.cantidad>>)
@@ -1058,16 +1079,94 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Select (Ccursor)
 	Go Top
 	Return 1
-	ENDFUNC
-	FUNCTION flujodeventasxturnos(Ccursor)
-	TEXT TO lc NOSHOW TEXTMERGE 
-	SELECT SUM(lect_cfinal-lect_inic) AS cant,SUM(lect_mfinal-lect_inim) AS monto,lect_idar,lect_fech,lect_idin
-	FROM fe_lecturas AS l
-	WHERE lect_acti='A' AND lect_fech BETWEEN '2025-2-1' AND '2025-2-4' GROUP BY lect_fech,lect_idar,lect_idin
-	ORDER BY lect_fech,lect_idin
-	ENDTEXT 
-	ENDFUNC 
+	Endfunc
+	Function flujodeventasxturnos(Ccursor)
+	If (This.fechaf - This.fechai) > 31 Then
+		This.Cmensaje = "Máximo 30 Días"
+		Return 0
+	Endif
+	f1 = Cfechas(This.fechai)
+	f2 = Cfechas(This.fechaf)
+	Set Textmerge On
+	Set Textmerge To Memvar Cc Noshow Textmerge
+	\Select cantidad,importe,lect_idar,lect_fech As Fecha,lect_idin,a.Descri As gradename From
+	\(Select Sum(lect_cfinal-lect_inic) As cantidad,Sum(lect_mfinal-lect_inim) As importe,lect_idar,lect_fech,lect_idin
+	\From fe_lecturas As l
+	\Where lect_acti='A'  And lect_cfinal>0 And lect_mfinal>0 And lect_fech Between '<<f1>>' And '<<f2>>'
+	If This.codt > 0 Then
+		If fe_gene.nruc = '20609310902' Then
+			Do Case
+			Case This.codt = 1
+	        \ And lect_idco In(1,2,3,4)
+			Otherwise
+	        \ And lect_idco In(5,6,7,8)
+			Endcase
+		Else
+			Do Case
+			Case This.codt = 1
+	       \ And lect_idco In(1,2)
+			Case This.codt = 2
+	       \ And lect_idco In(3,4)
+			Case This.codt = 3
+	       \ And lect_idco In(5,6)
+			Endcase
+		Endif
+	Endif
+	\Group By lect_fech,lect_idar,lect_idin) As q
+	\inner Join fe_art As a On a.idart=q.lect_idar
+	\Order By lect_fech,lect_idin
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(Cc, 'vv') < 1 Then
+		Return 0
+	Endif
+	Create Cursor (Ccursor) (Producto  c(20))
+	Select vv
+	Go Top
+	Do While !Eof()
+		Cdia = "Dia_" + Alltrim(Str(Day(vv.Fecha)))
+		Alter Table (Ccursor) Add Column (Cdia) N(12, 2)
+		dFecha = vv.Fecha
+		Do While !Eof() And vv.Fecha = m.dFecha
+			Select (Ccursor)
+			Locate  For Alltrim(Producto) = Alltrim(vv.gradename)
+			If !Found()
+				Text To lC1 Noshow Textmerge
+	            INSERT INTO  <<ccursor>> (producto,<<cdia>>)values('<<ALLTRIM(vv.gradename)>>',<<vv.cantidad>>)
+				Endtext
+				Execscript(lC1)
+				Text To lC2 Noshow Textmerge
+	            INSERT INTO  <<ccursor>> (producto,<<cdia>>)values('<<ALLTRIM(vv.gradename)>>',<<vv.importe>>)
+				Endtext
+				Execscript(lC2)
+			Else
+				Text To lC3 Noshow Textmerge
+			      replace <<cdia>> with <<vv.cantidad>> in <<ccursor>>
+				Endtext
+				Execscript(lC3)
+				Select (Ccursor)
+				If !Eof()
+					Skip 1
+					Text To lC4 Noshow Textmerge
+			         replace <<cdia>> with <<vv.importe>> in <<ccursor>>
+					Endtext
+					Execscript(lC4)
+				Endif
+			Endif
+			Select vv
+			Skip
+		Enddo
+	Enddo
+	Select (Ccursor)
+	Go Top
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
 
 
 

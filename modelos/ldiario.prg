@@ -19,7 +19,11 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	nttd = 0
 	ntth = 0
 	cTdoc = ""
-	nidauto=0
+	niDAUTO = 0
+	nidprovision = 0
+	Cmoneda = 'S'
+	nidclie = 0
+	nidprov = 0
 	Procedure BuscaProvision
 	Lparameters	np1, np2
 	Ccursor = 'bpr'
@@ -30,7 +34,6 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
           (?goapp.npara1,?goapp.npara2)
 	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
-
 		Return 0
 	Else
 		If bpr.idb > 0 Then
@@ -68,9 +71,8 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	nidl = This.EJECUTARf(lC, lp, cur)
 	If nidl < 1 Then
 		Return 0
-	Else
-		Return nidl
-	Endif
+	ENDIF 
+	Return nidl
 	Endproc
 *********************
 	Procedure IngresaDatosDiarioCProvision(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17)
@@ -753,8 +755,45 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
+	Function  IngresaDatosDiarioBProvision5()
+	cur = "rild"
+	lC = "FunIngresaDatosLibroDiarioCP"
+*!*		goApp.npara1 = np1
+*!*		goApp.npara2 = np2
+*!*		goApp.npara3 = np3
+*!*		goApp.npara4 = np4
+*!*		goApp.npara5 = np5
+*!*		goApp.npara6 = np6
+*!*		goApp.npara7 = np7
+*!*		goApp.npara8 = np8
+*!*		goApp.npara9 = np9
+*!*		goApp.npara10 = np10
+*!*		goApp.npara11 = np11
+*!*		goApp.npara12 = np12
+*!*		goApp.npara13 = np13
+*!*		goApp.npara14 = np14
+*!*		goApp.npara15 = np15
+*!*		goApp.npara16 = np16
+*!*		goApp.npara17 = np17
+*!*		Text To lp NOSHOW TEXTMERGE 
+*!*		     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+*!*		      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
+*!*		ENDTEXT
+	Text To lp Noshow Textmerge
+     ('<<cfechas(this.dfecha)>>',<<this.ndebe>>,<<this.nhaber>>,'<<this.cglosa>>',
+     '<<this.ctipo>>','<<this.cndoc>>',<<this.nidcta>>,'<<this.ccond>>',
+     <<this.Nitem>>,'<<this.ctipomvto>>',0,0,'<<this.cmoneda>>','<<this.ctran>>',<<this.nttd>>,
+     <<this.ntth>>,<<this.nidprovision>>,<<this.ncodt>>)
+	Endtext
+	nidl = This.EJECUTARf(lC, lp, cur)
+	If nidl < 1 Then
+		Return 0
+	ENDIF 
+	Return nidl
+	Endproc
 Enddefine
+
 
 
 

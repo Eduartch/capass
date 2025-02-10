@@ -158,38 +158,6 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	Function CreaProductospsysrx()
 	lC = 'FUNCREAPRODUCTOS'
 	cur = 'c_' + Sys(2015)
-*!*		Thisform.Producto.cdesc = .txtdescripcion.Value
-*!*			Thisform.Producto.cUnid = .txtunidad.Value
-*!*			Thisform.Producto.nprec = .txtprecio.Value
-*!*			Thisform.Producto.ncosto = .txtcosto.Value
-*!*			Thisform.Producto.np1 = .txtpreciomayor.Value
-*!*			Thisform.Producto.np2 = .txtprecioespecial.Value
-*!*			Thisform.Producto.np3 = .txtpreciomenor.Value
-*!*
-*!*			Thisform.Producto.npeso = .txtpeso.Value
-*!*			Thisform.Producto.ccat = .txtcodc.Value
-*!*			Thisform.Producto.cmar = .txtcodm.Value
-*!*			Thisform.Producto.ctipro = Left(.Cmbtipo.Value, 1)
-*!*			Thisform.Producto.nflete = .Txtcodigof.Value
-*!*			Thisform.Producto.Moneda = Left(.cmbMONEDA.Value, 1)
-*!*			Thisform.Producto.Cestado = Left(Thisform.Cmbestado.Value, 1)
-*!*			Thisform.Producto.cidpc  = Id()
-*!*			Thisform.Producto.dFecha = Datetime()
-*!*			nidusua = goApp.nidusua
-*!*			Thisform.Producto.nutil1 = (.txtutilidad1.Value / 100) + 1
-*!*			Thisform.Producto.nutil2= (.txtutilidad2.Value / 100) + 1
-*!*			Thisform.Producto.nutil3 = (.txtutilidad3.Value / 100) + 1
-*!*			Thisform.Producto.ncome = .txtcomisione.Value / 100
-*!*			Thisform.Producto.ncomc = .txtcomisionc.Value / 100
-*!*			Thisform.Producto.nsmax = .txtstmaximo.Value
-*!*			Thisform.Producto.nsmin = .txtstminimo.Value
-*!*			Thisform.Producto.nidcosto = .txtidcosto.Value
-*!*			Thisform.Producto.ndolar = .txtdolAR.Value
-*!*			Thisform.Producto.ccoda = .txtCodigo.Value
-*!*			cft=CFECHASTIME(DATETIME())
-*!*			ccoda,cdesc,cunid,nprec,ncosto,
-*!*			np1,np2,np3,npeso,ccat,cmar,ctipro,nflete,cm,cidpc,ncome,ncomc,
-*!*			nutil1,nutil2,nutil3,nidusua,nsmax,nsmin,nidcosto,ndolar
 	Set Textmerge On
 	Set Textmerge To Memvar lp Noshow Textmerge
 	\('<<this.ccoda>>', '<<this.cdesc>>', '<<this.cunid>>', << This.nprec >>, << This.ncosto >>,
