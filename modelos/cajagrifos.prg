@@ -157,14 +157,14 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		ENDCASE
 		ENDIF 
 	ENDIF
-*!*			\Union All
-*!*			\Select "Otra Ventas" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'I' As tipo,'E' As lcaj_form,'' As isla From
-*!*			\fe_lcaja As a
-*!*			\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
-*!*			\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0   And lcaj_form='E'
-*!*		If This.nisla > 0 Then
-*!*			\ And lcaj_codt=<<This.nisla>>
-*!*		Endif
+		\Union All
+		\Select "Otra Ventas" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'I' As tipo,'E' As lcaj_form,'' As isla From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0   And lcaj_form='E' and LEFT(lcaj_ndoc,5)='Otros'
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	Endif
 		\Union All
 		\Select "Vtas al Crédito" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'C' As lcaj_form,'' As isla From
 		\fe_lcaja As a

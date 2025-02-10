@@ -1,6 +1,7 @@
 Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	nturno = 0
 	Idlectura = 0
+	conotrositems=""
 	Function vtascomparativas(nidt, fi, ff, Ccursor)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
@@ -492,6 +493,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Go Top
 	calma = tmpv.Isla
 	Set Procedure To CapaDatos, rngrifo, ple5 Additive
+	cotros=IIF(this.conotrositems='S','Otros','')
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -505,18 +507,18 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Return 0
 	Endif
 	If This.Tdscto > 0 Then
-		If IngresaDatosLCajaEFectivoCturnos30(This.Fecha, "", This.razon, This.cta3, necaja, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Tdscto, This.Creferencia, This.Ctarjeta, This.CtarjetaBanco, This.Idlectura) = 0 Then
+		If IngresaDatosLCajaEFectivoCturnos30(This.Fecha, m.cotros, This.razon, This.cta3, necaja, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Tdscto, This.Creferencia, This.Ctarjeta, This.CtarjetaBanco, This.Idlectura) = 0 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Else
-		If IngresaDatosLCajaEFectivoCturnosTarjetas30(This.Fecha, "", This.razon, This.cta3, necaja, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Creferencia, This.Ctarjeta, This.CtarjetaBanco, This.Idlectura) = 0 Then
+		If IngresaDatosLCajaEFectivoCturnosTarjetas30(This.Fecha, m.cotros, This.razon, This.cta3, necaja, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Creferencia, This.Ctarjeta, This.CtarjetaBanco, This.Idlectura) = 0 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
 	If This.Etarjeta > 0 Then
-		If IngresaDatosLCajaEFectivoCturnos31(This.Fecha, "", This.razon, This.cta3, This.Etarjeta, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, 'E', This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Idlectura) = 0 Then
+		If IngresaDatosLCajaEFectivoCturnos31(This.Fecha, m.cotros, This.razon, This.cta3, This.Etarjeta, 0, 'S', fe_gene.dola, goApp.nidusua, This.Codigo, NAuto, 'E', This.Serie + This.numero, This.Tdoc, This.codt, goApp.IDturno, This.Idlectura) = 0 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
