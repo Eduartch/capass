@@ -212,15 +212,15 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 				This.Cmensaje = 'Al Registrar el Ingreso Kardex'
 				Exit
 			Endif
-			If ActualizaStock(tmpv.Coda, This.sucursal2, tmpv.cant, 'C') < 0 Then
+			If  _Screen.oProductos.ActualizaStock(tmpv.Coda, This.sucursal2, tmpv.cant, 'C') < 1 Then
 				Sw = 0
-				This.Cmensaje = 'Al Actualizar Stock de Ingreso'
+				This.Cmensaje = _Screen.oProductos.Cmensaje
 				Exit
 			Endif
 		Endif
-		If ActualizaStock(tmpv.Coda, This.sucursal1, tmpv.cant, 'V') < 0 Then
+		If  _Screen.oProductos.ActualizaStock(tmpv.Coda, This.sucursal1, tmpv.cant, 'V') < 1 Then
 			Sw = 0
-			This.Cmensaje = 'Al Actualizar Stock'
+			This.Cmensaje = _Screen.oProductos.Cmensaje
 			Exit
 		Endif
 		Select tmpv
@@ -845,12 +845,12 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	NAuto = IngresaResumenTraspasosNorplast(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, goApp.Tienda, 0, 0, 0, 0, 0, 'P')
+	NAuto = IngresaResumenTraspasosNorplast(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, This.sucursal1, 0, 0, 0, 0, 0, 'P')
 	If NAuto < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	nidg = This.IngresaGuiasXTraspaso(This.Fecha, This.ptop, This.ptoll, NAuto, This.fechat, goApp.nidusua, This.Detalle, This.Idtransportista, This.Ndoc, goApp.Tienda)
+	nidg = This.IngresaGuiasXTraspaso(This.Fecha, This.ptop, This.ptoll, NAuto, This.fechat, goApp.nidusua, This.Detalle, This.Idtransportista, This.Ndoc, This.sucursal1)
 	If nidg < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -999,7 +999,17 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	Go Top
 	Report Form traspasostrans To Printer Prompt Noconsole
 	Endfunc
+	Function CambiarTrasasoRecibe(nid)
+	Text To lC Noshow Textmerge
+	UPDATE fe_rcom SET rcom_reci='E' WHERE idauto=<<nid>>
+	Endtext
+	If This.ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

@@ -5,6 +5,8 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 	dff = Date()
 	codt = 0
 	conticket = ""
+	niDAUTO = 0
+	dFecha = Date()
 	Function Consultar(Ccursor)
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
@@ -187,7 +189,24 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 	Select (Ccursor)
 	Return gene_nbaj
 	Endfunc
+	Function registraAnulada(cTdoc, cndoc)
+	Local cur As String
+	lC = 'Proingresa_anulada1'
+	cur = ""
+	Text To lp Noshow Textmerge
+	('<<cfechas(this.dfecha)>>','<<m.cndoc>>','<<m.ctdoc>>',<<goapp.nidusua>>,<<goapp.tienda>>,0)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	ENDIF
+	this.cmensaje='Registrado Ok'
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
 
 
 

@@ -183,6 +183,8 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function IngresaCajaTarjetaEfectivopsysrx()
+	cdetalle=STRTRAN(this.cdetalle,"'"," ")
+	this.cdetalle=STRTRAN(m.cdetalle,'"'," ")
 	Text To lC Noshow Textmerge
 	INSERT INTO fe_lcaja(lcaj_fech,lcaj_ndoc,lcaj_deta,lcaj_idct,lcaj_deud,lcaj_acre,lcaj_mone,lcaj_dola,
     lcaj_idus,lcaj_clpr,lcaj_idau,lcaj_form,lcaj_fope,lcaj_dcto,lcaj_tdoc,lcaj_codt,lcaj_ttar,lcaj_btar,lcaj_rtar,lcaj_efec)VALUES
@@ -382,12 +384,6 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	f11 = Cfechas(This.dffi)
-*!*		If goApp.Cdatos = 'S' Then
-*!*		\And lcaj_codt=<<This.codt>>
-*!*		Endif
-*!*		If goApp.Cdatos = 'S' Then
-*!*		\And lcaj_codt=<<this.codt>>
-*!*		Endif
 	f12 = Cfechas(This.dfff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge

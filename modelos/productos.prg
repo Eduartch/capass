@@ -63,6 +63,8 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	nsmin3 = 0
 	nsmax3 = 0
 	ccoda = ""
+	ndetraccion = 0
+	coddetra = ""
 	Function MuestraProductosJ1(np1, np2, np3, np4, Ccursor)
 	lC = 'PROMUESTRAPRODUCTOSJx'
 	goApp.npara1 = np1
@@ -121,7 +123,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Local lC, lp
 	m.lC		 = 'PROMUESTRAPRODUCTOS1'
-	goApp.npara1 = m.np1
+	goApp.npara1 = Chrtran(m.np1, ' ', '%')
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
 	goApp.npara4 = m.np4
@@ -226,7 +228,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara11 = This.nflete
 	goApp.npara12 = This.Moneda
 	goApp.npara13 = This.nprec
-	goApp.npara14 = this.ccodigo1
+	goApp.npara14 = 0
 	goApp.npara15 = This.nutil1
 	goApp.npara16 = This.nutil2
 	goApp.npara17 = This.nutil3
@@ -236,7 +238,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara21 = This.nidart
 	goApp.npara22 = This.nsmax
 	goApp.npara23 = This.nsmin
-	goApp.npara24 = 0
+	goApp.npara24 = This.ccodigo1
 	goApp.npara25 = This.ndolar
 	goApp.npara26 = This.Cestado
 	goApp.npara27 = This.nutil0
@@ -882,7 +884,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		goApp.npara2 = np2
 		goApp.npara3  = This.constock
 		Text To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
+        (?goapp.npara1,?goapp.npara2,?goapp.npara3)
 		Endtext
 	Else
 		lC = 'ProMuestraProductos'
@@ -1637,7 +1639,62 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function verificaStocks(Ncantidad, ntda)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Local cur As String
+	cur = 'st'
+	lC = 'PRODSTOCKS'
+	Text To lp Noshow Textmerge
+	(<<this.nidart>>)
+	Endtext
+	If This.EJECUTARP(lC, lp, ccur) < 1 Then
+		Return 0
+	Endif
+	Do Case
+	Case ntda = 1
+		Ts = st.uno
+	Case ntda = 2
+		Ts = stock.Dos
+	Case ntda = 3
+		Ts = stock.tre
+	Case ntda = 4
+		Ts = stock.cua
+	Case ntda = 5
+		Ts = stock.cin
+	Case ntda = 6
+		Ts = stock.sei
+	Endcase
+	If Ncantidad > Ts Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function registradetraccion()
+	Do Case
+	Case This.nidart < 1
+		This.Cmensaje = "Seleccione Un Producto"
+		Return 0
+	Case Len(Alltrim(This.coddetra)) = 0
+		This.Cmensaje = "Ingrese Código de Detracción"
+		Return 0
+	Case This.ndetraccion = 0
+		This.Cmensaje = "Ingrese Porcentaje  Detracción"
+		Return 0
+	Endcase
+	Text To lC Noshow Textmerge
+        UPDATE fe_art SET prod_detr=<<this.ndetraccion>>,prod_cdtr='<<this.coddetra>>' WHERE idart=<<this.nidart>>
+	Endtext
+	IF this.ejecutarsql(Lc)<1 then
+	   RETURN 0
+	ENDIF 
+	this.cmensaje="Registrado Ok."
+	RETURN 1   
+	Endfunc
 Enddefine
+
+
 
 
 

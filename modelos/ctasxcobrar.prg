@@ -637,6 +637,20 @@ Define Class ctasporcobrar As Odata Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
+	ENDFUNC
+	Function IngresaCreditosNormalFormaPago1()
+	lC = 'FUNREGISTRACREDITOSFormaPago'
+	cur = "Xn"
+	Text To lp NOSHOW TEXTMERGE 
+     (<<this.Idauto>> ,<<this.nidclie>>,'<<this.cndoc>>','C','S','<<this.cdetalle>>',
+     '<<cfechas(this.dfech)>>','<<cfechas(this.Fechavto)>>','<<this.ctipo>>',
+      '<<this.cndoc>>',<<this.nimpo>>,0,<<this.Codv>>,<<This.nimpo>>,<<goapp.nidusua>>,<<goapp.tienda>>,'<<ID()>>','<<LEFT(this.cformapago,1)>>')
+	Endtext
+	nidc = This.EJECUTARf(lC, lp, cur)
+	If nidc < 1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 Enddefine
 

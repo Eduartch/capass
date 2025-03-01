@@ -96,7 +96,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Replace All Tdoc With np1, Ndoc With np4, cletras With np5, hash With np7, fech With np8, ;
 		codc With np9, Guia With np10, Direccion With np11, dni With np12, Forma With np13, fono With np14, ;
 		Vendedor With np15, valor With nvalor, igv With nigv, Total With nimpo, ;
-		dias With np16, razon With np17, nruc With np18, Contacto With np19, Detalle With np20, Archivo With np21, retencion With np22, ptop With goApp.Direccion  In (np6)
+		dias With np16, razon With np17, nruc With np18, Contacto With np19, Detalle With np20, Archivo With np21, Retencion With np22, ptop With goApp.Direccion  In (np6)
 	Go Top In (np6)
 	Do Foxypreviewer.App With "Release"
 	Set Procedure To Imprimir Additive
@@ -252,9 +252,9 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Return 1
 	Endfunc
 	Function generatmpcanjes(Ccursor)
-	IF this.idsesion>1 then
-	Set DataSession To This.Idsesion
-	ENDIF 
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
 	Create Cursor vtas2(Descri c(80), Unid c(4), cant N(10, 2), Prec N(13, 5), Coda N(8), idco N(13, 5), Auto N(5), ;
 		  Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), valor N(12, 2), igv N(12, 2), Total N(12, 2))
 	Create Cursor vtas3(Descri c(80), Unid c(4), cant N(10, 2), Prec N(10, 2), Coda N(8), codt N(10), IDautoP N(10), valor N(12, 2), igv N(12, 2), Total N(12, 2))
@@ -470,7 +470,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	ncodc = This.Codigo
 	cguia = ""
 	cdire = ""
-	cdni = ""
+	Cdni = ""
 	cforma = 'Efectivo'
 	Cfono = ""
 	Cvendedor = 'Oficina'
@@ -487,7 +487,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	cTdoc = This.Tdoc
 	If This.tipocanje <> 'I' Then
 		Select Descri  As Desc, Unid, cant, Prec, Ndoc, '' As Modi, Coda, cletras, chash As hash, dFech As fech, ncodc As codc, cguia As Guia, ;
-			cdire As Direccion, cdni As dni, cforma As Forma, Cfono As fono, Cvendedor As Vendedor, ndias As dias, crazo As razon, cTdoc As Tdoc, ;
+			cdire As Direccion, Cdni As dni, cforma As Forma, Cfono As fono, Cvendedor As Vendedor, ndias As dias, crazo As razon, cTdoc As Tdoc, ;
 			Cruc As nruc, 'S' As Mone, cguia As Ndo2, cforma As Form, 'I' As IgvIncluido, cdetalle As Detalle, cContacto As Contacto, cArchivo As Archivo, ;
 			dfvto As fechav, valor, igv, Total, '' As copia, cptop As ptop;
 			From vtas2 Into Cursor tmpv Readwrite
@@ -495,7 +495,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		cndoc = This.Serie + This.numero
 		cletras = Diletras(This.Importe, 'S')
 		Select Desc, Unid, cant, Prec, cndoc As Ndoc, '' As Modi, Coda, cletras, chash As hash, dFech As fech, ncodc As codc, cguia As Guia, ;
-			cdire As Direccion, cdni As dni, cforma As Forma, Cfono As fono, Cvendedor As Vendedor, ndias As dias, crazo As razon, cTdoc As Tdoc, ;
+			cdire As Direccion, Cdni As dni, cforma As Forma, Cfono As fono, Cvendedor As Vendedor, ndias As dias, crazo As razon, cTdoc As Tdoc, ;
 			Cruc As nruc, 'S' As Mone, cguia As Ndo2, cforma As Form, 'I' As IgvIncluido, cdetalle As Detalle, cContacto As Contacto, cArchivo As Archivo, ;
 			dfvto As fechav, This.valor As valor, This.igv As  igv, This.Monto As Total, '' As copia, cptop As ptop;
 			From vtas2  Into Cursor tmpv Readwrite
@@ -609,7 +609,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\  Select  a.kar_Cost  As kar_Cost,	  c.idusua,a.kar_comi  As kar_comi,	  a.codv      As codv,
+	\  Select  a.kar_Cost  As kar_Cost,	  c.idusua,a.kar_comi  As kar_comi,	  a.Codv      As Codv,
 	\  a.idauto    As idauto,	  c.codt      As alma,	  a.kar_idco  As idcosto,	  a.idkar     As idkar,
 	\  a.idart     As Coda,	  a.cant      As cant,	  a.Prec      As Prec,	  c.valor     As valor,c.rcom_exon,
 	\  c.igv       As igv,	  c.Impo      As Impo,	  c.fech      As fech, c.fecr      As fecr,	  c.Form      As Form,	  c.Deta      As Deta,
@@ -627,7 +627,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
     \INNER  Join fe_rcom c On a.idauto = c.idauto
     \Left Join fe_caja xx   On xx.idauto = c.idauto
     \INNER Join fe_clie d  On c.idcliente = d.idclie
-    \INNER  Join fe_vend p      On p.idven = a.codv
+    \INNER  Join fe_vend p      On p.idven = a.Codv
     \INNER Join fe_usua q     On q.idusua = c.idusua
     \Left Join (Select vend_idau,vend_idrv From fe_rvendedor Where vend_acti='A') As z  On z.vend_idau = c.idauto
     \Where c.Acti <> 'I'   And a.Acti <> 'I' And c.idauto=<<niDAUTO>> Order By idkar
@@ -639,8 +639,8 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Return 1
 	Endfunc
 	Function resumenventaspsysl(Ccursor)
-	dfi = cfechas(This.fechai)
-	dff = cfechas(This.fechaf)
+	dfi = Cfechas(This.fechai)
+	dff = Cfechas(This.fechaf)
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
@@ -665,7 +665,283 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Endif
 	Return 1
 	Endfunc
+	Function Generatmpvtas(Calias, cdcto, nforma)
+	Set Procedure To d:\capass\modelos\productos Additive
+	oProductos = Createobject("producto")
+	Create Cursor vtas2(Descri c(100), Unid c(4), cant N(10, 2), Prec N(13, 5), Coda N(8), idco N(13, 5), Auto N(5), ;
+		  Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), ;
+		  valor N(12, 2), igv N(12, 2), Total N(12, 2), tipro c(1))
+	Select * From (Calias) Into Cursor tpx
+	Go Top
+	x = 1
+	F = 0
+	sws = 1
+	Cserie = Left(cdcto, 4)
+	Cmensaje = ""
+	cn = Val(Substr(cdcto, 5))
+	Do While !Eof()
+		If F > This.Nitems Then
+			F = 1
+			x = x + 1
+			cn = cn + 1
+			cdcto = Cserie + Right("0000000" + Alltrim(Str(cn)), 8)
+		Endif
+		F = F + 1
+		If goApp.alma_nega = 0 Then
+			If tpx.tipro <> 'S' Then
+				oProductos.nidart = tpx.Coda
+				If .oProductos.devStocks("st") < 1 Then
+					sws = 0
+					m.Cmensaje = ""
+					Exit
+				Endif
+				If cant <= Iif(goApp.Tienda = 1, st.uno, Iif(goApp.Tienda = 2, st.Dos, Iif(goApp.Tienda = 3, st.tre, Iif(goApp.Tienda = 4, st.cua, Iif(goApp.Tienda = 5, st.cin, st.sei)))))
+					Insert Into vtas2(Descri, Unid, cant, Prec, Coda,  Auto, Ndoc, Nitem, comi, IDautoP, costo, tipro)Values(tpx.Desc, ;
+						  tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda, x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
+				Else
+					m.Cmensaje = "EL Item: " + Alltrim(Descri) + " Sin Disponibilidad:"
+					sws = 0
+				Endif
+			Else
+				Insert Into vtas2(Descri, Unid, cant, Prec, Coda, Auto, Ndoc, Nitem, comi, IDautoP, costo, tipro)Values(tpx.Desc, ;
+					  tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda,  x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
+			Endif
+		Else
+			Insert Into vtas2(Descri, Unid, cant, Prec, Coda, Auto, Ndoc, Nitem, comi, IDautoP, costo, tipro)Values(tpx.Desc, ;
+				  tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda, x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
+		Endif
+		Select tpx
+		Skip
+	Enddo
+	If sws = 0 Then
+		This.Cmensaje = Iif(Empty(Cmensaje), This.Cmensaje, m.Cmensaje)
+		Return 0
+	Endif
+	nit = F
+	For i = 1 To This.Nitems - F
+		nit = nit + 1
+		Insert Into vtas2(Ndoc, Nitem, Auto)Values(cdcto, nit, x)
+	Next
+	Return 1
+	Endfunc
+	Function Grabarvta
+	Local Sw As Integer
+	Set Classlib To d:\Librerias\fe.vcx Additive
+	ofe = Createobject("comprobante")
+	If VerificaAlias("cabecera") = 1 Then
+		Zap In cabecera
+	Else
+		Create Cursor cabecera(idcab N(8))
+	Endif
+	Set Procedure To CapaDatos, ple5 Additive
+	Select IDautoP From vtas2 Where IDautoP > 0 Into Cursor xlp Group By IDautoP
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	Sw = 1
+	Select xvtas
+	Go Top
+	Do While !Eof()
+		This.Serie = Left(xvtas.Ndoc, 4)
+		This.numero = Substr(xvtas.Ndoc, 5)
+		This.igv = Round(xvtas.Importe - Round(xvtas.Importe / fe_gene.igv, 2), 2)
+		This.valor = Round(xvtas.Importe / fe_gene.igv, 2)
+		This.Monto = xvtas.Importe
+		If This.grabacabeceradcto() = 0 Then
+			DEshacerCambios()
+			Sw = 0
+			Exit
+		Endif
+		If This.generanumerof(xvtas.Ndoc) = 0  Then
+			Sw = 0
+			Exit
+		Endif
+		Select xvtas
+		Skip
+	Enddo
+	If Sw = 1 Then
+		If This.GRabarCambios() < 1 Then
+			Return 0
+		Endif
+		If  goApp.EmisionElectronica = 'S' Then
+			ofe.Version = '2.1'
+			Try
+				Select cabecera
+				Scan All
+					Do Case
+					Case  This.Tdoc = '01'
+						Vdvto = ofe.obtenerdatosfactura(cabecera.idcab, Iif(fe_gene.gene_cpea = 'N', 'SF', .F.))
+					Case This.Tdoc = "03"
+						Vdvto = ofe.obtenerdatosBoleta(cabecera.idcab, 'SF') = 0
+					Endcase
+				Endscan
+			Catch To oErr When oErr.ErrorNo = 1429
+				This.Cmensaje = oErr.Message
+			Catch To oErr When oErr.ErrorNo = 1924
+				This.Cmensaje = oErr.Message
+			Finally
+			Endtry
+		Endif
+		This.imprimirdcto()
+		Zap In cabecera
+		Return 1
+	Else
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Endfunc
+	Function grabacabeceradcto()
+	Set Procedure To d:\capass\modelos\productos, d:\capass\modelos\regkardex, d:\capass\modelos\ctasxcobrar Additive
+	ocred = Createobject("ctasporcobrar")
+	If This.Tdoc = '01' Or This.Tdoc = '03' Then
+		nidcta1 = fe_gene.idctav
+		nidcta2 = fe_gene.idctai
+		nidcta3 = fe_gene.idctat
+	Else
+		nidcta1 = 0
+		nidcta2 = 0
+		nidcta3 = 0
+	Endif
+	NAuto = IngresaResumenDcto(This.Tdoc, This.cformapago,  This.Serie + This.numero, ;
+		  This.Fecha, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, This.NroGuia, 'S', ;
+		  fe_gene.dola, fe_gene.igv, 'k', This.Codigo, 'V', ;
+		  goApp.nidusua, 1, goApp.Tienda, nidcta1, nidcta2, nidcta3, This.razon, goApp.idcajero)
+	If NAuto = 0 Then
+		Return 0
+	Endif
+	If goApp.EmisionElectronica = 'S'  Then
+		If IngresaDatosLCajaEFectivo12(This.Fecha, "", This.razon, nidcta3, This.Monto, 0, 'S', fe_gene.dola, goApp.idcajero, This.Codigo, NAuto, This.formaPago, This.Serie + This.numero, This.Tdoc, goApp.Tienda) = 0 Then
+			Return 0
+		Endif
+	Else
+		nidcon = RetConcepto(This.Tdoc + This.formaPago, 'I')
+		If nidcon > 0 Then
+			If IngresaCaja(NAuto, This.Fecha, This.Monto, 'I', This.formaPago, 'S', This.Serie + This.numero, nidcon, goApp.idcajero, This.Monto, 'CK', Nt, 'S', fe_gene.dola, goApp.Tienda, '', 0, 0) <= 0 Then
+				Return 0
+			Endif
+		Endif
+	Endif
+	If .cmbFORMA.ListIndex = 1 Then
+		If IngresaRvendedores(NAuto, This.Codigo, This.Vendedor, This.formaPago) = 0 Then
+			Return 0
+		Endif
+	Endif
+	If Left(This.formaPago, 1) <> 'E' Then
+		ocred.cformapago = Left(This.formaPago, 1)
+		ocred.nidclie = This.Codigo
+		ocred.Cmoneda = "S"
+		ocred.cndoc = This.Serie + This.numero
+		ocred.Ctipo = 'C'
+		ocred.dFech = This.Fecha
+		ocred.cdetalle = This.Detalle
+		ocred.Fechavto = This.Fechavto
+		tipodcto = Left(This.Serie, 1)
+		Codv = This.Vendedor
+		nimpoo = This.Monto
+		nimpo = This.Monto
+		crefe = This.Serie + This.numero
+		ocred.Idauto = m.NAuto
+		If ocred.IngresaCreditosNormalFormaPago1() < 1 Then
+			This.Cmensaje = ocred.Cmensaje
+			Return 0
+		Endif
+	Endif
+	Sw = 1
+	Select xlp
+	Scan All
+		If GrabaCanjesPedidos(NAuto, xlp.IDautoP) = 0
+			Sw = 0
+			Exit
+		Endif
+	Endscan
+	If Sw = 0 Then
+		Return 0
+	Endif
+	Local sws As Integer
+	sws = 1
+	Na = NAuto
+	Cmensaje = ""
+	ncomi = 0
+	opro = Createobject("producto")
+	okar = Createobject("regkardex")
+	okar.ncosto = vtas.costo
+	okar.nidtda = goApp.Tienda
+	okar.niDAUTO = m.niDAUTO
+	okar.nidv = Thisform.Vendedor
+	okar.Ctipo = 'V'
+	okar.cincl = 'I'
+	okar.ctnvto = 'K'
+	Select vtas2
+	Set Filter To Auto = xvtas.Auto And Coda > 0
+	Go Top
+	Do While !Eof()
+		If vtas2.Prec <= vtas2.costo Then
+			ncomi = 0
+		Else
+			ncomi = vtas2.comi
+		Endif
+		opro.nidart = vtas2.Coda
+		okar.ncoda = vtas2.Coda
+		okar.ncant = vtas2.cant
+		okar.nprec = vtas2.Prec
+		okar.ncomi = m.ncomi
+		If goApp.alma_nega = 0 Then
+			If vtas2.tipro <> 'S' Then
+				If opro.verificaStocks(vtas2.cant, goApp.Tienda) < 1 Then
+					sws = 0
+					Cmensaje = 'Al Obtener Stock del Item ' + Alltrim(vtas2.Descri)
+					Exit
+				Endif
+				If okar.INGRESAKARDEX1() < 1 Then
+					sws = 0
+					Cmensaje = 'Al Registrar Item ' + Alltrim(vtas2.Descri)
+					Exit
+				Endif
+				If oro.ActualizaStock(vtas2.Coda, goApp.Tienda, vtas2.cant, 'V') < 1  Then
+					sws = 0
+					Cmensaje = 'Al Actualizar Stock Item  ' + Alltrim(vtas2.Descri)
+					Exit
+				Endif
+			Endif
+		Else
+			If okar.INGRESAKARDEX1() < 1 Then
+				sws = 0
+				Cmensaje = 'Al Registrar Item ' + Alltrim(vtas2.Descri)
+				Exit
+			Endif
+			If opro.ActualizaStock(vtas2.Coda, goApp.Tienda, vtas2.cant, 'V') < 1 Then
+				sws = 0
+				Cmensaje = 'Al Actualizar Stock Item  ' + Alltrim(vtas2.Descri)
+				Exit
+			Endif
+		Endif
+		Select vtas2
+		Skip
+	Enddo
+	If sws = 0 Then
+		Return 0
+	Endif
+	If sws = 1 Then
+		Insert Into cabecera(idcab)Values(NAuto)
+		Return 1
+	Else
+		Return 0
+	Endif
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

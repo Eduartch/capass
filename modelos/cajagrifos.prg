@@ -140,28 +140,28 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\Where lect_idin=<<This.nidlectura>>  And lect_acti='A' And lect_mfinal>0
 	If This.nisla > 0 Then
 		If fe_gene.nruc = '20609310902' Then
-		   Do Case
-		Case This.nisla = 1
+			Do Case
+			Case This.nisla = 1
 		        \ And lect_idco In(1,2,3,4)
-		Case This.nisla = 2
+			Case This.nisla = 2
 		        \ And lect_idco In(5,6,7,8)
-		ENDCASE
-		ELSE 
-		Do Case
-		Case This.nisla = 1
+			Endcase
+		Else
+			Do Case
+			Case This.nisla = 1
 		        \ And lect_idco In(1,2)
-		Case This.nisla = 2
+			Case This.nisla = 2
 		        \ And lect_idco In(3,4)
-		Case This.nisla = 3
+			Case This.nisla = 3
 		        \ And lect_idco In(5,6,7,8)
-		ENDCASE
-		ENDIF 
-	ENDIF
+			Endcase
+		Endif
+	Endif
 		\Union All
-		\Select "Otra Ventas" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'I' As tipo,'E' As lcaj_form,'' As isla From
+		\Select "Otras Ventas" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'I' As tipo,'E' As lcaj_form,'' As isla From
 		\fe_lcaja As a
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
-		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0   And lcaj_form='E' and LEFT(lcaj_ndoc,5)='Otros'
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0 And lcaj_form='E' And Left(lcaj_ndoc,5)='Otros'
 	If This.nisla > 0 Then
 		\ And lcaj_codt=<<This.nisla>>
 	Endif
@@ -177,15 +177,15 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\Select "Vtas C/Tarjeta" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'T' As lcaj_form,'' As isla From
 		\fe_lcaja As a
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
-		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form in('T')
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form In('T')
 	If This.nisla > 0 Then
 		\ And lcaj_codt=<<This.nisla>>
-	ENDIF
+	Endif
 		\Union All
 		\Select "Vtas C/Yape-Plin" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'Y' As lcaj_form,'' As isla From
 		\fe_lcaja As a
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
-		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form in('Y','P')
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form In('Y','P')
 	If This.nisla > 0 Then
 		\ And lcaj_codt=<<This.nisla>>
 	Endif
@@ -393,10 +393,10 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		Return
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function Saldoinicialcajaefectivoxdia()
 	Ccursor = 'c_' + Sys(2015)
-	f = Cfechas(This.dFecha)
+	F = Cfechas(This.dFecha)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\ Select Cast(Sum(If(a.lcaj_deud<>0,If(lcaj_mone='S',lcaj_deud,lcaj_deud*lcaj_dola),If(lcaj_mone='S',-lcaj_acre,-lcaj_acre*lcaj_dola)))  As Decimal(12,2)) As saldo
@@ -413,6 +413,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	Return nsaldo
 	Endfunc
 Enddefine
+
 
 
 

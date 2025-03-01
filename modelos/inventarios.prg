@@ -261,8 +261,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
       \INNER Join fe_mar As m On m.idmar=a.idmar
       \Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
       \INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
-      \Where k.Acti='A' And  r.`Acti`='A' And Tipo='C' Group By idart) As b On b.idart=xx.idart,fe_gene As v
-      \Where prod_acti='A'
+      \Where k.Acti<>'I' And  r.`Acti`<>'I' And Tipo='C' Group By idart) As b On b.idart=xx.idart,fe_gene As v
+      \Where prod_acti<>'I'
 	If This.linea > 0 Then
         \And a.idcat=<<This.linea>>
 	Endif
@@ -408,16 +408,16 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Select Coda, Descri As Desc, Unid From lx Into Cursor xc Order By Descri
 	ff = Cfechas(dff)
 	Text To lC Noshow Textmerge
-				    select b.fech,b.ndoc,b.tdoc,a.tipo,ROUND(a.cant*a.kar_equi,2) as cant,
-					ROUND(a.prec,2) as prec,b.mone,b.idcliente,
-					c.razo as cliente,b.idprov,e.razo as proveedor,
-					b.dolar as dola,b.vigv as igv,b.idauto,a.idkar,a.idart
-					from fe_kar as a
-					inner join fe_rcom as b ON(b.idauto=a.idauto)
-					left JOIN fe_prov as e ON (e.idprov=b.idprov)
-					LEFT JOIN fe_clie as c  ON (c.idclie=b.idcliente)
-					WHERE b.fech<='<<ff>>' and a.acti='A' and b.acti='A' and b.tcom<>'T'
-					OrDER BY b.fech,a.tipo,b.tdoc,b.ndoc
+		    select b.fech,b.ndoc,b.tdoc,a.tipo,ROUND(a.cant*a.kar_equi,2) as cant,
+			ROUND(a.prec,2) as prec,b.mone,b.idcliente,
+			c.razo as cliente,b.idprov,e.razo as proveedor,
+			b.dolar as dola,b.vigv as igv,b.idauto,a.idkar,a.idart
+			from fe_kar as a
+			inner join fe_rcom as b ON(b.idauto=a.idauto)
+			left JOIN fe_prov as e ON (e.idprov=b.idprov)
+			LEFT JOIN fe_clie as c  ON (c.idclie=b.idcliente)
+			WHERE b.fech<='<<ff>>' and a.acti='A' and b.acti='A' and b.tcom<>'T'
+			OrDER BY b.fech,a.tipo,b.tdoc,b.ndoc
 	Endtext
 	If This.EJECutaconsulta(lC, 'kkxx') < 1 Then
 		Return 0
@@ -556,7 +556,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 					Crazon = Iif(Isnull(Kardex.Cliente), "                                             ", Kardex.Cliente)
 
 					Insert Into k(fech, Tdoc, Serie, Ndoc, ct, Razo, egre, pree, impe, stock, cost, saldo, Coda, Desc, Unid, Coda);
-						Values(Kardex.fech, Kardex.Tdoc, Left(Kardex.Ndoc, 3), Substr(Kardex.Ndoc, 4), "S", Crazon, Kardex.cant, ;
+						Values(Kardex.fech, Kardex.Tdoc, Left(Kardex.Ndoc, 4), Substr(Kardex.Ndoc, 8), "S", Crazon, Kardex.cant, ;
 						  costo, xhaber, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.idart)
 				Endif
 			Endif
@@ -964,9 +964,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Sum(If(D.fech Between '<<f1>>' And '<<f2>>',If(Tipo='V',cant,0),0)) As tegresos,
 	\Max(If(Tipo='C',If(Tdoc<>'AJ',If(Tdoc<>'TT',D.fech,'0001-01-01'),'0001-01-01'),'0001-01-01')) As ulfc,
 	If This.contraspasos = 0 Then
-	\Max(If(Tipo='V',If(Tdoc<>'AJ',If(Tdoc<>'TT',D.fech,'0001-01-01'),'0001-01-01'),'0001-01-01')) As ulfv,
+	\MAX(IF(Tipo='V',IF(Tdoc<>'AJ',IF(Tdoc<>'TT',D.fech,CAST('0001-01-01' AS DATE)),CAST('0001-01-01' AS DATE)),CAST('0001-01-01' AS DATE))) AS ulfv,
 	Else
-	\Max(If(Tipo='V',If(Tdoc<>'AJ',D.fech,'0001-01-01'),'0001-01-01')) As ulfv,
+	\MAX(IF(Tipo='V',IF(Tdoc<>'AJ',D.fech,CAST('0001-01-01' AS DATE)),CAST('0001-01-01' AS DATE))) AS ulfv,
 	Endif
 	\c.idart
 	\From fe_rcom As D

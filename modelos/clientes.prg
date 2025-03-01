@@ -166,7 +166,7 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Endproc
 	Procedure Listarclientes(np1, np2, np3, nombrecursor)
 	cproc		 = 'PROMUESTRACLIENTES'
-	goApp.npara1 = m.np1
+	goApp.npara1 = CHRTRAN(m.np1,' ','%')
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
 	Text To m.lparametros Noshow

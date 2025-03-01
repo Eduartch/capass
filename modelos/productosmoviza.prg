@@ -27,9 +27,8 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) = 0 Then
 		Return 0
-	Else
-		Return 1
-	Endif
+	ENDIF 
+	Return 1
 	Endfunc
 	Function conStockminimopsysg(Ccursor)
 	If This.Idsesion > 1 Then

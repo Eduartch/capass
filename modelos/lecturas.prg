@@ -3,6 +3,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	nisla = 0
 	motivocierre = ""
 	nidlectura = 0
+	dFecha = Date()
 	Function ConsultarLecturas(Calias)
 	Df = Cfechas(fe_gene.fech - 2)
 	lC = 'ProlistarDespachos'
@@ -343,7 +344,23 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Select (Ccursor)
 	Return 1
 	Endfunc
+	Function listarlecturascierre(Ccursor)
+	Df = Cfechas(This.dFecha)
+	Text To lC Noshow Textmerge
+	SELECT a.descri AS producto,lect_inic AS cantidadinicial,lect_inim AS montoinicial,
+	lect_cfinal AS cantidadfinal,lect_mfinal AS montofinal,lect_cfinal-lect_inic AS cantidad,
+	lect_mfinal-lect_inim AS efectivo,lect_idco,'a' as orden
+	FROM fe_lecturas AS lec
+	INNER JOIN fe_art AS a ON a.`idart`=lec.lect_idar  
+	WHERE lect_esta='C' AND CAST(lect_fope1 AS DATE)="<<df>>" AND lect_acti='A' ORDER BY lect_idco,a.descri
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

@@ -802,25 +802,57 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function consultarcpeporenviar(Ccursor)
-	Text To lC Noshow Textmerge Pretext 7
-	    select a.ndoc as dcto,a.fech,b.razo,a.valor,a.rcom_exon,CAST(0 as decimal(12,2)) as inafecto,
-	    a.igv,a.impo,rcom_hash,u.nomb,a.fusua,IF(mone='S','Soles','Dólares') as moneda,a.tdoc,a.ndoc,idauto,a.idcliente,b.clie_corr,
-	    ndo2,b.fono,nruc,tcom,tdoc,a.vigv,a.mone,a.rcom_arch
-	    FROM fe_rcom as a
-	    JOIN fe_clie as b ON (a.idcliente=b.idclie)
-	    join fe_usua u on u.idusua=a.idusua
-	    where a.acti='A' and LEFT(ndoc,1) in ('F') and left(rcom_mens,1)<>'0' and  impo<>0 and a.tdoc='01'
-	    union all
-	    SELECT a.ndoc as dcto,a.fech,b.razo,a.valor,a.rcom_exon,CAST(0 as decimal(12,2)) as inafecto,
-	    a.igv,a.impo,a.rcom_hash,u.nomb,a.fusua,IF(a.mone='S','Soles','Dólares') as moneda,a.tdoc,a.ndoc,a.idauto,a.idcliente,b.clie_corr,
-	    a.ndo2,b.fono,nruc,a.tcom,w.tdoc,a.vigv,a.mone,a.rcom_arch
-	    FROM fe_rcom as a
-	    JOIN fe_clie as b ON (a.idcliente=b.idclie)
-	    join fe_usua u on u.idusua=a.idusua
-	    inner join fe_ncven g on g.ncre_idan=a.idauto
-	    inner join fe_rcom as w on w.idauto=g.ncre_idau
-        where a.acti='A' AND LEFT(a.ndoc,1) in ('F') and left(a.rcom_mens,1)<>'0'  and a.impo<>0  and w.tdoc='01' and a.tdoc in("07","08") order by fech,ndoc
-	Endtext
+*!*		SELECT a.ndoc AS dcto,a.fech,b.razo,a.valor,a.rcom_exon,CAST(0 AS DECIMAL(12,2)) AS inafecto,
+*!*		    a.igv,a.impo,IF(mone='S','Soles','Dólares') AS moneda,u.nomb,a.fusua,a.tdoc,a.ndoc,idauto,a.idcliente,b.clie_corr,
+*!*		    ndo2,b.fono,nruc,tcom,tdoc,a.vigv,a.mone,a.rcom_arch,rcom_hash
+*!*		    FROM fe_rcom AS a
+*!*		    JOIN fe_clie AS b ON (a.idcliente=b.idclie)
+*!*		    JOIN fe_usua u ON u.idusua=a.idusua
+*!*		    WHERE a.acti='A' AND LEFT(ndoc,1) IN ('F') AND LEFT(rcom_mens,1)<>'0' AND  impo<>0 AND a.tdoc='01'
+*!*		    UNION ALL
+*!*		    SELECT a.ndoc AS dcto,a.fech,b.razo,a.valor,a.rcom_exon,CAST(0 AS DECIMAL(12,2)) AS inafecto,
+*!*		    a.igv,a.impo,IF(a.mone='S','Soles','Dólares') AS moneda,u.nomb,a.fusua,a.tdoc,a.ndoc,a.idauto,a.idcliente,b.clie_corr,
+*!*		    a.ndo2,b.fono,nruc,a.tcom,w.tdoc,a.vigv,a.mone,a.rcom_arch,a.rcom_hash
+*!*		    FROM fe_rcom AS a
+*!*		    JOIN fe_clie AS b ON (a.idcliente=b.idclie)
+*!*		    JOIN fe_usua u ON u.idusua=a.idusua
+*!*		    INNER JOIN fe_ncven g ON g.ncre_idan=a.idauto
+*!*		    INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
+*!*	        WHERE a.acti='A' AND LEFT(a.ndoc,1) IN ('F') AND LEFT(a.rcom_mens,1)<>'0'  AND a.impo<>0  AND w.tdoc='01' AND a.tdoc IN("07","08") ORDER BY fech,ndoc
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\    Select a.ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
+	\    a.igv,a.Impo,If(mone='S','Soles','Dólares') As moneda,u.nomb,a.fusua,a.Tdoc,a.ndoc,Idauto,a.idcliente,b.clie_corr,
+	\    ndo2,b.fono,nruc,tcom,Tdoc,a.vigv,a.mone,a.rcom_arch,rcom_hash
+	\    From fe_rcom As a
+	\    Join fe_clie As b On (a.idcliente=b.idclie)
+	\    Join fe_usua u On u.idusua=a.idusua
+	\    Where a.Acti='A' And Left(ndoc,1) In ('F') And Left(rcom_mens,1)<>'0' And  Impo<>0 And a.Tdoc='01'
+	If This.confechas = 1 Then
+	  \ And  a.fech Between '<<f1>>' And '<<f2>>'
+	Endif
+	If Len(Alltrim(This.cTdoc)) > 0 Then
+	 \ And a.Tdoc='<<this.ctdoc>>'
+	Endif
+	\    Union All
+	\    Select a.ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
+	\    a.igv,a.Impo,If(a.mone='S','Soles','Dólares') As moneda,u.nomb,a.fusua,a.Tdoc,a.ndoc,a.Idauto,a.idcliente,b.clie_corr,
+	\    a.ndo2,b.fono,nruc,a.tcom,w.Tdoc,a.vigv,a.mone,a.rcom_arch,a.rcom_hash
+	\    From fe_rcom As a
+	\    Join fe_clie As b On (a.idcliente=b.idclie)
+	\    Join fe_usua u On u.idusua=a.idusua
+	\    INNER Join fe_ncven g On g.ncre_idan=a.Idauto
+	\    INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
+    \    Where a.Acti='A' And Left(a.ndoc,1) In ('F') And Left(a.rcom_mens,1)<>'0'  And a.Impo<>0  And w.Tdoc='01' And a.Tdoc In("07","08")
+	If This.confechas = 1 Then
+	  \ And  a.fech Between '<<f1>>' And '<<f2>>'
+	Endif
+	If Len(Alltrim(This.cTdoc)) > 0 Then
+	 \ And a.Tdoc='<<this.ctdoc>>'
+	Endif
+    \Order By fech,ndoc
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1454,6 +1486,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

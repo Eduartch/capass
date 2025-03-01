@@ -166,28 +166,28 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	goApp.npara30 = ""
 	goApp.npara31 = ""
 	goApp.npara32 = ""
-	Text To lc1 Noshow Textmerge
+	Text To lC1 Noshow Textmerge
 	  UPDATE fe_ectasc SET idcta=<<This.nidcta1>> WHERE idectas=<<This.idcta1>>;
 	Endtext
-	If This.Ejecutarsql(lc1) < 1 Then
+	If This.Ejecutarsql(lC1) < 1 Then
 		Return 0
 	Endif
-	Text To lc2 Noshow Textmerge
+	Text To lC2 Noshow Textmerge
 	  UPDATE fe_ectasc SET idcta=<<This.nidcta1>> WHERE idectas=<<This.idcta2>>;
 	Endtext
-	If This.Ejecutarsql(lc2) < 1 Then
+	If This.Ejecutarsql(lC2) < 1 Then
 		Return 0
 	Endif
-	Text To lc3 Noshow Textmerge
+	Text To lC3 Noshow Textmerge
 	  UPDATE fe_ectasc SET idcta=<<This.nidcta3>> WHERE idectas=<<This.idcta3>>;
 	Endtext
-	If This.Ejecutarsql(lc3) < 1 Then
+	If This.Ejecutarsql(lC3) < 1 Then
 		Return 0
 	Endif
-	Text To lc4 Noshow Textmerge
+	Text To lC4 Noshow Textmerge
 	  UPDATE fe_ectasc SET idcta=<<This.nidcta4>> WHERE idectas=<<This.idcta4>>;
 	Endtext
-	If This.Ejecutarsql(lc4) < 1 Then
+	If This.Ejecutarsql(lC4) < 1 Then
 		Return 0
 	Endif
 	Text To lc5 Noshow Textmerge
@@ -641,6 +641,9 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	If !Pemstatus(goApp, 'ccostos', 5) Then
 		AddProperty(goApp, 'ccostos', '')
 	Endif
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
+	Endif
 	f1 = Cfechas(This.fechai)
 	f2 = Cfechas(This.fechaf)
 	Set Textmerge On
@@ -696,13 +699,18 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
     \		 Else
     \		   Sum(Case c.Nitem When 8 Then c.`idcta` End)
 	\      End As ctav,
-	\    CASE
-	\       WHEN SUM(CASE c.Nitem WHEN 8 THEN
-    \            IF(a.Mone='S',c.Impo,ROUND(c.Impo*a.dolar,2)) ELSE 0 END)>0 THEN
-	\	         SUM(CASE c.Nitem WHEN 8 THEN c.`idcta` END) END AS ctat
+	\    Case
+	\       When Sum(Case c.Nitem When 8 Then
+    \            If(a.Mone='S',c.Impo,Round(c.Impo*a.dolar,2)) Else 0 End)>0 Then
+	\	         Sum(Case c.Nitem When 8 Then c.`idcta` End) End As ctat
     \	From fe_rcom As a
 	\	INNER Join fe_ectasc As c On(c.idrcon=a.idauto)
-	\	Where  fecr Between '<<f1>>' And '<<f2>>'  And Tdoc Not In ('09','II','GI')  And Acti='A' And ecta_acti='A'
+	\	Where  fecr Between '<<f1>>' And '<<f2>>'
+	If Alltrim(goApp.Proyecto) = 'xmsys' Then
+	 \And Tdoc Not In ('09','II','GI','02')  And Acti='A' And ecta_acti='A'
+	Else
+	 \And Tdoc Not In ('09','II','GI')  And Acti='A' And ecta_acti='A'
+	Endif
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And a.codt=<<goApp.Tienda>>
@@ -720,7 +728,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	\As c  On(c.idauto=a.idauto)
 	\Join fe_prov  As b On(b.idprov=a.idprov)
 	\Left Join fe_plan As p On p.idcta=c.ctav
-	\left join fe_plan As r On r.idcta=c.ctat
+	\Left Join fe_plan As r On r.idcta=c.ctat
 	If goApp.Ccostos = 'S' Then
 	 \Left Join fe_centcostos As w On w.cent_idco=a.rcom_ccos
 	Endif
@@ -748,7 +756,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Create Cursor registro(Auto N(15), Form c(1) Null, fecr d Null, fech d Null, Tdoc c(2) Null, Serie c(4), Ndoc c(10), nruc c(11)Null, Razo c(120)Null, valorg N(14, 2), Exon N(12, 2), ;
-		  igvg N(10, 2), otros N(12, 2), Importe N(14, 2), pimpo N(8, 2), Deta c(80), dola N(5, 3), detra c(24), fechad d, fechn d, tref c(2), Refe c(12), ncta c(10), ncta1 c(10),Ccostos c(150), Mone c(1), Codigo N(5), Fevto d, ;
+		  igvg N(10, 2), otros N(12, 2), Importe N(14, 2), pimpo N(8, 2), Deta c(80), dola N(5, 3), detra c(24), fechad d, fechn d, tref c(2), Refe c(12), ncta c(10), ncta1 c(10), Ccostos c(150), Mone c(1), Codigo N(5), Fevto d, ;
 		  ndni c(8), T N(1), Tipo c(1), icbper N(8, 2), vigv N(5, 3), ccost N(5))
 	x = 1
 	notas = 0
@@ -766,32 +774,15 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 			ntdoc = Xn.Tdoc
 			nndoc = Xn.Ndoc
 			nfech = Xn.fech
-		ENDIF
-		
-*!*	*!*			  IIF(notas=1,m.ntdoc,''),IIF(notas=1,m.nndoc,''),IIF(notas=1,m.nfech, Ctod("  /  /    "))
-		
+		Endif
 		nccostos = Iif(Vartype(registro1.rcom_ccos) = 'C', Val(registro1.rcom_ccos), registro1.rcom_ccos)
 		Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, valorg, Exon, igvg, otros, Importe, pimpo, Deta,  dola, Mone, detra, Codigo, ;
-			  Auto,  tref, Refe,  Tipo, icbper, fechn, fechad, T, vigv, ncta, Ccostos, ccost,ncta1);
+			  Auto,  tref, Refe,  Tipo, icbper, fechn, fechad, T, vigv, ncta, Ccostos, ccost, ncta1);
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
 			  registro1.nruc, registro1.Razo, registro1.valorg, registro1.Exon, registro1.igvg, registro1.otros, registro1.Importe, registro1.pimpo, registro1.Deta, ;
 			  registro1.dola,  registro1.Mone, registro1.detra,  ;
-			  registro1.Codigo, registro1.Auto, IIF(notas=1,m.ntdoc,''),IIF(notas=1,m.nndoc,''), registro1.Tipo, registro1.icbper, IIF(notas=1,m.nfech, Ctod("  /  /   ")),;
-     		  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv, registro1.ncta, registro1.centcostos, m.nccostos,registro1.ncta1)
-*!*			If notas = 1 Then
-*!*				Y = 1
-*!*				Select Xn
-*!*				Scan All
-*!*					If Y > 1 Then
-*!*						Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, Auto, tref, Refe, fechn, vigv);
-*!*							Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-*!*							  registro1.nruc, registro1.Razo, Xn.idn,  Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.vigv)
-*!*						x = x + 1
-*!*					Endif
-*!*					Y = Y + 1
-*!*				Endscan
-*!*				notas = 0
-*!*			Endif
+			  registro1.Codigo, registro1.Auto, Iif(notas = 1, m.ntdoc, ''), Iif(notas = 1, m.nndoc, ''), registro1.Tipo, registro1.icbper, Iif(notas = 1, m.nfech, Ctod("  /  /   ")), ;
+			  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv, registro1.ncta, registro1.centcostos, m.nccostos, registro1.ncta1)
 
 	Endscan
 	Go Top In registro
@@ -2082,10 +2073,10 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Function buscarotracompra(Ccursor)
 	If !Pemstatus(goApp, 'ccostos', 5) Then
 		AddProperty(goApp, 'ccostos', '')
-	ENDIF
-	IF this.idsesion>1 then
-	   SET DATASESSION TO this.idsesion
-	ENDIF    
+	Endif
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	  \Select  `c`.`Ndoc`   As `Ndoc`,  `c`.`valor`  As `valor`,  `c`.`igv`    As `igv`,
@@ -2111,6 +2102,8 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
+
+
 
 
 

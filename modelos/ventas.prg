@@ -41,6 +41,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	detraccion = 0
 	coddetraccion = ""
 	chkdetraccion = 0
+	pordetraccion=0
 	Calias = ""
 	NroGuia = ""
 	razon = ""
@@ -637,7 +638,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		This.Cmensaje = "Ingrese Importe para Nota Crédito Tipo 13"
 		Return 0
 	Case This.Tdoc = '07'
-		If This.Monto > This.montoreferencia
+		If (This.Monto-This.montoreferencia)>0.10 then
 			This.Cmensaje = "El Importe No Puede Ser Mayor al del Documento"
 			Return 0
 		Else
@@ -1129,7 +1130,10 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If This.Vendedor > 0 Then
 	      \ And a.Codv=<<This.Vendedor>>
 	Endif
-	      \Order By a.Codv,a.Idauto,e.Mone
+	IF this.codt>0 then
+	   \ and e.codt=<<this.codt>>
+	ENDIF    
+	\Order By a.Codv,a.Idauto,e.Mone
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -1779,13 +1783,12 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If !Pemstatus(goApp, 'proyecto', 5) Then
 		AddProperty(goApp, 'proyecto', '')
 	Endif
-
 	cndoc = This.Serie + This.numero
 	If This.IniciaTransaccion() < 1  Then
 		Return 0
 	Endif
 	If goApp.vtascondetraccion = 'S' Then
-		If ActualizaResumenDctovtascondetraccion(This.Tdoc, Left(This.formaPago, 1), cndoc, This.Fecha, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, "", Left(This.Moneda, 1), ;
+		If ActualizaResumenDctovtascondetraccion1(This.Tdoc, Left(This.formaPago, 1), cndoc, This.Fecha, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, "", Left(This.Moneda, 1), ;
 				  This.ndolar, This.vigv, 'S', This.Codigo, "V", goApp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, 0, This.detraccion, This.Idauto, This.coddetraccion) < 1 Then
 			This.DEshacerCambios()
 			Return 0
@@ -2357,6 +2360,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarventasresumidas(Ccursor)
+	CierraCursor(ccursor)
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
 	Endif
@@ -2402,7 +2406,6 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	      \And a.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
 		Endif
 	Else
-
 	Endif
 	\ Order By fech Desc,Ndoc
 	Set Textmerge Off
@@ -2646,7 +2649,10 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Function buscarxidpsystr(Ccursor)
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
-	Endif
+	ENDIF
+	IF !PEMSTATUS(goapp,'vtascondetraccion',5) then
+	   ADDPROPERTY(goapp,'vtascondetraccion','')
+	ENDIF    
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\ Select  `c`.`rcom_icbper` As `rcom_icbper`, `a`.`kar_icbper`  As `kar_icbper`, `c`.`rcom_mens`   As `rcom_mens`,ifnull(m.Fevto,c.fech) As fvto,
@@ -2665,9 +2671,13 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	\  `p`.`nomv`        As `Vendedor`, `q`.`nomb`        As `Usuario`, `c`.`rcom_idtr`   As `rcom_idtr`, `c`.`rcom_tipo`   As `rcom_tipo`
 	If goApp.Clienteconproyectos = 'S' Then
 	\ , `c`.`alma`        As `codproyecto`
-	Endif
+	ENDIF
+    IF goapp.vtascondetraccion='S' then
+     \ ,c.rcom_mdet,c.rcom_detr,xa.prod_detr,xa.prod_cdtr
+    ENDIF 
 	\  From `fe_rcom` `c`
     \  Join `fe_kar` `a`  On ((`a`.`Idauto` = `c`.`Idauto`))
+    \  Join fe_art AS xa on xa.idart=a.idart
     \  Join `vlistaprecios` `b`  On ((`b`.`idart` = `a`.`idart`))
     \  Join `fe_clie` `d`  On ((`d`.`idclie` = `c`.`idcliente`))
     \  Left Join `fe_vend` `p`  On ((`p`.`idven` = `a`.`Codv`))
@@ -3119,7 +3129,39 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function listarvtaspor50(Cserie, Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+  \ Select Month(fech) As mes,Year(fech) As nano,If(Length(Trim(Ndoc))<12,Concat('0',Left(Ndoc,3)),Left(Ndoc,4)) As Serie,
+  \ If(Length(Trim(Ndoc))<12,Concat('0',Substr(Ndoc,4)),Substr(Ndoc,5)) As Ndoc,valor,Exon,igv,Impo As Importe,vigv,'b' As orden From fe_rcom
+  \ Where idcliente>0 And  Month(fecr)=<<This.nmes>> And Year(fecr)=<<This.Naño>> And Tdoc='<<this.tdoc>>'
+  \ And Acti='A' And Left(Ndoc,1) Not In ("F","B","P")
+	If Len(Alltrim(m.Cserie)) > 0 Then
+    \ And Left(Ndoc,4)='<<m.cserie>>'
+	Endif
+  \ Union All
+  \ Select  Month(fech) As mes,Year(fech) As nano,If(Length(Trim(Ndoc))<12,Concat('0',Left(Ndoc,3)),Left(Ndoc,4)) As Serie,
+  \ If(Length(Trim(Ndoc))<12,Concat('0',Substr(Ndoc,4)),Substr(Ndoc,5)) As Ndoc,valor,Exon,igv,Impo As Importe,vigv,'a' As orden From fe_rcom
+  \ Where idcliente>0 And Month(fecr)=<<This.nmes>> And Year(fecr)=<<This.Naño>>
+  \And Tdoc='<<this.tdoc>>' And Acti='A' And Left(Ndoc,1)In ("F","B","P")
+	If Len(Alltrim(m.Cserie)) > 0 Then
+    \ And Left(Ndoc,4)='<<m.cserie>>'
+	Endif
+  \Order By orden,Serie,Ndoc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
 
 
 

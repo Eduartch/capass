@@ -203,11 +203,11 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-   \Select b.fecr As fech,b.Tdoc,a.ncta,Concat(Trim(c.Razo),'-',Trim(b.Ndoc)) As Razo,
+   \Select b.fecr As fech,b.Tdoc,a.ncta,Trim(c.Razo) as Razo,
    \(Case x.ecta_tipo When 'D' Then If((b.Mone = 'S'),x.Impo,Round((x.Impo * b.dolar),2)) Else 0 End) As debe,
    \(Case x.ecta_tipo When 'H' Then If((b.Mone = 'S'),x.Impo,Round((x.Impo * b.dolar),2)) Else 0 End) As haber,
    \a.idcta,a.nomb,x.ecta_tipo As Tipo,Left(Concat("Com-",Cast(b.idauto As Char)),12) As Ndoc,
-   \x.idectas,idauto,'N' As Tran,0 As itd,0 As ith,Cast(Nitem As unsigned) As Nitem,'Com' As tipomvto,'A' As cond,tcom,
+   \x.idectas,idauto,'N' As Tran,0 As itd,0 As ith,Cast(Nitem As unsigned) As Nitem,'Com' As tipomvto,'A' As cond,tcom,b.ndoc as dcto,
 	If goApp.Ccostos = 'S' Then
     \ 0 As rcom_ccos,ifnull(q.cent_desc,'') As Ccostos,b.fech As fechaemision
 	Else
@@ -230,11 +230,11 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		Endif
 	Endif
    \Union All
-   \Select b.fecr As fech, b.Tdoc,cdestinod As ncta,Concat(Trim(c.Razo),'-',Trim(b.Ndoc)) As Razo,
+   \Select b.fecr As fech, b.Tdoc,cdestinod As ncta,Trim(c.Razo) As Razo,
    \If(b.Mone ='S',x.Impo,Round(x.Impo * b.dolar,2)) As debe,
    \Cast(0 As Decimal(12,2)) As haber,
    \0 As idcta,a.nomb,'D' As Tipo,Left(Concat("Com-",Cast(b.idauto As Char)),12) As Ndoc,
-   \x.idectas,idauto,'N' As Tran,0 As itd,0 As ith,Cast('9'  As signed) As Nitem,'Com' As tipomvto,'D' As cond,tcom,
+   \x.idectas,idauto,'N' As Tran,0 As itd,0 As ith,Cast('9'  As signed) As Nitem,'Com' As tipomvto,'D' As cond,tcom,b.ndoc as dcto,
 	If goApp.Ccostos = 'S' Then
     \ b.rcom_ccos,ifnull(q.cent_desc,'') As Ccostos,b.fech As fechaemision
 	Else
@@ -258,11 +258,11 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		Endif
 	Endif
    \Union All
-   \Select b.fecr As fech,b.Tdoc,cdestinoh As ncta,Concat(Trim(c.Razo),'-',Trim(b.Ndoc)) As Razo,
+   \Select b.fecr As fech,b.Tdoc,cdestinoh As ncta,Trim(c.Razo) As Razo,
    \Cast(0 As Decimal(12,2)) As debe,
    \If(b.Mone = 'S',x.Impo,Round(x.Impo * b.dolar,2)) As haber,
    \0 As idcta,a.nomb,'H' As Tipo,Left(Concat("Com-",Cast(b.idauto As Char)),12) As Ndoc,
-   \x.idectas,idauto,'N' As Tran,0 As itd,0 As ith,Cast('10' As signed) As Nitem,'Com' As tipomvto,'D' As cond,tcom,
+   \x.idectas,idauto,'N' As Tran,0 As itd,0 As ith,Cast('10' As signed) As Nitem,'Com' As tipomvto,'D' As cond,tcom,b.ndoc as dcto,
 	If goApp.Ccostos = 'S' Then
     \ b.rcom_ccos,ifnull(q.cent_desc,'') As Ccostos,b.fech As fechaemision
 	Else
