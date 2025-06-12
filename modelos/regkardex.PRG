@@ -5,13 +5,15 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	nprec = 0
 	ncomi = 0
 	nidtda = 0
+	nidtda1=0
 	nidv = 0
 	Ctipo = ""
 	ncosto = 0
 	nidcosto = 0
-	nidicpber=0
-	ndetraccion=0
+	nidicpber = 0
+	ndetraccion = 0
 	ctmvto = ""
+	cdetalle=""
 	cTdoc = ""
 	cincl = ""
 	ntigv = 0
@@ -108,28 +110,56 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	Local lC, lp
 	cur			  = "nidk"
 	lC			  = "FunIngresaKardexdetraccion"
-    Text To lp NOSHOW TEXTMERGE 
+	Text To lp Noshow Textmerge
      (<<this.niDAUTO>>,<<this.ncoda>>,<<this.nidicpber>>,<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.ncomi>>,<<this.ndetraccion>>)
-     Endtext
+	Endtext
 	nidk = This.EJECUTARf(lC, lp, cur)
 	If nidk < 1 Then
 		Return 0
 	Endif
 	Return nidk
-	ENDFUNC
+	Endfunc
 	Function Actualizakardexdetraccion()
 	Local lC, lp
 	cur			  = ""
 	lC			  = "ProActualizaKardexdetraccion"
-    Text To lp NOSHOW TEXTMERGE 
+	Text To lp Noshow Textmerge
      (<<this.niDAUTO>>,<<this.ncoda>>,<<this.nidicpber>>,<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.nidkar>>,1,<<this.ncomi>>,<<this.ndetraccion>>)
-     Endtext
-	if This.EJECUTARP(lC, lp, cur)<1 then
-    	Return 0
+	Endtext
+	If This.ejecutarp(lC, lp, cur) < 1 Then
+		Return 0
 	Endif
 	Return 1
 	Endfunc
+	Function IngresaDtraspasos()
+	lC = 'FunIngresaKardex'
+	cur = "Xt"
+	*Na, ed.Coda, m.Ctipo, ed.Prec, ed.cant, 'I', 0, 'T', 'Devolución', nidtda, nidtda1, 0
+	*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12
+	goApp.npara1 = this.niDAUTO
+	goApp.npara2 = this.ncoda
+	goApp.npara3 = this.Ctipo
+	goApp.npara4 = this.nprec
+	goApp.npara5 = this.ncant
+	goApp.npara6 = this.cincl
+	goApp.npara7 = 0
+	goApp.npara8 = this.ctmvto
+	goApp.npara9 = this.cdetalle
+	goApp.npara10 = this.nidtda
+	goApp.npara11 = this.nidtda1
+	goApp.npara12 = 0
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12)
+	Endtext
+	nidk = This.EJECUTARf(lC, lp, cur)
+	If m.nidk < 1 Then
+		Return 0
+	Endif
+	Return m.nidk
+	Endfunc
 Enddefine
+
 
 
 

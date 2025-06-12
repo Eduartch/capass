@@ -12,7 +12,7 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	 WHERE b.acti<>'I'  AND e.acti='A' and b.alma=<<nalma>> and b.idart=<<nidart>> 
 	 GROUP BY  idart,alma) AS a
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -27,7 +27,7 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) = 0 Then
 		Return 0
-	ENDIF 
+	Endif
 	Return 1
 	Endfunc
 	Function conStockminimopsysg(Ccursor)
@@ -41,7 +41,7 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 		WHERE prod_acti<>'I' AND prod_smin>0) AS x WHERE diferencia>0
 		ORDER BY descri
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -74,12 +74,94 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	\ Order By b.Descri;
 		Set Textmerge Off
 	Set Textmerge To
-	If  This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If  This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function MuestraPresentacionesXProducto1(np1, np2, cur)
+	Local lC, lp
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC			 = 'ProMuestraPresentacionesXProducto'
+	goApp.npara1 = np1
+	goApp.npara2 = np2
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) = 0 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresaPreciosEpta(np1, np2, np3, np4, np5, np6, np7, np8, np9)
+	Local lC, lp
+	IF !PEMSTATUS(goapp,'ListaPreciosPorTienda',5) then
+	    ADDPROPERTY(goapp,'ListaPreciosPorTienda','')
+	ENDIF     
+	lC			 = 'FUNCREAEPTA'
+	cur			 = "XEpta"
+	goApp.npara1 = np1
+	goApp.npara2 = np2
+	goApp.npara3 = np3
+	goApp.npara4 = np4
+	goApp.npara5 = np5
+	goApp.npara6 = np6
+	goApp.npara7 = np7
+	goApp.npara8 = np8
+	goApp.npara8 = np9
+	IF goapp.ListaPreciosPorTienda='S' then
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
+	ENDTEXT
+	ELSE
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
+	ENDTEXT
+	ENDIF 
+	nid = This.EJECUTARf(lC, lp, cur)
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function ActualizaPreciosEpta(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11)
+	Local lC, lp
+	Local lC, lp
+	IF !PEMSTATUS(goapp,'ListaPreciosPorTienda',5) then
+	    ADDPROPERTY(goapp,'ListaPreciosPorTienda','')
+	ENDIF     
+	lC			  = 'PROACTUALIZAEPTA'
+	goApp.npara1  = np1
+	goApp.npara2  = np2
+	goApp.npara3  = np3
+	goApp.npara4  = np4
+	goApp.npara5  = np5
+	goApp.npara6  = np6
+	goApp.npara7  = np7
+	goApp.npara8  = np8
+	goApp.npara9  = np9
+	goApp.npara10 = np10
+	goApp.npara11 = np11
+	IF goapp.ListaPreciosPorTienda='S' then
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
+	ENDTEXT
+	ELSE
+	  Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
+	ENDTEXT
+	ENDIF 
+	If This.EJECUTARP(lC, lp, '') < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
+
 
 
 

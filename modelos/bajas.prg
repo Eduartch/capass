@@ -51,7 +51,7 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 				This.Cmensaje = mensajeError
 				Return 0
 			Endif
-		Case  Lower(odcto.Proc) = 'rnnr'
+		Case  Lower(odcto.Proc) = 'rnnr' OR Lower(odcto.Proc) = 'rnzapateria'
 			Set Procedure To (odcto.Proc) Additive
 			If  AnulaTransaccionN('', '', 'V', odcto.Idauto, odcto.Idusua, 'S', Ctod(odcto.fech), goApp.uauto, 0) = 0 Then
 				This.Cmensaje = mensajeError
@@ -103,7 +103,7 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 	Case  odvto.Vdvto = '7'
 		This.Cmensaje = "No se puede Obtener Respuesta desde el Servidor...no Existen las Credenciales para hacer la Consulta"
 	Otherwise
-		This.Cmensaje = "Respuesta del Servidor " + Alltrim(odvto.Vdvto)
+		This.Cmensaje = "Respuesta del Servidor " + Alltrim(odvto.Vdvto)+' '+alltrim(odvto.mensaje)
 	Endcase
 	Return 0
 	Endfunc

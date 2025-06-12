@@ -1456,7 +1456,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION getAllboletaspsys()
+
+	ENDFUNC 
 Enddefine
 
 

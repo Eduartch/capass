@@ -15,10 +15,10 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function consultadata1(np1, np2, Ccursor)
-	m.cfilejson = Addbs(Sys(5) + Sys(2003)) + 'm' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	m.cfilejson = Addbs(Sys(5) + Sys(2003)) + 'm' + Alltrim(Str(goApp.xopcion)) + '.json'
 	If File(m.cfilejson) Then
 		Create Cursor b_menus From Array cfieldsfemenu
-		responseType1 = Addbs(Sys(5) + Sys(2003)) + 'm' + Alltrim(Str(goApp.Xopcion)) + '.json'
+		responseType1 = Addbs(Sys(5) + Sys(2003)) + 'm' + Alltrim(Str(goApp.xopcion)) + '.json'
 		oResponse = nfJsonRead(m.responseType1)
 		If Vartype(m.oResponse) = 'O' Then
 			For Each oRow In  oResponse.Array
@@ -104,7 +104,7 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 	nCount = Afields(cfieldsfemenu)
 	Select * From (Ccursor) Into Cursor a_menus
 	cdata = nfcursortojson(.T.)
-	rutajson = Addbs(Sys(5) + Sys(2003)) + 'm' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'm' + Alltrim(Str(goApp.xopcion)) + '.json'
 	If File(m.rutajson) Then
 		Delete File m.rutajson
 	Endif

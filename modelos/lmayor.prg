@@ -14,14 +14,17 @@ Define Class lmayor As Odata Of 'd:\capass\database\data.prg'
 	dfecha11 = dfecha1 + 1
 	fi = cfechas(dfecha1)
 	ff = cfechas(dfecha2)
+	ff2=cfechas(dfecha1-1)
+	dfi=cfechas(Ctod('01/01/'+Trim(Str(na))))
 	If This.nmes = 1 Then
 		Set Textmerge On
 		Set Textmerge To  Memvar lC  Noshow
 	       \Select z.ldia_fech,z.ncta,z.nomb,If(z.debe>z.haber,z.debe-z.haber,00000000.00) As adeudor,
 		   \If(z.haber>z.debe,z.haber-z.debe,000000000.00) As aacreedor,idcta,ldia_nume,estado  From
 		   \(Select MAX(a.ldia_fech) as ldia_fech,b.ncta,b.nomb,Sum(a.ldia_debe-a.ldia_itrd) As debe,Sum(a.ldia_haber-a.ldia_itrh) As haber,b.idcta,MAX(a.ldia_nume) as ldia_nume,'I' As estado
-		   \From fe_ldiario As a inner Join fe_plan As b On b.idcta=a.ldia_idcta
-		   \Where a.ldia_acti='A' And ldia_fech = '<<f>>' And ldia_tran<>'T'  And ldia_inic='I'
+		   \From fe_ldiario As a 
+		   \inner Join fe_plan As b On b.idcta=a.ldia_idcta
+		   \Where a.ldia_acti='A' And ldia_fech = '<<dfi>>' And ldia_tran<>'T'  And ldia_inic='I'
 		If This.cmultiempresa = 'S' Then
 		   \And ldia_codt=<<This.ncodt>>
 		Endif
@@ -36,7 +39,7 @@ Define Class lmayor As Odata Of 'd:\capass\database\data.prg'
 		\If(z.haber>z.debe,z.haber-z.debe,000000000.00) As aacreedor,idcta,ldia_nume,estado  From
 		\	(Select MAX(a.ldia_fech) As ldia_fech,b.ncta,b.nomb,Sum(a.ldia_debe-a.ldia_itrd) As debe,Sum(a.ldia_haber-a.ldia_itrh) As haber,b.idcta,MAX(a.ldia_nume) As ldia_nume,'M' As estado
 		\	From fe_ldiario As a inner Join fe_plan As b On b.idcta=a.ldia_idcta
-		\	Where a.ldia_acti='A' And ldia_fech Between '<<fi>>' And '<<ff>>' And ldia_tran<>'T' And ldia_inic<>'I' 
+		\	Where a.ldia_acti='A' And ldia_fech Between '<<dfi>>' And '<<ff2>>' And ldia_tran<>'T'
 		If This.cmultiempresa = 'S' Then
 		   \And ldia_codt=<<This.ncodt>>
 		Endif

@@ -28,13 +28,12 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara23 = np23
 	goApp.npara24 = np24
 	goApp.npara25 = np25
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
-
 	If Vartype(nid) = 'C' Then
 		vd = 1
 		This.codigorodi = nid
@@ -74,11 +73,11 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara23 = np23
 	goApp.npara24 = np24
 	goApp.npara25 = np25
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -113,11 +112,11 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara24 = np24
 	goApp.npara25 = np25
 	goApp.npara26 = np26
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-	ENDTEXT
+	Endtext
 	If EJECUTARP(lC, lp, cur) < 1
 		Return 0
 	Endif
@@ -129,9 +128,9 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
-	TEXT To lp Noshow
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -147,9 +146,9 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lp Noshow
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -161,20 +160,26 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	Set Textmerge On
 	Set Textmerge To Memvar lp Noshow Textmerge
 	\('<<this.ccoda>>', '<<this.cdesc>>', '<<this.cunid>>', << This.nprec >>, << This.ncosto >>,
-	\<< This.np1 >>, << This.np2 >>, << This.np3 >>,
-	\<< This.npeso >>, << This.ccat >>, << This.cmar >>, '<<this.ctipro>>', << This.nflete >>,
-	\'<<this.cm>>', '<<this.cidpc>>', << This.ncome >>, << This.ncomc >>,
-	\<< This.nutil1 >>, << This.nutil2 >>, << This.nutil3 >>, << goApp.nidusua >>,
+	\<< This.np1 >>, << This.np2 >>, << This.np3 >>,<< This.npeso >>, << This.ccat >>, << This.cmar >>, '<<this.ctipro>>', << This.nflete >>,
+	\'<<this.cm>>', '<<this.cidpc>>', << This.ncome >>, << This.ncomc >>,<< This.nutil1 >>, << This.nutil2 >>, << This.nutil3 >>, << goApp.nidusua >>,
 	\<< This.nsmax >>, << This.nsmin >>, << This.nidcosto >>, << This.ndolar >>
 	If goApp.Lectorcodigobarras = 'S' Then
+		If _Screen.vtasexoneradas <> 'S' Then
 	  \,'<<this.ccodigo1>>')
+		Else
+	    \,'<<this.ccodigo1>>',<<This.ntigv>>)
+		Endif
 	Else
+		If _Screen.vtasexoneradas = 'S' Then
+		\,<<This.ntigv>>)
+		Else
 	\)
+		Endif
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
 	nid = This.EJECUTARf(lC, lp, cur)
-	If LEN(ALLTRIM(nid)) = 0 Then
+	If Len(Alltrim(nid)) = 0 Then
 		Return 0
 	Endif
 	Return 1
@@ -192,9 +197,17 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 		\<< This.ncome >>, << This.ncomc >>,<< goApp.nidusua >>,'<<this.ccoda>>',
 		\<< This.nsmax >>, << This.nsmin >>, << This.nidcosto >>, << This.ndolar >>
 		If goApp.Lectorcodigobarras = 'S' Then
+			If _Screen.vtasexoneradas <> 'S' Then
 		  \,'<<this.ccodigo1>>')
+			Else
+		    \,'<<this.ccodigo1>>',<<This.ntigv>>)
+			Endif
 		Else
-			\)
+			If _Screen.vtasexoneradas = 'S' Then
+		     \,<<This.ntigv>>)
+			Else
+	         \)
+			Endif
 		Endif
 		Set Textmerge Off
 		Set Textmerge To
@@ -202,16 +215,38 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 			Return 0
 		Endif
 	Else
-		TEXT To lcu Noshow Textmerge
+		Text To lcu Noshow Textmerge
 	        UPDATE fe_art SET prod_acti='I',prod_uact=<<goapp.nidusua>> WHERE idart='<<this.ccoda>>'
-		ENDTEXT
+		Endtext
 		If This.Ejecutarsql(lcu) < 1 Then
 			Return 0
 		Endif
 	Endif
 	Return 1
 	Endfunc
+	Function LocalizaCodigo(np1, Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC = 'ProLocalizaCodigo'
+	goApp.npara1 = np1
+	Text To lp Noshow
+	     (?goapp.npara1)
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		Return 0
+	Endif
+	If REgdvto(Ccursor) < 1 Then
+		This.Cmensaje="Código " + Alltrim(np1) + " NO Regsitrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
 
 
 

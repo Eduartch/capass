@@ -39,30 +39,58 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function registralecturas(Calias)
+	If goApp.IDturno = 1 Then
+		Nsgte = 2
+	Else
+		Nsgte = 1
+	Endif
 	nsgtelectura = goApp.Idlecturas + 1
 	Do Case
 	Case goApp.Isla = 1
-		Text To lC Noshow Textmerge
-          UPDATE fe_gene  SET idle1=nsgtelectura
+		Text To lcx Noshow Textmerge
+          UPDATE fe_gene  SET idle1=<<nsgtelectura>>
 		Endtext
 	Case goApp.Isla = 2
-		Text To lC Noshow Textmerge
-          UPDATE fe_gene  SET idle2=nsgtelectura
+		Text To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle2=<<nsgtelectura>>
 		Endtext
 	Case goApp.Isla = 3
-		Text To lC Noshow Textmerge
-          UPDATE fe_gene   SET idle3=nsgtelectura
+		Text To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle3=<<nsgtelectura>>
 		Endtext
 	Case goApp.Isla = 4
-		Text To lC Noshow Textmerge
-          UPDATE fe_gene SET idle4=nsgtelectura
+		Text To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle4=<<nsgtelectura>>
 		Endtext
 	Endcase
+
+	Do Case
+	Case goApp.Isla = 1
+		Text To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu1=<<nsgte>>
+		Endtext
+	Case goApp.Isla = 2
+		Text To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu2=<<nsgte>>
+		Endtext
+	Case goApp.Isla = 3
+		Text To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu3=<<nsgte>>
+		Endtext
+	Endcase
+	If  This.Ejecutarsql(lCt) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
 	q = 1
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	This.contransaccion = 'S'
+	If  This.Ejecutarsql(lcx) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
 	Select listaci
 	Scan All
 		If This.IngresalecturasContometros20(listaci.Surtidor, goApp.IDturno, listaci.lectura, listaci.Monto, fe_gene.fech, goApp.nidusua, listaci.Codigo, listaci.lado, listaci.Precio, nsgtelectura) < 1 Then
@@ -70,6 +98,8 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 			Exit
 		Endif
 	Endscan
+	goApp.IDturno = m.Nsgte
+	goApp.Idlecturas = m.nsgtelectura
 	If q = 1 Then
 		If This.GRabarCambios() < 1 Then
 			Return 0
@@ -256,7 +286,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	SELECT descri AS producto,lect_cfinal as final,lect_inic AS inicial,lect_cfinal-lect_inic as cantidad,lect_prec as Precio,
 	Round((lect_cFinal-lect_inic)*lect_prec,2) As Ventas,
 	lect_mfinal as montofinal,lect_inim as montoinicial,lect_mfinal-lect_inim as monto,lect_mang AS manguera,lect_idco AS surtidor,
-	u.nomb as Cajero,lect_fope as InicioTurno,lect_fope1 as FinTurno,lect_idtu as turno,lect_idle as Idlecturas,lect_idar AS codigo
+	u.nomb as Cajero,lect_fope as InicioTurno,lect_fope1 as FinTurno,lect_idtu as turno,lect_idle as Idlecturas,lect_idar AS codigo,'a' as orden
 	FROM fe_lecturas AS l
 	INNER JOIN fe_art AS a ON a.idart=l.lect_idar
 	inner join fe_usua as u on u.idusua=l.lect_idus
@@ -351,7 +381,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	lect_cfinal AS cantidadfinal,lect_mfinal AS montofinal,lect_cfinal-lect_inic AS cantidad,
 	lect_mfinal-lect_inim AS efectivo,lect_idco,'a' as orden
 	FROM fe_lecturas AS lec
-	INNER JOIN fe_art AS a ON a.`idart`=lec.lect_idar  
+	INNER JOIN fe_art AS a ON a.`idart`=lec.lect_idar
 	WHERE lect_esta='C' AND CAST(lect_fope1 AS DATE)="<<df>>" AND lect_acti='A' ORDER BY lect_idco,a.descri
 	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -359,7 +389,25 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function obteneridlecturaactiva()
+	Ccursor = 'c_' + Sys(2015)
+	Text To lC Noshow Textmerge
+	   select lect_idin as idlectura FROM fe_lecturas WHERE lect_idin=<<goApp.Idlecturas>> and lect_acti='A' AND lect_esta='A' limit 1
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If Idlectura > 0 Then
+		Return 1
+	Else
+		This.Cmensaje = 'NO existe LECTURA DE DESPACHO Vigente '
+		Return  0
+	Endif
+	Endfunc
 Enddefine
+
+
 
 
 

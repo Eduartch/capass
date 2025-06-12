@@ -1,7 +1,7 @@
 Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	nturno = 0
 	Idlectura = 0
-	conotrositems=""
+	conotrositems = ""
 	Function vtascomparativas(nidt, fi, ff, Ccursor)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
@@ -201,13 +201,24 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Endfunc
 	Function ValidarVtasGrifos()
 	Local lo
+	If !Pemstatus(goApp, 'ConectaControlador', 5) Then
+		AddProperty(goApp, 'ConectaControlador', '')
+	Endif
+	If goApp.ConectaControlador = 'Y' Then
+		Set Procedure To  d:\capass\modelos\lecturas Additive
+		olect = Createobject("lecturas")
+		If olect.obteneridlecturaactiva() < 1 Then
+			This.Cmensaje = olect.Cmensaje
+			Return .F.
+		Endif
+	Endif
 	x = 'C'
 	Set Procedure To d:\capass\modelos\ctasxcobrar Additive
 	ctasxcobrar = Createobject('ctasporcobrar')
 	Select (This.temporal)
 	Locate For cant = 0 And !Empty(Coda)
 	Do Case
-	Case !esfechaValida(This.Fecha) Or Month(This.Fecha) <> goApp.mes Or Year(This.Fecha) <> Val(goApp.año)
+	Case !esfechaValida(This.Fecha) Or Month(This.Fecha) <> goApp.mes Or Year(This.Fecha) <> Val(goApp.Año)
 		This.Cmensaje = "Fecha NO Permitida Por el Sistema"
 		lo = 0
 	Case This.Monto = 0 And This.gratuita = 0
@@ -218,6 +229,9 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		lo = 0
 	Case This.Monto < 1 And This.Tdoc = '03'  And This.gratuita = 0
 		This.Cmensaje = "Se Emite Boleta a Partir de S/1.00"
+		lo = 0
+	Case This.Ruc = fe_gene.nruc
+		This.Cmensaje = "No se puede facturar a la misma empresa"
 		lo = 0
 	Case This.sinstock = "S"
 		This.Cmensaje = "Hay Un Item que No tiene Stock Disponible"
@@ -493,7 +507,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Go Top
 	calma = tmpv.Isla
 	Set Procedure To CapaDatos, rngrifo, ple5 Additive
-	cotros=IIF(this.conotrositems='S','Otros','')
+	cotros = Iif(This.conotrositems = 'S', 'Otros', '')
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -1162,8 +1176,33 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Select (Ccursor)
 	Go Top
 	Return 1
+	ENDFUNC
+	Function listarvtasotrosproductos(nidus, nisla,nidl, Calias)
+	IF this.idsesion>0 then
+	   SET DATASESSION TO this.idsesion
+	ENDIF    
+    Set Textmerge On
+	Set  Textmerge To Memvar lC Nosho Textmerge
+	\SELECT fe_kar.idart,descri,cant,fe_kar.prec,rcom_idis,fusua,nomb AS cajero FROM fe_kar 
+    \INNER JOIN fe_art ON fe_art.`idart`=fe_kar.`idart` 
+    \INNER JOIN fe_rcom  ON fe_rcom.`idauto`=fe_kar.`idauto`
+    \INNER JOIN fe_usua ON fe_usua.`idusua`=fe_rcom.`idusua`
+	\WHERE kar_idco=0 AND fe_kar.acti='A' AND fe_kar.tipo='V' AND fe_rcom.acti='A' and rcom_idis=<<nidl>> and codt=1
+	If nidus > 0 Then
+	      \And fe_rcom.idusua=<<nidus>>
+	ENDIF
+	\order by descri
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 Enddefine
+
+
+
 
 
 

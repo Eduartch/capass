@@ -1,5 +1,8 @@
 Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasremision'
 	Function Grabar()
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
+	Endif
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
@@ -16,7 +19,12 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 			Return 0
 		Endif
 	Endif
-	NAuto = IngresaResumenTraspasos(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, goApp.Tienda, 0, 0, 0, 0, 0)
+	If goApp.Proyecto = 'psysm' Then
+		m.nflete = This.nflete
+	Else
+		m.nflete = 0
+	Endif
+	NAuto = IngresaResumenTraspasos(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, goApp.Tienda, 0, 0, 0, 0, m.nflete)
 	If NAuto < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -758,7 +766,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 		This.Cmensaje = "Ingrese el Punto de Partida"
 	Case Len(Alltrim(This.ptoll)) = 0
 		This.Cmensaje = "Ingrese el Punto de Llegada"
-	Case (Month(This.Fecha) <> goApp.mes Or Year(This.Fecha) <> Val(goApp.año)) And This.fechaautorizada = 0	And This.Fecha <= fe_gene.fech
+	Case (Month(This.Fecha) <> goApp.mes Or Year(This.Fecha) <> Val(goApp.año)) And This.fechaautorizada = 0 And This.Fecha <= fe_gene.fech
 		This.Cmensaje = "Ingrese Una Fecha Permitida Por el Sistema"
 	Endcase
 	If This.Cmensaje <> '' Then
@@ -1003,12 +1011,59 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	Text To lC Noshow Textmerge
 	UPDATE fe_rcom SET rcom_reci='E' WHERE idauto=<<nid>>
 	Endtext
-	If This.ejecutarsql(lC) < 1 Then
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function reportetraspasospsysm(chk, Ccursor)
+	dfi = Cfechas(This.dfi)
+	dff = Cfechas(This.dff)
+	If m.chk = 0 Then
+		Set Textmerge On
+		Set Textmerge To Memvar lC Noshow  Textmerge
+		\Select b.fech,b.Tdoc,b.Ndoc,b.codt AS alma,b.ndo2,a.Tipo,a.cant,a.idart,b.fusua,d.nomb As usua,b.rcom_carg,
+		\    e.Descri,e.Unid,F.nomb As origen,g.nomb As destino,b.Idauto,
+		\    "Trapaso Normal" As Refe From fe_kar As a
+		\    inner Join fe_art As e   On(e.idart=a.idart)
+		\    inner Join fe_rcom  As b On(b.Idauto=a.Idauto)
+	    \    inner Join fe_usua As d On(d.Idusua=b.Idusua)
+		\    inner Join fe_sucu As F On(F.idalma=b.codt)
+		\    inner Join fe_sucu As g On(g.idalma=b.ndo2)
+		\    Where b.tcom='T'  And b.Acti<>'I' and a.acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'
+		If This.codt > 0 Then
+		   \ And b.codt=<<This.codt>>
+		Endif
+		\Order By b.Ndoc
+		Set Textmerge Off
+		Set Textmerge To
+	Else
+		Set Textmerge On
+		Set Textmerge To Memvar lC Noshow  Textmerge
+			\Select b.fech, b.Tdoc, b.Ndoc, b.codt As alma, b.rcom_idtr As Ndo2, a.Tipo, a.cant, a.idart, b.fusua, ifnull(d.nomb, '') As usua,b.rcom_carg,
+			\e.Descri, e.Unid, b.Deta As Refe, tipoM, b.Idauto From fe_kar As a
+			\inner Join fe_art As e On(e.idart = a.idart)
+			\inner Join fe_rcom  As b On(b.Idauto = a.Idauto)
+			\Left Join fe_usua As d On d.Idusua = b.Idusua
+			\Where b.tcom = 'T' and a.acti='A'  And b.Acti <> 'I' And rcom_idtr > 0  And b.fech Between '<<dfi>>' And '<<dff>>' Order By b.Ndoc
+		Set Textmerge Off
+		Set Textmerge To
+		If This.codt > 0 Then
+		Endif
+	Endif
+	If  This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
+
+
+
+
+
 
 
 

@@ -63,6 +63,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	nigv = Kardex.igv
 	nimpo = Kardex.Impo
 	dFecha = Kardex.fech
+	cformapago=kardex.form 
 	nexonerado = Kardex.rcom_exon
 	clugar = Kardex.rcom_lope
 	nirta = Kardex.rcom_irta
@@ -86,7 +87,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Select tmpv
 	Replace All Ndoc With cndoc, cletras With Cimporte, Mone With cmone, hash With chash, Detalle With cdeta1, ;
 		Tdoc With cTdoc, valor With nvalor, igv With nigv, Total With nimpo, fech With dFecha, exonerado With m.nexonerado, ;
-		lugar With clugar, irta With nirta, neto With m.nneto
+		lugar With clugar, irta With nirta, neto With m.nneto,form WITH m.cformapago
 	Go Top In tmpv
 	Return 1
 	Endfunc
@@ -336,7 +337,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Replace  All cletras With  ccletras, dni With This.Cndni, exonerado With This.nimpo5, ;
 		irta With This.nirta, neto With This.nneto, valor With This.nimpo1, exonerado With This.nimpo5, ;
 		igv With This.nimpo6, Total With This.nimpo8, Mone With This.Cmoneda,  ;
-		razon With This.Crazon, Direccion With This.Cdireccion, fech With This.dFecha, ;
+		razon With This.Crazon, Direccion With This.Cdireccion, fech With This.dFecha,form WITH this.cforma,;
 		lugar With This.clugar, Detalle With This.cdetalle, Ndoc With This.cndoc  In tmpv
 	Select tmpv
 	Go Top
@@ -455,22 +456,6 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 		Return 0
 	Endif
 	This.Imprimir()
-*!*		ccletras =	Diletras(This.nneto, 'S')
-*!*		Select Count(*) As Ti From tmpc Into Cursor xitems
-*!*		Select * From tmpc Into Cursor tmpv Readwrite
-*!*		Select tmpv
-*!*		For x = 1 To This.Items  - xitems.Ti
-*!*			Insert Into tmpv(Ndoc)Values(This.Ndoc)
-*!*		Next
-*!*		Replace  All cletras With  ccletras, dni With This.Cndni, exonerado With This.nimpo5, ;
-*!*			irta With This.nirta, neto With This.nneto, valor With This.nimpo1, exonerado With This.nimpo5, ;
-*!*			igv With This.nimpo6, Total With This.nimpo8, Mone With This.Cmoneda,  ;
-*!*			razon With This.Crazon, Direccion With This.Cdireccion, fech With This.dFecha, ;
-*!*			lugar With This.clugar, Detalle With This.cdetalle, Ndoc With This.cndoc  In tmpv
-*!*		Select tmpv
-*!*		Go Top
-*!*		oimp.Tdoc = '04'
-*!*		oimp.ImprimeComprobanteM('S')
 	Return 1
 	Endfunc
 Enddefine

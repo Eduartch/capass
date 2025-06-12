@@ -1,8 +1,6 @@
-#Define MSGTITULO 'SISVEN'
 Define Class productosgrifos As producto  Of 'd:\capass\modelos\productos.prg'
 	Function MuestraProductosDescCod(np1, np2, np3, np4, ccursor)
 	Local lc, lp
-*:Global cpropiedad
 	m.lc		 = 'PROMUESTRAPRODUCTOS1'
 	goapp.npara1 = m.np1
 	If goapp.Listapreciosportienda='S' Then
@@ -12,7 +10,6 @@ Define Class productosgrifos As producto  Of 'd:\capass\modelos\productos.prg'
 	Endif
 	goapp.npara3 = m.np3
 	goapp.npara4 = m.np4
-*cpropiedad	 = 'ListaPreciosPorTienda'
 	TEXT To m.lp Noshow
         (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
 	ENDTEXT
@@ -36,7 +33,7 @@ Define Class productosgrifos As producto  Of 'd:\capass\modelos\productos.prg'
 	   IF nalma>0 then
 	     \ and a.alma=<<nalma>>
 	   ENDIF 
-	   \ ORDER BY d.fech,d.tipom,d.fusua
+	   \ ORDER BY d.fusua,d.fech,d.tipom,d.fusua
 	SET TEXTMERGE off
 	SET TEXTMERGE to
     If This.ejecutaconsulta(lc,ccursor)<1 Then

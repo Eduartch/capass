@@ -1,4 +1,47 @@
-Define Class Tienda As Odata Of 'd:\capass\database\data.prg'
+Define Class Tienda As OData Of 'd:\capass\database\data.prg'
+	cnomb = ""
+	cdire = ""
+	cciud = ""
+	nserie = 0
+	nidus = 0
+	nid = 0
+	nmetavtas = 0
+
+	Function EditaAlmacen()
+	cur = "Tda"
+	lC = 'ProEditaAlmacen'
+	goApp.npara1 = this.cnomb
+	goApp.npara2 = this.cdire
+	goApp.npara3 = this.cciud
+	goApp.npara4 = this.nserie
+	goApp.npara5 = this.nidus
+	goApp.npara6 = this.nid
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+    Function EditaAlmacenmetasvtas()
+	cur = "Tda"
+	lC = 'ProEditaAlmacen'
+	goApp.npara1 = this.cnomb
+	goApp.npara2 = this.cdire
+	goApp.npara3 = this.cciud
+	goApp.npara4 = this.nserie
+	goApp.npara5 = this.nidus
+	goApp.npara6 = this.nid
+	goApp.npara7 = this.nmetavtas
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 	Function Muestratiendas(Ccursor)
 	If This.Muestratiendasx(Ccursor) < 1 Then
 		Return 0
@@ -15,7 +58,6 @@ Define Class Tienda As Odata Of 'd:\capass\database\data.prg'
 		Endif
 	Else
 		If Type("cfieldsfesucu") <> 'U' Then
-*!*		       wait WINDOW cfieldsfesucu[1,1]
 		Endif
 		Create Cursor b_tdas From Array cfieldsfesucu
 		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
@@ -50,7 +92,7 @@ Define Class Tienda As Odata Of 'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
 	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2) ORDER BY nomb
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return  1
@@ -60,9 +102,9 @@ Define Class Tienda As Odata Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	Text To lC Noshow Textmerge
-	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9) ORDER BY idalma
+	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9,10) ORDER BY idalma
 	Endtext
-	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return  1
@@ -85,6 +127,8 @@ Define Class Tienda As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
+
+
 
 
 

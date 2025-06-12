@@ -101,15 +101,15 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Endif
 	lista = This.ObtenerSerie(Alltrim(Str(This.nserie)))
 	Ccursor = 'c_' + Sys(2015)
+	SET TEXTMERGE ON 
+	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
+	\SELECT nume,items,idserie FROM fe_serie WHERE serie=<<lista.nserie>> AND tdoc='<<this.ctdoc>>'
 	If This.conletras = 'S' Then
-		Text To lC Noshow Textmerge
-	     SELECT nume,items,idserie FROM fe_serie WHERE serie=<<lista.nserie>> AND tdoc='<<this.ctdoc>>' AND TRIM(letra)='<<lista.cletras>>' limit  1;
-		Endtext
-	Else
-		Text To lC Noshow Textmerge
-	     SELECT nume,items,idserie FROM fe_serie WHERE serie=<<lista.nserie>> AND tdoc='<<this.ctdoc>>' limit  1;
-		Endtext
-	Endif
+	  \AND TRIM(letra)='<<lista.cletras>>'
+	ENDIF 
+	\limit  1 
+	SET TEXTMERGE off
+	SET TEXTMERGE TO  
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		This.Ndoc = ""
 		Return 0
@@ -374,17 +374,17 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-************************************
 	Function GeneraCorrelativootraserie(nn, ns)
-	Text To lp NOSHOW TEXTMERGE 
+	Text To lp Noshow Textmerge
        UPDATE fe_serie  as f SET numebnotas=f.numebnotas+1 WHERE idserie=<<ns>>
 	Endtext
-	If this.ejecutarsql(lp)<1 Then
-	Return 0
-	ENDIF 
+	If This.Ejecutarsql(lp) < 1 Then
+		Return 0
+	Endif
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

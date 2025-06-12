@@ -2,7 +2,7 @@ Define Class planctas As OData Of 'd:\capass\database\data.prg'
 	Function MuestraPlanCuentasx(np1, cur)
 	lC = "PROMUESTRAPLANCUENTAS"
 	goApp.npara1 = np1
-	goApp.npara2 = Val(goApp.año)
+	goApp.npara2 = Val(goApp.Año)
 	Text To lp Noshow
        (?goapp.npara1,?goapp.npara2)
 	Endtext
@@ -53,7 +53,34 @@ Define Class planctas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function listarcuentasseleccionadas(cb, Ccursor)
+	Text To lC Noshow Textmerge
+	      SELECT ncta,idcta,nomb,cdestinod,cdestinoh,tipocta,plan_oper
+	      FROM fe_plan WHERE LEFT(ncta,2)='<<cb>>'  AND plan_acti='A'  ORDER BY ncta; 
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function carganombrectasgenerales()
+	Ccursor = 'c_' + Sys(2015)
+	If !Pemstatus(_Screen, 'nctatavtas', 5) Then
+			AddProperty(_Screen, 'nctatavtas', '')
+	Endif
+	Text To lC Noshow
+	  SELECT idctat,fe_plan.ncta FROM fe_gene LEFT JOIN fe_plan ON fe_plan.idcta=fe_gene.`idctat` WHERE idgene=1 LIMIT 1
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	_Screen.nctatavtas= ncta
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 

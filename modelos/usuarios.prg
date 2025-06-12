@@ -353,7 +353,8 @@ Define Class usuarios As OData Of 'd:\capass\database\data.prg'
 	Function Autorizarpsystr(Ctipo, Ccursor)
 	Do Case
 	Case Ctipo = "A"
-		Text To lC Noshow Textmerge
+	    SELECT fe_gene
+	   	Text To lC Noshow Textmerge
          select idusua,nomb,clave,activo,tipo FROM fe_usua WHERE activo="S" AND LEFT(tipo,1)='A' ORDER BY nomb
 		Endtext
 	Case Ctipo = "G"

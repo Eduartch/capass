@@ -59,6 +59,10 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listaventaspsysl(nmarca, Ccursor)
+	IF (this.dff-this.dfi)>120 THEN 
+	   this.cmensaje='Máximo 120 Dias'
+	   RETURN 0
+	ENDIF 
 	f1 = cfechas(This.dfi)
 	f2 = cfechas(This.dff)
 	Set Textmerge On
@@ -187,6 +191,38 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	rutajson = Addbs(Sys(5) + Sys(2003)) + 'v' + Alltrim(Str(goApp.Xopcion)) + '.json'
 	Strtofile (cdata, rutajson)
 	goApp.datosvend = 'S'
+	Return 1
+	ENDFUNC
+	Function listaventas(nmarca, Ccursor)
+	IF (this.dff-this.dfi)>120 THEN 
+	   this.cmensaje='Máximo 120 Dias'
+	   RETURN 0
+	ENDIF    
+	f1 = cfechas(This.dfi)
+	f2 = cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	 \ Select a.kar_comi*((a.cant*a.Prec)/e.vigv) As comi,a.Idauto,e.Tdoc,e.Ndoc,e.fech,a.cant,a.Prec,
+     \ Round(a.cant*a.Prec,2) As timporte,ifnull(b.idmar,Cast(0 As unsigned)) As idmar,e.Mone,a.alma,c.nomv As nomb,e.Form,
+     \ e.vigv As igv,Cast(a.Codv As unsigned) As Codv,e.dolar As dola,d.Razo,'v' As Tipo,e.Idcliente,e.Impo From
+     \ fe_clie As d
+     \ inner Join fe_rcom As e On e.Idcliente=d.idclie
+     \ Left Join fe_kar As a On a.Idauto=e.Idauto
+     \ Left Join fe_art As  b On b.idart=a.idart
+     \ Left Join fe_vend As c On c.idven=a.Codv
+     \ Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<f1>>' And '<<f2>>' And Form='E' And Impo<>0 And e.Tdoc Not In("07","08")
+	If This.nidv > 0 Then
+     \ And a.Codv=<<This.nidv>>
+	Endif
+	If nmarca > 0 Then
+	 \ And b.idmar=<<nmarca>>
+	Endif
+  	Set Textmerge Off
+	Set Textmerge To
+	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select  * From (Ccursor) Into Cursor (Ccursor)  Order By Codv, fech, Ndoc
 	Return 1
 	Endfunc
 Enddefine

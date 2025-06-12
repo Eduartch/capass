@@ -68,10 +68,10 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 			Return 0
 		Endif
 	Else
-		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.Xopcion)) + '.json'
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.xopcion)) + '.json'
 		Create Cursor b_dctos From Array cfieldsfetdoc
 		If File(m.cfilejson) Then
-			responseType1 = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.Xopcion)) + '.json'
+			responseType1 = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.xopcion)) + '.json'
 			oResponse = nfJsonRead( m.responseType1 )
 			If Vartype(m.oResponse) = 'O' Then
 				For Each oRow In  oResponse.Array
@@ -152,7 +152,7 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 	nCount = Afields(cfieldsfetdoc)
 	Select * From (Ccursor) Into Cursor a_dctos
 	cdata = nfcursortojson(.T.)
-	rutajson = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.xopcion)) + '.json'
 	If File(m.rutajson) Then
 		Delete File m.rutajson
 	Endif

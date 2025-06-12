@@ -14,7 +14,7 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	pc		   = ""
 	Celular	   = ""
 	Refe	   = ""
-	linea	   = 0
+	Linea	   = 0
 	Rpm		   = ""
 	zona	   = 0
 	idsegmento = 0
@@ -39,7 +39,7 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Endcase
 	Endfunc
 	Procedure AsignaValores
-	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, Cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
+	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, Cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, Linea, crpm, nidz
 	This.Codigo	   = m.Codigo
 	This.nruc	   = m.Cnruc
 	This.nombre	   = m.crazo
@@ -55,39 +55,22 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	This.pc		   = m.cidpc
 	This.Celular   = m.ccelu
 	This.Refe	   = m.crefe
-	This.linea	   = m.linea
+	This.Linea	   = m.Linea
 	This.Rpm	   = m.crpm
 	This.zona	   = m.nidz
 	Endproc
 	Function CreaCliente
 	Local lC, lp
-*:Global Cmensaje, cur
 	m.lC		  = 'FUNCREACLIENTE'
 	cur			  = "xt"
-*!*		goApp.npara1  = This.nruc
-*!*		goApp.npara2  = This.nombre
-*!*		goApp.npara3  = This.Direccion
-*!*		goApp.npara4  = This.ciudad
-*!*		goApp.npara5  = This.fono
-*!*		goApp.npara6  = This.fax
-*!*		goApp.npara7  = This.ndni
-*!*		goApp.npara8  = This.Tipo
-*!*		goApp.npara9  = This.correo
-*!*		goApp.npara10 = This.Vendedor
-*!*		goApp.npara11 = This.Usuario
-*!*		goApp.npara12 = This.pc
-*!*		goApp.npara13 = This.Celular
-*!*		goApp.npara14 = This.Refe
-*!*		goApp.npara15 = This.linea
-*!*		goApp.npara16 = This.Rpm
-*!*		goApp.npara17 = This.zona
 	If !Pemstatus(goApp, 'clientesconsegmento', 5)
 		goApp.AddProperty("clientesconsegmento", "")
-	Endif
-*!*		goApp.npara18 = This.idsegmento
-	Set Textmerge On
-	Set Textmerge To memvar lp Noshow Textmerge
-		\('<<This.nruc>>','<<This.nombre>>','<<This.Direccion>>','<<This.ciudad>>',
+	ENDIF
+	cnombre=CHRTRAN(CHRTRAN(this.nombre,"'",""),'"',"")
+	cdireccion=CHRTRAN(CHRTRAN(this.Direccion,"'",""),'"',"")
+	Set Textmerge ON
+	Set Textmerge To Memvar lp Noshow Textmerge
+		\('<<This.nruc>>','<<cnombre>>','<<cDireccion>>','<<This.ciudad>>',
 		\'<<This.fono>>','<<This.fax>>','<<This.ndni>>','<<This.Tipo>>','<<This.correo>>',
 		\<<This.Vendedor>>,<<This.Usuario>>,'<<This.pc>>','<<This.Celular>>','<<This.Refe>>',
 		\<<This.linea>>,'<<This.Rpm>>',<<This.zona>>
@@ -98,13 +81,6 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-*!*		     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-*!*			Endtext
-*!*		Else
-*!*			Text To m.lp Noshow
-*!*		    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-*!*			Endtext
-*!*		Endif
 	nidc = This.EJECUTARf(m.lC, m.lp, cur)
 	If nidc < 1 Then
 		Return 0
@@ -113,34 +89,16 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Procedure ActualizaCliente
 	Local lC, lp
-*:Global cur
 	m.lC		  = 'PROACTUALIZACLIENTE'
 	cur			  = ""
-*!*		goApp.npara1  = This.Codigo
-*!*		goApp.npara2  = This.nruc
-*!*		goApp.npara3  = This.nombre
-*!*		goApp.npara4  = This.Direccion
-*!*		goApp.npara5  = This.ciudad
-*!*		goApp.npara6  = This.fono
-*!*		goApp.npara7  = This.fax
-*!*		goApp.npara8  = This.ndni
-*!*		goApp.npara9  = This.Tipo
-*!*		goApp.npara10 = This.correo
-*!*		goApp.npara11 = This.Vendedor
-*!*		goApp.npara12 = This.Usuario
-*!*		goApp.npara13 = This.Celular
-*!*		goApp.npara14 = This.Refe
-*!*		goApp.npara15 = This.linea
-*!*		goApp.npara16 = This.Rpm
-*!*		goApp.npara17 = This.zona
 	If !Pemstatus(goApp, 'clientesconsegmento', 5)
 		goApp.AddProperty("clientesconsegmento", "")
-	Endif
-
-	goApp.npara18 = This.idsegmento
+	ENDIF
+   cnombre=CHRTRAN(CHRTRAN(this.nombre,"'",""),'"',"")
+   cdireccion=CHRTRAN(CHRTRAN(this.Direccion,"'",""),'"',"")
 	Set Textmerge On
 	Set Textmerge To Memvar lp Noshow Textmerge
-		\(<<This.Codigo>>,'<<This.nruc>>','<<This.nombre>>','<<This.Direccion>>',
+		\(<<This.Codigo>>,'<<This.nruc>>','<<cnombre>>','<<cDireccion>>',
 		\'<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.ndni>>','<<This.Tipo>>',
 		\'<<This.correo>>',<<This.Vendedor>>,<<This.Usuario>>,'<<This.Celular>>',
 		\'<<This.Refe>>','<<This.linea>>','<<This.Rpm>>','<<This.zona>>'
@@ -151,13 +109,6 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-*!*		     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-*!*			Endtext
-*!*		Else
-*!*			Text To m.lp Noshow
-*!*		     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-*!*			Endtext
-*!*		Endif
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Else
@@ -166,7 +117,11 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Endproc
 	Procedure Listarclientes(np1, np2, np3, nombrecursor)
 	cproc		 = 'PROMUESTRACLIENTES'
-	goApp.npara1 = CHRTRAN(m.np1,' ','%')
+	If Vartype(np1) = 'C' Then
+		goApp.npara1 = Chrtran(m.np1, ' ', '%')
+	Else
+		goApp.npara1 = m.np1
+	Endif
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
 	Text To m.lparametros Noshow
@@ -200,7 +155,7 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	If This.EJECutaconsulta(lC, "ya") < 1
 		Return 0
 	Endif
-	If ya.idcliE > 0 Then
+	If Ya.idcliE > 0 Then
 		This.Cmensaje = 'DNI Ya está Registrado '
 		This.Encontrado = 'S'
 		Return 0
@@ -223,7 +178,7 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	If This.EJECutaconsulta(lC, "ya") < 1
 		Return 0
 	Endif
-	If ya.nruc = Cruc
+	If Ya.nruc = Cruc
 		This.Cmensaje = "Nº de Ruc Ya Registrado"
 		This.Encontrado = 'S'
 		Return 0
@@ -282,7 +237,7 @@ Define Class clientex As Cliente
 	Usuario			  = 0
 	AutorizadoCredito = 0
 	Procedure AsignaValores
-	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, Cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz, ndias, cContacto, cdireccion1, nidsegmento
+	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, Cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, Linea, crpm, nidz, ndias, cContacto, cdireccion1, nidsegmento
 	This.Codigo		= m.Codigo
 	This.nruc		= m.Cnruc
 	This.nombre		= m.crazo
@@ -298,7 +253,7 @@ Define Class clientex As Cliente
 	This.pc			= m.cidpc
 	This.Celular	= m.ccelu
 	This.Refe		= m.crefe
-	This.linea		= m.linea
+	This.Linea		= m.Linea
 	This.Rpm		= m.crpm
 	This.zona		= m.nidz
 	This.dias		= m.ndias
@@ -325,7 +280,7 @@ Define Class clientex As Cliente
 	goApp.npara12 = This.pc
 	goApp.npara13 = This.Celular
 	goApp.npara14 = This.Refe
-	goApp.npara15 = This.linea
+	goApp.npara15 = This.Linea
 	goApp.npara16 = This.Rpm
 	goApp.npara17 = This.zona
 	goApp.npara18 = This.dias
@@ -363,7 +318,7 @@ Define Class clientex As Cliente
 	goApp.npara12 = This.Usuario
 	goApp.npara13 = This.Celular
 	goApp.npara14 = This.Refe
-	goApp.npara15 = This.linea
+	goApp.npara15 = This.Linea
 	goApp.npara16 = This.Rpm
 	goApp.npara17 = This.zona
 	goApp.npara18 = This.dias
@@ -537,6 +492,7 @@ Define Class clientex As Cliente
 	Endfunc
 Enddefine
 *****************************************
+
 
 
 

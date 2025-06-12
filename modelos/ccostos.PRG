@@ -84,5 +84,8 @@ Define Class ccostos As OData Of 'd:\capass\database\Data.prg'
 		Endif
 		Return 1
 	Endcase
-	Endfunc
+	ENDFUNC
+	FUNCTION registracostosproductos(ocostos)
+	
+	ENDFUNC 
 Enddefine

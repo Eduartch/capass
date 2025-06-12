@@ -161,7 +161,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\Select "Otras Ventas" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'I' As tipo,'E' As lcaj_form,'' As isla From
 		\fe_lcaja As a
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
-		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0 And lcaj_form='E' And Left(lcaj_ndoc,5)='Otros'
+		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And Left(lcaj_ndoc,5)='Otros'
 	If This.nisla > 0 Then
 		\ And lcaj_codt=<<This.nisla>>
 	Endif
@@ -362,6 +362,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	\	    lcaj_dsct As dscto,
 	\		Round(Case Forma When 'T' Then If(tipo='I',Impo,0) Else 0 End,2) As tarjeta,
 	\		Round(Case Forma When 'A' Then If(tipo='I',Impo,0) Else 0 End,2) As centrega,
+	\      	Round(Case Forma When 'Y' Then If(tipo='I',Impo,0) Else 0 End,2) As yape,
 	\		Round(Case tipo When 'S' Then If(Forma='E',Impo,0) Else 0 End,2) As egresos,Cast(0 As Decimal(12,2)) As saldo,
 	\		usua,fechao,lcaj_idtu,lcaj_codt,lcaj_rtar As rtarjeta,usuavtas,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,Impo,
 	\       0 As cheque

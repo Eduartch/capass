@@ -1,5 +1,4 @@
-Define Class presentaciones As Odata Of 'd:\capass\database\data'
-*************************
+Define Class presentaciones As OData Of 'd:\capass\database\data'
 	Function MuestratPresentaciones(np1, cur)
 	lC = 'PROMUESTRAPRESENTACIONESP'
 	goApp.npara1 = np1
@@ -11,11 +10,11 @@ Define Class presentaciones As Odata Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
-*************************
 	Function MuestraPresentacion(np1, cur)
 	Text To lp Noshow Textmerge
 	    SELECT a.pres_desc,CAST(IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)) AS DECIMAL(10,4)) AS epta_cost,b.epta_marg,
-		CAST(CEILING((IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)))*(1+(epta_marg/100))*10)/10 AS DECIMAL(10,2)) AS epta_prec,
+		CAST(ROUND(IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant))*(1+(epta_marg/100)),0.5) AS DECIMAL(10,2)) AS epta_prec,
+		CAST(CEILING((IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)))*(1+(epta_marg/100))*10)/10 AS DECIMAL(10,2)) AS epta_preciox,
 		epta_mcor,
 		CAST(CEILING((IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)))*(1+(epta_mcor/100))*10)/10 AS DECIMAL(10,2)) AS epta_pcor,
 		ROUND(epta_comi*100,3) AS epta_comi,epta_list,
@@ -27,7 +26,7 @@ Define Class presentaciones As Odata Of 'd:\capass\database\data'
 		INNER JOIN (SELECT idart,prec,tmon,prod_flet FROM fe_art WHERE idart=<<np1>> LIMIT 1) AS p ON p.idart=b.epta_idar,fe_gene AS g
 		WHERE b.epta_acti='A' AND a.pres_acti='A' AND epta_idar=<<np1>> ORDER BY b.epta_cant;
 	Endtext
-	If This.EjecutaConsulta(lp, cur) < 1 Then
+	If This.EJECutaconsulta(lp, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -43,7 +42,7 @@ Define Class presentaciones As Odata Of 'd:\capass\database\data'
 		INNER JOIN fe_presentaciones AS a  ON b.epta_pres=a.pres_idpr,fe_gene AS g
 		WHERE b.epta_acti='A' AND a.pres_acti='A' AND epta_idar=<<np1>> ORDER BY b.epta_cant;
 	Endtext
-	If This.EjecutaConsulta(lC, cur) < 1 Then
+	If This.EJECutaconsulta(lC, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -61,6 +60,38 @@ Define Class presentaciones As Odata Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function MuestraPresentacioneXProductox(np1, Ccursor)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC = 'ProMuestraPresentacionesXProducto'
+	goApp.npara1 = np1
+	Text To lp Noshow
+     (?goapp.npara1)
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function MuestraPresentacionesXProducto1(np1, np2, Ccursor)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC = 'ProMuestraPresentacionesXProducto'
+	goApp.npara1 = np1
+	goApp.npara2 = np2
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2)
+	Endtext
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
 
 
