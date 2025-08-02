@@ -543,7 +543,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Case This.Tpeso = 0 And This.Tdoc = '09'
 		This.Cmensaje = "El Peso de los Productos es Obligatorio"
 		Return 0
-	Case This.Idtransportista = 0 And This.Tdoc = '09'
+	Case This.Idtransportista < 1 And This.Tdoc = '09'
 		This.Cmensaje = "El Transportista es Obligatorio"
 		Return 0
 	Case (Empty(This.razont) Or Len(Alltrim(This.ructr)) <> 11 Or  Len(Alltrim(This.Constancia)) = 0) And Left(This.tipotransporte, 2) = '01' And This.Tdoc = '09'
@@ -774,31 +774,57 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
 	Endif
+	If !Pemstatus(goApp,'proyecto',5) Then
+		AddProperty(goApp,'proyecto','')
+	Endif
 	Calias = 'c_' + Sys(2015)
 	Do Case
 	Case This.Motivo = 'V'
 		If goApp.Cdatos <> 'S' Then
-			TEXT To lC Noshow Textmerge
-		    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
-	        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
-	        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
-	        k.idart AS coda,k.prec,k.idkar,g.guia_idtr,IFNULL(placa,'') AS placa,IFNULL(t.razon,'') AS razont,
-	        IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
-	        IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
-	        IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
-	        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,
-	        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,r.tdoc AS tdoc1,v.rucfirmad,gene_cert,clavecertificado as clavecerti,guia_moti,
-	        v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo
-	        FROM
-	        fe_guias AS g
-	        INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
-	        INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
-	        INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
-	        INNER JOIN fe_kar AS k ON k.idkar=e.entr_idkar
-	        INNER JOIN fe_art AS a ON a.idart=k.idart
-	        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
-	        LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
-			ENDTEXT
+			If goApp.Proyecto='psys3' Then
+				TEXT To lC Noshow Textmerge
+				SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
+		        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
+		        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
+		        e.entr_idar AS coda,g.guia_idtr,IFNULL(placa,'') AS placa,IFNULL(t.razon,'') AS razont,
+		        IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
+		        IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
+		        IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
+		        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,'09' as tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
+		        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,r.tdoc AS tdoc1,v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,
+		        v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo
+		        FROM
+		        fe_guias AS g
+		        INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
+		        INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
+		        INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
+		        INNER JOIN fe_art AS a ON a.idart=e.entr_idar
+		        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
+		        LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>>  AND entr_acti='A'
+				ENDTEXT
+			Else
+				TEXT To lC Noshow Textmerge
+			    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
+		        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
+		        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
+		        k.idart AS coda,k.prec,k.idkar,g.guia_idtr,IFNULL(placa,'') AS placa,IFNULL(t.razon,'') AS razont,
+		        IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
+		        IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
+		        IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
+		        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,'09' as tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
+		        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,r.tdoc AS tdoc1,v.rucfirmad,gene_cert,clavecertificado as clavecerti,guia_moti,
+		        v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo
+		        FROM
+		        fe_guias AS g
+		        INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
+		        INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
+		        INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
+		        INNER JOIN fe_kar AS k ON k.idkar=e.entr_idkar
+		        INNER JOIN fe_art AS a ON a.idart=k.idart
+		        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
+		        LEFT JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
+				ENDTEXT
+			Endif
 		Else
 			TEXT To lC Noshow Textmerge
 		    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
@@ -808,11 +834,10 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	        IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
 	        IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
 	        IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
-	        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,
+	        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,'09' as tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
 	        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,r.tdoc AS tdoc1,v.rucfirmad,gene_cert,clavecertificado as clavecerti,guia_moti,
 	        v.razonfirmad,v.nruc AS rucempresa,v.nomb  AS empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciud AS ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo
-	        FROM
-	        fe_guias AS g
+	        FROM  fe_guias AS g
 	        INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
 	        INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
 	        INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
@@ -832,11 +857,10 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
         IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
         IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
         IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
-        IFNULL(t.placa1,'') AS placa1,'09' AS tdoc,c.idprov,v.gene_usol,v.gene_csol,guia_ubig,'01' as tdoc1,
-        c.razo,guia_idgui AS idgui,c.dire,c.ciud,v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,
+        IFNULL(t.placa1,'') AS placa1,'09' AS tdoc,c.idprov,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
+        c.razo,guia_idgui AS idgui,c.dire,c.ciud,v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,'' as tdoc1,'' as dcto,
         v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo
-        FROM
-        fe_guias AS g
+        FROM  fe_guias AS g
         INNER JOIN fe_prov AS c ON c.idprov=g.guia_idpr
         INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
         INNER JOIN fe_art AS a ON a.idart=e.`entr_idar`
@@ -852,13 +876,12 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
         IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
         IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
         IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,v.nruc,'' as ndni,
-        IFNULL(t.placa1,'') AS placa1,guia_ndoc AS dcto,'09' AS tdoc,v.gene_usol,v.gene_csol,guia_ubig,
-        v.empresa AS razo,guia_idgui AS idgui,'09' AS tdoc1,v.rucfirmad,gene_cert,clavecertificado as clavecerti,guia_moti,
+        IFNULL(t.placa1,'') AS placa1,"" AS dcto,'09' AS tdoc,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
+        v.empresa AS razo,guia_idgui AS idgui,'' AS tdoc1,v.rucfirmad,gene_cert,clavecertificado as clavecerti,guia_moti,
         v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,
         v.ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo,tt.codigoestab AS codigo1,
         ttt.codigoestab AS codigo2,tt.ubigeo AS ubigeo1,ttt.ubigeo AS ubigeo2,'' as ciud,'' as dire
-        FROM
-        fe_guias AS g
+        FROM  fe_guias AS g
         INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
         INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
         INNER JOIN fe_kar AS k ON k.idkar=e.entr_idkar
@@ -877,11 +900,10 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
             IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
             IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
             IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
-            IFNULL(t.placa1,'') AS placa1,'09' AS tdoc,c.idprov,v.gene_usol,v.gene_csol,guia_ubig,'01' as tdoc1,
+            IFNULL(t.placa1,'') AS placa1,'09' AS tdoc,c.idprov,v.gene_usol,v.gene_csol,guia_ubig,'' as tdoc1,'' as dcto,guia_deta,
             c.razo,guia_idgui AS idgui,c.dire,c.ciud,v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,clavecertificado,
             v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,t.tran_tipo
-            FROM
-            fe_guias AS g
+            FROM  fe_guias AS g
             INNER JOIN fe_prov AS c ON c.idprov=g.guia_idpr
             INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
             inner join fe_kar as k on k.idkar=e.entr_idkar
@@ -891,25 +913,24 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		ENDTEXT
 	Case This.Motivo = 'O'
 		TEXT To lC Noshow Textmerge
-		    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
+		  SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
 	        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
 	        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
 	        k.idart AS coda,k.prec,k.idkar,g.guia_idtr,IFNULL(placa,'') AS placa,IFNULL(t.razon,'') AS razont,
-	        t.ructr AS ructr,t.nomb AS conductor,t.dirtr AS direcciont,t.breve AS brevete,
+	        t.ructr AS ructr,t.nombr AS conductor,t.dirtr AS direcciont,t.breve AS brevete,
 	        t.cons AS constancia,t.marca AS marca,c.nruc,c.ndni,
-	        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,
-	        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,r.tdoc AS tdoc1,v.rucfirmad,gene_cert,clavecertificado as clavecerti,guia_moti,
-	        v.razonfirmad,v.nruc AS rucempresa,v.nomb  AS empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciud AS ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo
-	        FROM
-	        fe_guias AS g
+	        t.placa1,'' AS dcto,'09' AS tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,
+	        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,'' AS tdoc1,v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,guia_deta,
+	        v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,t.tran_tipo
+	        FROM  fe_guias AS g
 	        INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
 	        INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
 	        INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
 	        INNER JOIN fe_kar AS k ON k.idkar=e.entr_idkar
 	        INNER JOIN fe_art AS a ON a.idart=k.idart
 	        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
-	        INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-	        INNER JOIN fe_sucu AS v ON v.idalma=g.guia_codt WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
+	        INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr, fe_gene AS v 
+	        WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
 		ENDTEXT
 	Endcase
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
@@ -936,6 +957,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		.Empresa = Empresa
 		.fech = fech
 		.fechat = fechat
+		.dcto= dcto
 		.gene_cert = gene_cert
 		.gene_csol = gene_csol
 		.Gene_usol = Gene_usol
@@ -943,6 +965,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		.guia_moti = guia_moti
 		.guia_ubig = guia_ubig
 		.idgui = idgui
+		.observaciones=Alltrim(guia_deta)
 		If This.Motivo = 'C' Or This.Motivo = 'D' Then
 			.idprov = idprov
 		Else
@@ -1145,7 +1168,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Function listarguias(dfi, dff, nidt, Ccursor)
 	dfi = Cfechas(dfi)
 	dff = Cfechas(dff)
-	If This.Idsesion > 1 Then
+	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	Set Textmerge On
@@ -1186,6 +1209,22 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
         \      IFNULL(T.razon,'') As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'T' As Motivo,guia_codt From fe_guias As a
         \      Left Join fe_tra As T On T.idtra=a.guia_idtr,fe_gene  As g
         \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='T' And guia_acti='A'
+	If  nidt > 0 Then
+        \And guia_codt=<<nidt>>
+	Endif
+	    \      Union All
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,g.Empresa As cliente,guia_deta As Detalle,guia_dcto As Refe,
+        \      T.razon As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'O' As Motivo,guia_codt From fe_guias As a
+        \      inner Join fe_tra As T On T.idtra=a.guia_idtr,fe_gene  As g
+        \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='O' And guia_acti='A'
+	If  nidt > 0 Then
+        \And guia_codt=<<nidt>>
+	ENDIF
+	    \      Union All
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,'' As cliente,guia_deta As Detalle,guia_dcto As Refe,
+        \      T.razon As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'I' As Motivo,guia_codt From fe_guias As a
+        \      inner Join fe_tra As T On T.idtra=a.guia_idtr,fe_gene  As g
+        \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='I' And guia_acti='A'
 	If  nidt > 0 Then
         \And guia_codt=<<nidt>>
 	Endif
@@ -1329,7 +1368,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\   Select guia_ndoc As Ndoc,guia_fech As fech,guia_fect As fechat,
-	If goApp.Proyecto = 'psysr' Then
+	If goApp.Proyecto = 'psysr' Or goApp.Proyecto='psys' Then
 	 \ '' As prod_cod1,
 	Else
 	 \  prod_cod1,
@@ -1339,8 +1378,8 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	 \  IFNULL(T.ructr,'') As ructr,IFNULL(T.nombr,'') As conductor,
 	 \  IFNULL(T.dirtr,'') As direcciont,IFNULL(T.breve,'') As brevete,
 	 \  IFNULL(T.Cons,'') As Constancia,IFNULL(T.Marca,'') As Marca,gg.nruc,"" As ndni,"" As kar_lote,guia_fech As kar_fvto,
-	 \  IFNULL(T.placa1,'') As placa1,r.Ndoc As dcto,Tdoc,r.Idcliente,r.fech As fechafactura,
-	 \  gg.Empresa As Razo,r.Idauto,"" As Dire,"" As ciud,IFNULL(guia_arch,'') As guia_arch,IFNULL(guia_hash,'') As guia_hash,guia_mens,guia_deta,IFNULL(T.tran_tipo,'') As tran_tipo
+	 \  IFNULL(T.placa1,'') As placa1,r.Ndoc As dcto,r.Tdoc,r.Idcliente,r.fech As fechafactura,
+	 \  gg.Empresa As Razo,r.Idauto,"" As Dire,"" As ciud,'' As guia_arch,IFNULL(guia_hash,'') As guia_hash,guia_mens,guia_deta,IFNULL(T.tran_tipo,'') As tran_tipo
 	 \ From
 	 \  fe_guias As g
 	 \  INNER Join fe_rcom As r On r.Idauto=g.guia_idau
@@ -1413,11 +1452,114 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		If  nidt > 0 Then
         \And guia_codt=<<nidt>>
 		Endif
+	Case This.Motivo = 'O'
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,g.Empresa As cliente,guia_deta As Detalle,guia_dcto As Refe,
+        \      T.razon As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'O' As Motivo,guia_codt From fe_guias As a
+        \      inner Join fe_tra As T On T.idtra=a.guia_idtr,fe_gene  As g
+        \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='O' And guia_acti='A'
+		If  nidt > 0 Then
+          \And guia_codt=<<nidt>>
+		ENDIF
+	Case This.Motivo = 'O'
+        \      Select guia_fech As fech,guia_ndoc As Ndoc,'' As cliente,guia_deta As Detalle,guia_dcto As Refe,
+        \      T.razon As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'I' As Motivo,guia_codt From fe_guias As a
+        \      inner Join fe_tra As T On T.idtra=a.guia_idtr,fe_gene  As g
+        \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='I' And guia_acti='A'
+		If  nidt > 0 Then
+          \And guia_codt=<<nidt>>
+		Endif	
 	Endcase
        \ ) As w
         \      Group By fech,Ndoc,cliente,Detalle,Refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt Order By fech
 	Set Textmerge Off
 	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function registradetalleguia(objdetalle)
+	If Vartype(objdetalle.nidart)='C' Then
+		TEXT TO lc NOSHOW TEXTMERGE
+	      INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar)VALUES('<<objdetalle.nidart>>',<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>)
+		ENDTEXT
+	Else
+		TEXT TO lc NOSHOW TEXTMERGE
+	     INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar)VALUES(<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>)
+		ENDTEXT
+	Endif
+	If This.Ejecutarsql(lC)<1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function registradetalleguiaUnidades(objdetalle)
+	TEXT TO lc NOSHOW TEXTMERGE
+	   INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar,entr_unid)VALUES(<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>,'<<objdetalle.unid>>')
+	ENDTEXT
+	If This.Ejecutarsql(lC)<1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function enviarguiasautomatico()
+	If This.consultarguiasxenviar('rguias')<1
+		Return 0
+	Endif
+	conerror=''
+	Select rguias
+	Scan All
+		This.Idautog=rguias.idguia
+		This.Motivo=rguias.Motivo
+		If goApp.nube='S' Then
+			If This.enviarasunat()<1 Then
+				conerror='S'
+				Select rguias
+				Skip
+				Loop
+			Endif
+		Else
+			If This.enviarservidor()<1 Then
+				conerror='S'
+				Select rguias
+				Skip
+				Loop
+			Endif
+		Endif
+	Endscan
+	If m.conerror='S' Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function consultarguiasxenviar(Ccursor)
+	TEXT To lC Noshow Textmerge
+	    SELECT guia_fech,guia_ndoc,"" AS cliente,razon,motivo,idauto as idguia,v.nruc,ticket FROM
+        (SELECT guia_idgui AS idauto,guia_ndoc,'V' AS motivo,guia_fech,t.razon,guia_tick AS ticket  FROM  fe_guias AS g
+         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+         WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='V' AND guia_acti='A' AND LEFT(guia_deta,7)<>'Anulada'
+         UNION ALL
+         SELECT guia_idgui AS idauto,guia_ndoc,'D' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
+         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+         WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='D' AND guia_acti='A'
+         UNION ALL
+         SELECT guia_idgui AS idauto,guia_ndoc,'C' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
+         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+         WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='C' AND guia_acti='A'
+         UNION ALL
+         SELECT guia_idgui AS idauto,guia_ndoc,'N' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
+         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+         WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A'
+         UNION ALL
+         SELECT guia_idgui AS idauto,guia_ndoc,'T' AS Motivo,guia_fech,t.razon,guia_tick AS ticket  FROM fe_guias AS a
+         INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
+         WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A'
+         UNION ALL
+         SELECT guia_idgui AS idauto,guia_ndoc,'O' AS Motivo,guia_fech,t.razon,guia_tick AS ticket   FROM fe_guias AS a
+         INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
+         WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='O' AND guia_acti='A') AS w,fe_gene AS v
+         ORDER BY guia_ndoc,guia_fech
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif

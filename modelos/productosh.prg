@@ -49,7 +49,6 @@ Define Class productosh As producto Of 'd:\capass\modelos\productos'
 	Endif
 	Return 1
 	Endfunc
-*****************************
 	Function MuestraStockCon(np1,ccur)
 	lc='ProMuestraStockC'
 	goapp.npara1=np1
@@ -73,8 +72,7 @@ Define Class productosh As producto Of 'd:\capass\modelos\productos'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
-*********************************
+	ENDFUNC
 	Function MuestraProductosHu(np1,ccursor)
 	lc='PromuestraProductosY'
 	goapp.npara1=np1

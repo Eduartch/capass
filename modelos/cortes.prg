@@ -129,8 +129,7 @@ Define Class Cortes As  OData Of 'd:\capass\database\data.prg'
 	Procedure BuscaSiEstaRegistrado
 	Lparameters nid
 	Text To lC Noshow Textmerge
-	      select serv_idau  FROM fe_serviciocorte f
-	      where serv_acti='A' and serv_idau=<<nid>> group by serv_idau
+	      select serv_idau  FROM fe_serviciocorte f  where serv_acti='A' and serv_idau=<<nid>> group by serv_idau
 	Endtext
 	If This.EJECutaconsulta(lC, 'ya') < 1 Then
 		Return 0

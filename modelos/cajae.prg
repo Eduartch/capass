@@ -438,7 +438,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	\		inner Join fe_usua As c On 	c.idusua=a.lcaj_idus
 	\		Left Join fe_rcom As r On r.idauto=a.lcaj_idau
 	\		Left Join fe_usua As u  On u.idusua=r.idusua
-	\       Left Join (Select idauto,codv From fe_kar Group By idauto,codv)  As p On p.idauto=a.lcaj_idau
+	\       Left Join (Select idauto,codv From fe_kar where acti='A'  Group By idauto,codv)  As p On p.idauto=a.lcaj_idau
 	\       Left Join fe_vend As z On z.idven=p.codv
 	\		Where
 	If This.confechas = 0 Then

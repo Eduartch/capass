@@ -24,7 +24,7 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 			For Each oRow In  oResponse.Array
 				Insert Into b_menus From Name oRow
 			Endfor
-			Select * From b_menus Where menu_tipo = np2 Into Cursor (Ccursor)
+			Select * From b_menus Where menu_tipo = np2 Into Cursor (Ccursor) ORDER BY iKey
 			Return 1
 		Else
 			goApp.datosmenus = ""
@@ -55,7 +55,7 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 			For Each oRow In  oResponse.Array
 				Insert Into b_menus1 From Name oRow
 			Endfor
-			Select * From b_menus1  Where menu_tipo = np2 Into Cursor (Ccursor)
+			Select * From b_menus1  Where menu_tipo = np2 Into Cursor (Ccursor) ORDER BY ikey
 		Else
 			goApp.datosmenus1 = ""
 			This.Cmensaje = 'Consultando...'
@@ -76,7 +76,7 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 	  INNER  JOIN fe_opt b ON b.opti_idme=a.menu_idme 
 	  WHERE b.opti_idus=<<nidus>> AND b.opti_acti=1 AND '<<df>>' BETWEEN b.opti_feci AND b.opti_fecf
 	  UNION ALL
-	  SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo FROM fe_menus WHERE  menu_enla='0_' ;
+	  SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo FROM fe_menus WHERE  menu_enla='0_' 
 	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1  Then
 		Return 0
@@ -111,5 +111,16 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 	Strtofile (cdata, rutajson)
 	goApp.datosmenus = 'S'
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION opcionesporusuario(ccursor)
+	Df = cfechas(fe_gene.fech)
+	Text To lC NOSHOW TEXTMERGE 
+	      SELECT opti_idop FROM fe_opt WHERE opti_idus=<<goapp.nidusua>> AND opti_Acti=1 AND '<<df>>' between opti_feci AND opti_fecf
+	      order by opti_idop
+	Endtext
+	If this.ejecutaconsulta(lC, ccursor) < 1 Then
+		RETURN 0
+	ENDIF
+	RETURN 1
+	ENDFUNC 
 Enddefine

@@ -169,7 +169,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
 	Function buscanombre(cmodo, Cruc, nidclie)
 	Ccursor = 'c_' + Sys(2015)
 	If Len(Alltrim(Cruc)) <= 3 Then
@@ -178,7 +178,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC  Noshow
-	\Select Razo From fe_prov Where Trim(Razo)='<<cruc>>' And clie_acti<>'I'
+	\Select Razo From fe_prov Where Trim(Razo)='<<cruc>>' And prov_acti<>'I'
 	If cmodo <> "N"
 	 \And idprov<><<nidclie>>
 	Endif
@@ -223,8 +223,26 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Local lC, lp
 	m.lC		  = 'funcreaproveedor'
 	cur			  = "xt"
-	Text To lp Noshow Textmerge
-     ('<<this.nruc>>','<<this.nombre>>','<<This.Direccion>>','<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.Rpm>>','<<This.correo>>','<<This.Refe>>','<<This.Celular>>',<<This.Usuario>>,'<<ID()>>', '<<this.ndni>>','<<this.cubigeo>>','<<this.distrito>>','<<this.provincia>>','<<this.departamento>>')
+	goApp.npara1  = This.nruc
+	goApp.npara2  = This.nombre
+	goApp.npara3  = This.Direccion
+	goApp.npara4  = This.ciudad
+	goApp.npara5  = This.fono
+	goApp.npara6  = This.fax
+	goApp.npara7  =  This.Rpm
+	goApp.npara8  = This.correo 
+	goApp.npara9  = This.Refe
+	goApp.npara10 = This.Celular
+	goApp.npara11 = This.Usuario
+	goApp.npara12 = ID()
+	goApp.npara13 = This.ndni
+	goApp.npara14 = this.cubigeo
+	goApp.npara15 = this.distrito
+	goApp.npara16 =this.provincia
+	goApp.npara17 = this.departamento
+	Text To m.lp Noshow
+	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
 	Endtext
 	nid = This.EJECUTARf(m.lC, m.lp, cur)
 	If nid < 1 Then

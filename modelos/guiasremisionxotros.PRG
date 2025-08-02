@@ -1,6 +1,6 @@
 Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremision'
 	Function listaritemsparaguiaotros(nids, Calias)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
            SELECT a.idart AS coda,entr_cant AS cant,g.guia_fech AS fech,r.idcliente AS idclie,k.idkar,guia_idgui,
 	       c.razo,c.nruc,c.dire,c.ciud,c.ndni,r.tdoc,r.ndoc,a.descri,a.unid,a.peso,guia_ndoc as ndoc,guia_idau as idauto
 	       FROM fe_guias AS g
@@ -10,24 +10,30 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	       INNER JOIN fe_kar AS k ON k.`idauto`=r.`idauto`
 	       INNER JOIN fe_art AS a ON a.idart=k.`idart`
 	       WHERE guia_idgui=<<nids>> AND guia_acti='A'  AND entr_acti='A' and guia_idre=0 ORDER BY k.`idkar`
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lc, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function GrabarguiaremitenteOtros()
+	objdetalle=Createobject("empty")
+	AddProperty(objdetalle,'nidart',0)
+	AddProperty(objdetalle,'ncant',0)
+	AddProperty(objdetalle,'nidg',0)
+	AddProperty(objdetalle,'nidkar',0)
+*<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	If This.idautog > 0 Then
 		If AnulaGuiasVentas(This.idautog, goApp.nidusua) = 0 Then
-			DEshacerCambios()
+			This.DEshacerCambios()
 			Return 0
 		Endif
 	Endif
-	nidg = This.IngresaGuiasXOtros(This.fecha, This.ptop, Alltrim(This.ptoll), This.idauto, This.fechat, goApp.nidusua, This.detalle, This.Idtransportista, This.ndoc, goApp.Tienda, This.ubigeocliente)
-	If nidg = 0 Then
+	nidg = This.IngresaGuiasXOtros()
+	If nidg < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -35,19 +41,23 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	Go Top
 	s = 1
 	Do While !Eof()
-		If GrabaDetalleGuias(tmpvg.nidkar, tmpvg.cant, nidg) = 0 Then
+		objdetalle.nidart=tmpvg.coda
+		objdetalle.ncant=tmpvg.cant
+		objdetalle.nidg=m.nidg
+		objdetalle.nidkar=tmpvg.nidkar
+		If This.registradetalleguia(objdetalle)<1 Then
+*	GrabaDetalleGuias(tmpvg.nidkar, tmpvg.cant, nidg) = 0 Then
 			s = 0
 			Exit
 		Endif
 		Select tmpvg
 		Skip
 	Enddo
-	If  this.RegistraRelacionGuias(nidg) < 1 Then
+	If  This.RegistraRelacionGuias(nidg) < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
 	If  This.generacorrelativo() = 1 And s = 1 Then
-
 		If This.GrabarCambios() = 0 Then
 			Return 0
 		Endif
@@ -58,25 +68,74 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 		Return 0
 	Endif
 	Endfunc
-	Function IngresaGuiasXOtros(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11)
+	Function ActualizarguiaremitenteOtros()
+	objdetalle=Createobject("empty")
+	AddProperty(objdetalle,'nidart',0)
+	AddProperty(objdetalle,'ncant',0)
+	AddProperty(objdetalle,'nidg',0)
+	AddProperty(objdetalle,'nidkar',0)
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	If AnulaGuiasVentas(This.idautog, goApp.nidusua) = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	nidg = This.IngresaGuiasXOtros()
+	If nidg < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Select tmpvg
+	Go Top
+	s = 1
+	Do While !Eof()
+		objdetalle.nidart=tmpvg.coda
+		objdetalle.ncant=tmpvg.cant
+		objdetalle.nidg=m.nidg
+		objdetalle.nidkar=tmpvg.nidkar
+		If This.registradetalleguia(objdetalle)<1 Then
+*	GrabaDetalleGuias(tmpvg.nidkar, tmpvg.cant, nidg) = 0 Then
+			s = 0
+			Exit
+		Endif
+		Select tmpvg
+		Skip
+	Enddo
+	If  This.RegistraRelacionGuias(nidg) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If  s = 1 Then
+		If This.GrabarCambios() = 0 Then
+			Return 0
+		Endif
+		This.imprimir('S')
+		Return  1
+	Else
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Endfunc
+	Function IngresaGuiasXOtros()
 	Local lc, lp
 	lc			  = "FUNINGRESAGUIASXOTROS"
 	cur			  = "YY"
-	goApp.npara1  = np1
-	goApp.npara2  = np2
-	goApp.npara3  = np3
-	goApp.npara4  = np4
-	goApp.npara5  = np5
-	goApp.npara6  = np6
-	goApp.npara7  = np7
-	goApp.npara8  = np8
-	goApp.npara9  = np9
-	goApp.npara10 = np10
-	goApp.npara11 = np11
+	goApp.npara1  = This.fecha
+	goApp.npara2  = Alltrim(This.ptop)
+	goApp.npara3  = Alltrim(This.ptoll)
+	goApp.npara4  = This.idauto
+	goApp.npara5  =This.fechat
+	goApp.npara6  = goApp.nidusua
+	goApp.npara7  = This.detalle
+	goApp.npara8  = This.Idtransportista
+	goApp.npara9  = This.ndoc
+	goApp.npara10 = goApp.Tienda
+	goApp.npara11 = This.ubigeocliente
 	goApp.npara12 = This.Codigo
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
-	Endtext
+	ENDTEXT
 	nidgg = This.EJECUTARf(lc, lp, cur)
 	If nidgg < 1 Then
 		Return 0
@@ -94,12 +153,38 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	Return 1
 	Endfunc
 	Function RegistraRelacionGuias(nidg)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 	   UPDATE fe_guias SET guia_idre=<<nidg>> where guia_idgui=<<this.nautor>>;
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
 	Return 1
+	Endfunc
+	Function buscarxid(nid,ccursor)
+	If This.idsesion>0 Then
+		Set DataSession To This.idsesion
+	Endif
+	TEXT TO lc NOSHOW TEXTMERGE
+	 SELECT guia_ndoc AS ndoc,guia_fech AS fech,guia_fect AS fechat,
+     LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
+     a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
+     e.entr_idar AS coda,0 AS prec,0 AS idkar,g.guia_idtr,placa AS placa,t.razon AS razont,
+     t.ructr,t.nombr AS conductor,t.dirtr AS direcciont,t.breve,t.cons AS constancia,t.marca,c.nruc,c.ndni,guia_deta,
+     t.placa1,'' AS dcto,'' AS tdoc,g.guia_idcl AS idcliente,v.gene_usol,v.gene_csol,guia_ubig,
+     c.razo,guia_idgui AS idgui,0 AS idauto,c.dire,c.ciud,'' AS tdoc1,v.rucfirmad,gene_cert,guia_moti,clavecertificado,
+     v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,t.tran_tipo AS tran_tipo
+     FROM fe_guias AS g
+     INNER JOIN fe_clie AS c ON c.idclie=g.guia_idcl
+     INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
+     INNER JOIN fe_art AS a ON a.idart=e.entr_idar
+     LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
+     INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v
+     WHERE guia_idgui=<<nid>>  order by entr_iden
+	ENDTEXT
+	If This.EjecutaConsulta(lc,ccursor)<1 Then
+		Return 0
+	Endif
+	Return  1
 	Endfunc
 Enddefine

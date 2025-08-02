@@ -57,6 +57,17 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function registramasmas
 	Local Sw, r As Integer
+	objdetalle=Createobject("empty")
+	AddProperty(objdetalle,'nidr',0)
+	AddProperty(objdetalle,'cndoc',"")
+	AddProperty(objdetalle,'ctipo',"")
+	AddProperty(objdetalle,'dfecha',Date())
+	AddProperty(objdetalle,'dfevto',Date())
+	AddProperty(objdetalle,'ndolar',0)
+	AddProperty(objdetalle,'nimpo',0)
+	AddProperty(objdetalle,'nrou',"")
+	AddProperty(objdetalle,'cdetalle',"")
+	AddProperty(objdetalle,'csitua',"")
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
@@ -69,12 +80,22 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Sw = 1
+	objdetalle.nidr=r
+	objdetalle.dFecha=This.dFech
+	objdetalle.ndolar=This.ndolar
 	Select (This.Calias)
 	Go Top
 	Scan All
-		If IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', This.dFech, tmpd.Fevto, tmpd.Tipo, This.ndolar, tmpd.Impo, goApp.nidusua, Id(), This.codt, tmpd.Ndoc, tmpd.Detalle, 'CA') = 0 Then
+		objdetalle.cndoc=tmpd.Ndoc
+		objdetalle.Ctipo='C'
+		objdetalle.dfevto= tmpd.Fevto
+		objdetalle.nimpo=tmpd.Impo
+		objdetalle.nrou= tmpd.Ndoc
+		objdetalle.cdetalle=tmpd.Detalle
+		objdetalle.csitua='CA'
+		If This.IngresaDetalleDeudas(objdetalle)<1 Then
+* IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', ,, tmpd.Tipo, , , goApp.nidusua, Id(), This.codt,, , 'CA') = 0 Then
 			Sw = 0
-			This.Cmensaje = 'Al Registrar Detalle de Cuentas por Pagar'
 			Exit
 		Endif
 	Endscan
@@ -136,12 +157,9 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Df = Cfechas(This.dFech)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\Select    `a`.`Ndoc` , `a`.`fech` ,`a`.`dola`,`a`.`nrou`,
-    \`a`.`banc` ,  `a`.`iddeu`,`s`.`Fevto` ,  `s`.`saldo` As importe,
-    \`s`.`rdeu_idpr` As `Idpr`,  `b`.`rdeu_impc` As importeC,
-    \'C' As `situa`,  `b`.`rdeu_idau` As `Idauto`, `s`.`Ncontrol` ,  `a`.`Tipo`,
-    \`a`.`banco`     As `banco`,  IFNULL(`c`.`Ndoc`,'0') As `docd`,
-    \IFNULL(`c`.`tdoc`,'0') As `tdoc`,  `b`.`rdeu_mone` As `Moneda`,IFNULL(u.nomb,'') As usuario,
+	\Select    `a`.`Ndoc` , `a`.`fech` ,`a`.`dola`,`a`.`nrou`,`a`.`banc` ,  `a`.`iddeu`,`s`.`Fevto` ,  `s`.`saldo` As importe,
+    \`s`.`rdeu_idpr` As `Idpr`,  `b`.`rdeu_impc` As importeC,'C' As `situa`,  `b`.`rdeu_idau` As `Idauto`, `s`.`Ncontrol` ,  `a`.`Tipo`,
+    \`a`.`banco`     As `banco`,  IFNULL(`c`.`Ndoc`,'0') As `docd`,IFNULL(`c`.`tdoc`,'0') As `tdoc`,  `b`.`rdeu_mone` As `Moneda`,IFNULL(u.nomb,'') As usuario,
     \`b`.`rdeu_codt` As `codt`,  `b`.`rdeu_idrd` As `Idrd`,  `b`.`rdeu_idct`
     \From (Select   Round(Sum((`d`.`Impo` - `d`.`acta`)),2) As `saldo`,
     \`d`.`Ncontrol` ,  Max(`d`.`Fevto`) As `Fevto`,  `r`.`rdeu_idpr` ,  `r`.`rdeu_mone`
@@ -230,8 +248,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\     Select a.Ndoc,a.fech,a.Fevto,a.saldo,a.importeC,x.razo,
-	\     situa,Idauto,Ncontrol,a.Tipo,banco,docd,tdoc,a.Idpr,a.Moneda,codt,dola,
+	\     Select a.Ndoc,a.fech,a.Fevto,a.saldo,a.importeC,x.razo, situa,Idauto,Ncontrol,a.Tipo,banco,docd,tdoc,a.Idpr,a.Moneda,codt,dola,
 	\     Idrd,a.rdeu_idct,IFNULL(u.nomb,'') As usuario From vpdtespago As a
 	\     INNER Join fe_prov As x On x.idprov=a.Idpr
 	\     INNER Join fe_rdeu As r On r.rdeu_idrd=a.Idrd
@@ -459,8 +476,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\   Select razo,Ndoc,fech,tsoles,tdolar,mone,idprov From (
 	\	Select p.rdeu_idpr As idprov,b.razo,p.rdeu_mone As mone,IFNULL(T.Ndoc,'') As Ndoc,IFNULL(T.fech,p.rdeu_fech) As fech,
-	\	If(p.rdeu_mone='S',Sum(a.Impo-a.acta),0) As tsoles,
-	\	If(p.rdeu_mone='D',Sum(a.Impo-a.acta),0) As tdolar
+	\	If(p.rdeu_mone='S',Sum(a.Impo-a.acta),0) As tsoles,If(p.rdeu_mone='D',Sum(a.Impo-a.acta),0) As tdolar
 	\	From fe_deu As a
 	\	INNER Join fe_rdeu As p On p.rdeu_idrd=a.deud_idrd
 	\	INNER Join  fe_prov As b On b.idprov=p.rdeu_idpr
@@ -607,6 +623,139 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	ENDTEXT
 	If This.EJECutaconsulta(lC,Ccursor)<1 Then
 		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function calcularSaldoproveedor(Ccursor)
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC = 'PROCALCULASALDOSPROVEEDOR'
+	TEXT To lp NOSHOW TEXTMERGE
+	     (<<this.nidprov>>)
+	ENDTEXT
+	If This.ejecutarp(lC, lp,Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function resumenctasxpagar(dFecha,Ccursor)
+	If !Pemstatus(goApp, 'cdatos', 5)
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Df=Cfechas(dFecha)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\SELECT c.nruc,c.razo AS proveedor,c.idprov AS codp,r.rdeu_mone,SUM(IF(r.rdeu_mone='S',saldo,0)) AS tsoles,SUM(IF(r.rdeu_mone='D',saldo,0)) AS tdolar,
+	\s.nomb AS Tienda FROM
+	\(SELECT a.Ncontrol,MIN(fevto) AS fech,ROUND(SUM(a.Impo-a.acta),2) AS saldo
+	\FROM fe_deu AS a
+	\INNER JOIN fe_rdeu AS xx  ON xx.rdeu_idrd=a.deud_idrd
+	\WHERE a.fech<='<<df>>'  AND  a.Acti<>'I' AND xx.rdeu_Acti<>'I'
+	If This.codt > 0 Then
+	\ And rdeu_codt=<<This.codt>>
+	Endif
+	\GROUP BY a.Ncontrol HAVING saldo<>0) AS b
+	\INNER JOIN fe_deu AS a ON a.iddeu=b.Ncontrol
+	\INNER JOIN fe_rdeu AS r ON r.rdeu_idrd=a.deud_idrd
+	\INNER JOIN fe_prov AS c ON c.idprov=r.rdeu_idpr
+	\INNER JOIN fe_sucu AS s ON s.idalma=r.rdeu_codt
+	\GROUP BY nruc,proveedor,codp,tienda ORDER BY proveedor
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresaDetalleDeudas(objdetalle)
+*nidr,cndoc,Ctipo,dFecha,dfevto,Ctipo,ndolar,nimpo,nidus,cpc,nidtda,cnrou,cdetalle,csitua
+	lC='FUNINGRESADEUDAS'
+	goApp.npara1=objdetalle.nidr
+	goApp.npara2=objdetalle.cndoc
+	goApp.npara3=objdetalle.Ctipo
+	goApp.npara4=objdetalle.dFecha
+	goApp.npara5=objdetalle.dfevto
+	goApp.npara6=objdetalle.Ctipo
+	goApp.npara7=objdetalle.ndolar
+	goApp.npara8=objdetalle.nimpo
+	goApp.npara9=goApp.nidusua
+	goApp.npara10=Id()
+	goApp.npara11=goApp.Tienda
+	goApp.npara12=objdetalle.nrou
+	goApp.npara13=objdetalle.cdetalle
+	goApp.npara14=objdetalle.csitua
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+	ENDTEXT
+	nid=This.EJECUTARf(lC,lp,'dd')
+	If nid<1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function IngresaCabeceraDeudasCctasResumen()
+	lC="FUNregistraDeudasCCtas"
+	cur="Yr"
+	goApp.npara1=This.NAuto
+	goApp.npara2=This.nidprov
+	goApp.npara3=This.Cmoneda
+	goApp.npara4=This.dFech
+	goApp.npara5=This.nimpo
+	goApp.npara6=goApp.nidusua
+	goApp.npara7=This.codt
+	goApp.npara8=Id()
+	goApp.npara9=This.ccta
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
+	ENDTEXT
+	If This.contransaccion<>'S' Then
+		If This.IniciaTransaccion()<1 Then
+			Return 0
+		Endif
+	Endif
+	r= This.EJECUTARf(lC,lp,cur)
+	If r<1 Then
+		If This.contransaccion<>'S' Then
+			This.DEshacerCambios()
+		Endif
+		Return 0
+	Endif
+	objdetalle=Createobject("empty")
+	AddProperty(objdetalle,'nidr',0)
+	AddProperty(objdetalle,'cndoc',"")
+	AddProperty(objdetalle,'ctipo',"")
+	AddProperty(objdetalle,'dfecha',Date())
+	AddProperty(objdetalle,'dfevto',Date())
+	AddProperty(objdetalle,'ndolar',0)
+	AddProperty(objdetalle,'nimpo',0)
+	AddProperty(objdetalle,'nrou',"")
+	AddProperty(objdetalle,'cdetalle',"")
+	AddProperty(objdetalle,'csitua',"")
+	objdetalle.nidr=r
+	objdetalle.dFecha=This.dFech
+	objdetalle.ndolar=This.ndolar
+	objdetalle.cndoc=This.cdcto
+	objdetalle.Ctipo='C'
+	objdetalle.dfevto= This.dFech
+	objdetalle.nimpo=This.nimpo
+	objdetalle.nrou= This.cdcto
+	objdetalle.cdetalle=This.cdetalle
+	objdetalle.csitua='CA'
+	If This.IngresaDetalleDeudas(objdetalle)<1 Then
+		If This.contransaccion<>'S' Then
+			This.DEshacerCambios()
+		Endif
+		Return 0
+	Endif
+	If This.contransaccion<>'S' Then
+		If This.GRabarCambios()<1 Then
+    		Return 0
+		Endif
 	Endif
 	Return 1
 	Endfunc

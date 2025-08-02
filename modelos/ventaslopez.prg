@@ -226,7 +226,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		JOIN fe_rcom AS rr ON rr.idauto=r.rcre_idau
 		WHERE `r`.`rcre_Acti` = 'A'  AND `c`.`acti` = 'A' AND rr.tdoc='20' AND rr.fech BETWEEN   '<<dfi>>' AND '<<dff>>'
 		GROUP BY c.`ncontrol`,`c`.`mone`,r.rcre_idau HAVING (`saldo`=0)) AS yy ON yy.idauto=r.idauto
-		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form='C' AND r.fech BETWEEN  '<<dfi>>' AND '<<dff>>' AND rcom_idtr=0 AND r.codt=<<this.almacen>> GROUP BY idart) AS s
+		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form in('C','R') AND r.fech BETWEEN  '<<dfi>>' AND '<<dff>>' AND rcom_idtr=0 AND r.codt=<<this.almacen>> GROUP BY idart) AS s
 		INNER JOIN fe_art AS a ON a.idart=s.idart
 		INNER JOIN fe_fletes AS  f ON f.idflete=a.idflete,fe_gene AS g
 		Endtext

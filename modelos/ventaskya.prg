@@ -73,8 +73,8 @@ Define Class ventaskya As ventas Of 'd:\capass\modelos\ventas.prg'
 	Return 1
 	Endfunc
 	Function packingkya(ccursor)
-	dfi=cfechas(this.fechai)
-	dff=cfechas(this.fechaf)
+	dfi=cfechas(This.fechai)
+	dff=cfechas(This.fechaf)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
 	\SELECT b.descri,a.kar_unid as unid,sum(a.cant) as cant,sum(ROUND(a.cant*a.prec,2)) as timporte,kar_equi,a.idart FROM fe_rcom as e
@@ -84,17 +84,76 @@ Define Class ventaskya As ventas Of 'd:\capass\modelos\ventas.prg'
 	\WHERE e.ACTI<>'I' and a.acti<>'I'  and e.fech  BETWEEN '<<dfi>>' and '<<dff>>'
 	If This.vendedor>0 Then
 	\ and a.codv=<<this.vendedor>>
-	ENDIF 
-	IF this.agrupada = 1
+	Endif
+	If This.agrupada = 1
 	\group by a.idart,a.kar_unid
-	ELSE
+	Else
 	\ group by a.idart
-	ENDIF 
+	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	IF this.ejecutaconsulta(lc,ccursor)<1  Then
-			RETURN 0
+	If This.EjecutaConsulta(lc,ccursor)<1  Then
+		Return 0
 	Endif
-	RETURN 1
-		Endfunc
+	Return 1
+	Endfunc
+	Function porlineaH(ccursor)
+	If This.fechaf-This.fechai>31 Then
+		This.cmensaje='Maximo 31 días'
+		Return 0
+	Endif
+	fi=cfechas(This.fechai)
+	ff=cfechas(This.fechaf)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+            \   SELECT x.fech,b.idcat,SUM(a.cant) as cant,SUM(a.cant*a.prec) as importe,c.dcat
+            \   FROM fe_kar as a
+            \   inner join fe_rcom as x on x.idauto=a.idauto
+            \   inner JOIN fe_art as b ON a.idart=b.idart
+            \   inner join fe_cat as c on c.idcat=b.idcat
+            \   WHERE  a.idart>0 AND a.ACTI='A' AND x.acti='A' and fech between '<<fi>>' and '<<ff>>' and a.alma>0
+	If This.codt>0 Then
+       \ and a.alma=<<this.codt>>
+	Endif
+	If This.nmarca > 0 Then
+       \ and b.idmar=<<this.nmarca>>
+	Endif
+	If This.nlinea > 0 Then
+	    \ and b.idcat=<<this.nlinea>>
+	Endif
+	\ group by x.fech,b.idcat,c.dcat ORDER BY fech,dcat
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EjecutaConsulta(lc,ccursor)<1  Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarxid(ccursor)
+	TEXT TO Lc NOSHOW TEXTMERGE
+	  SELECT  `c`.`rcom_mens`,`c`.`rcom_idtr`,  `a`.`codv` ,  `a`.`idauto`,  `a`.`kar_cost`, `a`.`kar_tigv` as tigv, `a`.`kar_posi` ,
+	  `a`.`kar_equi`,  `a`.`kar_epta`,  `a`.`kar_comi`,  `a`.`alma`,  `a`.`kar_idco`  AS `idcosto`,  `a`.`idkar`,  `a`.`idart`,  `a`.`cant`,  `a`.`prec`,  `c`.`valor`,  `c`.`igv`,
+	  `c`.`impo`,  `c`.`fech`,  `c`.`fecr`,  `c`.`form`,  `c`.`deta`, `c`.`ndo2`,  `c`.`rcom_entr`,
+	  `c`.`idcliente` AS `idclie`,  `d`.`razo`,  `d`.`nruc`,  `d`.`dire`,  `d`.`ciud`,
+	  `d`.`ndni`,  `a`.`tipo`,  `c`.`tdoc`,  `c`.`ndoc`,  `c`.`dolar`,`c`.`mone`,
+	  LEFT(CONCAT(TRIM(`t`.`dcat`),' ',SUBSTR(`b`.`descri`,(LOCATE(',',`b`.`descri`) + 1)),' ',SUBSTR(`b`.`descri`,1,(LOCATE(',',`b`.`descri`) - 1))),150) AS `descri`,
+	  IFNULL(`x`.`idcaja`,0) AS `idcaja`,  `a`.`kar_unid`  AS `unid`,  `b`.`premay`    AS `pre1`,
+	  `b`.`peso`,  `b`.`premen`    AS `pre2`,  IFNULL(`z`.`vend_idrv`,0) AS `nidrv`,  `c`.`vigv`      AS `vigv`,
+	  `c`.`idcliente` ,`c`.`codt`,  `b`.`pre3` AS `pre3`, `b`.`cost`      AS `costo`,  `b`.`uno`,  `b`.`dos`,  `b`.`tre`,  `b`.`cua`,  (`b`.`uno` + `b`.`dos`) AS `TAlma`,  `c`.`fusua` ,  `p`.`nomv`  AS `Vendedor`,  `q`.`nomb`      AS `Usuario`
+	  FROM  `fe_rcom` `c`
+	  JOIN `fe_kar` `a`     ON   `c`.`idauto` = `a`.`idauto`
+	  JOIN `fe_art` `b`    ON   `a`.`idart` = `b`.`idart`
+	  JOIN `fe_cat` `t`     ON   `t`.`idcat` = `b`.`idcat`
+	  LEFT JOIN `fe_caja` `x` ON   `x`.`idauto` = `c`.`idauto`
+	  JOIN `fe_clie` `d`      ON   `c`.`idcliente` = `d`.`idclie`
+	  JOIN `fe_vend` `p`      ON   `p`.`idven` = `a`.`codv`
+	  JOIN `fe_usua` `q`      ON   `q`.`idusua` = `c`.`idusua`
+	  LEFT JOIN `fe_rvendedor` `z`     ON   `z`.`vend_idau` = `c`.`idauto`
+	WHERE   `c`.`idauto` = <<this.idauto>>  AND  `c`.`acti` <> 'I'   AND  `a`.`acti` <> 'I'
+	ENDTEXT
+	If This.EjecutaConsulta(lc,ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine

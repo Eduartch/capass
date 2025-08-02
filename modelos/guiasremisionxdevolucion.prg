@@ -136,7 +136,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Return nidy
 	Endfunc
 	Function validarguia()
-	If This.Idsesion > 1 Then
+	If This.Idsesion > 0 Then
 		Set DataSession To  This.Idsesion
 	Endif
 	If This.idprov < 1 Then
@@ -239,7 +239,12 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Endif
 	Endfunc
 	Function grabarx()
-	If This.Idsesion > 1 Then
+	objdetalle=Createobject("empty")
+	AddProperty(objdetalle,"nidart",'')
+	AddProperty(objdetalle,"ncant",0)
+	AddProperty(objdetalle,"nidg",0)
+	AddProperty(objdetalle,"nidkar",0)
+	If This.Idsesion > 0 Then
 		Set DataSession To  This.Idsesion
 	Endif
 	s = 1
@@ -249,11 +254,13 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		Return 0
 	Endif
 	Na = IngresaResumenDcto('09', 'E',	This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, '', 'S', fe_gene.dola, fe_gene.igv, 'k', This.idprov, 'C', goApp.nidusua, 0, goApp.Tienda, 0, 0, 0, 0, 0)
+
 	If Na < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
 	nidg = This.IngresaGuiasxDcompras(This.Fecha, This.ptop, This.ptoll, Na, This.fechat, goApp.nidusua, This.Detalle, This.Idtransportista, This.Ndoc, goApp.Tienda)
+
 	If nidg < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -261,60 +268,72 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Select tmpvg
 	Go Top
 	Do While !Eof()
-		If fe_gene.alma_nega = 0 Then
-			If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
+		nidkar=0
+
+		If This.condsctostock='S' Then
+			If fe_gene.alma_nega = 0 Then
+				If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
+					s = 0
+					Cmensaje = 'No está activado la venta con Negativos'
+					Exit
+				Endif
+				Do Case
+				Case goApp.Tienda = 1
+					Ts = stock.uno
+				Case goApp.Tienda = 2
+					Ts = stock.Dos
+				Case goApp.Tienda = 3
+					Ts = stock.tre
+				Case goApp.Tienda = 4
+					Ts = stock.cua
+				Case goApp.Tienda = 5
+					Ts = stock.cin
+				Case goApp.Tienda = 6
+					Ts = stock.sei
+				Case goApp.Tienda = 7
+					Ts = stock.sie
+				Case goApp.Tienda = 8
+					Ts = stock.och
+				Case goApp.Tienda = 9
+					Ts = stock.nue
+				Case goApp.Tienda = 10
+					Ts = stock.die
+				Endcase
+				If tmpvg.cant > Ts Then
+					s = 0
+					Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
+					Exit
+				Endif
+			Endif
+			nidkar = INGRESAKARDEXR(Na, ALLTRIM(tmpvg.Coda), "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, 0)
+			If nidkar < 1 Then
 				s = 0
-				Cmensaje = 'No está activado la venta con Negativos'
+				This.Cmensaje = 'Al Registrar Kardex'
 				Exit
 			Endif
-			Do Case
-			Case goApp.Tienda = 1
-				Ts = stock.uno
-			Case goApp.Tienda = 2
-				Ts = stock.Dos
-			Case goApp.Tienda = 3
-				Ts = stock.tre
-			Case goApp.Tienda = 4
-				Ts = stock.cua
-			Case goApp.Tienda = 5
-				Ts = stock.cin
-			Case goApp.Tienda = 6
-				Ts = stock.sei
-			Case goApp.Tienda = 7
-				Ts = stock.sie
-			Case goApp.Tienda = 8
-				Ts = stock.och
-			Case goApp.Tienda = 9
-				Ts = stock.nue
-			Case goApp.Tienda = 10
-				Ts = stock.die
-			Endcase
-			If tmpvg.cant > Ts Then
+			If ActualizaStock(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
 				s = 0
-				Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
+				This.Cmensaje = 'Al actualizar Stock'
 				Exit
 			Endif
 		Endif
-		nidkar = INGRESAKARDEXR(Na, tmpvg.Coda, "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, 0)
-		If nidkar < 1 Then
+		objdetalle.nidart=alltrim(tmpvg.Coda)
+		objdetalle.ncant=tmpvg.cant
+		objdetalle.nidg=m.nidg
+		objdetalle.nidkar=m.nidkar
+	
+		If  This.registradetalleguia(objdetalle)<1 Then
 			s = 0
-			Cmensaje = 'Al Registrar Kardex'
-			Exit
-		Endif
-		If GrabaDetalleGuias(nidkar, tmpvg.cant, nidg) < 1 Then
-			s = 0
-			Cmensaje = 'Al Registrar detalle de Guia'
-			Exit
-		Endif
-		If ActualizaStock(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
-			s = 0
-			Cmensaje = 'Al actualizar Stock'
 			Exit
 		Endif
 		Select tmpvg
 		Skip
 	Enddo
-	If This.GeneraCorrelativo() = 1  And s = 1 Then
+	If s <1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GeneraCorrelativo() = 1  Then
 		If This.GRabarCambios() = 0 Then
 			Return 0
 		Endif
@@ -367,10 +386,14 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 				sws = 0
 				Cmensaje = "Al Registrar el detalle de la guia"
 				Exit
-
-			Endif
-			If Actualizastock1(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V', tmpvg.equi) = 0 Then
-				Cmensaje = "Al Actualizar Stock"
+    		Endif
+			_Screen.oproductos.ncoda=tmpvg.Coda
+			_Screen.oproductos.codt=goApp.Tienda
+			_Screen.oproductos.ncant=tmpvg.cant
+			_Screen.oproductos.ctipo='V'
+			_Screen.oproductos.nequi=tmpvg.equi
+			If _Screen.oproductos.Actualizastockunidades()<1
+				Cmensaje = _Screen.oproductos.cmensaje
 				sws = 0
 				Exit
 			Endif
@@ -380,7 +403,6 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		objdetalle.nidg=m.nidg
 		objdetalle.nidkar=m.nidkar
 		If  This.registradetalleguia(objdetalle)<1 Then
-*GrabaDetalleGuiasCons(tmpvg.Coda, tmpvg.cant, nidg, nidkar) = 0
 			sws = 0
 			Cmensaje = This.Cmensaje
 			Exit
@@ -388,7 +410,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		Select tmpvg
 		Skip
 	Enddo
-	If This.GeneraCorrelativo() = 1  And s = 1 Then
+	If This.GeneraCorrelativo() = 1  And sws = 1 Then
 		If This.GRabarCambios() = 0 Then
 			Return 0
 		Endif
@@ -488,8 +510,8 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 					Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
 					Exit
 				Endif
-				ncodalmacen = goApp.Tienda
 			Endif
+			ncodalmacen = goApp.Tienda
 		Else
 			ncodalmacen = 0
 		Endif
@@ -546,15 +568,6 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?this.idautog,?goapp.npara11,?goapp.npara12,?goapp.npara13)
 	ENDTEXT
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
-		Return 0
-	Endif
-	Return 1
-	Endfunc
-	Function registradetalleguia(objdetalle)
-	TEXT TO lc NOSHOW TEXTMERGE
-	   INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar)VALUES(<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>)
-	ENDTEXT
-	If This.ejecutarsql(lC)<1 Then
 		Return 0
 	Endif
 	Return 1

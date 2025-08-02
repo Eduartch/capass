@@ -4,7 +4,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	nidlectura = 0
 	Function listarcaja(Calias)
 	Df = Cfechas(This.dFecha)
-	Text To lC Noshow  Textmerge
+	TEXT To lC Noshow  Textmerge
 	        SELECT cajero,isla,efectivo+credito+deposito+tarjeta+dscto+centrega as Ingresos,dscto,efectivo+credito+deposito+tarjeta+centrega as ventasnetas,
 	        tarjeta,credito,efectivo,centrega,egresos,efectivo-egresos as saldo,idusua from(
 	        SELECT usua AS Cajero,SUM(ROUND(CASE forma WHEN 'E' THEN IF(tipo='I',impo,0) ELSE 0 END,2)) AS efectivo,
@@ -32,7 +32,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 			INNER JOIN fe_usua AS c ON 	c.idusua=a.lcaj_idus
 			WHERE lcaj_idle=<<this.nidlectura>> AND lcaj_acti<>'I' AND lcaj_idau=0 and LEFT(c.tipo,1)="V")
 			AS b GROUP BY lcaj_idus,lcaj_codt,usua,lcaj_idtu) as x  ORDER BY isla,cajero
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
@@ -40,7 +40,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	Endfunc
 	Function listarcaja1(Calias)
 	Df = Cfechas(This.dFecha)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 		SELECT descri AS producto,u.nomb as Cajero,lect_idco AS surtidor,lect_mang AS manguera,lect_inic  as inicial,lect_cfinal as final,
 		lect_cFinal-lect_inic As Cantidad,lect_prec as Precio,Round((lect_cFinal-lect_inic)*lect_prec,2) As Ventas,
 		lect_mfinal AS montofinal,lect_inim AS montoinicial, lect_mfinal-lect_inim AS monto,
@@ -48,7 +48,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		INNER JOIN fe_art AS a ON a.idart=l.lect_idar
 		inner join fe_usua as u on u.idusua=l.lect_idus
 		WHERE lect_acti='A' and lect_idtu=<<this.nturno>> and lect_esta='C' and lect_idin=<<this.nidlectura>> order by lect_idco,lect_mang
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
@@ -57,7 +57,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	Function listarcajaparacierre(Calias)
 	Df = Cfechas(This.dFecha)
 	If This.nisla = 0 Then
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 	        SELECT cajero,isla,efectivo+credito+deposito+tarjeta+dscto as Ingresos,dscto,efectivo+credito+deposito+tarjeta as ventasnetas,
 	        tarjeta,credito,efectivo,egresos,efectivo-egresos as saldo,idusua from(
 	        SELECT usua AS Cajero,SUM(ROUND(CASE forma WHEN 'E' THEN IF(tipo='I',impo,0) ELSE 0 END,2)) AS efectivo,
@@ -85,9 +85,9 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 			INNER JOIN fe_usua AS c ON 	c.idusua=a.lcaj_idus
 			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau=0 and lcaj_idtu=<<this.nturno>> and LEFT(c.tipo,1)="V")
 			AS b GROUP BY lcaj_idus,lcaj_codt) as x  ORDER BY isla,cajero
-		Endtext
+		ENDTEXT
 	Else
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 	       SELECT cajero,isla,efectivo+credito+deposito+tarjeta+dscto as Ingresos,dscto,efectivo+credito+deposito+tarjeta as ventasnetas,
 	       tarjeta,credito,efectivo,egresos,efectivo-egresos as saldo,idusua from(
 	        SELECT usua AS Cajero,SUM(ROUND(CASE forma WHEN 'E' THEN IF(tipo='I',impo,0) ELSE 0 END,2)) AS efectivo,
@@ -115,7 +115,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 			INNER JOIN fe_usua AS c ON 	c.idusua=a.lcaj_idus
 			WHERE lcaj_idle=<<this.nidlectura>>  AND lcaj_acti<>'I' AND lcaj_idau=0 and lcaj_idtu=<<this.nturno>> and LEFT(c.tipo,1)="V" and lcaj_codt=<<this.nisla>>)
 			AS b GROUP BY lcaj_idus,lcaj_codt) as x  ORDER BY isla,cajero
-		Endtext
+		ENDTEXT
 	Endif
 	This.conconexion = 1
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
@@ -139,14 +139,17 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	    \ From fe_lecturas
 		\Where lect_idin=<<This.nidlectura>>  And lect_acti='A' And lect_mfinal>0
 	If This.nisla > 0 Then
-		If fe_gene.nruc = '20609310902' Then
+		Do Case
+		Case  fe_gene.nruc = '20609310902'
 			Do Case
 			Case This.nisla = 1
 		        \ And lect_idco In(1,2,3,4)
 			Case This.nisla = 2
 		        \ And lect_idco In(5,6,7,8)
 			Endcase
-		Else
+		Case fe_gene.nruc = '20609681609'
+              \  and lect_idco=<<this.nisla>>
+		Otherwise
 			Do Case
 			Case This.nisla = 1
 		        \ And lect_idco In(1,2)
@@ -155,7 +158,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 			Case This.nisla = 3
 		        \ And lect_idco In(5,6,7,8)
 			Endcase
-		Endif
+		Endcase
 	Endif
 		\Union All
 		\Select "Otras Ventas" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'I' As tipo,'E' As lcaj_form,'' As isla From
@@ -179,7 +182,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
 		\Where lcaj_idle=<<This.nidlectura>>  And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form In('T')
 	If This.nisla > 0 Then
-		\ And lcaj_codt=<<This.nisla>>
+		 \And lcaj_codt=<<This.nisla>>
 	Endif
 		\Union All
 		\Select "Vtas C/Yape-Plin" As detalle,ifnull(Sum(lcaj_deud),0) As Impo,'E' As tipo,'Y' As lcaj_form,'' As isla From
@@ -195,7 +198,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
 		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_idau>0  And lcaj_form='D'
 	If This.nisla > 0 Then
-		\ And lcaj_codt=<<This.nisla>>
+		\And lcaj_codt=<<This.nisla>>
 	Endif
 		\Union All
 		\Select "Descuentos" As detalle,ifnull(Sum(lcaj_dsct),0) As Impo,'E' As tipo,'S' As lcaj_form,'' As isla  From
@@ -209,7 +212,15 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\Select "Retiros" As detalle,ifnull(Sum(lcaj_acre),0) As Impo,'E' As tipo,'S' As lcaj_form,'' As isla  From
 		\fe_lcaja As a
 		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
-		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_acre>0
+		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_acre>0 and LEFT(lcaj_ndoc,6)<>'gastos'
+	If This.nisla > 0 Then
+		\ And lcaj_codt=<<This.nisla>>
+	ENDIF
+	\Union All
+		\Select "Gastos" As detalle,ifnull(Sum(lcaj_acre),0) As Impo,'E' As tipo,'S' As lcaj_form,'' As isla  From
+		\fe_lcaja As a
+		\INNER Join fe_usua As c On c.idusua=a.lcaj_idus
+		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_acre>0 and LEFT(lcaj_ndoc,6)='gastos'
 	If This.nisla > 0 Then
 		\ And lcaj_codt=<<This.nisla>>
 	Endif
@@ -272,6 +283,14 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	\	  Where a.lcaj_acti='A' And lcaj_form='T'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_deud>0 And lcaj_idau>0  And lcaj_idus>0
 	If goApp.conectasucursales = 'S' Then
 	\ And lcaj_codt=<<goApp.tienda>>
+	ENDIF
+	\	  Union All
+	\	  Select "Ventas C/Depósito-Yape" As detalle,ifnull(Sum(a.lcaj_deud),Cast(0 As Decimal(12,2))) As Total_Ventas,'' As producto,'' As unid,
+	\	  Cast(0 As Decimal(12,2)) As Cantidad,
+	\	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'S' As tipo From fe_lcaja  As a
+	\	  Where a.lcaj_acti='A' And lcaj_form in ('D','Y','P')  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_deud>0 And lcaj_idau>0  And lcaj_idus>0
+	If goApp.conectasucursales = 'S' Then
+	\ And lcaj_codt=<<goApp.tienda>>
 	Endif
 	\	  Union All
 	\	  Select "Otros Ingresos" As detalle,ifnull(Sum(a.lcaj_deud),Cast(0 As Decimal(12,2))) As Total_Ventas,'' As producto,'' As unid,
@@ -286,9 +305,9 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	\	  Cast(0 As Decimal(12,2)) As Cantidad,
 	\	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'S' As tipo From fe_lcaja  As a
 	\	  Where a.lcaj_acti='A' And lcaj_form='E'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_idtra<=0  And lcaj_acre>0 And (lcaj_idau=0 Or lcaj_clpr=0)
-	If goApp.conectasucursales = 'S' Then
-	\ And lcaj_codt=<<goApp.tienda>>
-	Endif
+*!*		If goApp.conectasucursales = 'S' Then
+*!*		\ And lcaj_codt=<<goApp.tienda>>
+*!*		Endif
 	\	  Union All
 	\	  Select '' As detalle,Cast(0 As Decimal(12,2)) As  Total_Ventas,Descri As producto,unid,Cast(Sum(k.cant) As Decimal(12,2)) As Cantidad,
 	\	  Cast(Sum(k.cant*k.Prec)/Sum(k.cant) As Decimal(12,2)) As Precio,Cast(Sum(k.cant*k.Prec) As Decimal(12,2)) As venta,"" As tipo
@@ -324,7 +343,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	If goApp.ConectaControlador = 'S' And  Left(goApp.tipousuario, 1) <> 'A' Then
        \ a.lcaj_fech='<<dfecha2>>'
 	Else
-    \ a.lcaj_fech = '<<dfecha2>>'
+       \ a.lcaj_fech='<<dfecha2>>'
 	Endif
     \ And a.lcaj_acti='A' And a.lcaj_form='E' And lcaj_idus=<<This.idusuario>> Group By lcaj_idus
 	Set Textmerge Off
@@ -338,11 +357,11 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	Return nsaldo
 	Endfunc
 	Function ImprimeTransferenciaBoveda(nidx)
-	Text To lC Noshow
+	TEXT To lC Noshow
 	SELECT lcaj_fope AS fope,lcaj_fech AS fecha,lcaj_acre AS importe,lcaj_deta as refe FROM
     fe_lcaja AS l INNER JOIN fe_usua AS u ON u.idusua=l.lcaj_idus
     WHERE lcaj_idca=?nidx AND lcaj_acti='A' AND lcaj_form='E' AND lcaj_acre>0
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, 'tr') < 1 Then
 		Return 0
 	Endif
@@ -403,6 +422,22 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	\ Select Cast(Sum(If(a.lcaj_deud<>0,If(lcaj_mone='S',lcaj_deud,lcaj_deud*lcaj_dola),If(lcaj_mone='S',-lcaj_acre,-lcaj_acre*lcaj_dola)))  As Decimal(12,2)) As saldo
     \ From fe_lcaja  As a Where
 	\ a.lcaj_fech='<<f>>'  And a.lcaj_acti='A' And a.lcaj_form='E' And lcaj_idus=<<This.idusuario>> Group By lcaj_idus
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		This.conerror = 1
+		Return 0
+	Endif
+	Select (Ccursor)
+	nsaldo = Iif(Isnull(saldo), 0, saldo)
+	Return nsaldo
+	ENDFUNC
+	Function Saldoboveda()
+	Ccursor = 'c_' + Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\ Select Cast(Sum(If(a.lcaj_deud<>0,If(lcaj_mone='S',lcaj_deud,lcaj_deud*lcaj_dola),If(lcaj_mone='S',-lcaj_acre,-lcaj_acre*lcaj_dola)))  As Decimal(12,2)) As saldo
+    \ From fe_lcaja  As a Where  lcaj_acti='A' And a.lcaj_form='E' And lcaj_idus=<<This.idusuario>> Group By lcaj_idus
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then

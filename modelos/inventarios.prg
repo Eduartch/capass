@@ -14,6 +14,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	ncant = 0
 	nprec = 0
 	solocontable = 0
+	tipro=""
 	contraspasos = 0
 	Function saldosinicialeskardex(Df, ncoda, nalma, Ccursor)
 	Set Textmerge On
@@ -141,25 +142,46 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function consultamvtosresumidos1(fi, ff, fii, Ccursor)
+*!*		       SELECT q.coda,b.descri,b.unid,si,compras,ventas,stock  FROM (
+*!*			   SELECT x.coda,sum(si) as si,Sum(compras) As compras,Sum(ventas) As ventas,sum(si)+Sum(compras)-Sum(ventas) As stock from(
+*!*			   Select idart as coda,a.alma,cast(000000.00 as decimal(12,2)) as Si,cant As compras,cast(000000.00 as decimal(12,2)) As ventas
+*!*			   From fe_kar as a
+*!*			   inner join fe_rcom as b  on  b.idauto=a.idauto
+*!*			   Where a.tipo='C' and a.acti='A' and b.acti='A' AND b.fech between '<<fi>>' and '<<ff>>' and b.tcom<>'T' and tdoc not in('GI','20')
+*!*			   Union All
+*!*			   Select idart as coda,c.alma,cast(000000.00 as decimal(12,2)) as si,cast(0000000.00 as decimal(12,2))  As compras,cant As ventas
+*!*			   From fe_kar as c
+*!*			   inner join fe_rcom as d  on  d.idauto=c.idauto
+*!*			   Where c.tipo='V' and c.acti='A' and d.acti='A' AND d.fech between '<<fi>>' and '<<ff>>' and d.tcom<>'T' and tdoc not in('GI','20')
+*!*			   union all
+*!*			   Select idart as coda,CAST(1 as decimal(2)) as alma,	Sum(If(Tipo='C',cant,-cant)) as si,cast(0000000.00 as decimal(12,2))  As compras,cast(000000.00 as decimal(12,2)) As ventas
+*!*			   From fe_rcom as z
+*!*			   inner join fe_kar as d  on  d.idauto=z.idauto
+*!*			   Where z.acti='A' AND z.fech<='<<fii>>' and tdoc not in('GI','20') group By idart)
+*!*			   as x group by x.coda) as q
+*!*			   inner join fe_art as b ON b.idart=q.coda where  si<>0 or compras<>0 or ventas<>0  order by b.descri
 	TEXT To lC Noshow Textmerge
-	       SELECT q.coda,b.descri,b.unid,si,compras,ventas,stock  FROM (
+		  select q.coda,b.descri,b.unid,si,compras,ventas,stock,0 As cmd,DATE(b.`fechc`) AS fechaUltimaCompra,b.`prec` AS preciosingiv,b.`prod_cod1` AS codigoFabrica,
+		   m.dmar AS marca,ca.`dcat` AS linea,g.`desgrupo` AS grupo  FROM (
 		   SELECT x.coda,sum(si) as si,Sum(compras) As compras,Sum(ventas) As ventas,sum(si)+Sum(compras)-Sum(ventas) As stock from(
 		   Select idart as coda,a.alma,cast(000000.00 as decimal(12,2)) as Si,cant As compras,cast(000000.00 as decimal(12,2)) As ventas
-		   From fe_kar as a
-		   inner join fe_rcom as b  on  b.idauto=a.idauto
-		   Where a.tipo='C' and a.acti='A' and b.acti='A' AND b.fech between '<<fi>>' and '<<ff>>' and b.tcom<>'T' and tdoc not in('GI','20')
+		   From fe_kar as a 
+		   inner join fe_rcom as b  on  b.idauto=a.idauto 
+		   Where a.tipo='C' and a.acti='A' and b.acti='A' AND b.fech between '<<fi>>' and '<<ff>>' and b.tcom<>'T'  and tdoc not in('GI','20')
 		   Union All
 		   Select idart as coda,c.alma,cast(000000.00 as decimal(12,2)) as si,cast(0000000.00 as decimal(12,2))  As compras,cant As ventas
-		   From fe_kar as c
-		   inner join fe_rcom as d  on  d.idauto=c.idauto
-		   Where c.tipo='V' and c.acti='A' and d.acti='A' AND d.fech between '<<fi>>' and '<<ff>>' and d.tcom<>'T' and tdoc not in('GI','20')
+		   From fe_kar as c inner join fe_rcom as d
+		   on  d.idauto=c.idauto Where c.tipo='V' and c.acti='A' and d.acti='A' AND d.fech between '<<fi>>' and '<<ff>>' and d.tcom<>'T'  and tdoc not in('GI','20')
 		   union all
-		   Select idart as coda,CAST(1 as decimal(2)) as alma,	Sum(If(Tipo='C',cant,-cant)) as si,cast(0000000.00 as decimal(12,2))  As compras,cast(000000.00 as decimal(12,2)) As ventas
-		   From fe_rcom as z
-		   inner join fe_kar as d  on  d.idauto=z.idauto
-		   Where z.acti='A' AND z.fech<='<<fii>>' and tdoc not in('GI','20') group By idart)
-		   as x group by x.coda) as q
-		   inner join fe_art as b ON b.idart=q.coda where  si<>0 or compras<>0 or ventas<>0  order by b.descri
+		   Select idart as coda,z.alma,if(tipo='C',cant,-cant) as si,cast(0000000.00 as decimal(12,2))  As compras,cast(000000.00 as decimal(12,2)) As ventas
+		   From fe_kar as z inner join fe_rcom as y  on  y.idauto=z.idauto Where z.acti='A' and y.acti='A' AND
+		   y.fech<'<<fi>>'  AND  y.tcom<>'T' and tdoc not in('GI','20'))
+		   as x group by x.coda) as q  
+		   inner join fe_art as b ON b.idart=q.coda 
+		   INNER JOIN `fe_mar` AS m ON (b.`idmar`=m.`idmar`)
+		   INNER JOIN fe_cat AS ca ON (b.`idcat`=ca.`idcat`)
+		   INNER JOIN fe_grupo AS g ON (ca.`idgrupo`=g.`idgrupo`)
+		   where  si<>0 or compras<>0 or ventas<>0  order by b.descri
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -219,13 +241,10 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		Return 1
 	Endif
 	Endfunc
-******************
 	Function CalCularStockContable()
 	Local cur As String
 	lC = 'CalcularStock1'
-	cur = ""
-	lp = ""
-	If This.EJECUTARP(lC, lp, cur) < 1 Then
+	If This.EJECUTARP(lC, "", "") < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1121,7 +1140,6 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 					m.nindice=Ascan(_Screen.tiendas,nh)
 					nfila=Asubscript(_Screen.tiendas,m.nindice,1)
 					Crazon = 'Salida A ' +Iif(m.nindice > 0, _Screen.tiendas[m.nfila,2], "")
-* Iif(Val(Kardex.Ndo2) > 0, IIF(kardex.alma=VAL(kardex.ndo2),_Screen.tiendas[kardex.codt,2],_Screen.tiendas[val(Kardex.Ndo2),2]),"")
 				Else
 					Crazon = Kardex.Cliente
 				Endif
@@ -2459,15 +2477,111 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function calcularstockxsysg(Ccursor)
 	dff=Cfechas(This.Fecha)
-	TEXT TO lc NOSHOW TEXTMERGE
-	  select b.descri AS descr,b.unid,alma,a.idart AS nreg,a.idart
-      FROM (SELECT a.idart,SUM(IF(tipo='C',cant,-cant)) AS alma FROM fe_kar AS a
-      INNER JOIN fe_rcom AS c ON c.idauto=a.idauto
-      WHERE c.fech<='<<dff>>' AND a.acti<>'I' AND c.acti<>'I'  and c.rcom_ccaj<>'C'  GROUP BY a.idart) AS a
-      INNER JOIN fe_art AS b ON a.idart=b.idart
-      WHERE b.prod_acti<>'I' ORDER BY b.descri
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	If This.calcularcostospromedio()<1 Then
+		Return 0
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	  \select b.descri AS descr,b.unid,alma,a.idart
+      \FROM (SELECT a.idart,SUM(IF(tipo='C',cant,-cant)) AS alma FROM fe_kar AS a
+      \INNER JOIN fe_rcom AS c ON c.idauto=a.idauto
+      \WHERE c.fech<='<<dff>>' AND a.acti<>'I' AND c.acti<>'I'  and c.rcom_ccaj<>'C'  GROUP BY a.idart) AS a
+      \INNER JOIN fe_art AS b ON a.idart=b.idart
+      \WHERE b.prod_acti<>'I'
+	If This.tipro='C'
+         \ and b.tipro='C'
+	Endif
+      \ORDER BY b.descri
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Select a.Descr, a.Unid, a.alma, Iif(!Isnull(x.costo), x.costo, 0) As costo, Iif(!Isnull(x.costo), Round(x.costo * a.alma, 2), 0) As valor,a.idart From ;
+		(m.Ccursor)  As a Left Join costos As x On x.idart = a.idart Where alma <> 0 Into Cursor (m.Ccursor)
+	Return 1
+	Endfunc
+	Function calcularcostospromedio()
+	Df=Cfechas(This.dfi)
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	TEXT TO lc NOSHOW textmerge
+	  select a.idart,cant,if(tipo='C',a.prec*if(d.mone<>'S',d.dolar,1),1) as precio,tipo from fe_kar as a
+	  inner join fe_rcom as d ON(d.idauto=a.idauto)
+	  where a.acti<>'I' and d.acti<>'I' and d.tcom<>'T' and d.fech<'<<df>>' and a.idart>0  order by a.idart,d.fech,a.tipo
 	ENDTEXT
-	If This.ejecutaconsulta(lC,Ccursor)<1 Then
+	If This.EJECutaconsulta(lC,"invec")<1
+		Return 0
+	Endif
+	Select idart,Precio As costo From invec Where idart=-1 Into Cursor costos Readwrite
+	Select invec
+	Do While !Eof()
+		Store 0 To sa_to,cost,nsaldo,saldo
+		xcoda=invec.idart
+		Store 0 To xcant,xprec,toti,xdebe
+		Do While !Eof() And invec.idart=xcoda
+			If invec.Tipo="V"
+				saldo=saldo-cant
+				sa_to=sa_to-(cost*cant)
+			Else
+				saldo=saldo+cant
+				xprec=invec.Precio
+				If xprec=0  Then
+					xprec=cost
+				Endif
+				toti=toti+(Iif(invec.cant=0,1,invec.cant)*xprec)
+				xdebe=Round(Iif(invec.cant=0,1,invec.cant)*xprec,2)
+				If saldo<0 Then
+					If invec.cant<>0 Then
+
+						sa_to=Round(saldo*xprec,2)
+					Else
+						sa_to=sa_to+xdebe
+					Endif
+				Else
+					If sa_to<0 Then
+						sa_to=Round(saldo*xprec,2)
+					Else
+						If sa_to=0 Then
+							sa_to=Round(saldo*xprec,2)
+						Else
+							sa_to=Round(sa_to+xdebe,2)
+						Endif
+					Endif
+				Endif
+				If toti<>0 Then
+					cost=Iif(saldo<>0,Round(sa_to/saldo,4),xprec)
+				Endif
+				If cost=0 Then
+					cost=xprec
+				Endif
+			Endif
+			Skip
+		Enddo
+		If saldo<>0 Then
+			Insert Into costos(idart,costo)Values(xcoda,cost)
+		Endif
+		Select invec
+	Enddo
+	Return 1
+	Endfunc
+	Function consultarmvtosinventariopermanenteValorizado(dfi,dff,ccursor)
+	ff=cfechas(dff)
+	TEXT TO lc NOSHOW TEXTMERGE
+		select b.fech,b.ndoc,b.tdoc,a.tipo,a.cant,ROUND(a.prec,2) as prec,b.mone,b.idcliente,c.razo as cliente,b.idprov,e.razo as proveedor,
+		b.dolar as dola,b.vigv as igv,b.idauto,a.idkar,a.idart
+		from fe_kar as a
+		inner join fe_rcom as b ON(b.idauto=a.idauto)
+		left JOIN fe_prov as e ON (e.idprov=b.idprov)
+		LEFT JOIN fe_clie as c  ON (c.idclie=b.idcliente)
+		WHERE b.fech<='<<ff>>' and a.acti='A' and b.acti='A' and b.tcom<>'T' and b.tdoc not in("20","GI")
+		OrDER BY b.fech,a.tipo,b.tdoc,b.ndoc
+	ENDTEXT
+	If This.EJECutaconsulta(lC,ccursor)<1 Then
 		Return 0
 	Endif
 	Return 1

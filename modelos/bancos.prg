@@ -19,6 +19,13 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	idb = 0
 	nserie = 0
 	Cmoneda = ""
+	ctipo=""
+	idserie=0
+	nsgte=0
+	nidauto=0
+	devolucion=''
+	dfi=Date()
+	dff=Date()
 	Function ReporteBancos(dfi, dff, ccta, Calias)
 	Local lC
 	f1 = Cfechas(dfi)
@@ -34,6 +41,28 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	   left join fe_prov as n on n.idprov=a.cban_idpr
 	   inner join fe_plan as c on c.idcta=a.cban_idct
 	   where a.cban_acti='A' AND a.cban_fech between '<<f1>>' and '<<f2>>'  and a.cban_idba=<<cta>> order by a.cban_fech,tipo,a.cban_ndoc
+	ENDTEXT
+	If This.EJECutaconsulta(lC, Calias) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ReporteBancospsysn(Calias)
+	Local lC
+	f1 = Cfechas(This.dfi)
+	f2 = Cfechas(This.dff)
+	TEXT To lC Noshow Textmerge
+	   select a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,if(a.cban_debe>0,ifnull(m.razo,''),ifnull(n.razo,'')) as razon,
+	   a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,a.cban_dola as dolar,cban_tran,
+	   cban_ttra as ttra,if(cban_debe<>0,'I','S') as tipo,cban_devo,d1.razo AS devo1,d2.`razo` AS devo2
+	   from fe_cbancos as a
+	   inner join fe_mpago as b on b.pago_idpa=a.cban_idmp
+	   left join fe_clie as m on m.idclie=a.cban_idcl
+	   left join fe_prov as n on n.idprov=a.cban_idpr
+	   inner join fe_plan as c on c.idcta=a.cban_idct
+	   LEFT JOIN fe_prov AS d1 ON d1.`idprov`=a.`cban_idpr`
+	   LEFT JOIN fe_clie AS d2 ON d2.`idclie`=a.`cban_idcl`
+	   where a.cban_acti='A' AND a.cban_fech between '<<f1>>' and '<<f2>>'  and a.cban_idba=<<this.idcta>> order by a.cban_fech,tipo,a.cban_ndoc
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
@@ -329,26 +358,32 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Return nid
 	Endfunc
 	Function IngresaDatosLCajabancos()
-	lC = 'FUNIngresaCajaBancos2'
 	cur = "Xn"
 	goApp.npara1 = This.idcta
 	goApp.npara2 = This.dFecha
 	goApp.npara3 = This.cope
 	goApp.npara4 = This.nmpago
 	goApp.npara5 = This.cdeta
-	goApp.npara6 = 0
+	goApp.npara6 = This.idprov
 	goApp.npara7 = This.idcliE
 	goApp.npara8 = This.cndoc
 	goApp.npara9 = This.idcta1
 	goApp.npara10 = This.ndebe
 	goApp.npara11 = This.nhaber
 	goApp.npara12 = This.norden
-	goApp.npara13 = This.idcliE
+	goApp.npara13 = 0
 	goApp.npara14 = This.ndolar
-	TEXT To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-	ENDTEXT
+	If This.devolucion='S' Then
+		TEXT To lp Noshow
+        (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+		ENDTEXT
+		lC = 'FUNIngresaCajaBancosD'
+	Else
+		TEXT To lp Noshow
+        (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+		ENDTEXT
+		lC = 'FUNIngresaCajaBancos2'
+	Endif
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1  Then
 		Return 0
@@ -367,8 +402,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	This.idcta = This.idcta
 	This.ndolar = fe_gene.dola
 	This.nmpago = 1
-	ocorr.Nsgte = series.nume
-	ocorr.Idserie = series.Idserie
+	ocorr.nsgte = series.nume
+	ocorr.idserie = series.idserie
 	ocajae.ndolar = fe_gene.dola
 	ocajae.nidusua = goApp.nidusua
 	ocajae.Cmoneda = This.Cmoneda
@@ -376,7 +411,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	odiario.nttd = 0
 	odiario.ntth = 0
 	odiario.cTdoc = ""
-	odiario.niDAUTO = 0
+	odiario.nidauto = 0
 	odiario.nidprovision = 0
 	odiario.nidclie = 0
 	odiario.nidprov = 0
@@ -391,7 +426,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Scan All
 		ocajae.dFecha = ctas.Fecha
 		This.dFecha=ctas.Fecha
-		cdcto = Right("0000" + Alltrim(Str(This.nserie)), 3) + Right('000000000' + Alltrim(Str(ocorr.Nsgte)), 7)
+		cdcto = Right("0000" + Alltrim(Str(This.nserie)), 3) + Right('000000000' + Alltrim(Str(ocorr.nsgte)), 7)
 		If ctas.Importe > 0 Then
 			If ctas.idcta = fe_gene.gene_idca Then
 				ocajae.cdetalle = "Ret. y Dep. a la Cuenta:" + Alltrim(This.ctab)
@@ -489,7 +524,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 						odiario.ndebe = provi.debe
 						odiario.nhaber = provi.haber
 						odiario.cglosa = Alltrim(provi.Detalle) + ' ' + m.cdcto
-						odiario.Ctipo = provi.Tipo
+						odiario.ctipo = provi.Tipo
 						odiario.cndoc = m.cnume
 						odiario.ccond = provi.cond
 						odiario.Nitem = m.ni
@@ -512,7 +547,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 			Sw = 0
 			Exit
 		Endif
-		ocorr.Nsgte =	ocorr.Nsgte + 1
+		ocorr.nsgte =	ocorr.nsgte + 1
 	Endscan
 	If  Sw = 0 Then
 		This.DEshacerCambios()
@@ -537,6 +572,108 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	If This.EJECutaconsulta(lC,Ccursor)<1 Then
 		Return 0
 	Endif
+	Return 1
+	Endfunc
+	Function registradepositos()
+	Set Procedure To d:\capass\modelos\correlativos Additive
+	ocorr = Createobject("correlativo")
+	lC='FUNIngresaCajaBancos1'
+	cur="Xn"
+	goApp.npara1=This.idcta
+	goApp.npara2=This.dFecha
+	goApp.npara3=This.cope
+	goApp.npara4=This.nmpago
+	goApp.npara5=This.cdeta
+	goApp.npara6=0
+	goApp.npara7=This.idcliE
+	goApp.npara8=This.cndoc
+	goApp.npara9=This.idcta1
+	goApp.npara10=This.ndebe
+	goApp.npara11=This.nhaber
+	goApp.npara12=This.norden
+	goApp.npara13=This.idcliE
+	goApp.npara14=This.ctipo
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+	ENDTEXT
+	If This.iniciatransaccion()<1 Then
+		Return 0
+	Endif
+	nid=This.EJECUTARf(lC,lp,cur)
+	If nid<1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	ocorr.Ndoc = This.cndoc
+	ocorr.nsgte = This.nsgte
+	ocorr.idserie = This.idserie
+	If ocorr.GeneraCorrelativo() < 1 Then
+		This.Cmensaje=ocorr.Cmensaje
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios()<1 Then
+		Return 0
+	Endif
+	This.Cmensaje='Ok'
+	Return 1
+	Endfunc
+	Function listardepositosporcliente(nidcl,Ccursor)
+	TEXT TO lc NOSHOW TEXTMERGE
+	SELECT a.banc_nomb as banco,b.ctas_ctas as numerocta,cban_fech,cban_nume,c.razo,cban_debe as impo,
+	ifnull(acta,cast(0 as unsigned)) as acta,cban_idcl,cban_idco,cban_ndoc FROM fe_cbancos as d
+	inner join fe_ctasb as b on b.ctas_idct=d.cban_idba
+	inner join fe_bancos as a on a.banc_idba=b.ctas_idba
+	inner join fe_clie as c on c.idclie=d.cban_idcl
+	left join (select sum(acta) as acta,cred_idcb from fe_cred where acti='A' and acta>0 and cred_idcb>0 group by cred_idcb )as x on x.cred_idcb=d.cban_idco
+	where cban_acti='A'  and cban_tipo='P' and cban_idcl=<<m.nidcl>> order by cban_debe
+	ENDTEXT
+	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function registraingresoscontarjetas()
+	Set Procedure To d:\capass\modelos\correlativos Additive
+	ocorr = Createobject("correlativo")
+	If ocorr.buscarseries(Alltrim(_Screen.seriebcos),'LC','serieb')<1 Then
+		This.Cmensaje=ocorr.Cmensaje
+		Return 0
+	Endif
+	cserie=Right("000"+Alltrim(_Screen.seriebcos),3)
+	cnumero=Right("00000000"+Alltrim(Str(serieb.nume)),7)
+	This.nsgte=serieb.nume
+	This.idserie=serieb.idserie
+	lC='ProIngresaTrajetaBancos'
+	cur="Xn"
+	goApp.npara1=This.idcta
+	goApp.npara2=This.dFecha
+	goApp.npara3=This.cope
+	goApp.npara4=This.nmpago
+	goApp.npara5=This.cdeta
+	goApp.npara6=0
+	goApp.npara7=This.idcliE
+	goApp.npara8=m.cserie+m.cnumero
+	goApp.npara9=This.idcta1
+	goApp.npara10=This.ndebe
+	goApp.npara11=This.nhaber
+	goApp.npara12=This.norden
+	goApp.npara13=This.nidauto
+	goApp.npara14=This.ctipo
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+	ENDTEXT
+	If This.EJECUTARP(lC,lp,cur)<1 Then
+		Return 0
+	Endif
+	ocorr.Ndoc = m.cserie+m.cnumero
+	ocorr.nsgte = This.nsgte
+	ocorr.idserie = This.idserie
+	If ocorr.GeneraCorrelativo1() < 1 Then
+		This.Cmensaje=ocorr.Cmensaje
+		Return 0
+	Endif
+	This.Cmensaje='Ok'
 	Return 1
 	Endfunc
 Enddefine

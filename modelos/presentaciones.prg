@@ -14,9 +14,9 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 	Text To lp Noshow Textmerge
 	    SELECT a.pres_desc,CAST(IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)) AS DECIMAL(10,4)) AS epta_cost,b.epta_marg,
 		CAST(ROUND(IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant))*(1+(epta_marg/100)),0.5) AS DECIMAL(10,2)) AS epta_prec,
-		CAST(CEILING((IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)))*(1+(epta_marg/100))*10)/10 AS DECIMAL(10,2)) AS epta_preciox,
 		epta_mcor,
 		CAST(CEILING((IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)))*(1+(epta_mcor/100))*10)/10 AS DECIMAL(10,2)) AS epta_pcor,
+		CAST(CEILING((IF(p.tmon='S',(((p.prec*g.igv)+prod_flet)*epta_cant),(((p.prec*g.igv*g.dola)+prod_flet)*epta_cant)))*(1+(epta_marg/100))*10)/10 AS DECIMAL(10,2)) AS epta_preciox,	
 		ROUND(epta_comi*100,3) AS epta_comi,epta_list,
 		IF(b.epta_mone='S',ROUND(b.epta_cost/((100-g.pmvtas)/100),2),ROUND((b.epta_cost*g.dola)/((100-g.pmvtas)/100),2)) AS precio1,
 		IF(b.epta_mone='S',b.epta_cost,ROUND(b.epta_cost*g.dola,2)) AS costo,

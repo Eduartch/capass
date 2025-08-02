@@ -1,0 +1,1 @@
+Define Class guiaremisionxintinerante As GuiaRemision Of 'd:\capass\modelos\guiasremision'

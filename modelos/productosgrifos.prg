@@ -18,7 +18,7 @@ Define Class productosgrifos As producto  Of 'd:\capass\modelos\productos.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function consultarkardexproductogrifos(ccoda,dfechai,dfechaf,calmacen,ccursor)
+	Function consultarkardexproductogrifos(ccoda,dfechai,dfechaf,nalma,ccursor)
 	SET TEXTMERGE on
 	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
 	   \SELECT '' as nped,d.ndo2,d.fech,d.ndoc,d.tdoc,a.tipo,d.mone as cmoneda,a.cant,d.fusua,ifnull(g.nomb,'') as usua1,

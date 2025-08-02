@@ -1,8 +1,8 @@
 Define Class appsysven As Odata Of 'd:\capass\database\data.prg'
 	Function dATOSGLOBALES(Ccursor)
-	Text To lC Noshow
+	TEXT To lC Noshow
       SELECT * FROM fe_gene WHERE idgene=1 limit 1
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta( lC, (Ccursor) ) < 1
 		Return 0
 	Endif
@@ -24,6 +24,24 @@ Define Class appsysven As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Strtofile (cdata, rutajson)
 	goApp.datosg = 'S'
+	Return 1
+	Endfunc
+	Function cambiaestadoenviocpe(ecpe)
+	TEXT TO cupdate NOSHOW TEXTMERGE
+         UPDATE fe_gene SET gene_cpea='<<ecpe>>',gene_nres=1,gene_nbaj=1 WHERE idgene=1
+	ENDTEXT
+	If This.Ejecutarsql(cupdate)<1
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function settearctabancos(nidcta,nserie)
+	TEXT TO cupdate NOSHOW TEXTMERGE
+         UPDATE fe_gene SET gene_ibco=<<nidcta>>,gene_sban=<<nserie>> WHERE idgene=1
+	ENDTEXT
+	If This.Ejecutarsql(cupdate)<1
+		Return 0
+	Endif
 	Return 1
 	Endfunc
 Enddefine

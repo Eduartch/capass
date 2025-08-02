@@ -21,15 +21,20 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 	m.lC		 = 'ProMuestraTransportista'
 	goApp.npara1 = m.np1
 	goApp.npara2 = m.np2
-	Text To m.lp Noshow
+	TEXT To m.lp Noshow
      (?goapp.npara1,?goapp.npara2)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(m.lC, m.lp, m.ccur) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function VAlidar()
+	If Type('oempresa') = 'U' Then
+		m.cnruc='fe_gene.nruc'
+	Else
+		m.cnruc=oempresa.nruc
+	Endif
 	Do Case
 	Case Len(Alltrim(This.nombre)) = 0
 		This.Cmensaje = "Ingrese Nombre de Transportista"
@@ -38,13 +43,19 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 		This.Cmensaje = "Ruc NO Válido"
 		Return 0
 	Case !Empty(This.Placa) And Len(Alltrim(This.Placa)) < 5
-		This.Cmensaje = 'Placa No Válida'
+		This.Cmensaje = 'Número de Placa NO Válida'
 		Return 0
-	Case This.cmodo = 'N' And !Empty(This.Placa)
-		If This.buscarplaca() < 1 Then
-			Return 0
-		Endif
-		Return 1
+	Case Empty(This.Placa) AND !EMPTY(this.placa1)
+		This.Cmensaje = 'Se debe registrar la Placa del vehiculo como Principal '
+		Return 0	
+	Case This.Ruc=m.cnruc And This.TipoT='01'
+		This.Cmensaje='El Transportista debe ser Privado'
+		Return 0
+*!*		Case This.cmodo = 'N' And !Empty(This.Placa)
+*!*			If This.buscarplaca() < 1 Then
+*!*				Return 0
+*!*			Endif
+*!*			Return 1
 	Otherwise
 		Return 1
 	Endcase
@@ -56,13 +67,13 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 	Endif
 	m.lC		 = 'FUNCREATRANSPORTISTA'
 	If This.activofijo = 'S' Then
-		Text To lp Noshow Textmerge
+		TEXT To lp Noshow Textmerge
     ('<<this.placa>>','<<this.nombre>>','<<this.direccion>>','<<this.ruc>>','<<this.chofer>>','<<this.brevete>>','<<this.marca>>','<<this.registromtc>>',<<goapp.nidusua>>,'<<this.placa1>>','<<this.tipot>>','<<this.constancia>>',<<this.npropio>>)
-		Endtext
+		ENDTEXT
 	Else
-		Text To lp Noshow Textmerge
+		TEXT To lp Noshow Textmerge
     ('<<this.placa>>','<<this.nombre>>','<<this.direccion>>','<<this.ruc>>','<<this.chofer>>','<<this.brevete>>','<<this.marca>>','<<this.registromtc>>',<<goapp.nidusua>>,'<<this.placa1>>','<<this.tipot>>','<<this.constancia>>')
-		Endtext
+		ENDTEXT
 	Endif
 	nidt = This.EJECUTARf(lC, lp, 'trax')
 	If nidt < 1 Then
@@ -76,13 +87,13 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 	Endif
 	m.lC		 = 'PROACTUALIZATRANSPORTISTA'
 	If This.activofijo = 'S' Then
-		Text To lp Noshow Textmerge
+		TEXT To lp Noshow Textmerge
     ('<<this.placa>>','<<this.nombre>>','<<this.direccion>>','<<this.ruc>>','<<this.chofer>>','<<this.brevete>>','<<this.marca>>','<<this.registromtc>>',<<this.idtr>>,'<<this.placa1>>','<<this.tipot>>','<<this.constancia>>',<<this.npropio>>)
-		Endtext
+		ENDTEXT
 	Else
-		Text To lp Noshow Textmerge
+		TEXT To lp Noshow Textmerge
     ('<<this.placa>>','<<this.nombre>>','<<this.direccion>>','<<this.ruc>>','<<this.chofer>>','<<this.brevete>>','<<this.marca>>','<<this.registromtc>>',<<this.idtr>>,'<<this.placa1>>','<<this.tipot>>','<<this.constancia>>')
-		Endtext
+		ENDTEXT
 	Endif
 	If This.EJECUTARP(lC, lp) < 1 Then
 		Return 0
@@ -143,9 +154,9 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function buscarplaca()
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
         select placa FROM fe_tra WHERE placa='<<This.Placa>>' AND ructr='<<this.ruc>>' limit 1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif

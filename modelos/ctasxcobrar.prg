@@ -1,5 +1,6 @@
 Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Tienda = 0
+	ninic=0
 	chkTIENDA = 0
 	cformapago = ""
 	chkformapago = 0
@@ -34,6 +35,16 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	dff = Date()
 	tipopago = ""
 	solocontable = ""
+	Function Actualizardatos(idcreditos,objeto)
+	TEXT To lC Noshow Textmerge
+         UPDATE fe_cred SET ndoc='<<objeto.cdcto>>',tipo='<<objeto.ctipo>>',banc='<<objeto.cdeta>>',fevto='<<objeto.dfevto>>',fech='<<objeto.dfecha>>'  WHERE idcred=<<idcreditos>>
+	ENDTEXT
+	If This.Ejecutarsql(lC) < 1
+		Return 0
+	ENDIF
+	this.cmensaje='Ok'
+	Return 1
+	Endfunc
 	Function mostrarpendientesxcobrar(nidclie, Ccursor)
 	TEXT To lC Noshow Textmerge
 		SELECT `x`.`idclie`,		`x`.`razo`      AS `razo`,
@@ -142,7 +153,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function vlineacredito(ccodc, nmonto, nlinea)
-	Ccursor = Sys(2015)
+	Ccursor = 'c_'+Sys(2015)
 	lC = "FUNVERIFICALINEACREDITO"
 	goApp.npara1 = ccodc
 	goApp.npara2 = nmonto
@@ -150,7 +161,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
 	ENDTEXT
-	Sw = This.EJECUTARf(lC, lp, (Ccursor))
+	Sw = This.EJECUTARf(lC, lp, Ccursor)
 	If Sw < 0 Then
 		Return 0
 	Endif
@@ -173,15 +184,14 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Select (Ccursor)
-*WAIT WINDOW impsoles
-*WAIT WINDOW nmonto
-	If impsoles < 0 Then
-		Anticipos = Abs(impsoles)
+	nimporte=Iif(Isnull(impsoles),0,impsoles)
+	If m.nimporte < 0 Then
+		Anticipos = Abs(m.nimporte)
 	Else
-		Anticipos = impsoles
+		Anticipos = m.nimporte
 	Endif
-	If nmonto > Anticipos Then
-		This.Cmensaje = 'Saldo No Disponible :' + Alltrim(Str(Anticipos, 12, 2))
+	If nmonto > m.Anticipos Then
+		This.Cmensaje = 'Saldo NO Disponible :' + Alltrim(Str(m.Anticipos, 12, 2))
 		Return 0
 	Endif
 	Return 1
@@ -345,7 +355,6 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return Sw
 	Endfunc
 	Function CancelaCreditosanticipos()
-*cndoc, nacta, cesta, cmone, cb1, dFech, dfevto, Ctipo, nctrl, cnrou, nidrc, cpc, nidus, NidAnticipo
 	lC = "FUNINGRESAPAGOSCREDITOSANTICIPOS"
 	Ccursor = "nidp"
 	goApp.npara1 = This.cndoc
@@ -642,9 +651,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	\v.importe,v.fevto,`v`.`rcre_idrc` As `rcre_idrc`,`rr`.`rcre_fech` As `fech`,
 	\`rr`.`rcre_idau` As `Idauto`,rcre_codv As idven,ifnull(`vv`.`nomv`,'')  As `nomv`,
 	\ ifnull(`cc`.`ndoc`,"") As `docd`, ifnull(`cc`.`tdoc`,'') As `tdoc`, a.`ndoc`,
-	\`a`.`mone` ,`a`.`banc` ,a.situa,rr.rcre_impc,
-	\`a`.`tipo` ,`a`.`dola`      As `dola`,rcre_codt,
-	\`a`.`nrou`,`a`.`banco` ,
+	\`a`.`mone` ,`a`.`banc` ,a.situa,rr.rcre_impc,`a`.`tipo` ,`a`.`dola`      As `dola`,rcre_codt,`a`.`nrou`,`a`.`banco` ,
 	\`a`.`idcred`,a.fech As fepd,v.Ncontrol,a.estd,a.ndoc,v.rcre_idrc,a.Impo As impoo
 	\From (
 	\Select Ncontrol,rcre_idrc,rcre_idcl,Max(`c`.`fevto`) As `fevto`,Round(Sum((`c`.`Impo` - `c`.`acta`)),2) As `importe` From
@@ -908,14 +915,14 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function resumenctasxcobrar(dfecha,Ccursor)
+	Function resumenctasxcobrar(dFecha,Ccursor)
 	If !Pemstatus(goApp, 'cdatos', 5)
 		AddProperty(goApp, 'cdatos', '')
-	ENDIF
-	IF this.idsesion>0 then
-	   SET DATASESSION TO this.idsesion
-	ENDIF    
-	df=cfechas(dfecha)
+	Endif
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Df=Cfechas(dFecha)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\SELECT c.nruc,c.razo AS proveedor,c.idclie AS codp,a.mone,SUM(IF(a.mone='S',saldo,0)) AS tsoles,SUM(IF(a.mone='D',saldo,0)) AS tdolar,
@@ -944,6 +951,120 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
+	Return 1
+	Endfunc
+	Function calcularSaldocliente(Ccursor)
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC = 'PROCALCULARSALDOSCLIENTE'
+	TEXT To lp NOSHOW TEXTMERGE
+	     (<<this.nidclie>>)
+	ENDTEXT
+	If This.ejecutarp(lC, lp,Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresaCabeceraCreditos()
+	lC='FUNINGRESARCREDITOS'
+	goApp.npara1 = This.Idauto
+	goApp.npara2 = This.nidclie
+	goApp.npara3 = This.dFech
+	goApp.npara4 = This.Codv
+	goApp.npara5 =This.nimpo
+	goApp.npara6 = goApp.nidusua
+	goApp.npara7 =This.Tienda
+	goApp.npara8 = This.ninic
+	goApp.npara9 = Id()
+	TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
+	ENDTEXT
+	nid = This.EJECUTARf(lC, lp, 'nidp')
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function IngresaDcreditos(obj)
+*dFecha,dfevto,nimpo,cndoc,cest,Cmon,crefe,Ctipo,id1,nidus
+	lC='FUNINGRESAdCREDITOS'
+	goApp.npara1 = obj.fecha
+	goApp.npara2 = obj.dfevto
+	goApp.npara3 = obj.nimpo
+	goApp.npara4 = obj.cndoc
+	goApp.npara5 =obj.Cestado
+	goApp.npara6 =obj.Cmoneda
+	goApp.npara7 = obj.cdetalle
+	goApp.npara8 = obj.Ctipo
+	goApp.npara9 = obj.nidrc
+	goApp.npara10 = goApp.nidusua
+	TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
+	ENDTEXT
+	nid = This.EJECUTARf(lC, lp, 'dcreditos')
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function registracreditosconcuotas()
+	obj=Createobject("empty")
+	AddProperty(obj,'fecha',Date())
+	AddProperty(obj,'dfevto',Date())
+	AddProperty(obj,'nimpo',0)
+	AddProperty(obj,'cndoc',"")
+	AddProperty(obj,'cestado',"")
+	AddProperty(obj,'cmoneda',"")
+	AddProperty(obj,'cdetalle',"")
+	AddProperty(obj,'ctipo',"")
+	AddProperty(obj,'nidrc',0)
+	AddProperty(obj,'nidusua',goApp.nidusua)
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	If This.IniciaTransaccion()<1 Then
+		Return 0
+	Endif
+	nidrc=This.IngresaCabeceraCreditos()
+	If m.nidrc<1 Then
+		This.DEshacerCambios()
+		Return
+	Endif
+	Sw=1
+	Select tmpd
+	Go Top
+	Do While !Eof()
+		ccimporte=retcimporte(tmpd.Impo,Left(.cmbmoneda.Value,1))
+		crefe=Iif(Empty(.referencia),tmpd.detalle,.referencia)
+*REPLACE cimporte WITH ccimporte,razo WITH crazo,nruc WITH cnruc,dire WITH cdire,ciud WITH cciud,fono WITH cfono,;
+anombre WITH .txtanombre.Value,adire WITH .txtadireccion.Value,afono WITH .txtafono.Value,;
+anruc WITH .txtanruc.Value,dni WITH cdni IN tmpd
+		x=x+1
+		obj.fecha=This.dFech
+		obj.dfevto=tmpd.fevto
+		obj.nimpo=tmpd.Impo
+		obj.cndoc=tmpd.ndoc
+		obj.Cestado='C'
+		obj.Cmoneda='S'
+		obj.cdetalle=m.crefe
+		obj.Ctipo=This.Ctipo
+		obj.nidrc=m.nidrc
+		If This.IngresaDcreditos(obj)<1 Then
+			Sw=0
+			Exit
+		Endif
+		Select tmpd
+		Skip
+	Enddo
+	If Sw=0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If 	This.GRabarCambios()<1 Then
+		Return 0
+	Endif
+	This.Cmensaje='Ok'
 	Return 1
 	Endfunc
 Enddefine

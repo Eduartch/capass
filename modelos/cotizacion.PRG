@@ -35,6 +35,8 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	nmes = 0
 	Naño = 0
 	solomoneda = 0
+	calias=""
+	tipocot=""
 	Function cambiaestadocotizacion(nid, estado)
 	Local lC
 	Do Case
@@ -53,17 +55,17 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function CreatemporalCotizaciones(Calias)
+	Function CreatemporalCotizaciones(calias)
 	Create Cursor Precios(Precio N(8, 2), Coda N(8), iden N(1), Nitem N(3))
-	Create  Cursor (Calias) (Descri c(200), Unid c(4), cant N(10, 3), Prec N(13, 5), Nreg N(8), idco N(8), Moneda c(20), ;
+	Create  Cursor (calias) (Descri c(200), Unid c(4), cant N(10, 3), Prec N(13, 5), Nreg N(8), idco N(8), Moneda c(20), ;
 		Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Coda N(8), Valida c(1), pos N(5), costo N(13, 8), pre1 N(8, 2), Pre2 N(8, 2), Pre3 N(8, 2), ;
 		uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), calma c(5), aprecios c(1), come N(7), a1 c(15), idped N(10), valida1 c (1), permitido N(1), ;
 		Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), Detalle c(180), ;
 		nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), pmenor N(8, 2), pmayor N(8, 2), ;
 		Contacto c(120), Transportista c(120), dire1 c(120), fono1 c(20), dias N(2), Vendedor c(100), tipro c(1), Item N(4), ;
 		codc N(6), razon c(120), fech d, Cod c(20), orden N(3), coda1 c(15), pre0 N(13, 8), cantoferta N(10, 2), Precio1 N(13, 8), Tdoc c(2), swd N(1) Default 0, como N(7, 3), ;
-		Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), cantmayor N(8, 2),grati c(1))
-	Select (Calias)
+		Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), cantmayor N(8, 2),grati c(1),cant2 N(10,3))
+	Select (calias)
 	Index On Descri Tag Descri
 	Index On Nitem Tag Items
 	Endfunc
@@ -251,13 +253,14 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge To  Memvar lC Noshow Textmerge
     \Select a.Ndoc,a.fech,b.Descri,b.Unid,c.cant,c.Prec,Round(c.cant*c.Prec,2) As Importe,
     \ ifnull(d.razo,' ') As razo,e.nomv,a.idpcped,a.aten,a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,x.nomb As usua,
-    \ If(tipopedido='P','Proforma','Nota Pedido') As tipopedido,a.IDautoP,a.fecho,a.rped_mone As Mone,
-    \  a.idclie As codigo From fe_rped As a
+    \ If(tipopedido='P','Proforma','Nota Pedido') As tipopedido,a.IDautoP,a.fecho,a.rped_mone As Mone,idtienda,
+    \  a.idclie As codigo,ifnull(t.nomb,'') As tienda,ifnull(d.ciud,' ') as direccion From fe_rped As a
     \  inner Join fe_ped As c On(c.IDautoP=a.IDautoP)
     \  inner Join fe_art As b On(b.idart=c.idart)
     \  inner Join fe_vend As e On(e.idven=a.idven)
     \  Left Join fe_clie As d On(d.idclie=a.idclie)
     \  inner Join fe_usua As x On x.idusua=a.rped_idus
+    \  left join fe_sucu As t on t.idalma=a.idtienda
 	If This.nidautop > 0 Then
         \ Where  a.IDautoP=<<This.nidautop>> And c.Acti='A' And a.Acti='A'
 	Else
@@ -345,8 +348,8 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Function listarparacanjespsysb(cnumero, Ccursor)
 	TEXT To lC Noshow Textmerge Pretext 7
 	   SELECT a.dped_cost  AS costo,
-	   c.tdoc,  c.form, c.idclie , a.idart, b.prod_tigv  AS prod_tigv,  b.descri     AS descri,
-	   x.pres_desc  AS unid,  a.cant       AS cant,  a.prec,  b.premay,  b.premen     AS premen,  c.fech       AS fech,  c.idautop    AS idautop,
+	   c.tdoc,  c.form, c.idclie , a.idart, b.prod_tigv  AS prod_tigv,  b.descri,
+	   x.pres_desc  AS unid,  a.cant       AS cant,  a.prec,  b.premay,  b.premen     AS premen,  c.fech,  c.idautop    AS idautop,
 	   c.impo       AS impo,  a.dped_epta  AS dped_epta,  c.ndoc,  b.prod_idco  AS idco,  b.uno, b.dos,b.tre, b.cua,  a.dped_equi,  n.nomb       AS Usuario,  c.rped_idus  AS rped_idus,  c.idpcped    AS idpcped,  c.fecho      AS fecho,  m.nomv       AS nomv,
 	   c.idven      AS idven,  c.idtienda   AS idtienda,  c.facturado  AS facturado,  a.dped_posi  AS dped_posi,  c.aten       AS aten,  c.forma,
 	   b.prod_equi1 AS equi1,  b.prod_equi2 AS equi2,  c.plazo      AS plazo,  c.validez    AS validez,  b.premay     AS pre1,  b.premen     AS pre2,  IFNULL(b.pre3,0) AS pre3,
@@ -452,7 +455,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 				Exit
 			Endif
 			If tmpp.tipoItem = 'A' Then
-				If This.InsertarVarios(m.nidetalle,tmpp.nitem) < 1 Then
+				If This.InsertarVarios(m.nidetalle,tmpp.Nitem) < 1 Then
 					x = 0
 					Exit
 				Endif
@@ -765,10 +768,10 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function ValidaCantidadesypreciosycostos(Calias)
+	Function ValidaCantidadesypreciosycostos(calias)
 	Local Sw As Integer
 	m.Sw=1
-	Select (Calias)
+	Select (calias)
 	If Fsize("descri")>0 Then
 		campo='descri'
 	Else
@@ -803,6 +806,255 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function Grabarpsysn(Cestado)
+	Set Procedure To d:\capass\modelos\correlativos Additive
+	ocorr = Createobject("Correlativo")
+	ocorr.Nsgte = This.Nsgte
+	ocorr.Idserie = This.nIdserie
+	objdetalle=Createobject("empty")
+	AddProperty(objdetalle,'ncoda',0)
+	AddProperty(objdetalle,'ncant',0)
+	AddProperty(objdetalle,'nprec',0)
+	AddProperty(objdetalle,'nidauto',0)
+	AddProperty(objdetalle,'norden',0)
+	AddProperty(objdetalle,'ctipo','')
+	AddProperty(objdetalle,'nr',0)
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	If m.Cestado='N' Then
+		nid = This.IngresaResumencotizacion()
+		If nid < 1  Then
+			This.DEshacerCambios()
+			Return 0
+		Endif
+	Else
+		nid=This.nidautop
+		If This.ActualizaResumencotizacion()<1 Then
+			This.DEshacerCambios()
+			Return 0
+		Endif
+	Endif
+	x = 1
+	o = 1
+	Select  (This.calias)
+	Set Deleted Off
+	Go Top
+	Do While !Eof()
+		o = o + 1
+		Select (This.calias)
+		objdetalle.ncoda = Coda
+		objdetalle.ncant = cant
+		objdetalle.nprec = Prec
+		objdetalle.nidauto = nid
+		objdetalle.norden=o
+		If m.Cestado='N' Then
+			If This.ingresadetalleordenado(objdetalle)<1 Then
+				x = 0
+				Exit
+			Endif
+		Else
+			Select (This.calias)
+			If Nreg=0 Then
+				If This.ingresadetalleordenado(objdetalle)<1 Then
+					x = 0
+					Exit
+				Endif
+			Else
+				objdetalle.nr=Nreg
+				Select (This.calias)
+				If Deleted()
+					objdetalle.ctipo='A'
+					If This.ActualizaDpedidosOrdenados(objdetalle) = 0 Then
+						x = 0
+						Exit
+					Endif
+				Else
+					objdetalle.ctipo='U'
+					If This.ActualizaDpedidosOrdenados(objdetalle) <1 Then
+						x = 0
+						Exit
+					Endif
+				Endif
+			Endif
+		Endif
+		Select (This.calias)
+		Skip
+	Enddo
+	If x = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Set Deleted On
+	sx = 1
+	Set Procedure To d:\capass\modelos\autoriza Additive
+	Obj = Createobject("Autorizado")
+	Select Autorizado
+	Scan All
+		Obj.Coda = Autorizado.Coda
+		Obj.cant = Autorizado.cant
+		Obj.Prec = Autorizado.Prec
+		Obj.Prea = Autorizado.Prea
+		Obj.Unid = Autorizado.Unid
+		Obj.Idusua = Autorizado.Idusua
+		Obj.idusuaa = Autorizado.idusuaa
+		Obj.IDautoP = m.nid 
+		Obj.Idauto = 0
+		If Obj.GrabaPreciosAutorizados() < 1 Then
+			sx = 0
+			Exit
+		Endif
+	Endscan
+	If sx=0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If m.Cestado='N' Then
+		If ocorr.GeneraCorrelativo1() < 1 Then
+			This.DEshacerCambios()
+			This.Cmensaje = ocorr.Cmensaje
+			Return  0
+		Endif
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return  0
+	Endif
+	Return  1
+	Endfunc
+	Function ingresadetalleordenado(objdetalle)
+	TEXT TO lc NOSHOW TEXTMERGE
+	INSERT INTO fe_ped(idart,cant,prec,idautop,pedi_orde)VALUES(<<objdetalle.ncoda>>,<<objdetalle.ncant>>,<<objdetalle.nprec>>,<<objdetalle.nidauto>>,<<objdetalle.norden>>)
+	ENDTEXT
+	If This.Ejecutarsql(lC)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizaDpedidosOrdenados(objdetalle)
+	lC='ProActualizaDetallePedidos'
+	cur=""
+	goApp.npara1=objdetalle.ncoda
+	goApp.npara2=objdetalle.ncant
+	goApp.npara3=objdetalle.nprec
+	goApp.npara4=objdetalle.nr
+	goApp.npara5=objdetalle.ctipo
+	goApp.npara6=objdetalle.norden
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
+	ENDTEXT
+	If This.EJECUTARP(lC,lp,cur)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresaResumencotizacion()
+	lC='FUNINGRESACABECERACOTIZACION'
+	goApp.npara1 = This.dFech
+	goApp.npara2 = This.nidclie
+	goApp.npara3 = This.cndoc
+	goApp.npara4 = ''
+	goApp.npara5 = This.nTotal
+	goApp.npara6 = This.cform
+	goApp.npara7 = This.cusua
+	goApp.npara8 = Id()
+	goApp.npara9 = This.nidven
+	goApp.npara10 = This.ncodt
+	goApp.npara11 = this.tipocot
+	goApp.npara12 = ""
+	goApp.npara13 = ""
+	goApp.npara14 = ""
+	goApp.npara15 = ""
+	goApp.npara16 = ""
+	goApp.npara17 = ""
+	goApp.npara18 = This.Cmoneda
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
+	ENDTEXT
+	nid=This.EJECUTARf(lC,lp,'idcot')
+	If nid<1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function ActualizaResumencotizacion()
+	lC='PROACTUALIZACotizacion'
+	goApp.npara1 = This.dFech
+	goApp.npara2 = This.nidclie
+	goApp.npara3 = This.cndoc
+	goApp.npara4 = This.cTdoc
+	goApp.npara5 = This.nTotal
+	goApp.npara6 = This.cform
+	goApp.npara7 = This.cusua
+	goApp.npara8 = This.nidven
+	goApp.npara9 = This.ncodt
+	goApp.npara10 = 'p'
+	goApp.npara11 = ""
+	goApp.npara12 = ""
+	goApp.npara13 = ""
+	goApp.npara14 = ""
+	goApp.npara15 = ""
+	goApp.npara16 = ""
+	goApp.npara17 = "S"
+	goApp.npara18 = This.nidautop
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
+	ENDTEXT
+	If This.EJECUTARP(lC,lp,"")<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarcotizacionpsysn(cndoc,Ccursor)
+	TEXT TO lc NOSHOW TEXTMERGE
+	   SELECT  `a`.`idart`,  `b`.`descri`,  `b`.`unid`, `a`.`cant`, IFNULL(`m`.`idven`,0) AS `idven`,  IFNULL(`m`.`nomv`,'') AS `Vendedor`,
+	  `a`.`prec` , `c`.`fech`,  `c`.`idautop`,  `c`.`impo`, `c`.`ndoc`,  `c`.`aten`,  `c`.`forma`,
+	  `c`.`plazo`,  `c`.`validez`,  `c`.`entrega`,`c`.`detalle`, IFNULL(`d`.`idclie`,0) AS `idclie`,  IFNULL(`d`.`razo`,'') AS `razo`,
+	  IFNULL(`d`.`nruc`,'') AS `nruc`,  IFNULL(`d`.`dire`,'') AS `dire`,  `c`.`rped_mone`,tipopedido,ifnull(d.ndni,'') as ndni,ifnull(clie_auto,0) as clie_auto,
+	  IFNULL(`d`.`ciud`,'') AS `ciud`,  `d`.`fono`,  `d`.`fax`,  `a`.`idped`     AS `nreg`,  `a`.`pedi_orde` AS `orden`,
+	  IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv)+p.prec)*prod_uti1,((b.prec*v.igv*v.dola)+p.prec)*prod_uti1),2),0) AS pre1,
+	  IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv)+p.prec)*prod_uti2,((b.prec*v.igv*v.dola)+p.prec)*prod_uti2),2),0) AS pre2,
+	  round(if(tmon='S',(b.prec*v.igv)+p.prec,(b.prec*v.igv*v.dola)+p.prec),2) as costo,
+	  IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv)+p.prec)*prod_uti3,((b.prec*v.igv*v.dola)+p.prec)*prod_uti3),2),0) AS pre3,
+	  IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv)+p.prec)*prod_uti1,((b.prec*v.igv*v.dola)+p.prec)*prod_uti1),2),0) AS premay,
+	  IFNULL(ROUND(IF(tmon='S',((b.prec*v.igv)+p.prec)*prod_uti3,((b.prec*v.igv*v.dola)+p.prec)*prod_uti3),2),0) AS premen,prod_cod1,idtienda,
+	  b.prod_come AS come,b.prod_comc AS comc,b.uno,b.dos,b.tre,b.cua
+	  FROM `fe_ped` `a`
+	     JOIN `fe_rped` `c`  ON `c`.`idautop` = `a`.`idautop`
+	     JOIN `fe_art` `b`   ON `b`.`idart` = `a`.`idart`
+	     JOIN  fe_fletes AS p ON p.idflete=b.idflete
+	     LEFT JOIN `fe_clie` `d` ON `d`.`idclie` = `c`.`idclie`
+	     LEFT JOIN `fe_vend` `m` ON `m`.`idven` = `c`.`idven`,fe_gene AS v
+	     WHERE `a`.`acti` = 'A'  AND `c`.`acti` = 'A' AND c.ndoc='<<m.cndoc>>'  order by pedi_orde
+	ENDTEXT
+	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	FUNCTION listarpsys(Ccursor)
+	IF this.idsesion>0 then
+	   SET DATASESSION TO this.idsesion
+	ENDIF    
+	TEXT TO lc NOSHOW TEXTMERGE 
+    SELECT  `a`.`idart` ,  `b`.`descri`,  `b`.`unid` ,  `a`.`cant` AS `cant`,
+    `a`.`prec` ,  `b`.`pre1`      AS `premay`,  `b`.`pre2`      AS `premen`,  `c`.`fech` ,  `c`.`idautop`, `c`.`impo`,  `c`.`ndoc`,
+    `c`.`aten` ,  `c`.`forma`     AS `forma`,  `c`.`plazo`,  `c`.`validez`   AS `validez`,
+    `c`.`entrega`,  `c`.`detalle` ,  `d`.`idclie`    AS `idclie`,
+    `d`.`razo` ,  `d`.`nruc` ,  `d`.`dire` ,  `c`.`rped_mone`,
+    `d`.`ciud`,  `d`.`fono` ,  `d`.`fax` ,  `a`.`idped`     AS `nreg`,  `c`.`idven` 
+    FROM `fe_ped` `a` 
+    JOIN `fe_rped` `c`   ON `a`.`idautop` = `c`.`idautop`
+    JOIN `fe_art` `b`   ON `b`.`idart` = `a`.`idart`
+    LEFT JOIN `fe_clie` `d` ON `d`.`idclie` = `c`.`idclie`
+    WHERE `a`.`acti` <> 'I' AND `c`.`acti` <> 'I' and idautop=<<this.nidautop>> order by idped
+	ENDTEXT 
+	IF this.ejecutaconsulta(lc,ccursor)<1 then
+	    RETURN 0
+	ENDIF 
+	RETURN 1    
+	ENDFUNC 
 Enddefine
 
 
