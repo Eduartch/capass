@@ -1,8 +1,87 @@
-Define Class whatsapp as  Custom
-    cfono=""
-    ctexto=""
-    cdcto=""
-    cmensaje=""
+Define Class whatsapp As  Custom 
+	cfono=""
+	ctexto=""
+	cdcto=""
+	cmensaje=""
+	Function _clipboard(taFileList)
+	Local lnDataLen, lcDropFiles, llOk, i, lhMem, lnPtr, lCurData
+	#Define CF_HDROP 15
+
+	If Type(taFileList,1) != 'A'
+		lCurData = taFileList
+		Dimension taFileList(1)
+		taFileList[1] = lCurData
+	Endif
+
+*  Global Memory Variables with Compile Time Constants
+	#Define GMEM_MOVABLE 	0x0002
+	#Define GMEM_ZEROINIT	0x0040
+	#Define GMEM_SHARE		0x2000
+
+* Load required Windows API functions
+	this.LoadApiDlls()
+
+	llOk = .T.
+* Build DROPFILES structure
+	lcDropFiles = ;
+		CHR(20) + Replicate(Chr(0),3) + ; 	&& pFiles
+	Replicate(Chr(0),8) + ; 		&& pt
+	Replicate(Chr(0),8)  			&& fNC + fWide
+* Add zero delimited file list
+	For i= 1 To Alen(taFileList,1)
+* 1-D and 2-D (1st column) arrays
+		lcDropFiles = lcDropFiles + Iif(Alen(taFileList,2)=0, taFileList[i], taFileList[i,1]) + Chr(0)
+	Endfor
+* Final CHR(0)
+	lcDropFiles = lcDropFiles + Chr(0)
+	lnDataLen = Len(lcDropFiles)
+* Copy DROPFILES structure into the allocated memory
+	lhMem = GlobalAlloc(GMEM_MOVABLE+GMEM_ZEROINIT+GMEM_SHARE, lnDataLen)
+	lnPtr = GlobalLock(lhMem)
+	=CopyFromStr(lnPtr, @lcDropFiles, lnDataLen)
+	=GlobalUnlock(lhMem)
+* Open clipboard and store DROPFILES into it
+	llOk = (OpenClipboard(0) <> 0)
+	If llOk
+		=EmptyClipboard()
+		llOk = (SetClipboardData(CF_HDROP, lhMem) <> 0)
+		If Not llOk
+			=GlobalFree(lhMem)
+		Endif
+* Close clipboard
+		=CloseClipboard()
+	Endif
+	this.UnloadApiDlls()
+	Return llOk
+	Endfunc
+
+	Function LoadApiDlls
+*  Clipboard Functions
+	Declare Long OpenClipboard In WIN32API Long HWnd
+	Declare Long CloseClipboard In WIN32API
+	Declare Long EmptyClipboard In WIN32API
+	Declare Long SetClipboardData In WIN32API Long uFormat, Long Hmem
+*  Memory Management Functions
+	Declare Long GlobalAlloc 	In WIN32API Long wFlags, Long dwBytes
+	Declare Long GlobalFree 	In WIN32API Long Hmem
+	Declare Long GlobalLock 	In WIN32API Long Hmem
+	Declare Long GlobalUnlock 	In WIN32API Long Hmem
+	Declare Long RtlMoveMemory 	In WIN32API As CopyFromStr Long lpDest, String @lpSrc, Long iLen
+	Return
+	Endfunc
+
+	Function UnloadApiDlls
+	Clear Dlls OpenClipboard, ;
+		CloseClipboard, ;
+		EmptyClipboard, ;
+		SetClipboardData, ;
+		GlobalAlloc, ;
+		GlobalFree, ;
+		GlobalLock, ;
+		GlobalUnlock, ;
+		CopyFromStr
+	Return
+	Endfunc
 	Function enviarmensaje()
 *
 * Creada por Manish Swami
@@ -19,7 +98,7 @@ Define Class whatsapp as  Custom
 *!*		Parameters pcPhone, pcText, pcDocument
 	Local lhwnd, llResult, pcOldValue
 	pcOldValue = _Cliptext
-	_Cliptext = this.cdcto
+	_Cliptext = This.cdcto
 	Declare Sleep In kernel32 Integer
 	Declare Integer FindWindow In WIN32API String, String
 	Declare Integer ShowWindow In WIN32API Integer, Integer
@@ -28,12 +107,12 @@ Define Class whatsapp as  Custom
 	lhwnd = FindWindow(0, "WhatsApp")                                 && Busca la ventana WhatsApp y devulve su puntero
 	If lhwnd # 0                                                         && 0 si no fue hallada
 		oKey = Createobject("Wscript.Shell" )                         && Crea el objeto para usar el metodo SENDKEYS
-		lcCommand = "whatsapp://send?phone=" + this.cfono            && Abro el canal de CHAT
+		lcCommand = "whatsapp://send?phone=" + This.cfono            && Abro el canal de CHAT
 		= ShellExecute(0, "open", lcCommand, "", "", 0)
 		Sleep(5000)
 *!*                Como no siempre se abre la ventana con el foco en la caja de texto
 *!*                le envio un texto para poner el cursor en dicho objeto
-		lcCommand = lcCommand + "&text=" + this.ctexto
+		lcCommand = lcCommand + "&text=" + This.ctexto
 		= ShellExecute(0, "open", lcCommand, "", "", 0)                 && Envío el nuevo comando con el texto
 		Sleep(300)&& 600
 		oKey.sendKeys ("{ENTER}")
@@ -55,12 +134,12 @@ Define Class whatsapp as  Custom
 		Sleep(1000)
 		oKey.sendKeys ("{TAB}")
 		Sleep(700)
-		*!*ShowWindow (lhwnd, 11)                                && Fuerza al minimizado de la ventana
+*!*ShowWindow (lhwnd, 11)                                && Fuerza al minimizado de la ventana
 		oKey = Null
-		this.cmensaje="Enviado Ok"
+		This.cmensaje="Enviado Ok"
 		llResult = .T.
 	Else
-		this.cmensaje="Whatsapp no está disponible, abralo o instalelo"
+		This.cmensaje="Whatsapp no está disponible, abralo o instalelo"
 		llResult = .F.
 	Endif
 	Clear Dlls "Sleep", "FindWindow", "ShowWindow", "ShellExecute"

@@ -7,7 +7,6 @@ oform1.showpdf(carchivo)
 Return
 
 Define Class form1 As Form
-
 	AutoCenter = .T.
 	Height = 520
 	Width = 741

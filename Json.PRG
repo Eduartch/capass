@@ -84,11 +84,6 @@ return retval
 
 function json_getErrorMsg()
 return _json.cError
-	
-
-
-
-
 *
 * recordToJson()
 *
@@ -250,10 +245,6 @@ define class json as custom
 		endcase
 
 	return ''
-
-
-
-
 
 	*
 	* regresa un elemento representado por la cadena json que se manda

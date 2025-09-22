@@ -2,7 +2,7 @@
 Define Class sire As Custom
 	Cmensaje = ""
 	nmonto = 0
-	na = 0
+	Na = 0
 	nmes = 0
 	nruc = ""
 	cempresa = ""
@@ -14,26 +14,54 @@ Define Class sire As Custom
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	cnruc = This.nruc
+	If !Pemstatus(_Screen, 'conanuladas', 5) Then
+		AddProperty(_Screen, 'conanuladas', '')
+	Endif
+	m.existegratuito = ''
+	m.existecodt=''
+	Select registro
+	If Fsize("tgrati") > 0 Then
+		m.existegratuito = 'S'
+		ccampo = ',tgrati'
+	Else
+		ccampo = ''
+	ENDIF
+	Select registro
+	If Fsize("codt") > 0 Then
+		m.existecodt = 'S'
+		ccampo1 = ',codt'
+	Else
+		ccampo1 = ''
+	ENDIF
+	If _Screen.conanuladas = 'S' Then
+		condicion = ''
+	Else
+		If m.existegratuito = 'S' Then
+			condicion = ' And (tgrati>0 or Importe<>0)'
+		Else
+			condicion = ' And Importe <> 0'
+		Endif
+	Endif
+	Cnruc = This.nruc
 	cempresa = This.cempresa
 	Cruta = Addbs(Justpath(np1)) + np2
 	cr1	  = Cruta + '.txt'
-	Select cnruc As rucemisor, ;
-		cempresa As empresa, ;
-		Cast(Alltrim(Str(Year(fech))) + Iif(Month(fech) <= 9, '0' + Alltrim(Str(Month(fech))), Alltrim(Str(Month(fech))))  As Integer) As periodo, ;
+	Select Cnruc As rucemisor, ;
+		cempresa As Empresa, ;
+		Cast(Alltrim(Str(Year(fech))) + Iif(Month(fech) <= 9, '0' + Alltrim(Str(Month(fech))), Alltrim(Str(Month(fech))))  As Integer) As Periodo, ;
 		'' As car, ;
 		fech As fech, ;
 		''  As fvto, ;
 		Tdoc As tipocomp, ;
-		Iif(Len(Alltrim(serie)) <= 3, '0' + Trim(serie), Trim(serie)) As serie, ;
+		Iif(Len(Alltrim(Serie)) <= 3, '0' + Trim(Serie), Trim(Serie)) As Serie, ;
 		Round(Val(Ndoc), 0) As nrocomp, ;
 		'' As pagofinal, ;
 		Icase(Tdoc = '01', Iif(Left(nruc, 1) = '*', '0', '6'), ;
-		Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
-		Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
-		Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
+		  Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
+		  Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
+		  Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
 		Icase(Tdoc = '03', Iif(Empty(ndni), '' + Space(11), ndni + Space(3)), Tdoc = '01', Iif(Left(nruc, 1) = '*', '' + Space(11), nruc), Iif(Empty(nruc), ndni + Space(3), Iif(Left(nruc, 1) = '*', '' + Space(11), nruc))) As nruc, ;
-		Iif(Tdoc = '03', Iif(Empty(ndni), '' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '' + Space(40), Razo)) As cliente, ;
+		Iif(Tdoc = '03', Iif(Empty(ndni), '' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '' + Space(40), Razo)) As Cliente, ;
 		0 As exporta, ;
 		Icase(Tdoc = '07', Iif(Month(fechn) <> Month(fech), 000000.00, valorg), Tdoc = '08', Iif(Month(fechn) <> Month(fech), 000000.00, valorg), valorg)  As Base, ;
 		Icase(Tdoc = '07', Iif(Month(fechn) <> Month(fech), valorg, 000000.00), Tdoc = '08', Iif(Month(fechn) <> Month(fech), valorg, 0000000.00), 0000000.00)  As dsctoigv, ;
@@ -48,23 +76,22 @@ Define Class sire As Custom
 		0 As otros, ;
 		Importe As Total, ;
 		Iif(Mone = 'S', 'PEN', 'USD') As Mone, ;
-		Iif(dola > 0, dola, fe_gene.dola) As tipocambio, ;
+		Iif(dola > 0, dola, fe_gene.dola) As Tipocambio, ;
 		Iif(Empty(fechn), Ctod("01/01/0001"), fechn) As fechn, ;
 		Iif(Empty(tref), '00', tref) As tipon, ;
 		Iif(Empty(Left(Refe, 4)), '-' + Space(3), Iif(Len(Alltrim(Refe)) < 3, '0' + Left(Refe, 3), Left(Refe, 4))) As serien, ;
 		Iif(Empty(Refe), '-' + Space(10), Iif(Len(Alltrim(Refe)) < 3, Substr(Refe, 4), Substr(Refe, 5))) As ndocn, ;
-		'' As contrato, Mone As Moneda;
-		From registro Where Left(Razo, 5) <> '-----'    Into Cursor lreg
-*!*		And Importe <> 0	
+		'' As contrato, Mone As Moneda &ccampo &ccampo1 ;
+		From registro Where Left(Razo, 5) <> '-----'  &condicion  Into Cursor lreg
 	Select lreg
 	Set Textmerge On Noshow
 	Set Textmerge To ((cr1))
 	nl = 0
 	Scan
 		If nl = 0 Then
-       \\<<rucemisor>>|<<Trim(empresa)>>|<<periodo>>|<<''>>|<<fech>>|<<fvto>>|<<tipocomp>>|<<serie>>|<<nrocomp>>|<<''>>|<<Trim(tipodocc)>>|<<Trim(nruc)>>|<<Alltrim(cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<BaseIvap>>|<<ivap>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',tipocambio)>>|<<Iif(fechn=Ctod('01/01/0001'),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0))>>|<<''>>|
+       \\<<rucemisor>>|<<Trim(Empresa)>>|<<Periodo>>|<<''>>|<<fech>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<''>>|<<Trim(tipodocc)>>|<<Trim(nruc)>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<Iif(m.existegratuito='S',tgrati,inafecta)>>|<<isc>>|<<BaseIvap>>|<<ivap>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',Tipocambio)>>|<<Iif(fechn=Ctod('01/01/0001'),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0))>>|<<Iif(m.existecodt='S',codt,'')>>|
 		Else
-       \<<rucemisor>>|<<Trim(empresa)>>|<<periodo>>|<<''>>|<<fech>>|<<fvto>>|<<tipocomp>>|<<serie>>|<<nrocomp>>|<<''>>|<<Trim(tipodocc)>>|<<Trim(nruc)>>|<<Alltrim(cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<BaseIvap>>|<<ivap>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',tipocambio)>>|<<Iif(fechn=Ctod('01/01/0001'),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0))>>|<<''>>|
+        \<<rucemisor>>|<<Trim(Empresa)>>|<<Periodo>>|<<''>>|<<fech>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<''>>|<<Trim(tipodocc)>>|<<Trim(nruc)>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<Iif(m.existegratuito='S',tgrati,inafecta)>>|<<isc>>|<<BaseIvap>>|<<ivap>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',Tipocambio)>>|<<Iif(fechn=Ctod('01/01/0001'),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0))>>|<<Iif(m.existecodt='S',codt,'')>>|
 		Endif
 		nl = nl + 1
 	Endscan
@@ -84,7 +111,7 @@ Define Class sire As Custom
 	Else
 		Cruta = Addbs(Justpath(np1)) + np2
 	Endif
-	cnruc = This.nruc
+	Cnruc = This.nruc
 	cempresa = This.cempresa
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
@@ -95,22 +122,27 @@ Define Class sire As Custom
 	Else
 		notros = 1
 	Endif
+	If Fsize("ccost") = 0 Then
+		nccostos = 0
+	Else
+		nccostos = 1
+	Endif
 	ccuo = 'M002'
 	cr1 = Cruta + '.txt'
 	Select;
-		cnruc As rucempresa, ;
-		cempresa As empresa, ;
-		Cast(Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))  As Integer) As periodo, ;
+		Cnruc As rucempresa, ;
+		cempresa As Empresa, ;
+		Cast(Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))  As Integer) As Periodo, ;
 		'' As car, ;
 		fech As fechae, ;
 		'' As fvto, ;
 		Tdoc As tipocomp, ;
-		Iif(Tdoc = "10", '1683', Iif(Tdoc = '50', Left(Alltrim(Str(Val(serie))), 3), Iif(Len(Alltrim(serie)) <= 3, '0', '') + serie)) As serie, ;
-		Iif(Tdoc = '50', Val(This.na), 0000) As fdua, ;
+		Iif(Tdoc = "10", '1683', Iif(Tdoc = '50', Left(Alltrim(Str(Val(Serie))), 3), Iif(Len(Alltrim(Serie)) <= 3, '0', '') + Serie)) As Serie, ;
+		Iif(Tdoc = '50', Val(This.Na), 0000) As fdua, ;
 		Round(Val(Ndoc), 0) As nrocomp, ;
 		'' As n1, ;
-		6 As tipodocp, ;
-		nruc As nruc, ;
+		Iif(Tdoc = '04', 1, 6) As tipodocp, ;
+		Iif(Tdoc = '04', ndni + Space(3), nruc) As nruc, ;
 		Razo As proveedor, ;
 		valorg As Base, ;
 		igvg As igv, ;
@@ -124,7 +156,7 @@ Define Class sire As Custom
 		Iif(notros = 1, otros, notros) As otros, ;
 		Importe As Total, ;
 		Iif(Mone = 'S', 'PEN', 'USD') As Mone, ;
-		Iif(Mone = 'S', 1.000, dola) As tipocambio, ;
+		Iif(Mone = 'S', 1.000, dola) As Tipocambio, ;
 		Iif(Empty(fechn), Ctod("01/01/0001"), fechn) As fechn, ;
 		Iif(Empty(tref), '00', tref) As tipon, ;
 		Iif(Empty(Left(Refe, 4)), '-' + Space(4), Left(Refe, 4)) As serien, ;
@@ -141,20 +173,21 @@ Define Class sire As Custom
 		'' As incon, ;
 		Alltrim(ccuo) As ccuo, ;
 		Round((vigv * 100) - 100, 0) As porcigv, ;
-		Tipo,mone as moneda, ;
-		IIF(VARTYPE(Auto)='N',Alltrim(Str(Auto)),ALLTRIM(Auto)) As Auto;
+		Tipo, Mone As Moneda, ;
+		Iif(Vartype(Auto) = 'N', Alltrim(Str(Auto)), Alltrim(Auto)) As Auto, ;
+		Iif(m.nccostos = 1, ccost, m.nccostos) As Ccostos, ;
+		ncta, ;
+		ncta1;
 		From registro Where Left(Razo, 5) <> '-----'  Into Cursor lreg
-**
 	Select lreg
-*return
-	Set Textmerge On Noshow
+    Set Textmerge On Noshow
 	Set Textmerge To ((cr1))
 	nl = 0
 	Scan
 		If nl = 0 Then
-    \\<<Trim(rucempresa)>>|<<Trim(empresa)>>|<<periodo>>|<<car>>|<<fechae>>|<<IIF(tipocomp='14',fechae,fvto)>>|<<tipocomp>>|<<serie>>|<<Iif(fdua=0,'',fdua)>>|<<nrocomp>>|<<''>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<exporta>>|<<igvex>>|<<inafecta>>|<<igvng>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',tipocambio)>>|<<Iif(fechn=Ctod("01/01/0001"),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<''>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0))>>|<<tipo>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<Alltrim(Auto)>>|<<porcigv>>|
+    \\<<Trim(rucempresa)>>|<<Trim(Empresa)>>|<<Periodo>>|<<car>>|<<fechae>>|<<Iif(tipocomp='14',fechae,fvto)>>|<<tipocomp>>|<<Serie>>|<<Iif(fdua=0,'',fdua)>>|<<nrocomp>>|<<''>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<exporta>>|<<igvex>>|<<inafecta>>|<<igvng>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',Tipocambio)>>|<<Iif(fechn=Ctod("01/01/0001"),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<''>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0))>>|<<Tipo>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<Alltrim(Auto)>>|<<porcigv>>|<<''>>|<<Ccostos>>|<<Trim(ncta)>>|<<Trim(ncta1)>>|
 		Else
-     \<<Trim(rucempresa)>>|<<Trim(empresa)>>|<<periodo>>|<<car>>|<<fechae>>|<<IIF(tipocomp='14',fechae,fvto)>>|<<tipocomp>>|<<serie>>|<<Iif(fdua=0,'',fdua)>>|<<nrocomp>>|<<''>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<exporta>>|<<igvex>>|<<inafecta>>|<<igvng>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',tipocambio)>>|<<Iif(fechn=Ctod("01/01/0001"),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<''>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0)))>>|<<tipo>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<Alltrim(Auto)>>|<<porcigv>>|
+     \<<Trim(rucempresa)>>|<<Trim(Empresa)>>|<<Periodo>>|<<car>>|<<fechae>>|<<Iif(tipocomp='14',fechae,fvto)>>|<<tipocomp>>|<<Serie>>|<<Iif(fdua=0,'',fdua)>>|<<nrocomp>>|<<''>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<exporta>>|<<igvex>>|<<inafecta>>|<<igvng>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Iif(Moneda='S','',Tipocambio)>>|<<Iif(fechn=Ctod("01/01/0001"),'',fechn)>>|<<Iif(tipon='00','',tipon)>>|<<Iif(Left(serien,1)='-','',Trim(serien))>>|<<''>>|<<Iif(Left(ndocn,1)='-','',Round(Val(ndocn),0)))>>|<<Tipo>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<''>>|<<Alltrim(Auto)>>|<<porcigv>>|<<''>>|<<Ccostos>>|<<Trim(ncta)>>|<<Trim(ncta1)>>|
 		Endif
 		nl = nl + 1
 	Endscan
@@ -169,42 +202,42 @@ Define Class sire As Custom
 	Do Case
 	Case  opt = 1
 		_Screen.ActiveForm.cmdaexcel.Click()
-		vdvto = 1
+		Vdvto = 1
 	Case opt = 2
 		Try
 			Set Procedure To CapaDatos, ple5 Additive
 			cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
 			If This.nmonto > 0 Then
-				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140100001111"
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140100001111"
 			Else
-				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140100001011"
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140100001011"
 			Endif
 			This.GeneraPLE5VENTAS(cf, cr)
 			Cruta = Addbs(Justpath(cf)) + cr
 			This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
-			vdvto = 1
+			Vdvto = 1
 		Catch To oerror
 			This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
-			vdvto = 0
+			Vdvto = 0
 		Endtry
 	Case opt = 3
 *!*			Try
 		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
 		If This.nmonto > 0 Then
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021112"
+			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021112"
 		Else
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021012"
+			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021012"
 		Endif
 		This.generarvtas(cf, cr)
 		Cruta = Addbs(Justpath(cf)) + cr
 		This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
-		vdvto = 1
+		Vdvto = 1
 *!*			Catch To oerror
 *!*				This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
 *!*				vdvto = 0
 *!*			Endtry
 	Endcase
-	Return vdvto
+	Return Vdvto
 	Endfunc
 	Function opcioncompras(opt)
 	Do Case
@@ -215,15 +248,15 @@ Define Class sire As Custom
 		Set Procedure To CapaDatos, ple5 Additive
 		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
 		If This.nmonto > 0 Then
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001111"
+			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001111"
 		Else
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001011"
+			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001011"
 		Endif
-		This.GeneraPlE5Compras(cf, cr, This.nmes, This.na)
+		This.GeneraPlE5Compras(cf, cr, This.nmes, This.Na)
 		Cruta = Addbs(Justpath(cf)) + cr
 		Messagebox("Se Genero el Archivo 1 de 2:" + Cruta + " Correctamente", 64, MSGTITULO)
 		Cruta = Addbs(Justpath(cf)) + cr
-		TEXT  To lC Noshow Textmerge
+		Text  To lC Noshow Textmerge
             SELECT com1_fech,com1_tdoc,com1_ser1,com1_ndoc,com1_valo,com1_otro,com1_impo,
 			com1_tdoc1,com1_serie1,com1_año,com1_ndoc1,com1_rete,com1_mone,com1_dola,' ' as pais1,c.razo,concat(trim(c.dire),' ',trim(c.ciud)) as dire,
 			c.nruc,ifnull(e.nruc,' ') as ndni,ifnull(e.razo,'') as razo1,' ' as pais2,
@@ -233,7 +266,7 @@ Define Class sire As Custom
 			inner join fe_prov as c on c.idprov=a.com1_codp
 			left join fe_prov as e on e.idprov=a.com1_codp1
 			where com1_ActI='A' and MONTH(com1_fecr)=<<this.nmes>> and YEAR(com1_fecr)=<<this.na>>
-		ENDTEXT
+		Endtext
 		ncon = AbreConexion()
 		If SQLExec(ncon, lC, 'lnd') < 0 Then
 			Errorbd(lC)
@@ -245,8 +278,8 @@ Define Class sire As Custom
 		Else
 			cnombre = "00080200001011"
 		Endif
-		cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + cnombre
-		GeneraPlE5Compras1(cf, cr, This.nmes, Val(This.na))
+		cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + cnombre
+		GeneraPlE5Compras1(cf, cr, This.nmes, Val(This.Na))
 		Messagebox("Se Genero el Archivo 2 de 2:" + Cruta + " Correctamente", 64, MSGTITULO)
 *Catch To oerror
 *	Messagebox("No se Genero El Archivo de Envio Correspondiente",16,MSGTITULO)
@@ -255,15 +288,15 @@ Define Class sire As Custom
 *!*			Try
 		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
 		If This.nmonto > 0 Then
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
+			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
 		Else
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
+			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
 		Endif
 		This.tipog = 'R'
 		This.generacompras(cf, cr)
 		Cruta = Addbs(Justpath(cf)) + cr
 		This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
-		vdvto = 1
+		Vdvto = 1
 *!*			Catch To oerror
 *!*				This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
 *!*				vdvto = 0
@@ -271,12 +304,12 @@ Define Class sire As Custom
 	Case opt = 4
 *!*			Try
 		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
-		cr = Alltrim(This.nruc) + '-CP-' + Alltrim(This.na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))
+		cr = Alltrim(This.nruc) + '-CP-' + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))
 		This.tipog = 'C'
 		This.generacompras(cf, cr)
 		Cruta = Addbs(Justpath(cf)) + cr
 		This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
-		vdvto = 1
+		Vdvto = 1
 *!*			Catch To oerror
 *!*				This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
 *!*				vdvto = 0
@@ -286,22 +319,22 @@ Define Class sire As Custom
 	Function correlativocompras()
 	Set Procedure To d:\capass\modelos\correlativos Additive
 	ocorr = Createobject("Correlativo")
-	vdvto = ocorr.correlativosirecompras()
-	If vdvto < 1 Then
+	Vdvto = ocorr.correlativosirecompras()
+	If Vdvto < 1 Then
 		This.Cmensaje = ocorr.Cmensaje
 		Return 0
 	Endif
-	This.ncorrcompras = vdvto
+	This.ncorrcompras = Vdvto
 	Return This.ncorrcompras
 	Endfunc
 	Function GeneraPlE5Compras(np1, np2, nmes, Naño)
 *:Global ccuo, cpropiedad, cr1, cruta, nl, nlote, notros
 	cpropiedad = "RegimenContribuyente"
-	na = Val(Naño)
+	Na = Val(Naño)
 	If !Pemstatus(goApp, cpropiedad, 5)
 		goApp.AddProperty("RegimenContribuyente", "")
 	Endif
-	If goApp.regimencontribuyente = 'R' Then
+	If goApp.RegimenContribuyente = 'R' Then
 		ccuo = "M-RER"
 	Else
 		ccuo = 'M002'
@@ -318,14 +351,14 @@ Define Class sire As Custom
 	Endif
 	cr1 = Cruta + '.txt'
 	Select;
-		Cast(Alltrim(Str(na)) + Iif(nmes <= 9, '0' + Alltrim(Str(nmes)), Alltrim(Str(nmes))) + '00' As Integer) As periodo, ;
+		Cast(Alltrim(Str(Na)) + Iif(nmes <= 9, '0' + Alltrim(Str(nmes)), Alltrim(Str(nmes))) + '00' As Integer) As Periodo, ;
 		Auto As nrolote, ;
-		Trim(ccuo) As esta, ;
+		Trim(ccuo) As Esta, ;
 		fech As fechae, ;
 		fech As fvto, ;
 		Tdoc As tipocomp, ;
-		Iif(Tdoc = "10", '1683', Iif(Tdoc = '50', Left(Alltrim(Str(Val(serie))), 3), Iif(Len(Alltrim(serie)) <= 3, '0', '') + serie)) As serie, ;
-		Iif(Tdoc = '50', na, 0000) As fdua, ;
+		Iif(Tdoc = "10", '1683', Iif(Tdoc = '50', Left(Alltrim(Str(Val(Serie))), 3), Iif(Len(Alltrim(Serie)) <= 3, '0', '') + Serie)) As Serie, ;
+		Iif(Tdoc = '50', Na, 0000) As fdua, ;
 		Ndoc As nrocomp, ;
 		'' As n1, ;
 		6 As tipodocp, ;
@@ -343,7 +376,7 @@ Define Class sire As Custom
 		icbper, ;
 		Importe As Total, ;
 		Iif(Mone = 'S', 'PEN', 'USD') As Mone, ;
-		Iif(Mone = 'S', 1.000, dola) As tipocambio, ;
+		Iif(Mone = 'S', 1.000, dola) As Tipocambio, ;
 		Iif(Empty(fechn), Ctod("01/01/0001"), fechn) As fechn, ;
 		tref As tipon, ;
 		Iif(Empty(Left(Refe, 4)), '-' + Space(4), Left(Refe, 4)) As serien, ;
@@ -360,19 +393,19 @@ Define Class sire As Custom
 		'' As errpro3, ;
 		Iif(Importe > 3500, '1', ' ') As Mpago, ;
 		Icase(Tdoc = '01', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
-		Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
-		Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '10', '0', ;
-		Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '16', '0', ;
-		Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
-		Iif(Month(fech) = nmes, '1', '9')) As estado;
+		  Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
+		  Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
+		  Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '10', '0', ;
+		  Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '16', '0', ;
+		  Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Iif(Month(fech) = nmes, '1', '9')) As estado;
 		From registro Where Left(Razo, 5) <> '-----'  Into Cursor lreg
 	Select lreg
 	Set Textmerge On Noshow
@@ -381,9 +414,9 @@ Define Class sire As Custom
 	Scan
 		nlote = nrolote
 		If nl = 0 Then
-    \\<<periodo>>|<<nrolote>>|<<esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
+    \\<<Periodo>>|<<nrolote>>|<<esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
 		Else
-     \<<periodo>>|<<nrolote>>|<<esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
+     \<<Periodo>>|<<nrolote>>|<<esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
 		Endif
 		nl = nl + 1
 	Endscan
@@ -395,7 +428,7 @@ Define Class sire As Custom
 	If !Pemstatus(goApp, cpropiedad, 5)
 		goApp.AddProperty("RegimenContribuyente", "")
 	Endif
-	If goApp.regimencontribuyente = 'R' Then
+	If goApp.RegimenContribuyente = 'R' Then
 		ccuo = "M-RER"
 	Else
 		ccuo = 'M001'
@@ -406,21 +439,21 @@ Define Class sire As Custom
 	Cruta = Addbs(Justpath(np1)) + np2
 	cr1	  = Cruta + '.txt'
 	Select;
-		Cast(Alltrim(Str(Year(fech))) + Iif(Month(fech) <= 9, '0' + Alltrim(Str(Month(fech))), Alltrim(Str(Month(fech)))) + '00' As Integer) As periodo, ;
+		Cast(Alltrim(Str(Year(fech))) + Iif(Month(fech) <= 9, '0' + Alltrim(Str(Month(fech))), Alltrim(Str(Month(fech)))) + '00' As Integer) As Periodo, ;
 		Auto As nrolote, ;
-		Trim(ccuo + Alltrim(Str(Recno()))) As esta, ;
+		Trim(ccuo + Alltrim(Str(Recno()))) As Esta, ;
 		fech As Fecha, ;
 		fech As fvto, ;
 		Tdoc As tipocomp, ;
-		Iif(Len(Alltrim(serie)) <= 3, '0' + Trim(serie), Trim(serie)) As serie, ;
+		Iif(Len(Alltrim(Serie)) <= 3, '0' + Trim(Serie), Trim(Serie)) As Serie, ;
 		Round(Val(Ndoc), 0) As nrocomp, ;
 		' ' As consolidado, ;
 		Icase(Tdoc = '01', Iif(Left(nruc, 1) = '*', '0', '6'), ;
-		Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
-		Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
-		Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
+		  Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
+		  Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
+		  Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
 		Icase(Tdoc = '03', Iif(Empty(ndni), '0' + Space(11), ndni + Space(3)), Tdoc = '01', Iif(Left(nruc, 1) = '*', '0' + Space(11), nruc), Iif(Empty(nruc), ndni + Space(3), Iif(Left(nruc, 1) = '*', '-' + Space(11), nruc))) As nruc, ;
-		Iif(Tdoc = '03', Iif(Empty(ndni), '-' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '-' + Space(40), Razo)) As cliente, ;
+		Iif(Tdoc = '03', Iif(Empty(ndni), '-' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '-' + Space(40), Razo)) As Cliente, ;
 		0.00 As exporta, ;
 		valorg As Base, ;
 		0.00 As dsctoigv, ;
@@ -435,7 +468,7 @@ Define Class sire As Custom
 		icbper, ;
 		Importe As Total, ;
 		Iif(Mone = 'S', 'PEN', 'USD') As Mone, ;
-		Iif(Mone = 'S', 1.000, Iif(dola > 0, dola, fe_gene.dola)) As tipocambio, ;
+		Iif(Mone = 'S', 1.000, Iif(dola > 0, dola, fe_gene.dola)) As Tipocambio, ;
 		Iif(Empty(fechn), Ctod("01/01/0001"), fechn) As fechn, ;
 		Iif(Empty(tref), '00', tref) As tipon, ;
 		Iif(Empty(Left(Refe, 4)), '-' + Space(3), Iif(Len(Alltrim(Refe)) < 3, '0' + Left(Refe, 3), Left(Refe, 4))) As serien, ;
@@ -450,9 +483,9 @@ Define Class sire As Custom
 	nl = 0
 	Scan
 		If nl = 0 Then
-   \\<<periodo>>|<<nrolote>>|<<esta>>|<<fecha>>|<<fvto>>|<<tipocomp>>|<<serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
+   \\<<Periodo>>|<<nrolote>>|<<esta>>|<<Fecha>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
 		Else
-    \<<periodo>>|<<nrolote>>|<<esta>>|<<fecha>>|<<fvto>>|<<tipocomp>>|<<serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
+    \<<Periodo>>|<<nrolote>>|<<esta>>|<<Fecha>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
 		Endif
 		nl = nl + 1
 	Endscan
@@ -460,6 +493,14 @@ Define Class sire As Custom
 	Set Textmerge Off
 	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
 
 
 

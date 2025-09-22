@@ -1,7 +1,7 @@
 #Define SMTP0 "mail.compania-sysven.com"
 #Define SMTP1 "mail.companysysven.com"
 #Define DOMINIO1  "http://companysysven.com/"
-#Define DOMINIO2  "http://compania-sysven.com/"
+#Define DOMINIO2  "http://companiasysven.com/"
 Define Class E_MAIL As Custom
 	cAdjuntos		= ""                   && Archivos adjuntos que se enviarán con el e-mail. Deben separarse con punto y coma (;)
 	cContrasena		= ""                   && La contraseña de quien envía el e-mail. Requerido.
@@ -30,7 +30,7 @@ Define Class E_MAIL As Custom
 	If !Pemstatus(goapp,'puerto',5) Then
 		AddProperty(goapp,'puerto','465')
 	Endif
-	This.nSMTPPuerto=IIF(Val(goapp.puerto)>0,VAL(goapp.puerto),465)
+	This.nSMTPPuerto=Iif(Val(goapp.puerto)>0,Val(goapp.puerto),465)
 	If !Pemstatus(goapp,'clavecorreo',5)
 		AddProperty(goapp,'clavecorreo','')
 	Endif
@@ -39,26 +39,29 @@ Define Class E_MAIL As Custom
 	Else
 		This.cdominio='compania-sysven.com'
 	Endif
-	If 'compania-sysven.com' $ This.cRemitente  Then
-		If Empty(goapp.clavecorreo)
-			cpassword= This.SolicitaContraseña(This.cRemitente)
-			goapp.clavecorreo=cpassword
-			If Empty(cpassword) Or Left(cpassword,1)='N' Then
-				This.CmensajeError='Correo No Encontrado'
-				Return (.F.)
-			Endif
-			This.cContrasena=cpassword
-		Else
-			This.cContrasena=goapp.clavecorreo
-		Endif
-	Else
-		objcorreo=This.Solicitaemail('cpe')
-		If Vartype(objcorreo.correo)='L' Then
-			This.CmensajeError='No se Puede Acceder a la URL del Correo '+This.cRemitente
-			Return
-		Endif
+	If Alltrim(This.cRemitente)="soporte@companysysven.com" Then
 
-		This.cContrasena=objcorreo.Password
+	Else
+		If 'compania-sysven.com' $ This.cRemitente  Then
+			If Empty(goapp.clavecorreo)
+				cpassword= This.SolicitaContraseña(This.cRemitente)
+				goapp.clavecorreo=cpassword
+				If Empty(cpassword) Or Left(cpassword,1)='N' Then
+					This.CmensajeError='Correo No Encontrado'
+					Return (.F.)
+				Endif
+				This.cContrasena=cpassword
+			Else
+				This.cContrasena=goapp.clavecorreo
+			Endif
+		Else
+			objcorreo=This.Solicitaemail('cpe')
+			If Vartype(objcorreo.correo)='L' Then
+				This.CmensajeError='No se Puede Acceder a la URL del Correo '+This.cRemitente
+				Return
+			Endif
+			This.cContrasena=objcorreo.Password
+		Endif
 	Endif
 	With This
 		.VALIDAR()
@@ -86,17 +89,17 @@ Define Class E_MAIL As Custom
 		loMsg = Createobject("CDO.Message")
 		With loMsg
 			.Configuration = loCDO
-			.From		   = ALLTRIM(This.cRemitente)          && Requerido
-			.To			   = ALLTRIM(This.cDestinatario)       && Requerido
-			.Cc			   = ALLTRIM(This.cConCopia)           && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
-	     	.Bcc		   = ALLTRIM(This.cConCopiaOculta)     && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
-			.Subject	   = ALLTRIM(This.ctitulo)             && Requerido
-			.TextBody	   = ALLTRIM(This.cTexto)              && Requerido
-			
+			.From		   = Alltrim(This.cRemitente)          && Requerido
+			.To			   = Alltrim(This.cDestinatario)       && Requerido
+			.Cc			   = Alltrim(This.cConCopia)           && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
+			.Bcc		   = Alltrim(This.cConCopiaOculta)     && Los e-mails de los demás destinatarios (si los hubiera), separados con punto y coma
+			.Subject	   = Alltrim(This.ctitulo)             && Requerido
+			.TextBody	   = Alltrim(This.cTexto)              && Requerido
+
 *!*	WAIT WINDOW loMsg.From
 *!*	WAIT WINDOW loMsg.To
 *!*	WAIT WINDOW loMsg.cc
-*!*	WAIT WINDOW loMsg.Bcc	
+*!*	WAIT WINDOW loMsg.Bcc
 *!*	WAIT WINDOW This.cSMTPServidor
 *--- Si hay archivos adjuntos, se los agrega al e-mail
 			If !Empty(This.cAdjuntos) Then
@@ -257,5 +260,34 @@ Define Class E_MAIL As Custom
 		cvalor=Alltrim(ovalor.Get('id'))
 	Endif
 	Return cvalor
+	Endfunc
+	Function descargarsendmail()
+	Declare Integer URLDownloadToFile In urlmon.Dll;
+		INTEGER pCaller, String szURL, String szFileName,;
+		INTEGER dwReserved, Integer lpfnCB
+	Local lcRemoteFile, lcLocalFile, lcResult
+	lcRemoteFile = DOMINIO2+'app88/sendmail.zip'
+	lcLocalFile =Addbs(Sys(5)+Sys(2003))+'sendmail.zip'
+	lcResult = URLDownloadToFile(0,lcRemoteFile,lcLocalFile,0,0)
+	If lcResult = 0 Then
+		This.CmensajeError=' descarga Ok'
+		Clear
+		Set Library TO LOCFILE("vfpcompression.fll")
+		Local lcFileName As String, lcFolderName As String, llUnZipOk As Logical
+		curdire=ADDBS(SYS(5)+SYS(2003))
+		m.lcFileName   = Fullpath(m.curdire + "sendmail.zip")
+		m.lcFolderName = Fullpath(m.curdire)
+		m.llUnZipOk = UnZipOpen(m.lcFileName)
+		m.llUnZipOk = (m.llUnZipOk And UnZipGotoFileByName(Forceext(Justfname(m.lcFileName),"exe")))
+		m.llUnZipOk = (m.llUnZipOk And UnZipFile(m.lcFolderName))
+		m.llUnZipOk = (UnzipClose())
+		? m.llUnZipOk
+		Release m.lcFileName,m.lcFolderName,m.llUnZipOk
+		Set Library To
+		Return 1
+	Else
+		This.CmensajeError='Falló la descarga del archivo, código de error desde '+ALLTRIM(DOMINIO2+'app88/sendmail.zip') 
+		Return 0
+	Endif
 	Endfunc
 Enddefine

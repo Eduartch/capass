@@ -109,6 +109,7 @@ Define Class Odata As Custom
 	Function EJECUTARP(tcComando As String, clparametros As String, NombCursor As String)
 	Local lResultado As Integer
 	Local lR
+	This.conerror=0
 	If This.contransaccion <> 'S' Then
 		If This.verificaconexion() < 1 Then
 			Return 0
@@ -128,8 +129,10 @@ Define Class Odata As Custom
 		If Aerror(laError) > 0
 			This.Cmensaje = This.mensajeError(@laError)
 		Endif
+		This.conerror=1
 		Return 0
 	Endif
+	this.Cmensaje='Ok'
 	Endfunc
 	Function EJECUTARf(tcComando As String, lp As String, NCursor As String )
 	Local lResultado As Integer
@@ -162,7 +165,8 @@ Define Class Odata As Custom
 		Endif
 		This.conerror = 1
 		Return 0
-	Endif
+	ENDIF
+	this.Cmensaje='Ok'
 	Endfunc
 	Function Ejecutarsql(tcComando As String, lp As String, NCursor As String )
 	Local lR As Integer
@@ -184,18 +188,23 @@ Define Class Odata As Custom
 			This.Cmensaje = This.mensajeError(@laError)
 		Endif
 		Return 0
-	Endif
+	ENDIF
+	this.Cmensaje='Ok'
 	Endfunc
 	Function IniciaTransaccion
 	If  This.verificaconexion() < 1  Then
 		Return 0
 	Endif
 	If SQLExec(goApp.bdConn, "SET TRANSACTION ISOLATION LEVEL READ COMMITTED") < 1 Then
-		This.Cmensaje = "No se Pudo Iniciar Las Transacciones"
+		If Aerror(laError) > 0
+			This.Cmensaje = This.mensajeError(@laError)
+		Endif
 		Return 0
 	Endif
 	If SQLExec(goApp.bdConn, "START TRANSACTION") < 1 Then
-		This.Cmensaje = "No se Pudo Iniciar Las Transacciones"
+		If Aerror(laError) > 0
+			This.Cmensaje = This.mensajeError(@laError)
+		Endif
 		Return 0
 	Endif
 	This.contransaccion = 'S'
@@ -207,9 +216,9 @@ Define Class Odata As Custom
 		Return 1
 	Else
 		This.contransaccion = ""
-		= Aerror(laError)
-		m.lcError	  = m.laError(2)
-		This.Cmensaje = "Al Deshacer Cambios " + Chr(13) + Alltrim(m.lcError)
+		If Aerror(laError) > 0
+			This.Cmensaje = This.mensajeError(@laError)
+		Endif
 		Return 0
 	Endif
 	Endfunc
@@ -224,6 +233,7 @@ Define Class Odata As Custom
 		This.contransaccion = ""
 		Return 0
 	Endif
+	this.Cmensaje='Ok'
 	Endfunc
 	Function Abreconexion1(nopcion)
 	If Len(Alltrim(_Screen.conector)) = 0 Then
@@ -263,7 +273,8 @@ Define Class Odata As Custom
 			This.Cmensaje = This.mensajeError(@laError)
 		Endif
 		Return 0
-	Endif
+	ENDIF
+	this.Cmensaje='Ok'
 	Endfunc
 	Function EJECUTARP10(tcComando As String, clparametros As String, NombCursor As String)
 	Local lResultado As Integer
@@ -301,9 +312,9 @@ Define Class Odata As Custom
 	Endfunc
 	Function sabersihay(ctabla, cfield)
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow  Textmerge
-	 SHOW COLUMNS FROM <<ctabla>> WHERE FIELD = '<<cfield>>'     
-	Endtext
+	TEXT To lC Noshow  Textmerge
+	 SHOW COLUMNS FROM <<ctabla>> WHERE FIELD = '<<cfield>>'
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif

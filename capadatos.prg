@@ -8,135 +8,6 @@
 *DO thor.app
 Set Procedure To ple5 Additive
 *******************************
-Function N2L(tnNro, tnFlag)
-If Empty(tnFlag)
-	tnFlag = 0
-Endif
-Local lnEntero, lcRetorno, lnTerna, lcMiles, ;
-	lcCadena, lnUnidades, lnDecenas, lnCentenas
-lnEntero = Int(tnNro)
-lcRetorno = ''
-lnTerna = 1
-Do While lnEntero > 0
-	lcCadena = ''
-	lnUnidades = Mod(lnEntero, 10)
-	lnEntero = Int(lnEntero / 10)
-	lnDecenas = Mod(lnEntero, 10)
-	lnEntero = Int(lnEntero / 10)
-	lnCentenas = Mod(lnEntero, 10)
-	lnEntero = Int(lnEntero / 10)
-
-*--- Analizo la terna
-	Do Case
-	Case lnTerna = 1
-		lcMiles = ''
-	Case lnTerna = 2 And (lnUnidades + lnDecenas + lnCentenas # 0)
-		lcMiles = 'MIL '
-	Case lnTerna = 3 And (lnUnidades + lnDecenas + lnCentenas # 0)
-		lcMiles = Iif(lnUnidades = 1 And lnDecenas = 0 And ;
-			lnCentenas = 0, 'MILLON ', 'MILLONES ')
-	Case lnTerna = 4 And (lnUnidades + lnDecenas + lnCentenas # 0)
-		lcMiles = 'MIL MILLONES '
-	Case lnTerna = 5 And (lnUnidades + lnDecenas + lnCentenas # 0)
-		lcMiles = Iif(lnUnidades = 1 And lnDecenas = 0 And ;
-			lnCentenas = 0, 'BILLON ', 'BILLONES ')
-	Case lnTerna > 5
-		lcRetorno = ' ERROR: NUMERO DEMASIADO GRANDE '
-		Exit
-	Endcase
-
-*--- Analizo las unidades
-	Do Case
-	Case lnUnidades = 1
-		lcCadena = Iif(lnTerna = 1 And tnFlag = 0, 'UNO ', 'UN ')
-	Case lnUnidades = 2
-		lcCadena = 'DOS '
-	Case lnUnidades = 3
-		lcCadena = 'TRES '
-	Case lnUnidades = 4
-		lcCadena = 'CUATRO '
-	Case lnUnidades = 5
-		lcCadena = 'CINCO '
-	Case lnUnidades = 6
-		lcCadena = 'SEIS '
-	Case lnUnidades = 7
-		lcCadena = 'SIETE '
-	Case lnUnidades = 8
-		lcCadena = 'OCHO '
-	Case lnUnidades = 9
-		lcCadena = 'NUEVE '
-	Endcase
-
-*--- Analizo las decenas
-	Do Case
-	Case lnDecenas = 1
-		Do Case
-		Case lnUnidades = 0
-			lcCadena = 'DIEZ '
-		Case lnUnidades = 1
-			lcCadena = 'ONCE '
-		Case lnUnidades = 2
-			lcCadena = 'DOCE '
-		Case lnUnidades = 3
-			lcCadena = 'TRECE '
-		Case lnUnidades = 4
-			lcCadena = 'CATORCE '
-		Case lnUnidades = 5
-			lcCadena = 'QUINCE '
-		Other
-			lcCadena = 'DIECI' + lcCadena
-		Endcase
-	Case lnDecenas = 2
-		lcCadena = Iif(lnUnidades = 0, 'VEINTE ', 'VEINTI') + lcCadena
-	Case lnDecenas = 3
-		lcCadena = 'TREINTA ' + Iif(lnUnidades = 0, '', 'Y ') + lcCadena
-	Case lnDecenas = 4
-		lcCadena = 'CUARENTA ' + Iif(lnUnidades = 0, '', 'Y ') + lcCadena
-	Case lnDecenas = 5
-		lcCadena = 'CINCUENTA ' + Iif(lnUnidades = 0, '', 'Y ') + lcCadena
-	Case lnDecenas = 6
-		lcCadena = 'SESENTA ' + Iif(lnUnidades = 0, '', 'Y ') + lcCadena
-	Case lnDecenas = 7
-		lcCadena = 'SETENTA ' + Iif(lnUnidades = 0, '', 'Y ') + lcCadena
-	Case lnDecenas = 8
-		lcCadena = 'OCHENTA ' + Iif(lnUnidades = 0, '', 'Y ') + lcCadena
-	Case lnDecenas = 9
-		lcCadena = 'NOVENTA ' + Iif(lnUnidades = 0, '', 'Y ') + lcCadena
-	Endcase
-
-*--- Analizo las centenas
-	Do Case
-	Case lnCentenas = 1
-		lcCadena = Iif(lnUnidades = 0 And lnDecenas = 0, ;
-			'CIEN ', 'CIENTO ') + lcCadena
-	Case lnCentenas = 2
-		lcCadena = 'DOSCIENTOS ' + lcCadena
-	Case lnCentenas = 3
-		lcCadena = 'TRESCIENTOS ' + lcCadena
-	Case lnCentenas = 4
-		lcCadena = 'CUATROCIENTOS ' + lcCadena
-	Case lnCentenas = 5
-		lcCadena = 'QUINIENTOS ' + lcCadena
-	Case lnCentenas = 6
-		lcCadena = 'SEISCIENTOS ' + lcCadena
-	Case lnCentenas = 7
-		lcCadena = 'SETECIENTOS ' + lcCadena
-	Case lnCentenas = 8
-		lcCadena = 'OCHOCIENTOS ' + lcCadena
-	Case lnCentenas = 9
-		lcCadena = 'NOVECIENTOS ' + lcCadena
-	Endcase
-
-*--- Armo el retorno terna a terna
-	lcRetorno = lcCadena + lcMiles + lcRetorno
-	lnTerna = lnTerna + 1
-Enddo
-If lnTerna = 1
-	lcRetorno = 'CERO '
-Endif
-Return lcRetorno
-Endfunc
-*******************************
 Procedure RemoteSPTCursor2RemoteView
 Lparameters tcCursorAlias, tcTableName, tcPKFieldName, ;
 	tnBuffering, tnWhereType, tlExcludePK
@@ -320,17 +191,6 @@ Else
 	Return 0
 Endif
 Endfunc
-*******************************
-Function MuestraDctos(cb)
-ccursor="dctosv"
-Set Procedure To d:\capass\modelos\dctos Additive
-odctos=Createobject("dctos")
-If odctos.MuestraDctos(cb,ccursor)<1 Then
-	goapp.mensajeapp=odctos.cmensaje
-	Return 0
-Endif
-Return 1
-Endfunc
 *********************************
 Function MuestraProveedores(cb,opt,nid)
 If SQLExec(goapp.bdconn,"CALL PROMUESTRAPROVEEDOR(?cb,?opt,?nid)","proveedores")<1
@@ -356,15 +216,6 @@ If SQLExec(goapp.bdconn," CALL PROMUESTRAPRODUCTOS(?lw,?ND)", "productos") < 1
 	Return 0
 Else
 	Return 1
-Endif
-Endfunc
-**************************************
-Function MuestraGrupos(lw)
-If SQLExec(goapp.bdconn,"CALL PROMUESTRAGRUPOS(?LW)","lgrupo") < 1
-	errorbd(ERRORPROC)
-	Return 0
-Else
-	Return  1
 Endif
 Endfunc
 *****************************************
@@ -595,7 +446,11 @@ Endfunc
 *******************************************************
 Function IngresaCabeceraCreditos(nauto,nidcliente,dFecha,nidven,nimpoo,nidus,nidtda,ninic,cpc)
 If SQLExec(goapp.bdconn,"SELECT FUNINGRESARCREDITOS(?nauto,?nidcliente,?dfecha,?nidven,?nimpoo,?nidus,?nidtda,?ninic,?cpc) AS IDC","RCRE")<0 Then
-	errorbd(ERRORPROC+' '+" Ingresando Cabecera Créditos")
+	errorbd(ERRORPROC+' '+" Ingresando Cabecera de Créditos") 
+*!*		=Aerror(laError)
+*!*		 FOR n = 1 TO 7  && Display all elements of the array
+*!*	      ? laError(n)
+*!*	   ENDFOR
 	Return 0
 Else
 	Return rcre.idc
@@ -853,7 +708,10 @@ Endfunc
 ************************************************
 Function INGRESAKARDEX1(nid,cc,ct,npr,nct,cincl,tmvto,ccodv,nidalmacen,nidcosto1,xcomision)
 If SQLExec(goapp.bdconn,"SELECT FUNINGRESAkardex1(?nid,?cc,?ct,?npr,?nct,?cincl,?tmvto,?ccodv,?nidalmacen,?nidcosto1,?xcomision) as nidk","nidk")<1 Then
-	errorbd(ERRORPROC+' Ingresando KARDEX 1')
+	= Aerror(laError)
+	m.lcError	  = m.laError(1, 2)
+	cmensaje = Alltrim(m.lcError)
+	aviso(cmensaje)
 	Return  0
 Else
 	Return nidk.nidk
@@ -994,7 +852,7 @@ Endfunc
 **************************
 Function IngresaRvendedores(idca,nidclie,ccodv,cform)
 If SQLExec(goapp.bdconn,"CALL PROingresarvendedores(?idca,0,?nidclie,?cform,?ccodv)") <1 Then
-	errorbd(ERRORPROC)
+	errorbd(ERRORPROC+ 'Al ingresar datos de venta al vendeor')
 	Return 0
 Else
 	Return 1
@@ -1329,15 +1187,6 @@ Else
 	Return 1
 Endif
 Endfunc
-********************
-Function  MuestraZonasp(cb)
-If SQLExec(goapp.bdconn,"CALL PROMUESTRAZONASP(?cb)","lzonasp")<0 Then
-	errorbd(ERRORPROC)
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
 **********************
 Function CreaZonasp(cnom,cpc,nidus)
 If SQLExec(goapp.bdconn,"select FunCreaZonaP(?cnom,?cpc,?nidus) as id","zonap")<0 Then
@@ -1370,15 +1219,6 @@ Else
 Endif
 Endfunc
 ******************
-Function  MuestraZonas(cb)
-If SQLExec(goapp.bdconn,"CALL PROMUESTRAZONAS(?cb)","lzonas")<0 Then
-	errorbd(ERRORPROC)
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-**********************
 Function CreaZonas(cnom,cpc,nidus,nidz)
 If SQLExec(goapp.bdconn,"select FunCreaZona(?cnom,?cpc,?nidus,?nidz) as id","zona")<0 Then
 	errorbd(ERRORPROC)
@@ -1455,24 +1295,6 @@ If SW=0 Then
 Else
 	GRABARCAMBIOS()
 	Return 1
-Endif
-Endfunc
-******************
-Function DtipoCambio(df,ct)
-If SQLExec(goapp.bdconn,"SELECT Fundtipocambio(?df,?ct) as vta","lmone")<0 Then
-	errorbd("No es posible Obtener el Tipo de Cambio")
-	Return 0
-Else
-	If lmone.vta>0 Then
-		Return lmone.vta
-	Else
-		If Used("fe_gene") Then
-*!*			If DatosGlobales()>0 Then
-			Return fe_gene.dola
-		Else
-			Return 0
-		Endif
-	Endif
 Endif
 Endfunc
 ******************
@@ -1602,24 +1424,6 @@ Endfunc
 Function CancelaDctosComprasPorCaja(nidauto,opt)
 If SQLExec(goapp.bdconn,"CALL ProCancelaDctosComprasPorCaja(?nidauto,?opt)")<0
 	errorbd(ERRORPROC+ 'Cancelando Documentos de Caja')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-*******************
-Function MostrarMarcas(cb)
-If SQLExec(goapp.bdconn,"CALL PROMUESTRAMARCAS(?cb)","cmarcas")< 1 Then
-	errorbd(ERRORPROC+ ' Consultando Marcas')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-*******************
-Function MostrarLineas(cb,nidg)
-If SQLExec(goapp.bdconn,"CALL PROMUESTRALINEAS(?cb,?nidg)","clineas")< 1 Then
-	errorbd(ERRORPROC+' Obteniendo Lineas')
 	Return 0
 Else
 	Return 1
@@ -1776,28 +1580,6 @@ Declare Integer GetPrivateProfileString In WIN32API ;
 nRet = GetPrivateProfileString(cSection, cEntry, cDefault, ;
 	@cRetVal, nRetLen, cINIFile)
 Return Alltrim(Left(cRetVal, nRetLen))
-Endfunc
-*******************
-Function DIletras(xt,tm)
-Local cimporte
-cimporte=N2L(xt)
-cnuc=Alltrim(Str(xt,10,2))
-npos=At(".",cnuc)
-If tm='S' Then
-	cm= "Soles"
-Else
-	cm="Dólares Americanos"
-Endif
-Do Case
-Case npos=0
-	ccadena='00'+'/100 '+cm
-Case Len(Substr(cnuc,npos+1))=1
-	ccadena=Substr(cnuc,npos+1,1)+'0'+'/100 ' +cm
-Otherwise
-	ccadena=Substr(cnuc,npos+1,2)+'/100 '+cm
-Endcase
-cimporte=cimporte+' Con '+ccadena
-Return cimporte
 Endfunc
 *******************
 Function ActualizaZonaClientes(nidclie,nidz)
@@ -3369,20 +3151,6 @@ Else
 Endif
 Endfunc
 ********************
-Function MuestraDctos1(np1,ccursor)
-lc='PROMUESTRADCTOS'
-goapp.npara1=np1
-TEXT to lp noshow
-     (?goapp.npara1)
-ENDTEXT
-If EJECUTARP(lc,lp,ccursor)=0 Then
-	errorbd(ERRORPROC+ 'Mostrando Documentos')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-**********************
 Function MuestraProductos1(np1,np2,ccursor)
 lc='PROMUESTRAPRODUCTOS'
 goapp.npara1=np1
@@ -3522,63 +3290,6 @@ TEXT to lp noshow
 ENDTEXT
 If EJECUTARP(lc,lp,ccursor)=0 Then
 	errorbd(ERRORPROC+ ' Obteniendo Stocks')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-********************
-Function MostrarMarcasX(np1,ccursor)
-lc='PROMUESTRAMARCAS'
-goapp.npara1=np1
-TEXT to lp noshow
-     (?goapp.npara1)
-ENDTEXT
-If EJECUTARP(lc,lp,ccursor)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Marcas')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-*******************
-Function MostrarLineasX(np1,np2,ccursor)
-lc='PROMUESTRALINEAS'
-goapp.npara1=np1
-goapp.npara2=np2
-TEXT to lp noshow
-     (?goapp.npara1,?goapp.npara2)
-ENDTEXT
-If EJECUTARP(lc,lp,ccursor)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Lineas')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-*********************
-Function MuestraGruposX(np1,ccursor)
-lc='PROMUESTRAGRUPOS'
-goapp.npara1=np1
-TEXT to lp noshow
-     (?goapp.npara1)
-ENDTEXT
-If EJECUTARP(lc,lp,ccursor)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Grupos')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-************************
-Function MuestraFletesX(np1,ccursor)
-lc='PROMUESTRAFLETES'
-goapp.npara1=np1
-TEXT to lp noshow
-     (?goapp.npara1)
-ENDTEXT
-If EJECUTARP(lc,lp,ccursor)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Fletes')
 	Return 0
 Else
 	Return 1
@@ -4036,8 +3747,34 @@ goapp.npara7=np7
 goapp.npara8=np8
 goapp.npara9=np9
 goapp.npara10=np10
+
 TEXT to lp noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
+ENDTEXT
+If EJECUTARF(lc,lp,cur)=0 Then
+	errorbd(ERRORPROC+ 'Ingresando Datos A Libro Caja Efectivo')
+	Return 0
+Else
+	Return Ca.Id
+Endif
+Endfunc
+**************************************
+Function IngresaDatosLCajaExsys(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11)
+lc="FunIngresaDatosLcajaE"
+cur="Ca"
+goapp.npara1=np1
+goapp.npara2=np2
+goapp.npara3=np3
+goapp.npara4=np4
+goapp.npara5=np5
+goapp.npara6=np6
+goapp.npara7=np7
+goapp.npara8=np8
+goapp.npara9=np9
+goapp.npara10=np10
+goapp.npara11=np11
+TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
 ENDTEXT
 If EJECUTARF(lc,lp,cur)=0 Then
 	errorbd(ERRORPROC+ 'Ingresando Datos A Libro Caja Efectivo')
@@ -4320,27 +4057,6 @@ Else
 Endif
 Endfunc
 *********************************
-Function MostrarMenu1(np1,np2,np3)
-If _Screen.omenus.MostrarMenu1(np1, np2, np3, "menus")<1 Then
-	Return 0
-Endif
-Return 1
-*!*	cur=
-*!*	lc='ProMostrarMenu1'
-*!*	goapp.npara1=np1
-*!*	goapp.npara2=np2
-*!*	goapp.npara3=np3
-*!*	TEXT to lp noshow
-*!*	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-*!*	ENDTEXT
-*!*	If EJECUTARP(lc,lp,cur)=0 Then
-*!*		errorbd(ERRORPROC+ ' Mostrando Opciones del Menú Lateral')
-*!*		Return 0
-*!*	Else
-*!*		Return 1
-*!*	Endif
-Endfunc
-**********************************
 Function YaestaRegistradoTraspaso(np1,np2)
 lc="FunHayTraspaso"
 goapp.npara1=np1
@@ -4422,21 +4138,6 @@ Else
 	Return Ia.Id
 Endif
 Endfunc
-**************************************
-*!*	Function PermiteIngresox(np1)
-*!*	lc="FUnVerificaBloqueo"
-*!*	goapp.npara1=np1
-*!*	ccursor='v'
-*!*	TEXT to lp noshow
-*!*	     (?goapp.npara1)
-*!*	ENDTEXT
-*!*	If EJECUTARF(lc,lp,ccursor)<1 Then
-*!*		errorbd(ERRORPROC+ ' No Se Puede Obtener el estado del Bloqueo para este Registro')
-*!*		Return 0
-*!*	Else
-*!*		Return v.Id
-*!*	Endif
-*!*	Endfunc
 ****************************************
 Function BloqueaD(np1,np2,np3)
 Local cur As String
@@ -5305,7 +5006,7 @@ Else
 Endif
 Endfunc
 ************************************
-Function ActualizaDatosLcajaE1(np1)
+Function ActualizaDatosLcajaE2(np1)
 lc="ProActualizaDatosLcajaE1"
 cur=""
 goapp.npara1=np1
@@ -5697,46 +5398,7 @@ Else
 	Return 1
 Endif
 Endfunc
-***************************
-Function ValidaRuc(lcNroRuc)
-Local aArrayRuc
-If Len(Alltrim(lcNroRuc)) <> 11 Then
-	Return .F.
-Endif
-Dimension aArrayRuc(3,11)
-For i = 1 To 11
-	aArrayRuc(1,i)=Val(Subs(lcNroRuc,i,1))
-Endfor
-aArrayRuc(2,1)=5
-aArrayRuc(2,2)=4
-aArrayRuc(2,3)=3
-aArrayRuc(2,4)=2
-aArrayRuc(2,5)=7
-aArrayRuc(2,6)=6
-aArrayRuc(2,7)=5
-aArrayRuc(2,8)=4
-aArrayRuc(2,9)=3
-aArrayRuc(2,10)=2
-aArrayRuc(3,11)=0
-For i=1 To 10
-	aArrayRuc(3,i) = aArrayRuc(1,i) * aArrayRuc(2,i)
-	aArrayRuc(3,11) = aArrayRuc(3,11) + aArrayRuc(3,i)
-Endfor
-lnResiduo = Mod(aArrayRuc(3,11),11)
-lnUltDigito = 11 - lnResiduo
-Do Case
-Case lnUltDigito = 11 Or lnUltDigito=1
-	lnUltDigito = 1
-Case lnUltDigito = 10 Or lnUltDigito=0
-	lnUltDigito = 0
-Endcase
-If lnUltDigito = aArrayRuc(1,11) Then
-	Return .T.
-Else
-	Return .F.
-Endif
-Endfunc
-**********************************************
+***********************************
 Function GeneraArchivoPlanCuentas(np1,np2,np3)
 cruta=Addbs(Justpath(np1))+np2
 cr1=cruta+'.txt'
@@ -6447,26 +6109,17 @@ Endif
 Endfunc
 ***********************************
 Function MuestraCtasBancos()
-lc="PROmuestraCtasBancos"
-lp=""
-ccursor="lctasb"
-If EJECUTARP(lc,lp,ccursor)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Lista de Cuentas Corrientes de Bancos ')
-	Return 0
-Else
-	Return 1
-Endif
+MUESTRACTASBANCOSX('lctasb')
 Endfunc
 **********************
-Function MuestraCtasBancosX(ccursor)
-lc="PROmuestraCtasBancos"
-lp=""
-If EJECUTARP(lc,lp,ccursor)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Lista de Cuentas Corrientes de Bancos ')
+Function MUESTRACTASBANCOSX(ccursor)
+Set Procedure To d:\capass\modelos\bancos Additive
+obcos=Createobject("bancos")
+If obcos.MuestraCtasBancos(ccursor)<1 Then
+	aviso(obcos.cmensaje)
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
 Endfunc
 **************************************
 Function GeneraArchivoCajaBancos(np1,np2,np3)
@@ -6832,7 +6485,6 @@ goapp.npara2=np2
 goapp.npara3=np3
 goapp.npara4=np4
 goapp.npara5=np5
-
 goapp.npara6=np6
 goapp.npara7=np7
 goapp.npara8=np8
@@ -6991,20 +6643,6 @@ If EJECUTARP(lc,lp,cur)=0 Then
 	Return 0
 Else
 	Return 1
-Endif
-Endfunc
-*****************************
-Function devuelveIdCtrlCredito(np1)
-Local ccur As String
-TEXT TO lc noshow
-  SELECT cred_idrc as idrc FROM fe_cred WHERE ncontrol=?np1
-ENDTEXT
-ccur='idctrl'
-If SQLExec(goapp.bdconn,lc,ccur)=0 Then
-	errorbd(lc)
-	Return 0
-Else
-	Return idctrl.idrc
 Endif
 Endfunc
 *********************************
@@ -7482,26 +7120,6 @@ Else
 	Return 1
 Endif
 Endfunc
-********************************
-Function muestramenu(np1,np2)
-If _Screen.omenus.muestramenu(np1, np2,"menus")<1 Then
-	Return 0
-Endif
-Return 1
-*!*	ccursor="menus"
-*!*	lc='PROMUESTRAMENU'
-*!*	goapp.npara1=np1
-*!*	goapp.npara2=np2
-*!*	TEXT to lp noshow
-*!*	(?goapp.npara1,?goapp.npara2)
-*!*	ENDTEXT
-*!*	If EJECUTARP(lc,lp,ccursor)<1 Then
-*!*		errorbd(ERRORPROC+ ' Consultando Menus ')
-*!*		Return 0
-*!*	Else
-*!*		Return 1
-*!*	Endif
-Endfunc
 *******************************
 Function OtorgaOpciones1(np1,np2,np3,np4)
 lc="ProOtorgaOpciones"
@@ -7539,43 +7157,6 @@ Else
 Endif
 Endfunc
 ******************************
-Function MostrarMenu11(np1,np2,np3,np4)
-If _Screen.omenus.MostrarMenu1(np1, np2, np3, np4,"menus")<1 Then
-	Return 0
-Endif
-Return 1
-*!*	cur="menus"
-*!*	lc='ProMostrarMenu1'
-*!*	goapp.npara1=np1
-*!*	goapp.npara2=np2
-*!*	goapp.npara3=np3
-*!*	goapp.npara4=np4
-*!*	TEXT to lp noshow
-*!*	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-*!*	ENDTEXT
-*!*	If EJECUTARP(lc,lp,cur)=0 Then
-*!*		errorbd(ERRORPROC+ ' Mostrando Opciones del Menú Lateral')
-*!*		Return 0
-*!*	Else
-*!*		Return 1
-*!*	Endif
-Endfunc
-***********************
-Function CambiaEstadoTraspaso(np1)
-lc='ProTraspasoRecibido'
-goapp.npara1=np1
-ccur=""
-TEXT TO lp noshow
-   (?goapp.npara1)
-ENDTEXT
-If EJECUTARP(lc,lp,ccur)=0 Then
-	errorbd(ERRORPROC+ ' Al Cammbiar Estado de Transferencia a Recibido  ')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
-********************
 Function IngresaDtraspasos(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11,np12)
 lc='FunIngresaKardex'
 cur="Xt"
@@ -8778,21 +8359,6 @@ Else
 Endif
 Endfunc
 *******************************
-Function esFechaValidaAdelantada(dFecha)
-Local tnAnio, tnMes, tnDia
-tnAnio=Year(dFecha)
-tnMes=Month(dFecha)
-tnDia=Day(dFecha)
-Return ;
-	VARTYPE(tnAnio) = "N" And ;
-	VARTYPE(tnMes) = "N" And ;
-	VARTYPE(tnDia) = "N" And ;
-	BETWEEN(tnAnio, 2000, 9999) And ;
-	BETWEEN(tnMes, 1, 12) And ;
-	BETWEEN(tnDia, 1, 31) And ;
-	NOT Empty(Date(tnAnio, tnMes, tnDia))
-Endfunc
-***************************
 Function IngresaDPedidosOrdenados(np1,np2,np3,np4,np5)
 lc='FunIngresaDPedidos'
 cur="idd"
@@ -9263,6 +8829,16 @@ Endif
 Return lnColor
 Endfunc
 ******************************
+Function ColoresTitulox
+Lparameters ctitulo
+If ctitulo='T' Then
+	lnColor = Rgb(210,210,210)
+Else
+	lnColor=Rgb(255,255,255)
+Endif
+Return lnColor
+Endfunc
+******************************
 Function ValidarCorreo
 Lparameters email && la cuenta
 If Vartype(email) # "C"
@@ -9583,7 +9159,7 @@ Try
 		Case opt=1
 			Report Form (cinforme) To Printer Prompt Noconsole
 		Case opt=2
-			Exp2Excel(CALIAS, "", cTitulo)
+			Exp2Excel(CALIAS, "", ctitulo)
 		Endcase
 	Endif
 Catch To oerror
@@ -9657,6 +9233,16 @@ Endfunc
 Function Coloresnegrita1
 Lparameters stock
 If stock<0 Then
+	lnColor = .T.
+Else
+	lnColor=.F.
+Endif
+Return lnColor
+Endfunc
+**************
+Function Coloresnegritax
+Lparameters ctitulo
+If ctitulo='T' Then
 	lnColor = .T.
 Else
 	lnColor=.F.
@@ -10051,10 +9637,6 @@ Else
 Endif
 Endfunc
 ****************************************
-Function CFECHAS(df)
-Return Alltrim(Str(Year(df)))+'-'+Alltrim(Str(Month(df)))+'-'+Alltrim(Str(Day(df)))
-Endfunc
-****************************************
 Define Class Empresa As Custom
 	Empresa=""
 	nruc=""
@@ -10142,20 +9724,6 @@ Else
 Endif
 Endfunc
 *****************************
-Function RegistraUnidadesPR(np1,np2)
-TEXT TO lc NOSHOW
-        UPDATE fe_presentaciones SET pres_unid=?np2 WHERE pres_idpr=?np1
-ENDTEXT
-ncon=Abreconexion()
-If SQLExec(ncon,lc)<0 Then
-	errorbd(lc)
-	Return 0
-Else
-	CierraConexion(ncon)
-	Return 1
-Endif
-Endfunc
-*************************
 Function Colorprecio
 Lparameters nprecio
 If nprecio=0 Then
@@ -10902,7 +10470,7 @@ Endfunc
 *********************
 Function DesactivaProductos(np1)
 TEXT TO lc NOSHOW
-   SELECT SUM(IF(tipo='C',cant,-cant)) as stock FROM fe_kar WHERE acti='A' AND idart=?np1 GROUP BY idart
+   SELECT SUM(IF(tipo='C',cant,-cant)) as stock FROM fe_kar WHERE acti='A' AND idart=?np1 AND alma>0 GROUP BY idart
 ENDTEXT
 If SQLExec(goapp.bdconn,lc,'vs')<1 Then
 	errorbd(lc)
@@ -10939,21 +10507,6 @@ Else
 	Return 0
 Endif
 Endfunc
-**********************************
-*Function MuestraPlanCuentasX(np1,cur)
-*lc='PROMUESTRAPLANCUENTAS'
-*goapp.npara1=np1
-*goapp.npara2=Val(goapp.año)
-*TEXT to lp noshow
-*     (?goapp.npara1,?goapp.npara2)
-*ENDTEXT
-*If EJECUTARP(lc,lp,cur)=0 Then
-*	errorbd(ERRORPROC+ ' Mostrando Plan Cuentas')
-*	Return 0
-*Else
-*	Return 1
-*Endif
-*Endfunc
 ********************************
 Function MuestraPlanCuentasX(np1,cur)
 lc="PROMUESTRAPLANCUENTAS"
@@ -11201,11 +10754,15 @@ Else
 Endif
 Endfunc
 *********************************
-Function Exp2Excel( ccursor, cFileSave, cTitulo )
-If Empty(ccursor)
-	ccursor = Alias()
+Function Exp2Excel( ccursorexcel, cFileSave, ctitulo )
+*!*	wait WINDOW ccursorexcel
+*!*	wait WINDOW TYPE('ccursorexcel')
+*!*	wait WINDOW Used(ccursorexcel)
+*!*	wait WINDOW ALIAS()
+If Empty(ccursorexcel)
+	ccursorexcel = Alias()
 Endif
-If Type('cCursor') # 'C' Or !Used(ccursor)
+If Type('ccursorexcel') # 'C' Or !Used(ccursorexcel)
 	Messagebox("Parámetros Inválidos",16,MSGTITULO)
 	Return .F.
 Endif
@@ -11228,15 +10785,15 @@ Local lnRecno, lnPos, lnPag, lnCuantos, lnRowTit, lnRowPos, i, lnHojas, cDefault
 
 cDefault = Addbs(Sys(5)  + Sys(2003))
 
-Select (ccursor)
-lnRecno = Recno(ccursor)
+Select (ccursorexcel)
+lnRecno = Recno(ccursorexcel)
 Go Top
 
 *************************************************
 *** Verifica la cantidad de hojas necesarias  ***
 *** en el libro para la cantidad de datos     ***
 *************************************************
-lnHojas = Round(Reccount(ccursor)/65000,0)
+lnHojas = Round(Reccount(ccursorexcel)/65000,0)
 Do While oExcel.Sheets.Count < lnHojas
 	oExcel.Sheets.Add
 Enddo
@@ -11244,35 +10801,35 @@ Enddo
 lnPos = 0
 lnPag = 0
 
-Do While lnPos < Reccount(ccursor)
+Do While lnPos < Reccount(ccursorexcel)
 
 	lnPag = lnPag + 1 && Hoja que se está procesando
 
 	mensaje('Exportando   Microsoft Excel...' ;
 		+ Chr(13) + '(Hoja '  + Alltrim(Str(lnPag))  + ' de '  + Alltrim(Str(lnHojas)) + ')')
 
-	If File(cDefault  + ccursor  + ".txt")
-		Delete File (cDefault  + ccursor  + ".txt")
+	If File(cDefault  + ccursorexcel  + ".txt")
+		Delete File (cDefault  + ccursorexcel  + ".txt")
 	Endif
 
-	Copy  Next 65000 To (cDefault  + ccursor  + ".txt") Delimited With Character ";"
-	lnPos = Recno(ccursor)
+	Copy  Next 65000 To (cDefault  + ccursorexcel  + ".txt") Delimited With Character ";"
+	lnPos = Recno(ccursorexcel)
 
 	oExcel.Sheets(lnPag).Select
 
 	XLSheet = oExcel.ActiveSheet
-	XLSheet.Name = ccursor + '_' + Alltrim(Str(lnPag))
+	XLSheet.Name = ccursorexcel + '_' + Alltrim(Str(lnPag))
 
-	lnCuantos = Afields(aCampos,ccursor)
+	lnCuantos = Afields(aCampos,ccursorexcel)
 
 ********************************************************
 *** Coloca título del informe (si este es informado) ***
 ********************************************************
-	If !Empty(cTitulo)
+	If !Empty(ctitulo)
 		XLSheet.Cells(1,1).Font.Name = "Arial"
 		XLSheet.Cells(1,1).Font.Size = 12
 		XLSheet.Cells(1,1).Font.BOLD = .T.
-		XLSheet.Cells(1,1).Value = cTitulo
+		XLSheet.Cells(1,1).Value = ctitulo
 		XLSheet.Range(XLSheet.Cells(1,1),XLSheet.Cells(1,lnCuantos)).MergeCells = .T.
 		XLSheet.Range(XLSheet.Cells(1,1),XLSheet.Cells(1,lnCuantos)).Merge
 		XLSheet.Range(XLSheet.Cells(1,1),XLSheet.Cells(1,lnCuantos)).HorizontalAlignment = 3
@@ -11287,7 +10844,7 @@ Do While lnPos < Reccount(ccursor)
 **********************************
 	For i = 1 To lnCuantos
 		lcName  = aCampos(i,1)
-		lcCampo = Alltrim(ccursor) + '.' + aCampos(i,1)
+		lcCampo = Alltrim(ccursorexcel) + '.' + aCampos(i,1)
 		XLSheet.Cells(lnRowTit,i).Value=lcName
 		XLSheet.Cells(lnRowTit,i).Font.BOLD = .T.
 		XLSheet.Cells(lnRowTit,i).Interior.ColorIndex = 15
@@ -11300,11 +10857,11 @@ Do While lnPos < Reccount(ccursor)
 *************************
 *** Cuerpo de la hoja ***
 *************************
-	oConnection = XLSheet.QueryTables.Add("TEXT;"  + cDefault  + ccursor  + ".txt", ;
+	oConnection = XLSheet.QueryTables.Add("TEXT;"  + cDefault  + ccursorexcel  + ".txt", ;
 		XLSheet.Range("A"  + Alltrim(Str(lnRowPos))))
 
 	With oConnection
-		.Name = ccursor
+		.Name = ccursorexcel
 		.FieldNames = .T.
 		.RowNumbers = .F.
 		.FillAdjacentFormulas = .F.
@@ -11355,8 +10912,8 @@ Go lnRecno
 
 Release oExcel,XLSheet,oConnection
 
-If File(cDefault + ccursor + ".txt")
-	Delete File (cDefault + ccursor + ".txt")
+If File(cDefault + ccursorexcel + ".txt")
+	Delete File (cDefault + ccursorexcel + ".txt")
 Endif
 
 Return .T.
@@ -11442,4 +10999,321 @@ If EJECUTARF(lc,lp,cur)=0 Then
 Else
 	Return Xn.Id
 Endif
+Endfunc
+**********************
+Function ActualizaDatosLcajaE22(np1)
+If np1>0 Then
+	TEXT to lc NOSHOW TEXTMERGE
+      UPDATE fe_lcaja SET lcaj_acti='I' WHERE lcaj_idac=<<np1>>
+	ENDTEXT
+	If SQLExec(goapp.bdconn,lc)=0 Then
+		errorbd(ERRORPROC+ ' Actualizando Datos A Libro Caja Efectivo 1')
+		Return 0
+	Endif
+Endif
+Return 1
+Endfunc
+***************************
+Function RetornaNAlmacenx(np1)
+cnombre=""
+For i = 1 To _Screen.nrotiendas
+	If _Screen.tiendas[i, 1]=np1 Then
+		cnombre=_Screen.tiendas[i,2]
+	Endif
+Next
+Return m.cnombre
+Endfunc
+*****************
+Function WScriptShell_Run(tcCmdLine As String, tnWindowStyle As Integer, tbWaitOnReturn As Boolean, tlDebug As Logical)
+* 14/09/2015 Fernando D. Bozzo - http://fox.wikis.com/wc.dll?Wiki~WScriptShellRun~VFP
+* Modificación basada en la rutina RunExitCode.prg de William GC Steinford (nov 2002)
+* pero compatible con el método Run de WScript.Shell para su reemplazo cuando no es posible usarlo.
+* http://fox.wikis.com/wc.dll?Wiki~ProcessExitCode
+*-----------------------------------------------------------------------------------------------
+* 'Run' Parameter Documentation at: https://msdn.microsoft.com/en-us/library/d5fk67ky%28v=vs.84%29.aspx
+*
+* NOTA IMPORTANTE:
+* A diferencia del WScript.Shell.Run original, el valor tbWaitOnReturn se comporta como un timeout
+* en milisegundos si se pasa un valor mayor a 1, pasado el cual se mata a la tarea invocada.
+*-----------------------------------------------------------------------------------------------
+* Ej.1: Ejecutar el comando DIR en una consola y enviar la salida stdout a un archivo dir.txt
+* ? WScriptShell_Run("c:\windows\system32\cmd.exe /c dir c:\*.* > \temp\dir.txt")
+*
+*-----------------------------------------------------------------------------------------------
+* Ej.2: Ejecutar la calculadora de Windows en ventana normal y esperar 5 segundos a que el usuario la cierre, o matarla.
+* ? WScriptShell_Run("calc.exe", 5, 5000, .T.)
+*
+*-----------------------------------------------------------------------------------------------
+* Ej.3: Ejecutar la calculadora de Windows en ventana normal y no esperar a su cierre.
+* ? WScriptShell_Run("calc.exe", 5, 0, .T.)
+*
+*-----------------------------------------------------------------------------------------------
+* Ej.4: Ejecutar el Notepad de Windows en ventana maximizada y esperar 15 segundos a que el usuario la cierre, o matarla.
+* ? WScriptShell_Run("notepad.exe", 3, 15000, .T.)
+*
+*-----------------------------------------------------------------------------------------------
+* Ej.5: Ejecutar el Notepad de Windows en ventana maximizada y esperar indefinidamente a que el usuario la cierre, o matarla.
+* ? WScriptShell_Run("notepad.exe", 3, 1, .T.)
+*
+*-----------------------------------------------------------------------------------------------
+
+Local lnWfSO, ln_dwFlags, ln_wShowWindow, lcStartInfo, lcProcessInfo, ln_hProcess, ln_hThread ;
+	, lnExitCode, ln_dwProcessId, ln_dwThreadId, tcProgFile, laDirFile(1,5), lnTimeout
+
+Try
+* NOTA: Las constantes para VFP se pueden consultar en http://www.news2news.com/vfp/w32constants.php
+
+	#Define SEE_MASK_NOCLOSEPROCESS  0x00000040
+	#Define WAIT_MILLISECOND 3000
+
+	#Define SW_SHOW   5
+	#Define STILL_ACTIVE 0x103
+	#Define cnINFINITE  0xFFFFFFFF
+	#Define cnHalfASecond 500 && milliseconds
+	#Define cnTimedOut  0x0102
+
+*-- Constantes para WaitForSingleObject
+	#Define WAIT_ABANDONED 0x00000080
+	#Define WAIT_OBJECT_0 0x00000000
+	#Define WAIT_TIMEOUT 0x00000102
+	#Define WAIT_FAILED  0xFFFFFFFF
+
+	tcProgFile  = Evl(tcProgFile, Null)
+	tcCmdLine  = Evl(tcCmdLine, Null)
+	lnTimeout  = cnINFINITE
+	lnExitCode  = 0
+
+	Do Case
+	Case Vartype(tbWaitOnReturn) = "L"
+	Case Vartype(tbWaitOnReturn) = "N"
+* Si se indica un valor mayor a 1, se interpreta como "esperar por N milisegundos"
+		If tbWaitOnReturn > 1
+			lnTimeout = tbWaitOnReturn
+		Endif
+		tbWaitOnReturn = (tbWaitOnReturn >= 1)
+	Otherwise
+		Error 'Invalid value for tbWaitOnReturn parameter'
+	Endcase
+
+	If Vartype(tnWindowStyle) # "N" Or Not Between(tnWindowStyle, 0, 10) Then
+		tnWindowStyle = 10
+	Endif
+
+	ln_dwFlags  = 1
+	ln_wShowWindow = tnWindowStyle
+
+* DOCUMENTACIÓN estructura _STARTUPINFO:
+* creates the STARTUP structure to specify main window
+* properties if a new window is created for a new process
+
+*| typedef struct _STARTUPINFO {
+*|     DWORD   cb;                4
+*|     LPTSTR  lpReserved;        4
+*|     LPTSTR  lpDesktop;         4
+*|     LPTSTR  lpTitle;           4
+*|     DWORD   dwX;               4
+*|     DWORD   dwY;               4
+*|     DWORD   dwXSize;           4
+*|     DWORD   dwYSize;           4
+*|     DWORD   dwXCountChars;     4
+*|     DWORD   dwYCountChars;     4
+*|     DWORD   dwFillAttribute;   4
+*|     DWORD   dwFlags;           4
+*|     WORD    wShowWindow;       2
+*|     WORD    cbReserved2;       2
+*|     LPBYTE  lpReserved2;       4
+*|     HANDLE  hStdInput;         4
+*|     HANDLE  hStdOutput;        4
+*|     HANDLE  hStdError;         4
+*| } STARTUPINFO, *LPSTARTUPINFO; total: 68 bytes
+	lcStartInfo = BinToC(68,'4RS') ;
+		+ BinToC(0,'4RS') + BinToC(0,'4RS') + BinToC(0,'4RS') ;
+		+ BinToC(0,'4RS') + BinToC(0,'4RS') + BinToC(0,'4RS') + BinToC(0,'4RS') ;
+		+ BinToC(0,'4RS') + BinToC(0,'4RS') + BinToC(0,'4RS') ;
+		+ BinToC(ln_dwFlags,'4RS') ;
+		+ BinToC(ln_wShowWindow,'2RS') ;
+		+ BinToC(0,'2RS') + BinToC(0,'4RS') ;
+		+ BinToC(0,'4RS') + BinToC(0,'4RS') + BinToC(0,'4RS')
+
+	lcProcessInfo = Replicate( Chr(0), 16 )
+
+* DOCUMENTACIÓN estructura _PROCESS_INFORMATION:
+* https://msdn.microsoft.com/en-us/library/windows/desktop/ms684873%28v=vs.85%29.aspx
+*    typedef struct _PROCESS_INFORMATION {
+*        HANDLE hProcess;
+*        HANDLE hThread;
+*        DWORD dwProcessId;
+*        DWORD dwThreadId;
+*    } PROCESS_INFORMATION;
+*
+
+	If CreateProcess( tcProgFile, tcCmdLine,0,0,0,0,0,0, lcStartInfo, @lcProcessInfo ) = 0
+
+*-- Segundo intento: Si se definió un archivo (ej: un TXT,LOG,etc) intento lanzarlo
+*-- con la aplicación predeterminada
+		If Adir(laDirFile, tcCmdLine) = 1 Then
+			Local lcInfo, lnHeap, lnLen, lnPtr
+
+*-- Ejemplo adaptado de: http://www.foxite.com/archives/0000316611.htm
+			lnLen = Len(tcCmdLine) + 1
+			lnHeap = GetProcessHeap()
+			lnPtr = HeapAlloc(lnHeap, 0x8, 5 + lnLen)
+			Sys(2600, lnPtr, 5, [open] + Chr(0))
+			Sys(2600, lnPtr+5, lnLen, tcCmdLine + Chr(0))
+
+* DOCUMENTACIÓN estructura _SHELLEXECUTEINFO:
+* https://msdn.microsoft.com/en-us/library/windows/desktop/bb759784%28v=vs.85%29.aspx
+*typedef struct _SHELLEXECUTEINFO {
+*    DWORD     cbSize;            4
+*    ULONG     fMask;             4
+*    HWND      hwnd;              4
+*    LPCTSTR   lpVerb;            4
+*    LPCTSTR   lpFile;            4
+*    LPCTSTR   lpParameters;      4
+*    LPCTSTR   lpDirectory;       4
+*    int       nShow;             4
+*    HINSTANCE hInstApp;          4
+*    LPVOID    lpIDList;          4
+*    LPCTSTR   lpClass;           4
+*    HKEY      hkeyClass;         4
+*    DWORD     dwHotKey;          4
+*    union {
+*        HANDLE hIcon;
+*        HANDLE hMonitor;
+*    } DUMMYUNIONNAME;            4
+*    HANDLE    hProcess;          4
+*} SHELLEXECUTEINFO, *LPSHELLEXECUTEINFO;
+*
+
+			lcInfo = ;
+				BINTOC(60, [4RS]) + ;
+				BINTOC(SEE_MASK_NOCLOSEPROCESS, [4RS]) + ;
+				BINTOC(0, [4RS]) + ;
+				BINTOC(lnPtr, [4RS]) + ;
+				BINTOC(lnPtr+5, [4RS]) + ;
+				BINTOC(0, [4RS]) + ;
+				BINTOC(0, [4RS]) + ;
+				BINTOC(1, [4RS]) + ;
+				REPLICATE(Chr(0), 28)
+
+			If ShellExecuteEx(@lcInfo) = 0
+				HeapFree(lnHeap, 0, lnPtr) && Comprobar si es correcto limpiar el puntero aqui
+				If tlDebug
+					? "Could not call process"
+				Endif
+				lnExitCode = -1
+				Exit
+			Else
+				HeapFree(lnHeap, 0, lnPtr)
+				ln_hProcess = CToBin(Right(lcInfo, 4), [4RS])
+				ln_hThread = 0
+
+				If tlDebug
+					? "Process handle    = "+Transform(ln_hProcess)
+					? "Thread handle     = "+Transform(ln_hThread)
+				Endif
+
+*IF lnProcess != 0
+* WaitForSingleObject(ln_hProcess, WAIT_MILLISECOND)
+* IF tlDebug
+*  ? "Terminating process!"
+* ENDIF
+* TerminateProcess(ln_hProcess, 0)
+*ENDIF
+			Endif
+
+		Else
+			If tlDebug
+				? "Could not create process"
+			Endif
+			lnExitCode = -1
+			Exit
+		Endif
+	Else
+
+* Process and thread handles returned in ProcInfo structure
+		ln_hProcess  = CToBin( Left( lcProcessInfo, 4 ), '4RS' )
+		ln_hThread  = CToBin( Substr( lcProcessInfo, 5, 4 ), '4RS' )
+		ln_dwProcessId = CToBin( Substr( lcProcessInfo, 9, 4 ), '4RS' )
+		ln_dwThreadId = CToBin( Substr( lcProcessInfo, 13, 4 ), '4RS' )
+
+		If tlDebug
+			? "Process handle    = "+Transform(ln_hProcess)
+			? "Thread handle     = "+Transform(ln_hThread)
+			? "Process handle id = "+Transform(ln_dwProcessId)
+			? "Thread handle id  = "+Transform(ln_dwThreadId)
+		Endif
+	Endif
+
+	If tbWaitOnReturn Then
+* // Give the process time to execute and finish
+		lnExitCode = STILL_ACTIVE
+
+		Do While lnExitCode = STILL_ACTIVE
+			lnWfSO = WaitForSingleObject(ln_hProcess, lnTimeout)
+
+			If tlDebug
+				? 'lnWfSO = ' + Transform(lnWfSO)
+			Endif
+
+			If GetExitCodeProcess(ln_hProcess, @lnExitCode) <> 0
+				If lnExitCode = STILL_ACTIVE
+					Do Case
+					Case lnWfSO = WAIT_TIMEOUT
+						If tlDebug
+							? "Exit code = "+ Transform(lnWfSO) + " (WAIT_TIMEOUT)"
+						Endif
+						TerminateProcess(ln_hProcess, 0)
+						lnExitCode = WAIT_TIMEOUT
+
+					Case lnWfSO = WAIT_FAILED
+						If tlDebug
+							? "Exit code = "+ Transform(lnWfSO) + " (WAIT_FAILED)"
+						Endif
+
+					Case lnWfSO = WAIT_OBJECT_0
+						If tlDebug
+							? "Exit code = "+ Transform(lnWfSO) + " (WAIT_OBJECT_0)"
+						Endif
+
+					Case lnWfSO = WAIT_ABANDONED
+						If tlDebug
+							? "Exit code = "+ Transform(lnWfSO) + " (WAIT_ABANDONED)"
+						Endif
+
+					Otherwise
+						If tlDebug
+							? "Exit code = "+ Transform( lnExitCode )
+						Endif
+					Endcase
+				Else
+					If tlDebug
+						? "Exit code = "+ Transform( lnExitCode )
+					Endif
+				Endif
+			Else
+				If tlDebug
+					? "GetExitCodeProcess() failed"
+				Endif
+				lnExitCode = -2
+			Endif
+
+*DOEVENTS
+		Enddo
+	Else
+		lnExitCode = 0
+	Endif
+
+*-- DOCUMENTACIÓN sobre cierre procesos/threads:
+*-- https://msdn.microsoft.com/en-us/library/windows/desktop/ms682512%28v=vs.85%29.aspx
+	=CloseHandle(ln_hProcess)
+	=CloseHandle(ln_hThread)
+
+	If tlDebug
+		? '> FUNCTION RETURN VALUE = '
+		?? lnExitCode
+	Endif
+Endtry
+
+Return lnExitCode
 Endfunc
