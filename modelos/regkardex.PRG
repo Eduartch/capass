@@ -167,6 +167,32 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function INGRESAKARDEXIcbper()
+	*.Auto, vtas2.Coda, vtas2.icbper, vtas2.Prec, vtas2.cant, 'I', 'K', .Codv, Iif(This.ctipovta='C',0,.Tienda), vtas2.costo, 0
+	Local lC, lp
+	cur			  = "nidk"
+	lC			  = "FunIngresaKardexIcbper"
+	goApp.npara1  = this.niDAUTO
+	goApp.npara2  = this.ncoda
+	goApp.npara3  = this.nidicpber
+	goApp.npara4  = This.nprec
+	goApp.npara5  = this.ncant
+	goApp.npara6  = this.cincl
+	goApp.npara7  = this.ctmvto
+	goApp.npara8  = this.nidv
+	goApp.npara9  = this.nidtda
+	goApp.npara10 = this.ncosto
+	goApp.npara11 =this.ncomi
+	TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11)
+	ENDTEXT
+     nid=this.EJECUTARf(lC, lp, cur)
+     IF m.nid<1 Then
+		Return 0
+	Endif
+	Return m.nid
+	Endfunc
 Enddefine
 
 

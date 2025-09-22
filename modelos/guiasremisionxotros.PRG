@@ -1,15 +1,22 @@
 Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremision'
 	Function listaritemsparaguiaotros(nids, Calias)
 	TEXT To lc Noshow Textmerge
-           SELECT a.idart AS coda,entr_cant AS cant,g.guia_fech AS fech,r.idcliente AS idclie,k.idkar,guia_idgui,
-	       c.razo,c.nruc,c.dire,c.ciud,c.ndni,r.tdoc,r.ndoc,a.descri,a.unid,a.peso,guia_ndoc as ndoc,guia_idau as idauto
+	       SELECT a.idart AS coda,entr_cant AS cant,g.guia_fech AS fech,r.idcliente AS idclie,k.idkar,guia_idgui,
+	       c.razo,c.nruc,c.dire,c.ciud,c.ndni,r.tdoc,a.descri,a.unid,a.peso,guia_ndoc AS ndoc,guia_idau AS idauto,entr_iden
 	       FROM fe_guias AS g
 	       INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
 	       INNER JOIN fe_rcom AS r ON r.idauto=g.guia_idau
 	       INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
 	       INNER JOIN fe_kar AS k ON k.`idauto`=r.`idauto`
 	       INNER JOIN fe_art AS a ON a.idart=k.`idart`
-	       WHERE guia_idgui=<<nids>> AND guia_acti='A'  AND entr_acti='A' and guia_idre=0 ORDER BY k.`idkar`
+	       WHERE guia_idgui=<<nids>> AND guia_acti='A'  AND entr_acti='A' AND guia_idre=0 
+	       UNION ALL
+	       SELECT a.idart AS coda,entr_cant AS cant,g.guia_fech AS fech,CAST(0 AS UNSIGNED) AS idclie,CAST(0 AS UNSIGNED) AS idkar,guia_idgui,
+	       v.empresa AS razo,v.nruc,v.ptop,v.ciudad AS ciud,"" AS ndni,'09' AS tdoc,a.descri,a.unid,a.peso,guia_ndoc AS ndoc,guia_idau AS idauto,entr_iden
+	       FROM fe_guias AS g
+	       INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
+	       INNER JOIN fe_art AS a ON a.idart=e.`entr_idar`,fe_gene AS v
+	       WHERE guia_idgui=<<nids>> AND guia_acti='A'  AND entr_acti='A' AND guia_idre=0 ORDER BY entr_iden
 	ENDTEXT
 	If This.EjecutaConsulta(lc, Calias) < 1 Then
 		Return 0
@@ -22,7 +29,6 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	AddProperty(objdetalle,'ncant',0)
 	AddProperty(objdetalle,'nidg',0)
 	AddProperty(objdetalle,'nidkar',0)
-*<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif

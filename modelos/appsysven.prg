@@ -18,7 +18,7 @@ Define Class appsysven As Odata Of 'd:\capass\database\data.prg'
 	Select * From fe_gene Into Cursor confsetup
 	cdata = nfcursortojson(.T.)
 	goApp.rucempresa = fe_gene.nruc
-	rutajson = Addbs(Sys(5) + Sys(2003)) + 'config' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'config' + Alltrim(Str(goApp.xopcion)) + '.json'
 	If File(m.rutajson)
 		Delete File m.rutajson
 	Endif

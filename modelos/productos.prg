@@ -1,6 +1,7 @@
 Define Class Producto As OData Of 'd:\capass\database\data'
 	cdesc	   = ""
 	cUnid	   = ""
+	cunid1 =   ""
 	nprec	   = 0
 	ncosto   = 0
 	np1	   = 0
@@ -67,6 +68,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Coddetra = ""
 	cubi1 = ""
 	imagen=""
+	nequi1=0
+	nequi2=0
+	nidprov=0  && Proveedor del producto
 	Function MuestraProductosJ1(np1, np2, np3, np4, Ccursor)
 	lC = 'PROMUESTRAPRODUCTOSJx'
 	goApp.npara1 = np1
@@ -144,34 +148,6 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If !Pemstatus(goApp, 'prodconimagenes', 5) Then
 		AddProperty(goApp, 'prodconimagenes', '')
 	Endif
-*!*			Thisform.producto.cdesc=cdesc
-*!*				Thisform.producto.cunid=cunid
-*!*				Thisform.producto.nprec=Nprecio
-*!*				Thisform.producto.ncosto =ncosto
-*!*				Thisform.producto.np1=np1
-*!*				Thisform.producto.np2=np2
-*!*				Thisform.producto.np3=np3
-*!*				Thisform.producto.npeso=npeso
-*!*				Thisform.producto.ccat=ccat
-*!*				Thisform.producto.cmar=cmar
-*!*				Thisform.producto.ctipro=m.ctipro
-*!*				Thisform.producto.nflete=m.nflete
-*!*				Thisform.producto.cm=m.cm
-*!*				Thisform.producto.cidpc=Id()
-*!*				Thisform.producto.ncome=m.ncome
-*!*				Thisform.producto.ntigv=m.Tigv
-*!*				Thisform.producto.nutil1=m.nutil1
-*!*				Thisform.producto.nutil2=m.nutil2
-*!*				Thisform.producto.nutil3=m.nutil3
-*!*				Thisform.producto.nidusua=goApp.nidusua
-*!*				Thisform.producto.nsmax=m.nsmax
-*!*				Thisform.producto.nsmin=m.nsmin
-*!*				Thisform.producto.ccodigo1=m.ccoda1
-*!*				Thisform.producto.ndolar=m.ndolar
-*!*				Thisform.producto.cestado=m.ce
-*	cdesc, cunid, Nprecio, ncosto, np1, np2, np3, npeso, ccat, cmar,
-* ctipro, nflete, cm, Id(), ncome, Tigv, nutil1, nutil2, nutil3, nidus,
-*nsmax, nsmin, ccoda1, ndolar
 	lC = 'FUNCREAPRODUCTOS'
 	cur = "Xn"
 	goApp.npara1 = This.cdesc
@@ -712,7 +688,6 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
 	goApp.npara4 = m.np4
-*cpropiedad	 = 'ListaPreciosPorTienda'
 	TEXT To m.lp Noshow
    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
 	ENDTEXT
@@ -1114,6 +1089,15 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function ActualizaProveedor(nidproveedor)
+	TEXT To lC Noshow  Textmerge
+	  UPDATE fe_art SET idprov=<<nidproveedor>> where idart=<<This.ncoda>>
+	ENDTEXT
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 	Function listarstockminmax(Ccursor)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow  Textmerge
@@ -1447,7 +1431,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	TEXT To lp Noshow Textmerge
      (<<this.nidart>>,<<this.nidtda>>,<<this.ncant>>,'<<this.ctipo>>',<<this.nequi>>,<<this.ncaant>>,'<<this.ctdoc>>')
 	ENDTEXT
-	*MESSAGEBOX(lp)
+*MESSAGEBOX(lp)
 	If This.EJECUTARP(lC, lp) < 1 Then
 		Return 0
 	Endif
@@ -1858,12 +1842,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	   \INNER Join fe_cat As c On c.idcat=a.idcat
 	   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
        \Left Join  (
-	   \ Select a.idart As coda,a.cant,If(b.mone="S",cant*a.Prec*b.vigv,cant*a.Prec*b.dolar*b.vigv) As importe,
-	   \ e.razo As referencia,a.alma,Month(b.fech) As mes From fe_kar As a
+	   \ Select a.idart As coda,SUM(a.cant) as cant,SUM(If(b.mone="S",cant*a.Prec*b.vigv,cant*a.Prec*b.dolar*b.vigv)) As importe,
+	   \ a.alma,Month(b.fech) As mes From fe_kar As a
 	   \INNER Join fe_art As z On z.idart=a.idart
 	   \INNER Join fe_rcom As b On b.idauto=a.idauto
-	   \INNER Join fe_prov As e On e.idprov=b.idprov
-	   \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'  And tdoc Not In("AJ","II")
+	   \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'  And tdoc Not In("AJ","II") and idprov>0
 	If This.ccat > 0 Then
 	       \ And z.idcat=<<This.ccat>>
 	Endif
@@ -1873,7 +1856,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.codt > 0 Then
 		   \ And b.codt=<<This.codt>>
 	Endif
-	   \) As z On a.idart=z.coda Where prod_acti='A'
+	   \group by a.idart) As z On a.idart=z.coda Where prod_acti='A'
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -1886,28 +1869,27 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	dff = Cfechas(ff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	   \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,
-	   \IFNULL(mes,0) As mes,m.dmar As marca,c.dcat As linea,g.desgrupo As grupo  From fe_art As a
-       \INNER Join fe_mar As m On m.idmar=a.idmar
-	   \INNER Join fe_cat As c On c.idcat=a.idcat
-	   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
-       \Left Join  (
-	   \ Select a.idart As coda,a.cant,If(b.mone="S",cant*a.Prec*b.vigv,cant*a.Prec*b.dolar*b.vigv) As importe,
-	   \ e.razo As referencia,a.alma,Month(b.fech) As mes From fe_kar As a
-	   \INNER Join fe_art As z On z.idart=a.idart
-	   \INNER Join fe_rcom As b On b.idauto=a.idauto
-	   \INNER Join fe_clie As e On e.idclie=b.idcliente
-	    \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'  And tdoc Not In("AJ","II")
+   \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,
+   \IFNULL(mes,0) As mes,m.dmar As marca,c.dcat As linea,g.desgrupo As grupo,z.alma  From fe_art As a
+   \INNER Join fe_mar As m On m.idmar=a.idmar
+   \INNER Join fe_cat As c On c.idcat=a.idcat
+   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+   \Left Join  (
+   \ Select a.idart As coda,SUM(a.cant) as cant,SUM(If(b.mone="S",cant*a.Prec,cant*a.Prec*b.dolar)) As importe,
+   \ a.alma,Month(b.fech) As mes From fe_kar As a
+   \INNER Join fe_art As z On z.idart=a.idart
+   \INNER Join fe_rcom As b On b.idauto=a.idauto
+   \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>' and idcliente>0  And tdoc Not In("AJ","II")
 	If This.ccat > 0 Then
-	       \ And z.idcat=<<This.ccat>>
+	   \ And z.idcat=<<This.ccat>>
 	Endif
 	If This.cmar > 0 Then
-		       \ And z.idmar=<<This.cmar>>
+	   \ And z.idmar=<<This.cmar>>
 	Endif
 	If This.codt > 0 Then
-		   \ And b.codt=<<This.codt>>
+	   \ And b.codt=<<This.codt>>
 	Endif
-	   \) As z On a.idart=z.coda Where prod_acti='A'
+	   \group by a.idart,a.alma) As z On a.idart=z.coda Where prod_acti='A' ORDER BY alma,idart
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -2010,6 +1992,53 @@ Define Class Producto As OData Of 'd:\capass\database\data'
        UPDATE fe_art SET prod_icbper=0 WHERE idart=<<this.nidart>>
 	ENDTEXT
 	If This.Ejecutarsql(lC)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listarmenosrotadosxsysz(f1,f2,Ccursor)
+	fi=Cfechas(f1)
+	ff=Cfechas(f2)
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	TEXT TO lc NOSHOW TEXTMERGE
+	    SELECT descri,c.`colr_desc` AS color,stocki,fechacompra,CAST(IFNULL(fechavta,'0001-01-01') AS DATE) AS fechavta,w.idart FROM(
+		SELECT i.idart,descri,codcolor,prod_des1,i.stocki,IFNULL(v.ventas,0) AS ventas,c.fechacompra,b.fechavta FROM
+		(SELECT c.idart,p.descri,SUBSTR(p.prod_coda,6,3) AS codcolor,prod_des1,SUM(IF(tipo='C',cant,-cant)) AS stocki FROM fe_rcom AS d
+		INNER JOIN fe_kar AS c ON(c.idauto=d.idauto)
+		INNER JOIN fe_art AS p ON p.idart=c.idart
+		WHERE c.ACTI='A' AND d.acti='A'  AND c.alma>0  GROUP BY c.idart HAVING  stocki>0) AS i
+		LEFT JOIN (
+		SELECT idart,MAX(fech) AS fechavta FROM fe_rcom AS r INNER JOIN fe_kar AS k
+		ON k.idauto=r.idauto  WHERE idcliente>0 AND r.`acti`='A' AND k.`acti`='A' AND fech<'<<fi>>' GROUP BY idart) AS b ON b.idart=i.idart
+		INNER JOIN (
+		SELECT idart,MAX(fech) AS fechacompra FROM fe_rcom AS r INNER JOIN fe_kar AS k
+		ON k.idauto=r.idauto  WHERE idprov>0 AND r.`acti`='A' AND k.`acti`='A'AND  r.fech<'<<fi>>' GROUP BY idart) AS c  ON c.idart=i.idart
+		LEFT JOIN
+		(SELECT c.idart,SUM(cant) AS  ventas FROM  fe_rcom AS d INNER JOIN fe_kar AS c ON(c.idauto=d.idauto)
+		WHERE idcliente>0 GROUP BY c.idart) AS v ON v.idart=i.idart) AS w
+		INNER JOIN fe_colores AS c ON c.`colr_coda` = w.codcolor
+		WHERE ventas=0  ORDER BY prod_des1,color,stocki DESC,fechavta
+	ENDTEXT
+*!*		    select descri,c.`colr_desc` AS color,stocki,fechacompra,CAST(IFNULL(fechavta,'0001-01-01') AS DATE) AS fechavta,w.idart FROM(
+*!*			SELECT i.idart,descri,codcolor,prod_des1,i.stocki,IFNULL(v.ventas,0) AS ventas,c.fechacompra,b.fechavta FROM
+*!*			(SELECT c.idart,p.descri,SUBSTR(p.prod_coda,6,3) AS codcolor,prod_des1,SUM(IF(tipo='C',cant,-cant)) AS stocki FROM fe_rcom AS d
+*!*			INNER JOIN fe_kar AS c ON(c.idauto=d.idauto)
+*!*			INNER JOIN fe_art AS p ON p.idart=c.idart
+*!*			WHERE c.ACTI='A' AND d.acti='A'  AND c.alma>0  GROUP BY c.idart HAVING  stocki>0) AS i
+*!*			LEFT JOIN (
+*!*			SELECT idart,MAX(fech) AS fechavta FROM fe_rcom AS r INNER JOIN fe_kar AS k
+*!*			ON k.idauto=r.idauto  WHERE idcliente>0 AND r.`acti`='A' AND k.`acti`='A' GROUP BY idart) AS b ON b.idart=i.idart
+*!*			INNER JOIN (
+*!*			SELECT idart,MAX(fech) AS fechacompra FROM fe_rcom AS r INNER JOIN fe_kar AS k
+*!*			ON k.idauto=r.idauto  WHERE idprov>0 AND r.`acti`='A' AND k.`acti`='A'  GROUP BY idart) AS c  ON c.idart=i.idart
+*!*			LEFT JOIN
+*!*			(SELECT c.idart,SUM(cant) AS  ventas FROM  fe_rcom AS d INNER JOIN fe_kar AS c ON(c.idauto=d.idauto)
+*!*			WHERE d.fech BETWEEN '<<fi>>' AND '<<ff>>' AND idcliente>0 GROUP BY c.idart) AS v ON v.idart=i.idart) AS w
+*!*			INNER JOIN fe_colores AS c ON c.`colr_coda` = w.codcolor
+*!*			WHERE ventas=0  ORDER BY prod_des1,color,stocki DESC,fechavta
+	If This.EJECutaconsulta(lC,Ccursor)<1 Then
 		Return 0
 	Endif
 	Return 1

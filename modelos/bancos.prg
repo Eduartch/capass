@@ -27,6 +27,10 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	dfi=Date()
 	dff=Date()
 	Function ReporteBancos(dfi, dff, ccta, Calias)
+	IF dff-dfi>31 then
+	   this.cmensaje='No Mayor a 31 días'
+	   RETURN 0
+	ENDIF    
 	Local lC
 	f1 = Cfechas(dfi)
 	f2 = Cfechas(dff)
@@ -48,6 +52,10 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function ReporteBancospsysn(Calias)
+	IF this.dff-this.dfi>31 then
+	   this.cmensaje='No Mayor a 31 días'
+	   RETURN 0
+	ENDIF  
 	Local lC
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
@@ -100,10 +108,10 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 		Endif
 	Else
 		Create Cursor t_ctasb From Array cfieldsfectasb
-		cfilejson = Addbs(Sys(5) + Sys(2003)) + 't' + Alltrim(Str(goApp.Xopcion)) + '.json'
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 't' + Alltrim(Str(goApp.xopcion)) + '.json'
 		conerror = 0
 		If File(m.cfilejson) Then
-			responseType1 = Addbs(Sys(5) + Sys(2003)) + 't' + Alltrim(Str(goApp.Xopcion)) + '.json'
+			oResponse = nfJsonRead( m.cfilejson )
 			If Vartype(m.oResponse) = 'O' Then
 				For Each oRow In  oResponse.Array
 					Insert Into t_ctasb From Name oRow
@@ -262,6 +270,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
     \Order By a.ctas_ctas
 	Set Textmerge Off
 	Set Textmerge To
+  *  MESSAGEBOX(goapp.tiendas)
+	*MESSAGEBOX(lc)
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -283,13 +293,11 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 			Return 0
 		Endif
 	Else
-		If Type("cfieldsfempago") <> 'U' Then
-		Endif
 		Create Cursor m_mpago From Array cfieldsfempago
 		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'p' + Alltrim(Str(goApp.Xopcion)) + '.json'
 		conerror = 0
 		If File(m.cfilejson) Then
-			responseType1 = Addbs(Sys(5) + Sys(2003)) + 'p' + Alltrim(Str(goApp.Xopcion)) + '.json'
+			oResponse = nfJsonRead( m.cfilejson )
 			If Vartype(m.oResponse) = 'O' Then
 				For Each oRow In  oResponse.Array
 					Insert Into m_mpago From Name oRow

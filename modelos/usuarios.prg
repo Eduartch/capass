@@ -9,6 +9,15 @@ Define Class usuarios As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
+	ENDFUNC
+	Function mostrarusuariospsysm(Ccursor)
+	Text To lC Noshow Textmerge
+      SELECT idusua,nomb,clave,activo,tipo,idalma,usua_super FROM fe_usua WHERE activo="S"  ORDER BY nomb
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 	Function mostrarusuariospsystr(Ccursor)
 	Text To lC Noshow Textmerge

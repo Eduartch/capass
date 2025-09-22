@@ -33,7 +33,7 @@ Define Class importadatos As Odata Of 'd:\capass\database\data'
 	Endif
 	This.cmensaje=""
 	lcHTML = loXmlHttp.Responsetext
-	*MESSAGEBOX(lcHTML)
+*MESSAGEBOX(lcHTML)
 	Set Procedure  To d:\librerias\nfJsonRead.prg Additive
 	ocontrib = nfJsonRead(lcHTML)
 	If  Vartype(ocontrib.nombre_o_razon_social)<>'U' Then
@@ -157,12 +157,35 @@ Define Class importadatos As Odata Of 'd:\capass\database\data'
 				d		  = Val(Right(fecha, 2))
 				Insert Into CurTCambio(DIA, TC_COMPRA, TC_VENTA)Values(d, Val(ls_compra), Val(ls_venta))
 			Endif
-		NEXT
-		this.cmensaje=''
-		RETURN 1
+		Next
+		This.cmensaje=''
+		Return 1
 	Else
-		this.cmensaje='No se encontro información para Tipo de Cambio'
-		RETURN 0
+		This.cmensaje='No se encontro información para Tipo de Cambio'
+		Return 0
+	Endif
+	Endfunc
+	Function DtipoCambio(df,ct)
+	lc='Fundtipocambio'
+	goapp.npara1=df
+	goapp.npara2=ct
+	TEXT TO lp NOSHOW
+	    (?goapp.npara1,?goapp.npara2)
+	ENDTEXT
+	m.ntc=This.ejecutarf(lc,lp,'lmone')
+	If m.ntc<1 Then
+		If This.conerror=1 Then
+			Return 0
+		Endif
+	Endif
+	IF m.ntc>0 Then
+		Return m.ntc	
+	Else
+		If Used("fe_gene") Then
+			Return fe_gene.dola
+		Else
+			Return 0
+		Endif
 	Endif
 	Endfunc
 Enddefine

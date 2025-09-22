@@ -7,6 +7,10 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	nmeta=0
 	cmodo=""
 	Todos=""
+	ctipo=""
+	conmeta=""
+	ncomision=0
+	soloefectivo=""
 	Function validar()
 	Do Case
 	Case Len(Alltrim(This.cnombre))=0
@@ -29,9 +33,16 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	goapp.npara1=This.cnombre
 	goapp.npara2=This.cfono
 	goapp.npara3=This.nmeta
-	TEXT TO lc NOSHOW TEXTMERGE
-	INSERT INTO fe_vend(nomv,vend_cuot,vend_fono)values(?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	ENDTEXT
+	pc=Id()
+	If Lower(Sys(2003))='\psysl' Then
+		TEXT TO lc NOSHOW TEXTMERGE
+	    INSERT INTO fe_vend(nomv,fechvend,idpcvend)values(?goapp.npara1,localtime,?pc)
+		ENDTEXT
+	Else
+		TEXT TO lc NOSHOW TEXTMERGE
+		INSERT INTO fe_vend(nomv,vend_cuot,vend_fono)values(?goapp.npara1,?goapp.npara2,?goapp.npara3)
+		ENDTEXT
+	Endif
 	If This.ejecutarsql(lc)<1 Then
 		Return 0
 	Endif
@@ -45,9 +56,15 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	goapp.npara1=This.cnombre
 	goapp.npara2=This.cfono
 	goapp.npara3=This.nmeta
-	TEXT TO lc NOSHOW TEXTMERGE
-	UPDATE fe_vend SET nomv=?goapp.npara1,vend_fono=?goapp.npara2,vend_cuot=?goapp.npara3 WHERE idven=<<this.nidv>>
-	ENDTEXT
+	If Lower(Sys(2003))='\psysl' Then
+		TEXT TO lc NOSHOW TEXTMERGE
+		UPDATE fe_vend SET nomv=?goapp.npara1,cuota=?goapp.npara3 WHERE idven=<<this.nidv>>
+		ENDTEXT
+	Else
+		TEXT TO lc NOSHOW TEXTMERGE
+		UPDATE fe_vend SET nomv=?goapp.npara1,vend_fono=?goapp.npara2,vend_cuot=?goapp.npara3 WHERE idven=<<this.nidv>>
+		ENDTEXT
+	Endif
 	If This.ejecutarsql(lc)<1 Then
 		Return 0
 	Endif
@@ -90,10 +107,9 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 		Endif
 	Else
 		Create Cursor b_vend From Array cfieldsfevend
-		cfilejson = Addbs(Sys(5) + Sys(2003)) +  'v' + Alltrim(Str(goapp.Xopcion)) + '.json'
+		cfilejson = Addbs(Sys(5) + Sys(2003)) +  'v' + Alltrim(Str(goapp.xopcion)) + '.json'
 		If File(m.cfilejson) Then
-			responseType1 = Addbs(Sys(5) + Sys(2003)) +  'v' + Alltrim(Str(goapp.Xopcion)) + '.json'
-			oResponse = nfJsonRead( m.responseType1 )
+			oResponse = nfJsonRead(m.cfilejson)
 			If Vartype(m.oResponse) = 'O' Then
 				For Each oRow In  oResponse.Array
 					Insert Into b_vend From Name oRow
@@ -264,11 +280,11 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	nCount = Afields(cfieldsfevend)
 	Select * From (Ccursor) Into Cursor a_vend
 	cdata = nfcursortojson(.T.)
-	cfilejson = Addbs(Sys(5) + Sys(2003)) + 'v' + Alltrim(Str(goapp.Xopcion)) + '.json'
+	cfilejson = Addbs(Sys(5) + Sys(2003)) + 'v' + Alltrim(Str(goapp.xopcion)) + '.json'
 	If File(cfilejson) Then
 		Delete File (cfilejson)
 	Endif
-	rutajson = Addbs(Sys(5) + Sys(2003)) + 'v' + Alltrim(Str(goapp.Xopcion)) + '.json'
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'v' + Alltrim(Str(goapp.xopcion)) + '.json'
 	Strtofile (cdata, rutajson)
 	goapp.datosvend = 'S'
 	Return 1
@@ -287,14 +303,17 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
      \ e.vigv As igv,Cast(a.Codv As unsigned) As Codv,e.dolar As dola,d.Razo,'v' As Tipo,e.Idcliente,e.Impo,e.impo as importe From
      \ fe_clie As d
      \ inner Join fe_rcom As e On e.Idcliente=d.idclie
-     \ Left Join fe_kar As a On a.Idauto=e.Idauto
-     \ Left Join(select idart,idmar from fe_art
+     \ inner Join fe_kar As a On a.Idauto=e.Idauto
+     \ inner Join(select idart,idmar from fe_art
 	If nmarca>0 Then
         \ where  idmar=<<nmarca>>
 	Endif
      \ ) As  b On b.idart=a.idart
-     \ Left Join fe_vend As c On c.idven=a.Codv
-     \ Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<f1>>' And '<<f2>>' And Form='E' And Impo<>0 And e.Tdoc Not In("07","08")
+     \ inner Join fe_vend As c On c.idven=a.Codv
+     \ Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<f1>>' And '<<f2>>'  And Impo<>0 And e.Tdoc Not In("07","08")
+	If This.soloefectivo='E' Then
+        \ And Form='E'
+	Endif
 	If This.nidv > 0 Then
      \ And a.Codv=<<This.nidv>>
 	Endif
@@ -379,12 +398,12 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	dff=cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT linea,v.nomv AS vendedor,tcant AS cantidad,timporte AS importe
+	\SELECT idcat,linea,v.nomv AS vendedor,tcant AS cantidad,timporte AS importe
     \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`*a.`kar_equi`) AS tcant,a.`codv`,b.`idcat`,cc.`dcat` AS linea FROM fe_rcom AS e
 	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
 	\INNER JOIN fe_art AS  b ON b.idart=a.idart
     \INNER JOIN fe_cat AS cc ON cc.`idcat`=b.`idcat`
-	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
+	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
 	If This.nidv>0 Then
 		\ and a.codv=<<this.nidv>>
 	Endif
@@ -410,17 +429,17 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	dff=cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT marca,v.nomv AS vendedor,tcant AS cantidad,timporte AS importe
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`*a.`kar_equi`) AS tcant,a.`codv`,b.`idcat`,mm.`dmar` AS marca FROM fe_rcom AS e
+	\SELECT idmar,marca,v.nomv AS vendedor,tcant AS cantidad,timporte AS importe
+    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`*a.`kar_equi`) AS tcant,a.`codv`,b.`idmar`,mm.`dmar` AS marca FROM fe_rcom AS e
 	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
 	\INNER JOIN fe_art AS  b ON b.idart=a.idart
     \INNER JOIN fe_mar AS mm ON mm.`idmar`=b.`idmar`
-	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
+	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
 	If This.nidv>0 Then
 		\ and a.codv=<<this.nidv>>
 	Endif
 	If m.nidm>0 Then
-	 \ and cc.idmar=<<m.nidm>>
+	 \ and b.idmar=<<m.nidm>>
 	Endif
 	\GROUP BY b.idmar,mm.`dmar`,a.codv) AS yy
 	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv
@@ -441,15 +460,15 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	dff=cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT producto,v.nomv AS vendedor,tcant AS cantidad,timporte AS importe
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`*a.`kar_equi`) AS tcant,a.`codv`,b.`idcat`,b.`descri` AS producto FROM fe_rcom AS e
+	\SELECT producto,v.nomv AS vendedor,kar_unid as unidad,tcant AS cantidad,timporte AS importe
+    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`) AS tcant,a.`codv`,b.`idcat`,b.`descri` AS producto,kar_unid FROM fe_rcom AS e
 	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
 	\INNER JOIN fe_art AS  b ON b.idart=a.idart
     \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
 	If This.nidv>0 Then
 		\ and a.codv=<<this.nidv>>
 	Endif
-	\GROUP BY b.idart,b.`descri`,a.codv) AS yy
+	\GROUP BY b.idart,b.`descri`,kar_unid,a.codv) AS yy
 	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv
 	\ORDER BY vendedor,importe DESC
 	Set Textmerge Off
@@ -489,8 +508,183 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	\ORDER BY importe DESC
 	Set Textmerge Off
 	Set Textmerge To
-*	MESSAGEBOX(lc)
 	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listaventasconmetaspsysl(nlinea,nmarca,Ccursor)
+	If (This.dff-This.dfi)>60 Then
+		This.cmensaje='Hasta 60 Días'
+		Return 0
+	Endif
+	dfi=cfechas(This.dfi)
+	dff=cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\select vendedor,importe,cuota,if(cuota>0,Round((importe*100)/cuota,2),0) As por1 from(
+	\SELECT v.nomv AS vendedor,timporte AS importe,
+	\IF(cuota>0,IF(DATEDIFF('<<dff>>','<<dfi>>')=0,1,DATEDIFF('<<dff>>','<<dfi>>'))*(cuota/30),0) AS cuota
+    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,a.`codv` FROM fe_rcom AS e
+	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
+	\INNER JOIN fe_art AS  b ON b.idart=a.idart
+    \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
+	If This.nidv>0 Then
+		\ and a.codv=<<this.nidv>>
+	Endif
+	If m.nlinea>0 Then
+	   \ and b.idcat=<<m.nlinea>>
+	Endif
+	If m.nmarca>0 Then
+	  \ and b.idmar=<<m.nmarca>>
+	Endif
+	\GROUP BY a.codv) AS yy
+	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv) as aa
+	\ORDER BY importe DESC
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function crearpsystr()
+	If This.validar()<1 Then
+		Return 0
+	Endif
+	goapp.npara1=This.cnombre
+	goapp.npara2=Datetime()
+	goapp.npara3=goapp.usuario
+	goapp.npara4=This.ncomision
+	goapp.npara5=This.ctipo
+	goapp.npara6=This.nmeta
+	If This.conmeta='N' Then
+		TEXT TO lc NOSHOW TEXTMERGE
+		INSERT INTO fe_vend(nomv,fechvend,usuavend,idpcvend,vend_comi,vend_tipo)values(?goapp.npara1,?goapp.npara2,?goapp.npara3,"",?goapp.npara4,?goapp.npara5)
+		ENDTEXT
+	Else
+		TEXT TO lc NOSHOW TEXTMERGE
+		INSERT INTO fe_vend(nomv,fechvend,usuavend,idpcvend,vend_comi,vend_tipo,vend_cuot)values(?goapp.npara1,?goapp.npara2,?goapp.npara3,"",?goapp.npara4,?goapp.npara5,?goapp.npara6)
+		ENDTEXT
+	Endif
+	If This.ejecutarsql(lc)<1 Then
+		Return 0
+	Endif
+	This.cmensaje='Ok'
+	Return 1
+	Endfunc
+	Function editarpsystr()
+	If This.validar()<1 Then
+		Return 0
+	Endif
+	goapp.npara1=This.cnombre
+	goapp.npara2=This.ncomision
+	goapp.npara3=This.ctipo
+	goapp.npara4=This.nmeta
+	If This.conmeta='N' Then
+		TEXT TO lc NOSHOW TEXTMERGE
+		UPDATE fe_vend SET nomv=?goapp.npara1,vend_comi=?goapp.npara2,vend_tipo=?goapp.npara3 WHERE idven=<<this.nidv>>
+		ENDTEXT
+	Else
+		TEXT TO lc NOSHOW TEXTMERGE
+		UPDATE fe_vend SET nomv=?goapp.npara1,vend_comi=?goapp.npara2,vend_tipo=?goapp.npara3,vend_cuot=?goapp.npara4 WHERE idven=<<this.nidv>>
+		ENDTEXT
+	Endif
+	If This.ejecutarsql(lc)<1 Then
+		Return 0
+	Endif
+	This.cmensaje='Ok'
+	Return 1
+	Endfunc
+	Function listaventasconmetaspsystr(Ccursor)
+	If (This.dff-This.dfi)>60 Then
+		This.cmensaje='Hasta 60 Días'
+		Return 0
+	Endif
+	dfi=cfechas(This.dfi)
+	dff=cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\select vendedor,importe,CAST(cuota as decimal(12,2)) as cuota,if(cuota>0,Round((importe*100)/cuota,2),0) As por1,(importe-costo)/importe as por2 from(
+	\SELECT v.nomv AS vendedor,timporte AS importe,costo,
+	\vend_cuot AS cuota
+    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,a.`codv`,SUM(cant*kar_cost) as costo FROM fe_rcom AS e
+	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
+    \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
+	If This.nidv>0 Then
+		\ and a.codv=<<this.nidv>>
+	Endif
+	\GROUP BY a.codv) AS yy
+	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv) as aa
+	\ORDER BY importe DESC
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function detallemarcas(nidm,Ccursor)
+	If (This.dff-This.dfi)>60 Then
+		This.cmensaje='Hasta 60 Días'
+		Return 0
+	Endif
+	dfi=cfechas(This.dfi)
+	dff=cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\SELECT descri as producto,kar_unid as unidad,SUM(a.`cant`) AS cantidad,ROUND(SUM(a.cant*a.prec),2) AS importe FROM fe_rcom AS e
+	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
+	\INNER JOIN fe_art AS b ON b.idart=a.idart
+ 	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
+	If This.nidv>0 Then
+		\ and a.codv=<<this.nidv>>
+	Endif
+	If m.nidm>0 Then
+	 \ and b.idmar=<<m.nidm>>
+	Endif
+	\GROUP BY a.idart,kar_unid
+	\ORDER BY importe DESC
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function detallelineas(nidc,Ccursor)
+	If (This.dff-This.dfi)>60 Then
+		This.cmensaje='Hasta 60 Días'
+		Return 0
+	Endif
+	dfi=cfechas(This.dfi)
+	dff=cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\SELECT descri as producto,kar_unid As  unidad,SUM(a.`cant`) AS cantidad,ROUND(SUM(a.cant*a.prec),2) AS importe FROM fe_rcom AS e
+	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
+	\INNER JOIN fe_art AS  b ON b.idart=a.idart
+ 	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
+	If This.nidv>0 Then
+		\ and a.codv=<<this.nidv>>
+	Endif
+	If m.nidc>0 Then
+	 \ and b.idcat=<<m.nidc>>
+	Endif
+	\GROUP BY a.idart,kar_unid
+	\ORDER BY importe DESC
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizarCuotapsysl(nvalor)
+	TEXT TO lc NOSHOW TEXTMERGE
+        UPDATE fe_vend SET cuota=<<nvalor>> WHERE idven=<<this.nidv>>
+	ENDTEXT
+	If This.ejecutarsql(lc)<1
 		Return 0
 	Endif
 	Return 1

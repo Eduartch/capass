@@ -72,11 +72,11 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
 	Endtext
-	If This.EJECUTARf(m.lC, m.lp, cur) = 0 Then
+	nid=This.EJECUTARf(m.lC, m.lp, cur)
+	IF m.nid <1 Then
 		Return 0
-	Else
-		Return Xt.Id
 	Endif
+	Return m.nid
 	Endfunc
 	Procedure Actualizaproveedor
 	Local lC, lp
@@ -103,11 +103,10 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
 	Endtext
-	If This.EJECUTARP(m.lC, m.lp, cur) = 0 Then
+	If This.EJECUTARP(m.lC, m.lp, cur) <1 Then
 		Return 0
-	Else
-		Return  1
 	Endif
+	Return  1
 	Endproc
 	Procedure Listarproveedores
 	Lparameters	np1, np2, np3, nombrecursor

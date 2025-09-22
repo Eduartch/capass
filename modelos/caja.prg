@@ -105,6 +105,7 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	\Round(Case Forma When 'H' Then If(tipo='I',Impo,0) Else 0 End,2) As cheque,
 	\Round(Case Forma When 'T' Then If(tipo='I',Impo,0) Else 0 End,2) As tarjeta,
 	\Round(Case Forma When 'A' Then If(tipo='I',Impo,0) Else 0 End,2) As antic,
+	\Round(Case Forma When 'O' Then If(tipo='I',Impo,0) Else 0 End,2) As online,
 	\Round(Case tipo When 'S' Then If(Forma='E',Impo,0) Else 0 End,2) As egresos,
 	\usua,fechao,usuavtas,Forma,mone,tmon1,dola,nimpo,tipo,tdoc,idcredito,iddeudas,idauto,Refe
 	\From(

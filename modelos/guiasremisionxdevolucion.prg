@@ -305,7 +305,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 					Exit
 				Endif
 			Endif
-			nidkar = INGRESAKARDEXR(Na, ALLTRIM(tmpvg.Coda), "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, 0)
+			nidkar = INGRESAKARDEXR(Na, Alltrim(tmpvg.Coda), "V", 0, tmpvg.cant, "I", "K", 0, goApp.Tienda, 0, 0, 0)
 			If nidkar < 1 Then
 				s = 0
 				This.Cmensaje = 'Al Registrar Kardex'
@@ -317,11 +317,11 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 				Exit
 			Endif
 		Endif
-		objdetalle.nidart=alltrim(tmpvg.Coda)
+		objdetalle.nidart=Alltrim(tmpvg.Coda)
 		objdetalle.ncant=tmpvg.cant
 		objdetalle.nidg=m.nidg
 		objdetalle.nidkar=m.nidkar
-	
+
 		If  This.registradetalleguia(objdetalle)<1 Then
 			s = 0
 			Exit
@@ -357,6 +357,9 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	AddProperty(objdetalle,"ncant",0)
 	AddProperty(objdetalle,"nidg",0)
 	AddProperty(objdetalle,"nidkar",0)
+	AddProperty(objdetalle,"fevto",Date())
+	AddProperty(objdetalle,"clote",'')
+	AddProperty(objdetalle,"unid",'')
 	If This.VAlidar() < 1 Then
 		Return 0
 	Endif
@@ -386,14 +389,14 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 				sws = 0
 				Cmensaje = "Al Registrar el detalle de la guia"
 				Exit
-    		Endif
+			Endif
 			_Screen.oproductos.ncoda=tmpvg.Coda
 			_Screen.oproductos.codt=goApp.Tienda
 			_Screen.oproductos.ncant=tmpvg.cant
 			_Screen.oproductos.ctipo='V'
 			_Screen.oproductos.nequi=tmpvg.equi
 			If _Screen.oproductos.Actualizastockunidades()<1
-				Cmensaje = _Screen.oproductos.cmensaje
+				Cmensaje = _Screen.oproductos.Cmensaje
 				sws = 0
 				Exit
 			Endif
@@ -402,7 +405,10 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		objdetalle.ncant=tmpvg.cant
 		objdetalle.nidg=m.nidg
 		objdetalle.nidkar=m.nidkar
-		If  This.registradetalleguia(objdetalle)<1 Then
+		objdetalle.fevto=m.dFv
+		objdetalle.clote=tmpvg.nlote
+		objdetalle.unid=tmpvg.Unid
+		If  This.registradetalleguiaUnidades(objdetalle)<1 Then
 			sws = 0
 			Cmensaje = This.Cmensaje
 			Exit

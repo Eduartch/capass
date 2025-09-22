@@ -27,7 +27,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		SELECT f.fech AS resu_fech,IF(f.mone='S',ABS(f.impo),ABS(f.impo*f.dolar)) AS resu_impo,' ' AS resu_mens,2 AS Tipo FROM fe_rcom f
 		INNER JOIN fe_ncven g ON g.ncre_idan=f.idauto
 		INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
-		WHERE  f.fech between '<<f1>>' and '<<f2>>' and f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1) in('F','B') AND w.tdoc='03' AND f.idcliente>0 ) AS x)
+		WHERE  f.fech between '<<f1>>' and '<<f2>>' and f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1) in('F','B') AND w.tdoc='03' AND f.idcliente>0) AS x)
 		AS y GROUP BY resu_fech ORDER BY resu_fech) AS zz  WHERE resumen-enviados>=1
 	Endtext
 	If  This.EJECutaconsulta(lC, 'rbolne') < 1 Then
@@ -657,8 +657,8 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Df = Cfechas(dFecha)
 	If This.todos = 0 Then
-		Set Textmerge On
-		Set Textmerge To Memvar lC Noshow Textmerge
+			Set Textmerge On
+			Set Textmerge To Memvar lC Noshow Textmerge
 			\	Select fech,Tdoc,
 			\	Left(Ndoc,4) As Serie,Substr(Ndoc,5) As numero,If(Length(Trim(c.ndni))<8,'0','1') As tipodoc,If(Length(Trim(c.ndni))<8,'00000000',c.ndni) As ndni,
 		    \    c.razo,If(F.mone='S',valor,valor*dolar) As valor,If(F.mone='S',rcom_exon,rcom_exon*dolar) As rcom_exon,If(F.mone='S',igv,igv*dolar) As igv,
@@ -666,25 +666,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			\	From fe_rcom F
 			\	INNER Join fe_clie c On c.idclie=F.idcliente
 			\	Where Tdoc="03" And fech='<<df>>' And Acti='A' And idcliente>0 And Left(Ndoc,1)='B' And (F.Impo>0 Or F.rcom_otro>0)
-		If goApp.Cdatos = 'S' Then
-			If Empty(goApp.Tiendas) Then
-	    		\ And F.codt=<<goApp.tienda>>
-			Else
-	           \And F.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
-			Endif
-		Endif
-			\	Union All
-			\	Select F.fech,F.Tdoc,
-			\	Concat("BC",Substr(F.Ndoc,3,2)) As Serie,Substr(F.Ndoc,5) As numero,'1' As tipodoc,If(Length(Trim(c.ndni))<8,'00000000',c.ndni) As ndni,
-		    \   c.razo,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
-		    \   Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,w.Tdoc As trefe,Left(w.Ndoc,4) As serieref,Substr(w.Ndoc,5) As numerorefe,
-		    \   If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
-			\	From fe_rcom F
-			\	INNER Join fe_ncven g On g.ncre_idan=F.Idauto
-			\	INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
-		    \   INNER Join fe_clie c On c.idclie=F.idcliente
-			\	Where F.Tdoc="07"  And F.Acti='A' And F.idcliente>0 And w.Tdoc='03' And F.fech='<<df>>' And (F.Impo<>0 Or F.rcom_otro>0)
 		If goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -704,6 +685,26 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			\	INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 		    \   INNER Join fe_clie c On c.idclie=F.idcliente
 			\	Where F.Tdoc="08"  And F.Acti='A' And F.idcliente>0 And w.Tdoc='03' And F.fech='<<df>>' And (F.Impo<>0 Or F.rcom_otro>0)
+
+		If goApp.Cdatos = 'S' Then
+			If Empty(goApp.Tiendas) Then
+	    		\ And F.codt=<<goApp.tienda>>
+			Else
+	           \And F.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+			Endif
+		Endif
+			\	Union All
+			\	Select F.fech,F.Tdoc,
+			\	Concat("BC",Substr(F.Ndoc,3,2)) As Serie,Substr(F.Ndoc,5) As numero,'1' As tipodoc,If(Length(Trim(c.ndni))<8,'00000000',c.ndni) As ndni,
+		    \   c.razo,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
+			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
+		    \   Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,w.Tdoc As trefe,Left(w.Ndoc,4) As serieref,Substr(w.Ndoc,5) As numerorefe,
+		    \   If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
+			\	From fe_rcom F
+			\	INNER Join fe_ncven g On g.ncre_idan=F.Idauto
+			\	INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
+		    \   INNER Join fe_clie c On c.idclie=F.idcliente
+			\	Where F.Tdoc="07"  And F.Acti='A' And F.idcliente>0 And w.Tdoc='03' And F.fech='<<df>>' And (F.Impo<>0 Or F.rcom_otro>0)
 		If goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -797,18 +798,18 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Else
 			Set Textmerge On
 			Set Textmerge To Memvar lC Noshow Textmerge
-				\Select fech,Tdoc,Serie,numero,If(Length(Trim(ndni))<8,'0','1') As tipodoc,If(Length(Trim(ndni))<8,'00000000',ndni) As ndni,
-		        \razo,valor,rcom_exon,igv,Impo,trefe,serieref,numerorefe,rcom_otro,Idauto
-			    \From(Select F.fech,F.Tdoc,
-			    \If(F.Tdoc='07',Concat("BC",Substr(F.Ndoc,3,2)),Concat("BD",Substr(F.Ndoc,3,2))) As Serie,Substr(F.Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-		        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
-		        \Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,Cast(mid(F.Ndoc,5) As unsigned) As numero1,c.razo,c.ndni,
-		        \ifnull(w.Tdoc,"") As trefe,ifnull(Left(w.Ndoc,4),"") As serieref,ifnull(Substr(w.Ndoc,5),"") As numerorefe,If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
-		     	\From fe_rcom F
-		     	\INNER Join fe_clie As c On c.idclie=F.idcliente
-			    \Left Join fe_ncven g On g.ncre_idan=F.Idauto
-			    \Left Join fe_rcom As w On w.Idauto=g.ncre_idau
-			    \Where F.Tdoc='<<this.ctdoc>>' And F.fech='<<df>>'  And F.Acti='A'  And (F.Impo<>0 Or F.rcom_otro<>0)
+			\Select fech,Tdoc,Serie,numero,If(Length(Trim(ndni))<8,'0','1') As tipodoc,If(Length(Trim(ndni))<8,'00000000',ndni) As ndni,
+	        \razo,valor,rcom_exon,igv,Impo,trefe,serieref,numerorefe,rcom_otro,Idauto
+		    \From(Select F.fech,F.Tdoc,
+		    \If(F.Tdoc='07',Concat("BC",Substr(F.Ndoc,3,2)),Concat("BD",Substr(F.Ndoc,3,2))) As Serie,Substr(F.Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
+	        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
+	        \Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,Cast(mid(F.Ndoc,5) As unsigned) As numero1,c.razo,c.ndni,
+	        \ifnull(w.Tdoc,"") As trefe,ifnull(Left(w.Ndoc,4),"") As serieref,ifnull(Substr(w.Ndoc,5),"") As numerorefe,If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
+	     	\From fe_rcom F
+	     	\INNER Join fe_clie As c On c.idclie=F.idcliente
+		    \Left Join fe_ncven g On g.ncre_idan=F.Idauto
+		    \Left Join fe_rcom As w On w.Idauto=g.ncre_idau
+		    \Where F.Tdoc='<<this.ctdoc>>' And F.fech='<<df>>'  And F.Acti='A'  And (F.Impo<>0 Or F.rcom_otro<>0)
 			If goApp.Cdatos = 'S' Then
 				If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -823,13 +824,13 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Endif
 		Set Textmerge On
 		Set Textmerge To Memvar lcx Noshow Textmerge
-				\Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,
-				\Sum(igv) As igv,Sum(Impo) As Impo,Sum(rcom_otro) As rcom_otro
-				\From(Select
-				\If(Tdoc='03',Left(Ndoc,4),If(Tdoc='07',Concat("BC",Substr(F.Ndoc,3,2)),Concat("BD",Substr(F.Ndoc,3,2)))) As Serie,Substr(Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-		        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
-		        \Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,Tdoc,Cast(mid(Ndoc,5) As unsigned) As numero1,If(F.mone='S',rcom_otro,rcom_otro*dolar) As rcom_otro
-				\From fe_rcom F Where Tdoc='<<this.ctdoc>>' And fech='<<df>>' And Acti='A' And idcliente>0
+		\Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,
+		\Sum(igv) As igv,Sum(Impo) As Impo,Sum(rcom_otro) As rcom_otro
+		\From(Select
+		\If(Tdoc='03',Left(Ndoc,4),If(Tdoc='07',Concat("BC",Substr(F.Ndoc,3,2)),Concat("BD",Substr(F.Ndoc,3,2)))) As Serie,Substr(Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
+        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
+        \Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,Tdoc,Cast(mid(Ndoc,5) As unsigned) As numero1,If(F.mone='S',rcom_otro,rcom_otro*dolar) As rcom_otro
+		\From fe_rcom F Where Tdoc='<<this.ctdoc>>' And fech='<<df>>' And Acti='A' And idcliente>0
 		If goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>

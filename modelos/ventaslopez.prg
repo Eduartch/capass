@@ -192,7 +192,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	dff = Cfechas(f2)
 	nmargen = (nm / 100) + 1
 	If This.formaPago = 'E' Then
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 		SELECT a.idart,descri,unid,cant as cantidad,importe,
 		ROUND(IF(a.tmon='S',(a.prec*g.igv)+f.prec,(a.prec*g.igv*g.dola)+f.prec)*<<nmargen>>,4) As precio,
 		ROUND(cant*(IF(a.tmon='S',(a.prec*g.igv)+f.prec,(a.prec*g.igv*g.dola)+f.prec)*<<nmargen>>),2) AS importe1,
@@ -204,14 +204,14 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form='E' AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>' and rcom_idtr=0 and r.codt=<<this.almacen>> GROUP BY idart) AS s
 		INNER JOIN fe_art AS a ON a.idart=s.idart
 		INNER JOIN fe_fletes AS  f ON f.idflete=a.idflete,fe_gene AS g
-		Endtext
-		Text To lcx Noshow Textmerge
+		ENDTEXT
+		TEXT To lcx Noshow Textmerge
 		SELECT r.idauto FROM fe_rcom AS r
 		INNER JOIN fe_kar AS k ON k.idauto=r.idauto
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form='E' AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>'  and rcom_idtr=0 and r.codt=<<this.almacen>> GROUP BY idauto
-		Endtext
+		ENDTEXT
 	Else
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 	    SELECT a.idart,descri,unid,cant AS cantidad,importe,
 		ROUND(IF(a.tmon='S',(a.prec*g.igv)+f.prec,(a.prec*g.igv*g.dola)+f.prec)*1,4) AS precio,
 		ROUND(cant*(IF(a.tmon='S',(a.prec*g.igv)+f.prec,(a.prec*g.igv*g.dola)+f.prec)*1),2) AS importe1,
@@ -224,14 +224,14 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		FROM `fe_rcred` `r`
 		JOIN `fe_cred` `c` ON `c`.`cred_idrc` = `r`.`rcre_idrc`
 		JOIN fe_rcom AS rr ON rr.idauto=r.rcre_idau
-		WHERE `r`.`rcre_Acti` = 'A'  AND `c`.`acti` = 'A' AND rr.tdoc='20' AND rr.fech BETWEEN   '<<dfi>>' AND '<<dff>>'
+		WHERE `r`.`rcre_Acti` = 'A'  AND `c`.`acti` = 'A' AND rr.tdoc='20' AND rr.fech BETWEEN   '<<dfi>>' AND '<<dff>>' AND r.rcre_codt=<<this.almacen>> 
 		GROUP BY c.`ncontrol`,`c`.`mone`,r.rcre_idau HAVING (`saldo`=0)) AS yy ON yy.idauto=r.idauto
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form in('C','R') AND r.fech BETWEEN  '<<dfi>>' AND '<<dff>>' AND rcom_idtr=0 AND r.codt=<<this.almacen>> GROUP BY idart) AS s
 		INNER JOIN fe_art AS a ON a.idart=s.idart
 		INNER JOIN fe_fletes AS  f ON f.idflete=a.idflete,fe_gene AS g
-		Endtext
+		ENDTEXT
 *!*	    Para Filtrar los Id de los Pedidos
-		Text To lcx Noshow Textmerge
+		TEXT To lcx Noshow Textmerge
 		SELECT r.idauto FROM fe_rcom AS r
 		INNER JOIN fe_kar AS k ON k.idauto=r.idauto
 		inner join
@@ -239,10 +239,10 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		FROM `fe_rcred` `r`
 		JOIN `fe_cred` `c` ON `c`.`cred_idrc` = `r`.`rcre_idrc`
 		JOIN fe_rcom AS rr ON rr.idauto=r.rcre_idau
-		WHERE `r`.`rcre_Acti` = 'A'  AND `c`.`acti` = 'A' AND rr.tdoc='20' AND rr.fech BETWEEN   '<<dfi>>' AND '<<dff>>'
+		WHERE `r`.`rcre_Acti` = 'A'  AND `c`.`acti` = 'A' AND rr.tdoc='20' AND rr.fech BETWEEN   '<<dfi>>' AND '<<dff>>' 
 		GROUP BY c.`ncontrol`,`c`.`mone`,r.rcre_idau HAVING (`saldo`=0)) AS yy ON yy.idauto=r.idauto
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form='C' AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>'  and rcom_idtr=0 and r.codt=<<this.almacen>> GROUP BY idauto
-		Endtext
+		ENDTEXT
 	Endif
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -257,7 +257,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		Set DataSession To This.Idsesion
 	Endif
 	Create Cursor vtas2(Descri c(80), Unid c(4), cant N(10, 2), Prec N(13, 5), Coda N(8), idco N(13, 5), Auto N(5), ;
-		  Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), valor N(12, 2), igv N(12, 2), Total N(12, 2))
+		Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), valor N(12, 2), igv N(12, 2), Total N(12, 2))
 	Create Cursor vtas3(Descri c(80), Unid c(4), cant N(10, 2), Prec N(10, 2), Coda N(8), codt N(10), IDautoP N(10), valor N(12, 2), igv N(12, 2), Total N(12, 2))
 	Select (Ccursor)
 	Go Top
@@ -402,9 +402,9 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	goApp.npara4 = This.fechai
 	goApp.npara5 = This.fechaf
 	goApp.npara6 = goApp.nidusua
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
-	Endtext
+	ENDTEXT
 	nidr = This.EJECUTARf(lC, lp, 'cvtx')
 	If nidr < 0 Then
 		Return 0
@@ -555,9 +555,9 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	vd = 1
 	Select ldx
 	Scan All
-		Text To ulcx Noshow  Textmerge
+		TEXT To ulcx Noshow  Textmerge
            UPDATE fe_rcom SET rcom_idtr=<<nidrv>> where idauto=<<ldx.idauto>>
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(ulcx) < 1 Then
 			vd = 0
 			Exit
@@ -595,9 +595,9 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	goApp.npara22 = np22
 	goApp.npara23 = np23
 	goApp.npara24 = np24
-	Text To lparametros Noshow
+	TEXT To lparametros Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
-	Endtext
+	ENDTEXT
 	nida = This.EJECUTARf(lC, lparametros, cur)
 	If nida < 1 Then
 		Return 0
@@ -640,6 +640,10 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Return 1
 	Endfunc
 	Function resumenventaspsysl(Ccursor)
+	If This.fechaf-This.fechai>31 Then
+		This.Cmensaje='Hasta 31 Días'
+		Return 0
+	Endif
 	dfi = Cfechas(This.fechai)
 	dff = Cfechas(This.fechaf)
 	If This.Idsesion > 1 Then
@@ -670,8 +674,8 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Set Procedure To d:\capass\modelos\productos Additive
 	oProductos = Createobject("producto")
 	Create Cursor vtas2(Descri c(100), Unid c(4), cant N(10, 2), Prec N(13, 5), Coda N(8), idco N(13, 5), Auto N(5), ;
-		  Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), ;
-		  valor N(12, 2), igv N(12, 2), Total N(12, 2), tipro c(1), copia c(1) Default '', Tdoc c(2))
+		Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), ;
+		valor N(12, 2), igv N(12, 2), Total N(12, 2), tipro c(1), copia c(1) Default '', Tdoc c(2))
 	Select * From (Calias) Into Cursor tpx
 	Go Top
 	x = 1
@@ -698,18 +702,18 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 				Endif
 				If cant <= Iif(goApp.Tienda = 1, st.uno, Iif(goApp.Tienda = 2, st.Dos, Iif(goApp.Tienda = 3, st.tre, Iif(goApp.Tienda = 4, st.cua, Iif(goApp.Tienda = 5, st.cin, st.sei)))))
 					Insert Into vtas2(Descri, Unid, cant, Prec, Coda,  Auto, Ndoc, Nitem, comi, IDautoP, costo, tipro)Values(tpx.Desc, ;
-						  tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda, x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
+						tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda, x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
 				Else
 					m.Cmensaje = "EL Item: " + Alltrim(Descri) + " Sin Disponibilidad:"
 					sws = 0
 				Endif
 			Else
 				Insert Into vtas2(Descri, Unid, cant, Prec, Coda, Auto, Ndoc, Nitem, comi, IDautoP, costo, tipro)Values(tpx.Desc, ;
-					  tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda,  x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
+					tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda,  x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
 			Endif
 		Else
 			Insert Into vtas2(Descri, Unid, cant, Prec, Coda, Auto, Ndoc, Nitem, comi, IDautoP, costo, tipro)Values(tpx.Desc, ;
-				  tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda, x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
+				tpx.Unid, tpx.cant, tpx.Prec, tpx.Coda, x, cdcto, F, Iif(tpx.como > 0, tpx.como, Iif(m.nforma = 1, tpx.come, tpx.Comc)), tpx.IDautoP, tpx.costo, tpx.tipro)
 		Endif
 		Select tpx
 		Skip
@@ -824,8 +828,8 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		nidcta3 = 0
 	Endif
 	NAuto = IngresaResumenDcto(This.Tdoc, Left(This.formaPago, 1),  This.Serie + This.numero, ;
-		  This.Fecha, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, This.NroGuia, 'S', ;
-		  fe_gene.dola, fe_gene.igv, 'k', This.Codigo, 'V',  goApp.idcajero, 1, goApp.Tienda, nidcta1, nidcta2, nidcta3, 0, 0)
+		This.Fecha, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, This.NroGuia, 'S', ;
+		fe_gene.dola, fe_gene.igv, 'k', This.Codigo, 'V',  goApp.idcajero, 1, goApp.Tienda, nidcta1, nidcta2, nidcta3, 0, 0)
 	If NAuto = 0 Then
 		Return 0
 	Endif

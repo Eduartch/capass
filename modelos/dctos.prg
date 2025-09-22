@@ -71,8 +71,7 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.xopcion)) + '.json'
 		Create Cursor b_dctos From Array cfieldsfetdoc
 		If File(m.cfilejson) Then
-			responseType1 = Addbs(Sys(5) + Sys(2003)) + 'd' + Alltrim(Str(goApp.xopcion)) + '.json'
-			oResponse = nfJsonRead( m.responseType1 )
+			oResponse = nfJsonRead(m.cfilejson)
 			If Vartype(m.oResponse) = 'O' Then
 				For Each oRow In  oResponse.Array
 					Insert Into b_dctos From Name oRow

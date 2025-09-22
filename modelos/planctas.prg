@@ -1,14 +1,56 @@
 Define Class planctas As OData Of 'd:\capass\database\data.prg'
-	Function MuestraPlanCuentasx(np1, cur)
+	Function MuestraPlanCuentasx(np1, ccursor)
+	If Alltrim(goApp.datosplanctas) <> 'S' Then
+		If This.consultardata(np1,Ccursor) < 1 Then
+			Return 0
+		Endif
+	Else
+		Create Cursor l_planctas From Array cfieldsfeplan
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'l' + Alltrim(Str(goApp.xopcion)) + '.json'
+		conerror = 0
+		If File(m.cfilejson) Then
+			oResponse = nfJsonRead( m.cfilejson )
+			If Vartype(m.oResponse) = 'O' Then
+				For Each oRow In  oResponse.Array
+					Insert Into l_planctas From Name oRow
+				Endfor
+				Select * From l_planctas Into Cursor (Ccursor)
+			Else
+				If This.consultardata(np1,Ccursor) < 1 Then
+					conerror = 1
+				Endif
+			Endif
+		Else
+			If This.consultardata(np1,Ccursor) < 1 Then
+				conerror = 1
+			Endif
+		Endif
+		If conerror = 1 Then
+			Return 0
+		Endif
+	Endif
+	Return 1
+	ENDFUNC
+	FUNCTION consultarData(np1,ccursor)
 	lC = "PROMUESTRAPLANCUENTAS"
 	goApp.npara1 = np1
 	goApp.npara2 = Val(goApp.Año)
 	Text To lp Noshow
        (?goapp.npara1,?goapp.npara2)
 	Endtext
-	If This.EJECUTARP(lC, lp, cur) < 1 Then
+	If This.EJECUTARP(lC, lp, ccursor) < 1 Then
 		Return 0
+	ENDIF
+	Select (Ccursor)
+	nCount = Afields(cfieldsfeplan)
+	Select * From (Ccursor) Into Cursor l_planctas
+	cdata = nfcursortojson(.T.)
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'l' + Alltrim(Str(goApp.xopcion)) + '.json'
+	If File(m.rutajson) Then
+		Delete File m.rutajson
 	Endif
+	Strtofile (cdata, rutajson)
+	goApp.datosplanctas = 'S'
 	Return 1
 	Endfunc
 	Function listarctasrcompras()

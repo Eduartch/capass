@@ -10,33 +10,33 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	Function EditaAlmacen()
 	cur = "Tda"
 	lC = 'ProEditaAlmacen'
-	goApp.npara1 = this.cnomb
-	goApp.npara2 = this.cdire
-	goApp.npara3 = this.cciud
-	goApp.npara4 = this.nserie
-	goApp.npara5 = this.nidus
-	goApp.npara6 = this.nid
-	Text To lp Noshow
+	goApp.npara1 = This.cnomb
+	goApp.npara2 = This.cdire
+	goApp.npara3 = This.cciud
+	goApp.npara4 = This.nserie
+	goApp.npara5 = This.nidus
+	goApp.npara6 = This.nid
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-    Function EditaAlmacenmetasvtas()
+	Function EditaAlmacenmetasvtas()
 	cur = "Tda"
 	lC = 'ProEditaAlmacen'
-	goApp.npara1 = this.cnomb
-	goApp.npara2 = this.cdire
-	goApp.npara3 = this.cciud
-	goApp.npara4 = this.nserie
-	goApp.npara5 = this.nidus
-	goApp.npara6 = this.nid
-	goApp.npara7 = this.nmetavtas
-	Text To lp Noshow
+	goApp.npara1 = This.cnomb
+	goApp.npara2 = This.cdire
+	goApp.npara3 = This.cciud
+	goApp.npara4 = This.nserie
+	goApp.npara5 = This.nidus
+	goApp.npara6 = This.nid
+	goApp.npara7 = This.nmetavtas
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -49,21 +49,16 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function Muestratiendasx(Ccursor)
-	If This.Idsesion > 1 Then
-		Set DataSession To This.Idsesion
-	Endif
 	If Alltrim(goApp.datostdas) <> 'S' Then
 		If This.consultardata(Ccursor) < 1 Then
 			Return 0
 		Endif
 	Else
-		If Type("cfieldsfesucu") <> 'U' Then
-		Endif
-		Create Cursor b_tdas From Array cfieldsfesucu
-		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
+		Create Cursor a_tdas From Array cfieldsfesucu
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goapp.xopcion)) + '.json'
 		conerror = 0
 		If File(m.cfilejson) Then
-			responseType1 = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
+			oResponse = nfJsonRead(m.cfilejson)
 			If Vartype(m.oResponse) = 'O' Then
 				For Each oRow In  oResponse.Array
 					Insert Into a_tdas From Name oRow
@@ -89,9 +84,9 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2) ORDER BY nomb
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -101,15 +96,18 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9,10) ORDER BY idalma
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return  1
 	Endfunc
 	Function consultardata(Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
 	lC = "PROMUESTRAALMACENES"
 	If This.EJECUTARP(lC, "", Ccursor) < 1 Then
 		Return 0
@@ -118,7 +116,7 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	nCount = Afields(cfieldsfesucu)
 	Select * From (Ccursor) Into Cursor a_tdas
 	cdata = nfcursortojson(.T.)
-	rutajson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.Xopcion)) + '.json'
+	rutajson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.xopcion)) + '.json'
 	If File(m.rutajson) Then
 		Delete File (m.rutajson)
 	Endif

@@ -3,15 +3,15 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	 SELECT a.tcompras-a.tventas as saldo
 	 FROM (SELECT b.idart,SUM(IF(b.tipo='C',b.cant*b.kar_equi,0)) AS tcompras,
-	 SUM(IF(b.tipo='V',b.cant*b.kar_equi,0)) AS tventas,b.alma 
+	 SUM(IF(b.tipo='V',b.cant*b.kar_equi,0)) AS tventas,b.alma
 	 FROM fe_kar AS b
-	 INNER JOIN fe_rcom AS e ON e.idauto=b.idauto 
-	 WHERE b.acti<>'I'  AND e.acti='A' and b.alma=<<nalma>> and b.idart=<<nidart>> 
+	 INNER JOIN fe_rcom AS e ON e.idauto=b.idauto
+	 WHERE b.acti<>'I'  AND e.acti='A' and b.alma=<<nalma>> and b.idart=<<nidart>>
 	 GROUP BY  idart,alma) AS a
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -22,9 +22,9 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, Ccursor) = 0 Then
 		Return 0
 	Endif
@@ -34,13 +34,13 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
-	    SELECT   descri AS producto,unid,stock,Prod_smin AS minimo,diferencia 
+	TEXT To lC Noshow Textmerge
+	    SELECT   descri AS producto,unid,stock,Prod_smin AS minimo,diferencia
 		FROM(SELECT descri,unid,uno+dos+tre+cua+cin+sei AS stock,prod_smin,prod_smax,
 		prod_smin-(uno+dos+tre+cua+cin) AS diferencia  FROM fe_art AS a
 		WHERE prod_acti<>'I' AND prod_smin>0) AS x WHERE diferencia>0
 		ORDER BY descri
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -72,7 +72,7 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 		\And  b.idcat=<<This.ccat>>
 	Endif
 	\ Order By b.Descri;
-		Set Textmerge Off
+	Set Textmerge Off
 	Set Textmerge To
 	If  This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -87,9 +87,9 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	lC			 = 'ProMuestraPresentacionesXProducto'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, cur) = 0 Then
 		Return 0
 	Endif
@@ -97,9 +97,9 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	Endfunc
 	Function IngresaPreciosEpta(np1, np2, np3, np4, np5, np6, np7, np8, np9)
 	Local lC, lp
-	IF !PEMSTATUS(goapp,'ListaPreciosPorTienda',5) then
-	    ADDPROPERTY(goapp,'ListaPreciosPorTienda','')
-	ENDIF     
+	If !Pemstatus(goApp,'ListaPreciosPorTienda',5) Then
+		AddProperty(goApp,'ListaPreciosPorTienda','')
+	Endif
 	lC			 = 'FUNCREAEPTA'
 	cur			 = "XEpta"
 	goApp.npara1 = np1
@@ -111,15 +111,15 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	goApp.npara7 = np7
 	goApp.npara8 = np8
 	goApp.npara8 = np9
-	IF goapp.ListaPreciosPorTienda='S' then
-	Text To lp Noshow
+	If goApp.ListaPreciosPorTienda='S' Then
+		TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
-	ENDTEXT
-	ELSE
-	Text To lp Noshow
+		ENDTEXT
+	Else
+		TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
-	ENDTEXT
-	ENDIF 
+		ENDTEXT
+	Endif
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -129,9 +129,9 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	Function ActualizaPreciosEpta(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11)
 	Local lC, lp
 	Local lC, lp
-	IF !PEMSTATUS(goapp,'ListaPreciosPorTienda',5) then
-	    ADDPROPERTY(goapp,'ListaPreciosPorTienda','')
-	ENDIF     
+	If !Pemstatus(goApp,'ListaPreciosPorTienda',5) Then
+		AddProperty(goApp,'ListaPreciosPorTienda','')
+	Endif
 	lC			  = 'PROACTUALIZAEPTA'
 	goApp.npara1  = np1
 	goApp.npara2  = np2
@@ -144,16 +144,33 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	goApp.npara9  = np9
 	goApp.npara10 = np10
 	goApp.npara11 = np11
-	IF goapp.ListaPreciosPorTienda='S' then
-	Text To lp Noshow
+	If goApp.ListaPreciosPorTienda='S' Then
+		TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
-	ENDTEXT
-	ELSE
-	  Text To lp Noshow
+		ENDTEXT
+	Else
+		TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-	ENDTEXT
-	ENDIF 
+		ENDTEXT
+	Endif
 	If This.EJECUTARP(lC, lp, '') < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function MuestraProductosconstock(np1, np2, Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	lC = 'ProMuestraProductosConStockmas'
+	goApp.npara1 = np1
+	goApp.npara2 = np2
+	goApp.npara3  = This.constock
+	TEXT To lp Noshow
+        (?goapp.npara1,?goapp.npara2,?goapp.npara3)
+	ENDTEXT
+	This.conconexion = 1
+	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1

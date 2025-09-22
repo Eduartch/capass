@@ -80,6 +80,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Cdireccion = ""
 	nidccostos = 0
 	ctemporal=""
+	solocontables=''
 	Function actualizaparteotrascompras()
 	This.CONTRANSACCION = 'S'
 	If This.IniciaTransaccion() < 1 Then
@@ -222,9 +223,9 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lC Noshow Textmerge
 	    \Select  c.Deta As Deta, a.idauto,a.alma, a.idkar As idkar,b.Descri As Descri, b.Peso As Peso, b.prod_idco As prod_idco, b.Unid As Unid,
 		\b.tipro  As tipro, a.idart As idart, a.Incl As Incl, c.Ndoc As Ndoc, c.valor     As valor, c.igv       As igv,
-		\c.Impo   As Impo, c.pimpo As pimpo, a.cant  As cant, a.Prec As Prec, c.fech      As fech, c.fecr      As fecr,
+		\c.Impo   As Impo, c.pimpo,a.cant, a.Prec, c.fech      As fech, c.fecr      As fecr,
 		\c.Form   As Form, c.Exon  As Exon, c.ndo2  As ndo2, c.vigv  As vigv, c.idprov    As idprov, a.Tipo      As Tipo,
-		\c.Tdoc, c.dolar  As dolar, c.Mone  As Mone,p.Razo As Razo, p.Dire      As Dire, p.ciud      As ciud,
+		\c.Tdoc, c.dolar  As dolar, c.Mone  As Mone,p.Razo,p.Dire, p.ciud      As ciud,
 		\p.nruc   As nruc, c.codt As codt, a.dsnc,a.dsnd,a.gast, c.fusua,c.idusua As idusua, w.nomb  As Usuario, c.rcom_fise,rcom_exon
 		\From fe_rcom c
 		\Left Join fe_kar a  On c.idauto = a.idauto
@@ -540,25 +541,25 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Endif
 	TEXT To lC Noshow Textmerge
 	SELECT  `c`.`deta`      AS `deta`, `a`.`idauto`    AS `idauto`, `a`.`alma`      AS `alma`, `a`.`idkar`     AS `idkar`,
-			  `b`.`descri`    AS `descri`,  `b`.`peso`      AS `peso`,  `b`.`prod_idco` AS `prod_idco`,
-			  `b`.`unid`      AS `unid`,  `b`.`tipro`     AS `tipro`,  `a`.`idart`     AS `idart`,
-			  `a`.`incl`      AS `incl`,  `c`.`ndoc`      AS `ndoc`,  `c`.`valor`     AS `valor`,
-			  `c`.`igv`       AS `igv`,  `c`.`impo`      AS `impo`,  `c`.`pimpo`     AS `pimpo`,
-			  `a`.`cant`      AS `cant`, `a`.`prec`      AS `prec`,  `c`.`fech`      AS `fech`,
-			  `c`.`fecr`      AS `fecr`, `c`.`form`      AS `form`,  `c`.`exon`      AS `exon`,
-			  `c`.`ndo2`      AS `ndo2`,  `c`.`vigv`      AS `vigv`,  `c`.`idprov`    AS `idprov`,
-			  `a`.`tipo`      AS `tipo`, `c`.`tdoc`      AS `tdoc`,  `c`.`dolar`     AS `dolar`,
-			  `c`.`mone`      AS `mone`,  `p`.`razo`      AS `razo`,  `p`.`dire`      AS `dire`,
-			  `p`.`ciud`      AS `ciud`, `p`.`nruc`      AS `nruc`,  `c`.`codt`      AS `codt`,
-			  `a`.`dsnc`      AS `dsnc`, `a`.`dsnd`      AS `dsnd`,  `a`.`gast`      AS `gast`,prod_cod1,
-			  `c`.`fusua`     AS `fusua`, `c`.`idusua`    AS `idusua`,  `w`.`nomb`      AS `Usuario`
-		    FROM `fe_rcom` `c`
-		    LEFT JOIN `fe_kar` `a`  ON `c`.`idauto` = `a`.`idauto`
-		    LEFT JOIN `fe_art` `b`  ON `b`.`idart` = `a`.`idart`
-		    JOIN `fe_prov` `p`  on `p`.`idprov` = `c`.`idprov`
-		    JOIN `fe_usua` `w` ON `w`.`idusua` = `c`.`idusua`
-		    WHERE `c`.`acti` <> 'I'     AND `a`.`acti` <> 'I' and c.ndoc='<<this.cndoc>>' AND c.tdoc='<<this.ctdoc>>' AND c.idprov=<<this.nidprov>>
-		    order by idkar
+	  `b`.`descri`    AS `descri`,  `b`.`peso`      AS `peso`,  `b`.`prod_idco` AS `prod_idco`,
+	  `b`.`unid`      AS `unid`,  `b`.`tipro`     AS `tipro`,  `a`.`idart`     AS `idart`,
+	  `a`.`incl`      AS `incl`,  `c`.`ndoc`      AS `ndoc`,  `c`.`valor`     AS `valor`,
+	  `c`.`igv`       AS `igv`,  `c`.`impo`      AS `impo`,  `c`.`pimpo`     AS `pimpo`,
+	  `a`.`cant`      AS `cant`, `a`.`prec`      AS `prec`,  `c`.`fech`      AS `fech`,
+	  `c`.`fecr`      AS `fecr`, `c`.`form`      AS `form`,  `c`.`exon`      AS `exon`,
+	  `c`.`ndo2`      AS `ndo2`,  `c`.`vigv`      AS `vigv`,  `c`.`idprov`    AS `idprov`,
+	  `a`.`tipo`      AS `tipo`, `c`.`tdoc`      AS `tdoc`,  `c`.`dolar`     AS `dolar`,
+	  `c`.`mone`      AS `mone`,  `p`.`razo`      AS `razo`,  `p`.`dire`      AS `dire`,
+	  `p`.`ciud`      AS `ciud`, `p`.`nruc`      AS `nruc`,  `c`.`codt`      AS `codt`,
+	  `a`.`dsnc`      AS `dsnc`, `a`.`dsnd`      AS `dsnd`,  `a`.`gast`      AS `gast`,prod_cod1,
+	  `c`.`fusua`     AS `fusua`, `c`.`idusua`    AS `idusua`,  `w`.`nomb`      AS `Usuario`
+    FROM `fe_rcom` `c`
+    LEFT JOIN `fe_kar` `a`  ON `c`.`idauto` = `a`.`idauto`
+    LEFT JOIN `fe_art` `b`  ON `b`.`idart` = `a`.`idart`
+    JOIN `fe_prov` `p`  on `p`.`idprov` = `c`.`idprov`
+    JOIN `fe_usua` `w` ON `w`.`idusua` = `c`.`idusua`
+    WHERE `c`.`acti` <> 'I'     AND `a`.`acti` <> 'I' and c.ndoc='<<this.cndoc>>' AND c.tdoc='<<this.ctdoc>>' AND c.idprov=<<this.nidprov>>
+    order by idkar
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -572,10 +573,10 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	TEXT To lC Noshow Textmerge
 	 SELECT  `c`.`deta`      AS `deta`, `a`.`idauto`, `a`.`alma`, `a`.`idkar`     AS `idkar`,
 	`b`.`descri`    AS `descri`,  `b`.`peso` ,  `b`.`prod_idco`,b.tmon,b.uno,b.dos,b.tre,b.cua,
-	 `b`.`unid`,  `b`.`tipro`     AS `tipro`,  `a`.`idart`     AS `idart`,
-	 `a`.`incl`,  `c`.`ndoc`      AS `ndoc`,  `c`.`valor`     AS `valor`,
-	 `c`.`igv` ,  `c`.`impo`      AS `impo`,  `c`.`pimpo`     AS `pimpo`,
-	 `a`.`cant`, `a`.`prec`      AS `prec`,  `c`.`fech`      AS `fech`,
+	 `b`.`unid`,  `b`.`tipro` ,  `a`.`idart`     AS `idart`,
+	 `a`.`incl`,  `c`.`ndoc` ,  `c`.`valor`     AS `valor`,
+	 `c`.`igv` ,  `c`.`impo` ,  `c`.`pimpo`     AS `pimpo`,
+	 `a`.`cant`, `a`.`prec`  ,  `c`.`fech`      AS `fech`,
 	 `c`.`fecr`, `c`.`form` ,  `c`.`exon`      AS `exon`,rcom_exon,
 	 `c`.`ndo2`,  `c`.`vigv`,  `c`.`idprov`    AS `idprov`,
 	 `a`.`tipo`, `c`.`tdoc` ,  CAST(`c`.`dolar` as  decimal(6,4))   AS `dolar`,
@@ -606,6 +607,10 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Endfunc
 	Function porproveedorpsystr(Ccursor)
+	If (This.fechaf-This.fechai)>120 Then
+		This.cmensaje='Hasta 120 Días'
+		Return 0
+	Endif
 	fi = Cfechas(This.fechai)
 	ff = Cfechas(This.fechaf)
 	Set Textmerge On
@@ -782,7 +787,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
 			registro1.nruc, registro1.Razo, registro1.valorg, registro1.Exon, registro1.igvg, registro1.otros, registro1.Importe, registro1.pimpo, registro1.Deta, ;
 			registro1.dola,  registro1.Mone, registro1.detra,  ;
-			registro1.Codigo, registro1.Auto, Iif(m.notas = 1, m.ntdoc, ''), Iif(m.notas = 1, m.nndoc, ''), registro1.Tipo, IIF(ISNULL(registro1.icbper),0,registro1.icbper), Iif(m.notas = 1, m.nfech, Ctod("  /  /   ")), ;
+			registro1.Codigo, registro1.Auto, Iif(m.notas = 1, m.ntdoc, ''), Iif(m.notas = 1, m.nndoc, ''), registro1.Tipo, Iif(Isnull(registro1.icbper),0,registro1.icbper), Iif(m.notas = 1, m.nfech, Ctod("  /  /   ")), ;
 			Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv, registro1.ncta, registro1.centcostos, m.nccostos, registro1.ncta1)
 
 	Endscan
@@ -1920,16 +1925,20 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Else
     \ d.Descri,
 	Endif
-    \d.Unid,cant,e.Prec,Mone,F.nomb As Usuario,Form,e.cant*e.Prec As Impo,valor,a.igv,Impo As Importe From
+    \d.Unid,cant,e.Prec,Mone,F.nomb As Usuario,Form,e.cant*e.Prec As Impo,valor,a.igv,Impo As Importe,e.idart as codigo,s.nomb as Almacen From
   	\fe_rcom As a
 	\INNER Join fe_prov As c On c.idprov=a.idprov
 	\Left Join fe_kar As e On e.idauto=a.idauto
 	\Left Join fe_art As d On d.idart=e.idart
+	\inner join fe_sucu as s on s.idalma=e.alma
 	\INNER Join fe_usua As F On F.idusua=a.idusua,fe_gene As z
 	\Where a.fech Between '<<dfechai>>' And '<<dfechaf>>'  And a.Acti='A' And e.Acti='A'
 	If This.codt > 0 Then
 	 \ And a.codt=<<This.codt>>
 	Endif
+	IF this.solocontables='S' then
+	 \ And a.Tdoc in("01","50","07","08","09")
+	ENDIF  
 	If Len(Alltrim(This.cTdoc)) > 0 Then
 	 \ And a.Tdoc='<<this.ctdoc>>'
 	Endif
@@ -1979,17 +1988,14 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function buscarporidpsysu(Ccursor)
+	Function buscarxidpsysu(Ccursor)
 	TEXT To lC Noshow Textmerge
-	  SELECT   c.idusua    AS idusua,
-	  a.idauto    AS idauto,  a.alma ,  a.idkar,  a.kar_equi ,  b.descri    AS descri,  b.peso      AS peso,
-	  b.prod_idco AS prod_idco,  a.kar_unid  AS unid,  b.tipro     AS tipro,  a.idart     AS idart,  a.incl      AS incl,  c.ndoc      AS ndoc,
-	  c.valor     AS valor,  c.igv       AS igv,  c.impo      AS impo,rcom_exon,  c.pimpo     AS pimpo,  a.cant      AS cant,  a.prec      AS prec,
-	  c.fech      AS fech,  c.fecr      AS fecr,  c.form      AS form,  c.exon      AS exon,  c.ndo2      AS ndo2,  c.vigv      AS vigv,
-	  c.idprov    AS idprov,  a.tipo      AS tipo,  c.tdoc      AS tdoc,  c.dolar     AS dolar,  c.mone      AS mone,  p.razo      AS razo,
-	  p.dire      AS dire,  p.ciud      AS ciud,  p.nruc      AS nruc,  a.kar_posi  AS kar_posi,  a.kar_epta  AS kar_epta,  IFNULL(x.idcaja,0) AS Idcaja,
-	  c.codt      AS codt,  c.fusua     AS fusua,  w.nomb      AS Usuario,kar_tigv
-	  FROM fe_rcom c
+	  SELECT   c.idusua, a.idauto,  a.alma ,  a.idkar,  a.kar_equi ,  b.descri ,  b.peso,
+	  b.prod_idco ,  a.kar_unid  AS unid,  b.tipro,  a.idart,  a.incl,  c.ndoc,
+	  c.valor   ,  c.igv,  c.impo,rcom_exon,  c.pimpo,  a.cant  a.prec,c.fech  ,  c.fecr,  c.form ,  c.exon,  c.ndo2,  c.vigv,
+	  c.idprov,  a.tipo,  c.tdoc,  c.dolar,  c.mone,  p.razo, p.dire , p.ciud ,  p.nruc,  a.kar_posi,  a.kar_epta,  IFNULL(x.idcaja,0) AS Idcaja,
+	  c.codt ,  c.fusua,  w.nomb      AS Usuario,kar_tigv
+	 FROM fe_rcom c
      LEFT JOIN fe_kar a   ON c.idauto = a.idauto
      LEFT JOIN fe_art b    ON b.idart = a.idart
      JOIN fe_prov p         ON p.idprov = c.idprov
@@ -2046,7 +2052,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function listarparaaplicarnotas(Ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
@@ -2180,10 +2186,10 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
         \ And Year(c.fech)=<<Na>>
 	Else
 		\ And c.fech Between '<<dfi>>' And '<<dff>>'
-	ENDIF
-	IF this.codt>0 then
+	Endif
+	If This.codt>0 Then
 	   \ and c.codt=<<this.codt>>
-	ENDIF 
+	Endif
     \ Order By c.fech Desc
 	Set Textmerge To
 	Set Textmerge Off
@@ -2286,13 +2292,13 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Case regdvto(This.ctemporal)=0
 		This.Cmensaje="Ingrese Items "
 		Return .F.
-	Case Len(Alltrim(Left(this.cndoc,4)))<4 Or Len(Alltrim(Substr(This.cndoc,5)))<8
+	Case Len(Alltrim(Left(This.cndoc,4)))<4 Or Len(Alltrim(Substr(This.cndoc,5)))<8
 		This.Cmensaje="Ingrese Serie y Número de Documento"
 		Return .F.
 	Case This.cencontrado="V"
 		This.Cmensaje="No es Posible Actualizar este Documento"
 		Return .F.
-	Case Month(This.dfechar)<>goApp.mes Or Year(This.dfechar)<>Val(goApp.Año) OR !esfechaValida(This.dFecha) Or !esfechaValida(This.dfechar)
+	Case Month(This.dfechar)<>goApp.mes Or Year(This.dfechar)<>Val(goApp.Año) Or !esfechaValida(This.dFecha) Or !esfechaValida(This.dfechar)
 		This.Cmensaje="Fecha No Permitida Por el Sistema"
 		Return .F.
 	Case This.nidprov<1
@@ -2310,6 +2316,27 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Otherwise
 		Return .T.
 	Endcase
+	ENDFUNC
+	Function listardetallecompra(niDAUTO, Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	TEXT To lC Noshow Textmerge
+	 SELECT   `a`.`idauto`, `a`.`alma`, `a`.`idkar`     AS `idkar`,
+	 `a`.`idart`,`a`.`incl`,  `c`.`ndoc` ,  `c`.`valor`     AS `valor`,
+	 `c`.`igv` ,  `c`.`impo` ,  `c`.`pimpo`     AS `pimpo`,
+	 `a`.`cant`,if(mone='S',`a`.`prec` *c.vigv,a.prec*c.vigv*dolar) as prec ,  `c`.`fech`, rcom_exon,
+	 `c`.`vigv`,  `c`.`idprov`    AS `idprov`,
+	 `a`.`tipo`, `c`.`tdoc` ,  c.`dolar`,b.descri,b.unid,
+	 `c`.`mone`, `c`.`codt`   FROM `fe_rcom` `c`
+	 INNER  JOIN `fe_kar` `a`  ON `c`.`idauto` = `a`.`idauto`
+	 inner join fe_art as b on b.idart=a.idart
+	 WHERE `c`.`acti` <> 'I'     AND `a`.`acti` <> 'I' and c.idauto=<<nidauto>> order by idart
+	ENDTEXT
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 Enddefine
 

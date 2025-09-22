@@ -1541,7 +1541,10 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Function consultarfacturaxenviar(pkid, Ccursor)
 	If !Pemstatus(goApp, 'proyecto', 5) Then
 		AddProperty(goApp, 'proyecto', '')
-	Endif
+	ENDIF
+	IF !PEMSTATUS(goApp,'vtascondetraccion',5) then
+	    AddProperty(goApp, 'vtascondetraccion', '')
+	ENDIF 
 	Set Textmerge On
 	Set  Textmerge To Memvar lC Noshow Textmerge
        \ Select  r.Idauto,r.Ndoc,r.Tdoc,r.fech As dFecha,r.mone,valor,Cast(0 As Decimal(12,2)) As inafectas,Cast(0 As Decimal(12,2)) As gratificaciones,
@@ -1552,7 +1555,10 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	   \ IFNULL(unid_codu,'NIU')As unid1,s.codigoestab,r.Form,v.gene_cert,v.Clavecertificado As clavecerti,v.Gene_usol,v.gene_csol
 	If Alltrim(Lower(goApp.Proyecto)) == 'psys' Then
 	      \,r.rcom_ocom
-	Endif
+	ENDIF
+	IF goapp.vtascondetraccion='S' then
+	   \,r.rcom_mdet
+	ENDIF 
 	   \ From fe_rcom r
 	   \ INNER Join fe_clie c On c.idclie=r.idcliente
 	   \ INNER Join fe_kar k On k.Idauto=r.Idauto

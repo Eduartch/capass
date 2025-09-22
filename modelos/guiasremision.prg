@@ -80,6 +80,8 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	nflete = 0
 	dfi = Date()
 	dff = Date()
+	Remitente=""
+	rucremitente=""
 	conentregasparciales=""
 	Function VerificaSiguiaVtaEstaIngresada(np1)
 	Local lC
@@ -282,7 +284,11 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		Constancia With This.Constancia, brevete With This.brevete, ;
 		razont With This.razont, ructr With This.ructr, Motivo With This.Motivo, ;
 		tref With This.tref, Refe With This.Referencia, Archivo With This.Archivo, tipotra With This.tipotransporte;
-		Ndoc With This.Ndoc, ndni With This.ndni, fechafactura With This.Fechafacturacompra, Detalle With This.Detalle   In tmpvg
+		Ndoc With This.Ndoc, ndni With This.ndni, fechafactura With This.Fechafacturacompra, Detalle With This.Detalle In tmpvg
+	Select tmpvg
+	If Fsize("remitente")>0  AND Fsize("rucremitente")>0 Then
+		Replace All Remitente With This.Remitente,rucremitente With This.rucremitente In tmpvg
+	Endif
 	If This.Cmulti = 'S' Then
 		carpdf = Oempresa.nruc + "-" + This.Tdoc + "-" + Left(This.Ndoc, 4) + '-' + Substr(This.Ndoc, 5) + ".Pdf"
 	Else
@@ -786,11 +792,9 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 				SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
 		        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
 		        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
-		        e.entr_idar AS coda,g.guia_idtr,IFNULL(placa,'') AS placa,IFNULL(t.razon,'') AS razont,
-		        IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
-		        IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
-		        IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
-		        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,'09' as tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
+		        e.entr_idar AS coda,g.guia_idtr,placa AS placa,t.razon AS razont,
+		        t.ructr AS ructr,t.nombr AS conductor,t.dirtr AS direcciont,t.breve AS brevete,t.cons AS constancia,t.marca AS marca,c.nruc,c.ndni,
+		        t.placa1 AS placa1,r.ndoc AS dcto,'09' as tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
 		        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,r.tdoc AS tdoc1,v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,
 		        v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,IFNULL(t.tran_tipo,'01') AS tran_tipo
 		        FROM
@@ -808,8 +812,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
 		        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
 		        k.idart AS coda,k.prec,k.idkar,g.guia_idtr,IFNULL(placa,'') AS placa,IFNULL(t.razon,'') AS razont,
-		        IFNULL(t.ructr,'') AS ructr,IFNULL(t.nombr,'') AS conductor,
-		        IFNULL(t.dirtr,'') AS direcciont,IFNULL(t.breve,'') AS brevete,
+		        t.ructr AS ructr,t.nombr AS conductor,t.dirtr AS direcciont,t.breve AS brevete,
 		        IFNULL(t.cons,'') AS constancia,IFNULL(t.marca,'') AS marca,c.nruc,c.ndni,
 		        IFNULL(t.placa1,'') AS placa1,r.ndoc AS dcto,'09' as tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,guia_deta,
 		        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,r.tdoc AS tdoc1,v.rucfirmad,gene_cert,clavecertificado as clavecerti,guia_moti,
@@ -906,20 +909,19 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
             FROM  fe_guias AS g
             INNER JOIN fe_prov AS c ON c.idprov=g.guia_idpr
             INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
-            inner join fe_kar as k on k.idkar=e.entr_idkar
-            INNER JOIN fe_art AS a ON a.idart=k.`idart`
+            INNER JOIN fe_art AS a ON a.idart=e.entr_idar
             LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
             INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
 		ENDTEXT
 	Case This.Motivo = 'O'
 		TEXT To lC Noshow Textmerge
-		  SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
+		    SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
 	        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
 	        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
-	        k.idart AS coda,k.prec,k.idkar,g.guia_idtr,IFNULL(placa,'') AS placa,IFNULL(t.razon,'') AS razont,
+	        k.idart AS coda,g.guia_idtr,placa,t.razon AS razont,
 	        t.ructr AS ructr,t.nombr AS conductor,t.dirtr AS direcciont,t.breve AS brevete,
 	        t.cons AS constancia,t.marca AS marca,c.nruc,c.ndni,
-	        t.placa1,'' AS dcto,'09' AS tdoc,r.idcliente,v.gene_usol,v.gene_csol,guia_ubig,
+	        t.placa1,'' AS dcto,'09' AS tdoc,v.gene_usol,v.gene_csol,guia_ubig,
 	        c.razo,guia_idgui AS idgui,r.idauto,c.dire,c.ciud,'' AS tdoc1,v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,guia_deta,
 	        v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,t.tran_tipo
 	        FROM  fe_guias AS g
@@ -929,7 +931,24 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	        INNER JOIN fe_kar AS k ON k.idkar=e.entr_idkar
 	        INNER JOIN fe_art AS a ON a.idart=k.idart
 	        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
-	        INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr, fe_gene AS v 
+	        INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr, fe_gene AS v
+	        WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
+	        union all
+	        SELECT guia_ndoc AS ndoc,DATE_FORMAT(guia_fech,'%Y-%m-%d') AS fech,DATE_FORMAT(guia_fect,'%Y-%m-%d') AS fechat,
+	        LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
+	        a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
+	        entr_idar AS coda,g.guia_idtr,placa,t.razon AS razont,
+	        t.ructr AS ructr,t.nombr AS conductor,t.dirtr AS direcciont,t.breve AS brevete,
+	        t.cons AS constancia,t.marca AS marca,v.nruc,"",
+	        t.placa1,'' AS dcto,'09' AS tdoc,v.gene_usol,v.gene_csol,guia_ubig,
+	        v.empresa as razo,guia_idgui AS idgui,CAST(0 as unsigned) as idauto,v.ptop as dire,v.ciudad as ciud,'' AS tdoc1,
+	        v.rucfirmad,gene_cert,clavecertificado AS clavecerti,guia_moti,guia_deta,
+	        v.razonfirmad,v.nruc AS rucempresa,v.empresa,v.ubigeo,g.guia_ptop AS ptop,v.ciudad,v.distrito,t.tran_tipo
+	        FROM  fe_guias AS g
+	        INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
+	        INNER JOIN fe_art AS a ON a.idart=e.entr_idar
+	        LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
+	        INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr, fe_gene AS v
 	        WHERE guia_idgui=<<this.idautog>> and entr_acti='A'
 		ENDTEXT
 	Endcase
@@ -1149,7 +1168,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		Peso N(10, 2), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(12), fecr d, fechafactura d, ;
 		calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ptoll c(120), Archivo c(120), Codigo c(15), ;
 		razon c(120), nruc c(11), ndni c(8), conductor c(120), Marca c(100), Placa c(20), placa1 c(20), Constancia c(20), brevete c(20), razont c(120), ructr c(11), ;
-		Motivo c(1), Detalle c(100), tipotra c(15))
+		Motivo c(1), Detalle c(100), tipotra c(15),Remitente c(150),rucremitente c(11))
 	Select (Calias)
 	Index On Descri Tag Descri
 	Index On Nitem Tag Items
@@ -1160,12 +1179,17 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		Peso N(10, 2), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(20), fecr d, Detalle c(120), fechafactura d, costo N(10, 3), Item N(8), ;
 		calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ptoll c(120), Archivo c(120), valida1 c(1), ;
 		razon c(120), nruc c(11), ndni c(8), conductor c(120), Marca c(100), Placa c(15), placa1 c(15), Constancia c(30), equi N(8, 4), prem N(10, 4), pos N(3), idepta N(5), ;
-		brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), comi N(5, 3), idem N(8), Tigv N(5, 3), caant N(12, 2), nlote c(20), Fechavto d, tipotra c(15), Codigo1 c(30))
+		brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), comi N(5, 3), idem N(8), Tigv N(5, 3), caant N(12, 2), nlote c(20), Fechavto d, tipotra c(15), Codigo1 c(30),;
+		Remitente c(150),rucremitente c(11))
 	Select (Calias)
 	Index On Descri Tag Descri
 	Index On Nitem Tag Items
 	Endfunc
 	Function listarguias(dfi, dff, nidt, Ccursor)
+	If dff-dfi>31 Then
+		This.Cmensaje='Hasta 31 Días'
+		Return 0
+	Endif
 	dfi = Cfechas(dfi)
 	dff = Cfechas(dff)
 	If This.Idsesion > 0 Then
@@ -1219,7 +1243,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
         \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='O' And guia_acti='A'
 	If  nidt > 0 Then
         \And guia_codt=<<nidt>>
-	ENDIF
+	Endif
 	    \      Union All
         \      Select guia_fech As fech,guia_ndoc As Ndoc,'' As cliente,guia_deta As Detalle,guia_dcto As Refe,
         \      T.razon As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'I' As Motivo,guia_codt From fe_guias As a
@@ -1336,24 +1360,32 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Endif
 	Endfunc
 	Function logneumaticos(cfechaanulacion, Ccursor)
+
+*!*		\Select lgui_fech As hora, u.`nomb` As Usuario,rgui_ndoc As NroGuia, rgui_fech As Fecha,  s.`nomb` As Tienda,
+*!*		\p.`Descri` As Producto, d.`dgui_cane` As Cantidad, rgui_idrg From fe_aguias As a
+*!*		\INNER Join fe_guias As r On r.`guias_idgu` = a.`lgui_idga`
+*!*		\INNER Join fe_sucu As s On s.`idalma` = r.`rgui_codt`
+*!*		\INNER Join fe_usua As u On u.`Idusua` = a.`lgui_idus`
+*!*		\INNER Join fe_ent As d On d.`entr_idgu` = r.`_guia_idgu`
+*!*		\INNER Join fe_art As p On p.`idart` = d.`dgui_idart`
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\Select lgui_fech As hora, u.`nomb` As Usuario,rgui_ndoc As NroGuia, rgui_fech As Fecha,  s.`nomb` As Tienda,
-	\p.`Descri` As Producto, d.`dgui_cane` As Cantidad, rgui_idrg From fe_aguias As a
-	\INNER Join fe_rguias As r On r.`rgui_idrg` = a.`lgui_idga`
-	\INNER Join fe_sucu As s On s.`idalma` = r.`rgui_codt`
-	\INNER Join fe_usua As u On u.`Idusua` = a.`lgui_idus`
-	\INNER Join fe_dguias As d On d.`dgui_idrg` = r.`rgui_idrg`
-	\INNER Join fe_art As p On p.`idart` = d.`dgui_idart`
+	\SELECT lgui_fech AS hora, u.`nomb` AS Usuario,guia_ndoc AS NroGuia, guia_fech AS Fecha,  s.`nomb` AS Tienda,
+	\p.`Descri` AS Producto, d.`entr_cant` AS Cantidad,guia_idgui FROM fe_aguias AS a
+	\INNER JOIN fe_guias AS r ON r.`guia_idgui` = a.`lgui_idga`
+	\INNER JOIN fe_sucu AS s ON s.`idalma` = r.`guia_codt`
+	\INNER JOIN fe_usua AS u ON u.`Idusua` = a.`lgui_idus`
+	\LEFT JOIN fe_ent AS d ON d.`entr_idgu` = r.`guia_idgui`
+	\LEFT JOIN fe_art AS p ON p.`idart` = d.`entr_idar`
 	\Where
 	If cfechaanulacion = 'S' Then
 	     \ a.lgui_fech Between '<<f1>>' And '<<f2>>'
 	Else
-	     \  rgui_fech  Between '<<f1>>' And '<<f2>>'
+	     \  guia_fech  Between '<<f1>>' And '<<f2>>'
 	Endif
-    \ Order By lgui_fech
+    \ Order By lgui_fech desc
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -1367,7 +1399,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\   Select guia_ndoc As Ndoc,guia_fech As fech,guia_fect As fechat,
+	\  Select guia_ndoc As Ndoc,guia_fech As fech,guia_fect As fechat,
 	If goApp.Proyecto = 'psysr' Or goApp.Proyecto='psys' Then
 	 \ '' As prod_cod1,
 	Else
@@ -1404,6 +1436,10 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function listarguiaspormotivo(dfi, dff, nidt, Ccursor)
+	If dff-dfi>31 Then
+		This.Cmensaje='Hasta 31 Días'
+		Return 0
+	Endif
 	dfi = Cfechas(dfi)
 	dff = Cfechas(dff)
 	If This.Idsesion > 1 Then
@@ -1459,7 +1495,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
         \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='O' And guia_acti='A'
 		If  nidt > 0 Then
           \And guia_codt=<<nidt>>
-		ENDIF
+		Endif
 	Case This.Motivo = 'O'
         \      Select guia_fech As fech,guia_ndoc As Ndoc,'' As cliente,guia_deta As Detalle,guia_dcto As Refe,
         \      T.razon As Transportista,guia_idgui As idguia,guia_arch,g.correo As clie_corr,'I' As Motivo,guia_codt From fe_guias As a
@@ -1467,7 +1503,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
         \      Where  Left(guia_ndoc,1)='T'  And guia_fech Between '<<dfi>>' And '<<dff>>' And guia_moti='I' And guia_acti='A'
 		If  nidt > 0 Then
           \And guia_codt=<<nidt>>
-		Endif	
+		Endif
 	Endcase
        \ ) As w
         \      Group By fech,Ndoc,cliente,Detalle,Refe,Transportista,idguia,guia_arch,clie_corr,Motivo,guia_codt Order By fech
@@ -1492,16 +1528,22 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function registradetalleguiaUnidades(objdetalle)
+	IF fe_gene.nruc='20481309841' then
+	   TEXT TO lc NOSHOW TEXTMERGE
+	   INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar,entr_unid,entr_lote,entr_fvto)VALUES(<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>,'<<objdetalle.unid>>','<<objdetalle.clote>>','<<cfechas(objdetalle.fevto)>>')
+	   ENDTEXT
+	ELSE 
 	TEXT TO lc NOSHOW TEXTMERGE
 	   INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar,entr_unid)VALUES(<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>,'<<objdetalle.unid>>')
 	ENDTEXT
+	ENDIF 
 	If This.Ejecutarsql(lC)<1 Then
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function enviarguiasautomatico()
 	If This.consultarguiasxenviar('rguias')<1
 		Return 0
