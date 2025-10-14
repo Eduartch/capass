@@ -223,37 +223,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		This.Cmensaje=oguias.Cmensaje
 		Return 0
 	Endif
-*!*		Text To lC Noshow Textmerge
-*!*		    SELECT guia_fech,guia_ndoc,"" AS cliente,razon,motivo,idauto as idguia,v.nruc,ticket FROM
-*!*	        (SELECT guia_idgui AS idauto,guia_ndoc,'V' AS motivo,guia_fech,t.razon,guia_tick AS ticket  FROM  fe_guias AS g
-*!*	         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-*!*	         WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='V' AND guia_acti='A' AND LEFT(guia_deta,7)<>'Anulada'
-*!*	         UNION ALL
-*!*	         SELECT guia_idgui AS idauto,guia_ndoc,'D' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
-*!*	         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-*!*	         WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='D' AND guia_acti='A'
-*!*	         UNION ALL
-*!*	         SELECT guia_idgui AS idauto,guia_ndoc,'C' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
-*!*	         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-*!*	         WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='C' AND guia_acti='A'
-*!*	         UNION ALL
-*!*	         SELECT guia_idgui AS idauto,guia_ndoc,'N' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
-*!*	         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-*!*	         WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A'
-*!*	         UNION ALL
-*!*	         SELECT guia_idgui AS idauto,guia_ndoc,'T' AS Motivo,guia_fech,t.razon,guia_tick AS ticket  FROM fe_guias AS a
-*!*	         INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
-*!*	         WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A'
-*!*	         UNION ALL
-*!*	         SELECT guia_idgui AS idauto,guia_ndoc,'O' AS Motivo,guia_fech,t.razon,guia_tick AS ticket   FROM fe_guias AS a
-*!*	         INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
-*!*	         WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='O' AND guia_acti='A') AS w,fe_gene AS v
-*!*	         ORDER BY guia_ndoc,guia_fech
-*!*		Endtext
-*!*		If This.EJECutaconsulta(lC, Ccursor) < 1 Then
-*!*			Return 0
-*!*		Endif
- 	Return 1
+	Return 1
 	Endfunc
 	Function consultarguiasxenviaralpharmaco(Ccursor)
 	TEXT To lC Noshow Textmerge
@@ -1541,31 +1511,34 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Function consultarfacturaxenviar(pkid, Ccursor)
 	If !Pemstatus(goApp, 'proyecto', 5) Then
 		AddProperty(goApp, 'proyecto', '')
-	ENDIF
-	IF !PEMSTATUS(goApp,'vtascondetraccion',5) then
-	    AddProperty(goApp, 'vtascondetraccion', '')
-	ENDIF 
+	Endif
+	If !Pemstatus(goApp,'vtascondetraccion',5) Then
+		AddProperty(goApp, 'vtascondetraccion', '')
+	Endif
 	Set Textmerge On
 	Set  Textmerge To Memvar lC Noshow Textmerge
-       \ Select  r.Idauto,r.Ndoc,r.Tdoc,r.fech As dFecha,r.mone,valor,Cast(0 As Decimal(12,2)) As inafectas,Cast(0 As Decimal(12,2)) As gratificaciones,
-       \ Cast(0 As Decimal(12,2)) As exoneradas,'10' As Tigv,vigv,v.rucfirmad,v.razonfirmad,ndo2,v.nruc As rucempresa,v.Empresa,v.Ubigeo,
-	   \ v.ptop,v.ciudad,v.distrito,c.nruc,'6' As tipodoc,c.razo,Concat(Trim(c.Dire),' ',Trim(c.ciud)) As Direccion,c.ndni,rcom_otro,kar_cost As costoRef,Deta,
-	   \ 'PE' As pais,r.igv,Cast(0 As Decimal(12,2)) As tdscto,Cast(0 As Decimal(12,2)) As Tisc,Impo,Cast(0 As Decimal(12,2)) As montoper,k.Incl,
-	   \ Cast(0 As Decimal(12,2)) As totalpercepcion,k.cant,k.Prec,Left(r.Ndoc,4) As Serie,Substr(r.Ndoc,5) As numero,a.Unid,a.Descri,k.idart As Coda,
-	   \ IFNULL(unid_codu,'NIU')As unid1,s.codigoestab,r.Form,v.gene_cert,v.Clavecertificado As clavecerti,v.Gene_usol,v.gene_csol
+   \ Select  r.Idauto,r.Ndoc,r.Tdoc,r.fech As dFecha,r.mone,valor,Cast(0 As Decimal(12,2)) As inafectas,Cast(0 As Decimal(12,2)) As gratificaciones,
+   \ Cast(0 As Decimal(12,2)) As exoneradas,'10' As Tigv,vigv,v.rucfirmad,v.razonfirmad,ndo2,v.nruc As rucempresa,v.Empresa,v.Ubigeo,
+   \ v.ptop,v.ciudad,v.distrito,c.nruc,'6' As tipodoc,c.razo,Concat(Trim(c.Dire),' ',Trim(c.ciud)) As Direccion,c.ndni,rcom_otro,kar_cost As costoRef,Deta,
+   \ 'PE' As pais,r.igv,Cast(0 As Decimal(12,2)) As tdscto,Cast(0 As Decimal(12,2)) As Tisc,Impo,Cast(0 As Decimal(12,2)) As montoper,k.Incl,
+   \ Cast(0 As Decimal(12,2)) As totalpercepcion,k.cant,k.Prec,Left(r.Ndoc,4) As Serie,Substr(r.Ndoc,5) As numero,a.Unid,a.Descri,k.idart As Coda,
+   \ IFNULL(unid_codu,'NIU')As unid1,s.codigoestab,r.Form,v.gene_cert,v.Clavecertificado As clavecerti,v.Gene_usol,v.gene_csol
 	If Alltrim(Lower(goApp.Proyecto)) == 'psys' Then
 	      \,r.rcom_ocom
-	ENDIF
-	IF goapp.vtascondetraccion='S' then
+	Endif
+	If Alltrim(Lower(goApp.Proyecto)) == 'psysr' Then
+	      \,r.rcom_mret,rcom_mdet
+	Endif
+	If goApp.Vtascondetraccion='S' Then
 	   \,r.rcom_mdet
-	ENDIF 
-	   \ From fe_rcom r
-	   \ INNER Join fe_clie c On c.idclie=r.idcliente
-	   \ INNER Join fe_kar k On k.Idauto=r.Idauto
-	   \ INNER Join fe_art a On a.idart=k.idart
-	   \ INNER Join fe_sucu s On s.idalma=r.codt
-	   \ Left Join fe_unidades As u On u.unid_codu=a.Unid, fe_gene As v
-	   \ Where r.Idauto=<<pkid>> And r.Acti='A' And k.Acti='A'
+	Endif
+   \ From fe_rcom r
+   \ INNER Join fe_clie c On c.idclie=r.idcliente
+   \ INNER Join fe_kar k On k.Idauto=r.Idauto
+   \ INNER Join fe_art a On a.idart=k.idart
+   \ INNER Join fe_sucu s On s.idalma=r.codt
+   \ Left Join fe_unidades As u On u.unid_codu=a.Unid, fe_gene As v
+   \ Where r.Idauto=<<pkid>> And r.Acti='A' And k.Acti='A'
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -1891,6 +1864,72 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Else
 		This.Cmensaje = Left(Alltrim(lcHTML), 200)
 		Return 0
+	Endif
+	Endfunc
+	Function ConsultaApisunat
+	Lparameters cTdoc, Cserie, cnumero, dFecha, nimpo,niDAUTO
+	Local Obj As "empty"
+	Local oHTTP As "MSXML2.XMLHTTP"
+	Local lcHTML
+	Obj		  = Createobject("empty")
+	pURL_WSDL = "http://companiasysven.com/ccpe.php"
+	If Type('oempresa') = 'U' Then
+		Cruc = fe_gene.nruc
+	Else
+		Cruc = Oempresa.nruc
+	Endif
+*MESSAGEBOX(cruc,16,'Hola')
+	TEXT To cdata Noshow Textmerge
+	{
+	"ruc":"<<cruc>>",
+	"tdoc":"<<ctdoc>>",
+	"serie":"<<cserie>>",
+	"cndoc":"<<cnumero>>",
+	"cfecha":"<<dfecha>>",
+	"cimporte":"<<nimpo>>"
+	}
+	ENDTEXT
+*!*	wait WINDOW cserie
+*!*	wait WINDOW cnumero
+*!*	MESSAGEBOX(cdata)
+	oHTTP = Createobject("MSXML2.XMLHTTP")
+	oHTTP.Open("post", pURL_WSDL, .F.)
+	oHTTP.setRequestHeader("Content-Type", "application/json")
+	oHTTP.Send(cdata)
+	If oHTTP.Status <> 200 Then
+		AddProperty(Obj, "vdvto", '-1')
+		AddProperty(Obj, "mensaje", "Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status)))
+		This.Cmensaje="Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status))
+*Return Obj
+		Return 0
+	Endif
+	lcHTML = oHTTP.responseText
+*MESSAGEBOX(lcHTML)
+	If Left(Alltrim(lcHTML), 1) <> '{' Then
+		AddProperty(Obj, "vdvto", -1)
+		AddProperty(Obj, "estadoruc", "")
+		AddProperty(Obj, "estadodom", "")
+		AddProperty(Obj, "mensaje", "No hay Respuesta de SUNAT")
+		This.Cmensaje="No hay Respuesta de SUNAT"
+		Return 0
+	Endif
+	Set Procedure To d:\Librerias\nfJsonRead.prg Additive
+	ocomp = nfJsonRead(lcHTML)
+	AddProperty(Obj, "vdvto", ocomp.estadocomprobante)
+	AddProperty(Obj, "estadoruc", ocomp.estadoruc)
+	AddProperty(Obj, "estadodom", ocomp.condomicilio)
+	AddProperty(Obj, "mensaje", ocomp.Mensaje)
+	This.Cmensaje=ocomp.Mensaje
+	If ocomp.estadocomprobante = '1' Then
+		TEXT TO lc NOSHOW TEXTMERGE
+		   UPDATE fe_rcom SET rcom_mens='0,Aceptado' WHERE idauto=<<m.nidauto>>
+		ENDTEXT
+		If This.Ejecutarsql(lC)<1 Then
+			Return 0
+		Endif
+		Return 1
+	Else
+		Return  0
 	Endif
 	Endfunc
 Enddefine

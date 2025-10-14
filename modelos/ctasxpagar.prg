@@ -29,7 +29,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Function buscardcto(cndoc)
 	ccursor='c_'+Sys(2015)
 	TEXT TO lc NOSHOW
-    SELECT ndoc FROM fe_deu WHERE TRIM(ndoc)=?cndoc  AND acti='A'
+    SELECT ndoc FROM fe_deu WHERE TRIM(ndoc)=?cndoc  AND acti='A' limit 1
 	ENDTEXT
 	If This.ejecutaconsulta(lc,ccursor)<1
 		Return 0
@@ -811,6 +811,23 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 		ENDTEXT
 	Endif
 	If This.ejecutaconsulta(lc,ccursor)< 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listarletra(niden,ccursor)
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	TEXT TO lc NOSHOW
+      SELECT b.ndoc AS docd,d.fech,d.fevto,a.importe,b.impo AS impc,b.idauto,"" AS banco,d.tipo,a.ncontrol,c.rdeu_mone AS mone,
+       d.nrou,d.ndoc FROM  (SELECT ncontrol,MIN(fech) AS fech,MAX(fevto) AS fevto,SUM(a.impo-a.acta) AS importe FROM fe_deu AS a WHERE  ncontrol=?niden
+       GROUP BY ncontrol) AS a
+       INNER JOIN fe_deu AS d ON d.`iddeu`=a.ncontrol      
+       INNER JOIN fe_rdeu AS c ON c.rdeu_idrd=d.deud_idrd
+       LEFT JOIN fe_rcom AS b  ON b.idauto=c.rdeu_idau
+	ENDTEXT
+	If This.ejecutaconsulta(lc,ccursor)<1 Then
 		Return 0
 	Endif
 	Return 1

@@ -1083,7 +1083,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	nidrc=This.IngresaCabeceraCreditos()
 	If m.nidrc<1 Then
 		This.DEshacerCambios()
-		Return
+		RETURN 0
 	Endif
 	Sw=1
 	Select tmpd

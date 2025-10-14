@@ -329,7 +329,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		ocomp.ItemsFacturas[i, 15] = "0.00"
 		ocomp.ItemsFacturas[i, 16] = Alltrim(Str(crb.gratificaciones, 12, 2))
 	Endscan
-
 	cpropiedad = "Firmarcondll"
 	If !Pemstatus(goApp, cpropiedad, 5)
 		goApp.AddProperty("Firmarcondll", "")
@@ -396,7 +395,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	If !Pemstatus(goApp, cpropiedad, 5)
 		goApp.AddProperty("cdatos", "")
 	Endif
-
 	dATOSGLOBALES()
 	Set Classlib To d:\Librerias\fe.vcx Additive
 	ocomp = Createobject("comprobante")
@@ -466,7 +464,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		inner join fe_ncven g on g.ncre_idan=f.idauto inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>>  order by f.ndoc) as x group by serie
 		Endtext
-
 	Else
 		Text To lC Noshow Textmerge
 		SELECT fech,tdoc,

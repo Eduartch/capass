@@ -329,7 +329,10 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	If (This.dff-This.dfi)>120 Then
 		This.cmensaje='Máximo 120 Dias'
 		Return 0
-	Endif
+	ENDIF
+	IF !PEMSTATUS(goapp,'proyecto',5) then
+	   ADDPROPERTY(goapp,'proyecto','')
+	   ENDIF 
 	f1 = cfechas(This.dfi)
 	f2 = cfechas(This.dff)
 	Set Textmerge On
@@ -347,7 +350,10 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	\Where r.Idcliente>0 And k.Acti='A' And r.Acti='A' And r.fech Between  '<<f1>>' And '<<f2>>'  And r.Impo<>0
 	If This.nidv > 0 Then
 	\	And k.Codv=<<This.nidv>>
-	Endif
+	ENDIF
+	IF goapp.proyecto='psysg' then
+	\ AND exon<>'S'
+	ENDIF 
 	\Group  By r.Idauto,k.Codv) As a On a.Idauto=e.Idauto
 	\Left Join fe_vend As c On c.idven=a.Codv
 	\Order By a.Codv,a.Idauto,e.Mone

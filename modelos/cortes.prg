@@ -61,27 +61,25 @@ Define Class Cortes As  OData Of 'd:\capass\database\data.prg'
 	Do Case
 	Case opt = 'I'
 		Text To lC Noshow Textmerge
-	      select ndoc,razo,r.impo as Importe,ifnull(e.empl_nomb,'') as cortador,serv_feci,
-	      f.estado,serv_fecf,serv_idser,serv_idau FROM
-	      (select serv_idau,serv_feci,CAST(ifnull(serv_hsal,'por definir') as char(30)) as serv_hsal,'Ingresado' as estado,serv_fecf,serv_idser,serv_idar,serv_idco
-	      from  fe_serviciocorte as a where serv_fecf is null and serv_acti='A' group by serv_idau ) as  f
-	      inner join fe_rcom r on r.idauto=f.serv_idau 
-	      inner join fe_clie c on c.idclie=r.idcliente 
-	      inner join fe_art a on a.idart=f.serv_idar
-	      left join fe_empl as e on e.empl_idem=f.serv_idco
-	      where codt=<<nidt>> order by fech desc,ndoc desc;
+	          SELECT ndoc,razo,r.impo AS importe,'' AS cortador,fusua AS serv_feci,serv_idau,
+    	      'Ingresado' AS estado,fusua,idauto FROM
+    	      (SELECT serv_idau,'Ingresado' AS estado
+    	       FROM  fe_serviciocorte AS a WHERE serv_fecf IS NULL AND serv_acti='A'  GROUP BY serv_idau) AS  f
+    	      INNER JOIN fe_rcom r ON r.idauto=f.serv_idau 
+    	      INNER JOIN fe_clie c ON c.idclie=r.idcliente 
+    	      WHERE codt=<<nidt>> ORDER BY fech DESC,ndoc DESC
 		Endtext
 	Case opt = 'E'
 		Text To lC Noshow Textmerge
-	      select ndoc,razo,r.impo as Importe,ifnull(e.empl_nomb,'') as cortador,serv_feci,
-	      CAST(ifnull(serv_hsal,'por definir') as char(30)) as serv_hsal,'Ingresado' as estado,serv_fecf,serv_idser,serv_idau,serv_idco FROM
-	      (select serv_idau,serv_feci,CAST(ifnull(serv_hsal,'por definir') as char(30)) as serv_hsal,'Ingresado' as estado,serv_fecf,serv_idser,serv_idar,serv_idco
-	      from  fe_serviciocorte as a where serv_hsal is not null  and serv_acti='A' and serv_fecf is null group by serv_idau ) f
-	      inner join fe_rcom r on r.idauto=f.serv_idau 
-	      inner join fe_clie c on c.idclie=r.idcliente 
-	      inner join fe_art a on a.idart=f.serv_idar
-	      left join fe_empl as e on e.empl_idem=f.serv_idco
-	      where codt=<<nidt>> group by serv_idau order by fech desc,ndoc desc;
+	      SELECT ndoc,razo,r.impo AS Importe,IFNULL(e.empl_nomb,'') AS cortador,r.fusua AS serv_feci,
+	      serv_hsal,'Ingresado' AS estado,serv_fecf,serv_idau,serv_idco FROM
+	      (SELECT serv_idau,serv_hsal,serv_fecf,serv_idco
+	      FROM  fe_serviciocorte AS a WHERE serv_hsal IS NOT NULL  AND serv_acti='A' AND serv_fecf IS NULL 
+	      GROUP BY serv_idau,serv_hsal,serv_fecf,serv_idco) f
+	      INNER JOIN fe_rcom r ON r.idauto=f.serv_idau 
+	      INNER JOIN fe_clie c ON c.idclie=r.idcliente 
+	      LEFT JOIN fe_empl AS e ON e.empl_idem=f.serv_idco
+	      WHERE codt=<<nidt>>  ORDER BY fech DESC,ndoc DESC;
 		Endtext
 	Case opt = 'S'
 		Text To lC Noshow Textmerge
@@ -93,7 +91,7 @@ Define Class Cortes As  OData Of 'd:\capass\database\data.prg'
 	      inner join fe_rcom r on r.idauto=f.serv_idau 
 	      inner join fe_clie c on c.idclie=r.idcliente join fe_art a on a.idart=f.serv_idar
 	      left join fe_empl as e on e.empl_idem=f.serv_idco
-	      where codt=?nidt group by serv_idau order by fech desc,ndoc desc;
+	      where codt=?nidt  order by fech desc,ndoc desc;
 		Endtext
 	Case opt = 'T'
 		Text To lC Noshow Textmerge
@@ -145,13 +143,13 @@ Define Class Cortes As  OData Of 'd:\capass\database\data.prg'
 	f1 = Cfechas(dfi)
 	f2 = Cfechas(dff)
 	Text To lC Noshow Textmerge
-	      select descri as Servicio,e.empl_nomb  as Cortador,SUM(cantidad) AS cantidad,SUM(importe) AS Importe,serv_idco
-	      FROM (select SUM(serv_cant) as cantidad,SUM(ROUND(serv_cant*serv_prec,2)) as Importe,serv_idco,serv_idar from  fe_serviciocorte
-	      where cast(serv_fecf as date)  between '<<f1>>' and '<<f2>>'  and serv_acti='A' and serv_tipro='S'
-	      group by serv_idco,serv_idar) f
-	      inner join fe_art a on a.idart=f.serv_idar 
-	      left join fe_empl as e on e.empl_idem=f.serv_idco
-	      order by e.empl_nomb,descri;
+	      SELECT descri AS Servicio,e.empl_nomb  AS Cortador,cantidad,importe,serv_idco
+	      FROM (SELECT SUM(serv_cant) AS cantidad,SUM(ROUND(serv_cant*serv_prec,2)) AS Importe,serv_idco,serv_idar FROM  fe_serviciocorte
+	      WHERE CAST(serv_fecf AS DATE)  BETWEEN '<<f1>>' and '<<f2>>'   AND serv_acti='A' AND serv_tipro='S'
+	      GROUP BY serv_idco,serv_idar) f
+	      INNER JOIN fe_art a ON a.idart=f.serv_idar 
+	      LEFT JOIN fe_empl AS e ON e.empl_idem=f.serv_idco
+	      ORDER BY e.empl_nomb,descri;
 	Endtext
 	If This.EJECutaconsulta(lC, cur) < 1 Then
 		Return 0

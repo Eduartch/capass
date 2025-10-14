@@ -531,7 +531,16 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION ActualizacodigoFabricante(nidart,cvalor)
+	TEXT TO lc noshow
+        UPDATE fe_art SET prod_codf=?cvalor WHERE idart=?nidart
+	ENDTEXT
+    IF this.ejecutarsql(lc)<1 then
+       RETURN 0
+    ENDIF 
+    RETURN 1   
+	ENDFUNC
 	Function ActualizaCodigoFabricantebloque(Ccursor)
 	Ab = 1
 	If This.IniciaTransaccion() < 1 Then

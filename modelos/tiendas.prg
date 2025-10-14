@@ -49,6 +49,9 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function Muestratiendasx(Ccursor)
+	IF this.idsesion>0 then
+	   SET DATASESSION TO this.idsesion
+	ENDIF    
 	If Alltrim(goApp.datostdas) <> 'S' Then
 		If This.consultardata(Ccursor) < 1 Then
 			Return 0
@@ -97,7 +100,7 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	TEXT To lC Noshow Textmerge
-	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9,10) ORDER BY idalma
+	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9,10,11) ORDER BY idalma
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0

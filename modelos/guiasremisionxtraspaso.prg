@@ -768,7 +768,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	If nidkar < 1 Then
 		Return 0
 	Endif
-	If GrabaDetalleGuias(nidkar, ncant, nidg) = 0 Then
+	If GrabaDetalleGuias(nidkar, ncant, nidg)<1 Then
 		Return 0
 	Endif
 	Return 1

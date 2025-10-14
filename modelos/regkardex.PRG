@@ -22,6 +22,7 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	nirta = 0
 	dfi = Date()
 	dff = Date()
+	nplus=0
 	cfechaanulacion = ''
 	Function registrakardexcompras()
 	lC = "FunIngresaKardexcompras"
@@ -48,6 +49,16 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	lC = "proregistraKardexventas"
 	TEXT To lp Noshow Textmerge
     (<<this.nidauto>>,<<this.ncoda>>,'<<this.ctipo>>',<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.ncomi>>,'<<this.ctdoc>>')
+	ENDTEXT
+	If This.ejecutarp(lC, lp, '') < 1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function registrakardexventaspsysn()
+	lC = "proregistraKardexventas"
+	TEXT To lp Noshow Textmerge
+    (<<this.nidauto>>,<<this.ncoda>>,'<<this.ctipo>>',<<this.nprec>>,<<this.ncant>>,'<<this.cincl>>','<<this.ctmvto>>',<<this.nidv>>,<<this.nidtda>>,<<this.ncosto>>,<<this.ncomi>>,'<<this.ctdoc>>',<<this.nplus>>)
 	ENDTEXT
 	If This.ejecutarp(lC, lp, '') < 1 Then
 		Return 0

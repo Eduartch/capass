@@ -2675,7 +2675,22 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION rotacionresumida(nidart,Ccursor)
+	f1=cfechas(this.dfi)
+	f2=cfechas(this.dff)
+	TEXT TO Lc NOSHOW TEXTMERGE 
+	SELECT SUM(IF(tipo='C',cant,0)) AS compras,SUM(IF(tipo='V',cant,0)) AS ventas 
+	FROM fe_rcom AS r 
+	INNER JOIN fe_kar AS k ON k.`idauto`=r.`idauto`
+	WHERE fech BETWEEN '<<f1>>' AND '<<f2>>' AND (idcliente>0 OR idprov>0) AND k.acti='A' AND r.`acti`='A' AND idart=<<m.nidart>>
+	GROUP BY idart
+	ENDTEXT 
+	IF this.ejecutaconsulta(lc,Ccursor)<1 then
+	   RETURN 0
+	ENDIF 
+	RETURN 1   
+	ENDFUNC 
 Enddefine
 
 

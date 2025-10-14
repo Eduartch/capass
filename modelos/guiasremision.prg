@@ -286,7 +286,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		tref With This.tref, Refe With This.Referencia, Archivo With This.Archivo, tipotra With This.tipotransporte;
 		Ndoc With This.Ndoc, ndni With This.ndni, fechafactura With This.Fechafacturacompra, Detalle With This.Detalle In tmpvg
 	Select tmpvg
-	If Fsize("remitente")>0  AND Fsize("rucremitente")>0 Then
+	If Fsize("remitente")>0  And Fsize("rucremitente")>0 Then
 		Replace All Remitente With This.Remitente,rucremitente With This.rucremitente In tmpvg
 	Endif
 	If This.Cmulti = 'S' Then
@@ -508,7 +508,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Endif
 	Do Case
 	Case cencontrado = 'S' And This.Idautog = 0
-		This.Cmensaje = "NÚMERO de Guia de Remisión Ya Registrado"
+		This.Cmensaje = "NÚMERO de Documento Ya Registrado"
 		Return 0
 	Case Left(This.Ndoc, 4) = "0000"  Or Val(Substr(This.Ndoc, 4)) = 0
 		This.Cmensaje = "Ingrese NÚMERO de Guia Remitente Válido"
@@ -528,7 +528,7 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Case This.fechat < This.Fecha
 		This.Cmensaje = "La Fecha de Traslado No Puede Ser Antes que la Fecha de Emisión"
 		Return 0
-	Case Date()-This.Fecha>1
+	Case Date()-This.Fecha>1 And This.Tdoc<>'TT'
 		This.Cmensaje = "Solo se Emiten Guias con 1 Día de Atraso"
 		Return 0
 	Case Len(Alltrim(This.ptoll)) = 0
@@ -728,7 +728,11 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 		Cmulti = 'N'
 	Else
 		Cruc = Oempresa.nruc
-		Cmulti = Iif(goApp.Empresanube = 'rgm', 'S', '')
+		If goApp.Empresanube='rgm' Or goApp.Empresanube='fminera' Then
+			Cmulti = 'S'
+		Else
+			Cmulti=""
+		Endif
 	Endif
 	TEXT To cdata Noshow Textmerge
 	{
@@ -1530,15 +1534,15 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function registradetalleguiaUnidades(objdetalle)
-	IF fe_gene.nruc='20481309841' then
-	   TEXT TO lc NOSHOW TEXTMERGE
+	If fe_gene.nruc='20481309841' Then
+		TEXT TO lc NOSHOW TEXTMERGE
 	   INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar,entr_unid,entr_lote,entr_fvto)VALUES(<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>,'<<objdetalle.unid>>','<<objdetalle.clote>>','<<cfechas(objdetalle.fevto)>>')
-	   ENDTEXT
-	ELSE 
-	TEXT TO lc NOSHOW TEXTMERGE
+		ENDTEXT
+	Else
+		TEXT TO lc NOSHOW TEXTMERGE
 	   INSERT INTO fe_ent(entr_idar,entr_cant,entr_idgu,entr_idkar,entr_unid)VALUES(<<objdetalle.nidart>>,<<objdetalle.ncant>>,<<objdetalle.nidg>>,<<objdetalle.nidkar>>,'<<objdetalle.unid>>')
-	ENDTEXT
-	ENDIF 
+		ENDTEXT
+	Endif
 	If This.Ejecutarsql(lC)<1 Then
 		Return 0
 	Endif
@@ -1575,33 +1579,81 @@ Define Class GuiaRemision As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function consultarguiasxenviar(Ccursor)
-	TEXT To lC Noshow Textmerge
-	    SELECT guia_fech,guia_ndoc,"" AS cliente,razon,motivo,idauto as idguia,v.nruc,ticket FROM
-        (SELECT guia_idgui AS idauto,guia_ndoc,'V' AS motivo,guia_fech,t.razon,guia_tick AS ticket  FROM  fe_guias AS g
-         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-         WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='V' AND guia_acti='A' AND LEFT(guia_deta,7)<>'Anulada'
-         UNION ALL
-         SELECT guia_idgui AS idauto,guia_ndoc,'D' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
-         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-         WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='D' AND guia_acti='A'
-         UNION ALL
-         SELECT guia_idgui AS idauto,guia_ndoc,'C' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
-         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-         WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='C' AND guia_acti='A'
-         UNION ALL
-         SELECT guia_idgui AS idauto,guia_ndoc,'N' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
-         INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-         WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A'
-         UNION ALL
-         SELECT guia_idgui AS idauto,guia_ndoc,'T' AS Motivo,guia_fech,t.razon,guia_tick AS ticket  FROM fe_guias AS a
-         INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
-         WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A'
-         UNION ALL
-         SELECT guia_idgui AS idauto,guia_ndoc,'O' AS Motivo,guia_fech,t.razon,guia_tick AS ticket   FROM fe_guias AS a
-         INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
-         WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='O' AND guia_acti='A') AS w,fe_gene AS v
-         ORDER BY guia_ndoc,guia_fech
-	ENDTEXT
+	If !Pemstatus(goApp,'cdatos',5)
+		AddProperty(goApp,'cdatos','')
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\SELECT guia_fech,guia_ndoc,"" AS cliente,razon,motivo,idauto as idguia,v.nruc,ticket FROM
+    \(SELECT guia_idgui AS idauto,guia_ndoc,'V' AS motivo,guia_fech,t.razon,guia_tick AS ticket  FROM  fe_guias AS g
+    \INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+    \WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='V' AND guia_acti='A' AND LEFT(guia_deta,7)<>'Anulada'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And guia_codt=<<goApp.tienda>>
+		Else
+	      \And guia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+    \UNION ALL
+    \SELECT guia_idgui AS idauto,guia_ndoc,'D' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
+    \INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+    \WHERE LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='D' AND guia_acti='A'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And guia_codt=<<goApp.tienda>>
+		Else
+	      \And guia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+    \UNION ALL
+    \SELECT guia_idgui AS idauto,guia_ndoc,'C' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
+    \INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+    \WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='C' AND guia_acti='A'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And guia_codt=<<goApp.tienda>>
+		Else
+	      \And guia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+    \UNION ALL
+    \SELECT guia_idgui AS idauto,guia_ndoc,'N' AS motivo,guia_fech,t.razon,guia_tick AS ticket   FROM  fe_guias AS g
+    \INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+    \WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A'
+	If goApp.Cdatos = 'S' then
+		If Empty(goApp.Tiendas) Then
+	      \And guia_codt=<<goApp.tienda>>
+		Else
+	      \And guia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+    \UNION ALL
+    \SELECT guia_idgui AS idauto,guia_ndoc,'T' AS Motivo,guia_fech,t.razon,guia_tick AS ticket  FROM fe_guias AS a
+    \INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
+    \WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And guia_codt=<<goApp.tienda>>
+		Else
+	      \And guia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+    \UNION ALL
+    \SELECT guia_idgui AS idauto,guia_ndoc,'O' AS Motivo,guia_fech,t.razon,guia_tick AS ticket   FROM fe_guias AS a
+    \INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
+    \WHERE LEFT(guia_ndoc,1)='T' AND  LEFT(guia_mens,1)<>'0' AND guia_moti='O' AND guia_acti='A'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And guia_codt=<<goApp.tienda>>
+		Else
+	      \And guia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+	\) AS w,fe_gene AS v
+    \ ORDER BY guia_ndoc,guia_fech
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif

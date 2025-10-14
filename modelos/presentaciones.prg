@@ -146,11 +146,26 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 	TEXT TO lc NOSHOW
         UPDATE fe_presentaciones SET pres_unid=?np2 WHERE pres_idpr=?np1
 	ENDTEXT
-	If This.ejecutarsql(lc)<1 Then
+	If This.ejecutarsql(lC)<1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
+*!*	*************************
+*!*		Function MuestraPresentacionesXProducto1(np1, np2, cur)
+*!*		lC = 'ProMuestraPresentacionesXProducto'
+*!*		goApp.npara1 = np1
+*!*		goApp.npara2 = np2
+*!*		TEXT To lp Noshow
+*!*	     (?goapp.npara1,?goapp.npara2)
+*!*		ENDTEXT
+*!*		If EJECUTARP(lC, lp, cur) = 0 Then
+*!*			Errorbd(ERRORPROC + 'Mostrando Presentaciones de Productos')
+*!*			Return 0
+*!*		Else
+*!*			Return 1
+*!*		Endif
+*!*		Endfunc
 Enddefine
 
 

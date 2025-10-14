@@ -2171,8 +2171,8 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	If goApp.Proyecto = 'psysg' Or goApp.Proyecto = 'xsys3'  Or goApp.Proyecto = 'psysu' Then
       \,kar_unid As Unid,kar_equi
 	Endif
-    \,cant,Round(Prec*c.vigv,2) As Prec,If(c.Mone='S','Soles','Dólares') As Moneda,c.Tdoc As Tdoc,
-	\c.Ndoc As Ndoc,Month(c.fech) As mes,s.nomb As Tienda,c.Mone,a.alma From fe_kar As a
+    \,cant,Round(a.Prec*c.vigv,2) As Prec,If(c.Mone='S','Soles','Dólares') As Moneda,c.Tdoc As Tdoc,
+	\c.Ndoc As Ndoc,Month(c.fech) As mes,s.nomb As Tienda,c.Mone,a.alma,a.prec as preciocompra,c.idprov From fe_kar As a
 	\INNER Join fe_rcom  As c On(c.idauto=a.idauto)
 	\INNER Join fe_prov As b On (b.idprov=c.idprov)
 	\INNER Join fe_sucu As s On s.idalma=c.codt
@@ -2293,10 +2293,10 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		This.Cmensaje="Ingrese Items "
 		Return .F.
 	Case Len(Alltrim(Left(This.cndoc,4)))<4 Or Len(Alltrim(Substr(This.cndoc,5)))<8
-		This.Cmensaje="Ingrese Serie y Número de Documento"
+		This.Cmensaje="Ingrese Serie y Número de Documento Válido"
 		Return .F.
 	Case This.cencontrado="V"
-		This.Cmensaje="No es Posible Actualizar este Documento"
+		This.Cmensaje="NO es Posible Actualizar este Documento"
 		Return .F.
 	Case Month(This.dfechar)<>goApp.mes Or Year(This.dfechar)<>Val(goApp.Año) Or !esfechaValida(This.dFecha) Or !esfechaValida(This.dfechar)
 		This.Cmensaje="Fecha No Permitida Por el Sistema"

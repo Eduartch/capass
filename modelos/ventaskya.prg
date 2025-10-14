@@ -251,20 +251,9 @@ Define Class ventaskya As ventas Of 'd:\capass\modelos\ventas.prg'
 	Endif
 	dfi=cfechas(This.fechai)
 	dff=cfechas(This.fechaf)
-*!*		\SELECT producto,p.razo  AS proveedor,kar_unid as unidad,tcant AS cantidad,timporte AS importe,yy.idprov
-*!*	    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`) AS tcant,a.`codv`,p.descri AS producto,p.idprov,kar_unid FROM fe_rcom AS e
-*!*		\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-*!*		\INNER JOIN fe_art AS p ON p.idart=a.idart
-*!*	    \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
-*!*		If m.nid>0 Then
-*!*		 \ and p.idprov=<<m.nid>>
-*!*		Endif
-*!*		\GROUP BY a.idart,kar_unid,p.idprov) AS yy
-*!*		\INNER JOIN fe_prov AS p ON p.`idprov`=yy.idprov
-*!*		\ORDER BY importe DESC ,producto
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT producto,p.razo  AS proveedor,kar_unid as unidad,tcant AS cantidad,timporte AS importe,yy.idprov,v.nomv as vendedor
+	\SELECT producto,p.razo  AS proveedor,kar_unid as unidad,tcant AS cantidad,timporte AS importe,yy.idprov,v.nomv as vendedor,v.idven
     \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`) AS tcant,a.`codv`,p.descri AS producto,p.idprov,kar_unid FROM fe_rcom AS e
 	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
 	\INNER JOIN fe_art AS p ON p.idart=a.idart

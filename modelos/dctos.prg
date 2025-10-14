@@ -1,4 +1,7 @@
 Define Class dctos As OData Of "d:\capass\database\data.prg"
+	idcodigo=0
+	descdcto=""
+	codigosunat=""
 	Function mostrarvtasf(Ccursor)
 	Dimension dct[3, 3]
 	dct[1, 1] = 'FACTURA     '
@@ -141,9 +144,9 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 	Endfunc
 	Function consultardata(cb, Ccursor)
 	lC = "PROMUESTRADCTOS"
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
        ('<<cb>>')
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -157,6 +160,77 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 	Endif
 	Strtofile (cdata, rutajson)
 	goApp.datosdctos = 'S'
+	Return 1
+	Endfunc
+	Function InsertaDctos()
+	If This.validar()<1 Then
+		Return 0
+	Endif
+	lC="FUNCREADCTOS"
+	goApp.npara1=This.descdcto
+	goApp.npara2=This.codigosunat
+	TEXT TO lp NOSHOW
+	(?goapp.npara1,goapp.npara2)
+	ENDTEXT
+	nid=This.ejecutarf(lC,lp,'x')
+	If nid<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function VerificaCodDcto(nid1,nid2)
+	If nid2=0 Then
+		TEXT TO lc NOSHOW
+        SELECT COUNT(*) as x FROM fe_tdoc WHERE tdoc=?nid1 AND dcto_acti<>'I' GROUP BY idtdoc limit 1
+		ENDTEXT
+		If This.ejecutaconsulta(lC,'wd')<1 Then
+			Return 0
+		Endif
+		If !Empty(wd.x) Then
+			This.cmensaje="Ya Existe El Còdigo Registrado"
+			Return 0
+		Endif
+	Else
+		TEXT TO lc NOSHOW
+      	  SELECT COUNT(*) as x FROM fe_tdoc WHERE idtdoc<>?nid2 AND dcto_acti<>'I' AND tdoc=?nid1 GROUP BY idtdoc limit 1
+		ENDTEXT
+		If This.ejecutaconsulta(lC,'wd')<1 Then
+			Return 0
+		Endif
+		If !Empty(wd.x) Then
+			This.cmensaje="Ya Existe El Còdigo Registrado"
+			Return 0
+		Endif
+	Endif
+	Return 1
+	Endfunc
+	Function validar()
+	Do Case
+	Case Empty(This.codigosunat)
+		This.cmensaje="Ingrese Código de Documento"
+		Return 0
+	Case Len(Alltrim(This.descdcto))=0
+		This.cmensaje="Ingrese Descripción de Documento"
+		Return 0
+	Case This.VerificaCodDcto(This.codigosunat,This.idcodigo)<1
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
+	Function EditarDctos()
+	If This.validar()<1 Then
+		Return 0
+	Endif
+	goApp.npara1=This.descdcto
+	goApp.npara2=This.codigosunat
+	goApp.npara3=This.idcodigo
+	TEXT TO lp NOSHOW
+	  UPDATE fe_tdoc SET tdoc=?gpapp.npara2,nomb=?goapp.npara1 WHERE idtdoc=?goapp.npara3
+	ENDTEXT
+	If This.ejecutarsql(lC)<1 Then
+		Return 0
+	Endif
 	Return 1
 	Endfunc
 Enddefine

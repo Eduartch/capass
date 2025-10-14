@@ -814,6 +814,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	AddProperty(objdetalle,'norden',0)
 	AddProperty(objdetalle,'ctipo','')
 	AddProperty(objdetalle,'nr',0)
+	AddProperty(objdetalle,'premax',0)
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -843,32 +844,35 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		objdetalle.nprec = Prec
 		objdetalle.nidauto = nid
 		objdetalle.norden=o
-		If m.Cestado='N' Then
+	*	objdetalle.premax=premax
+		If m.Cestado='N'  And !Deleted() Then
 			If This.ingresadetalleordenado(objdetalle)<1 Then
 				x = 0
 				Exit
 			Endif
 		Else
-			Select (This.calias)
-			If Nreg=0 Then
-				If This.ingresadetalleordenado(objdetalle)<1 Then
-					x = 0
-					Exit
-				Endif
-			Else
-				objdetalle.nr=Nreg
+			If m.Cestado='M' Then
 				Select (This.calias)
-				If Deleted()
-					objdetalle.ctipo='A'
-					If This.ActualizaDpedidosOrdenados(objdetalle) = 0 Then
+				If Nreg=0 Then
+					If This.ingresadetalleordenado(objdetalle)<1 Then
 						x = 0
 						Exit
 					Endif
 				Else
-					objdetalle.ctipo='U'
-					If This.ActualizaDpedidosOrdenados(objdetalle) <1 Then
-						x = 0
-						Exit
+					objdetalle.nr=Nreg
+					Select (This.calias)
+					If Deleted()
+						objdetalle.ctipo='A'
+						If This.ActualizaDpedidosOrdenados(objdetalle) = 0 Then
+							x = 0
+							Exit
+						Endif
+					Else
+						objdetalle.ctipo='U'
+						If This.ActualizaDpedidosOrdenados(objdetalle) <1 Then
+							x = 0
+							Exit
+						Endif
 					Endif
 				Endif
 			Endif
@@ -893,7 +897,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		Obj.Unid = Autorizado.Unid
 		Obj.Idusua = Autorizado.Idusua
 		Obj.idusuaa = Autorizado.idusuaa
-		Obj.IDautoP = m.nid 
+		Obj.IDautoP = m.nid
 		Obj.Idauto = 0
 		If Obj.GrabaPreciosAutorizados() < 1 Then
 			sx = 0
@@ -924,7 +928,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function ingresadetalle(objdetalle)
 	TEXT TO lc NOSHOW TEXTMERGE
 	INSERT INTO fe_ped(idart,cant,prec,idautop)VALUES(<<objdetalle.ncoda>>,<<objdetalle.ncant>>,<<objdetalle.nprec>>,<<objdetalle.nidauto>>)
@@ -950,10 +954,10 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function ActualizaDpedidos(objdetalle)
 	lC='ProActualizaDcotizacion'
-    goApp.npara1=objdetalle.ncoda
+	goApp.npara1=objdetalle.ncoda
 	goApp.npara2=objdetalle.ncant
 	goApp.npara3=objdetalle.nprec
 	goApp.npara4=objdetalle.nr
@@ -978,7 +982,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara8 = Id()
 	goApp.npara9 = This.nidven
 	goApp.npara10 = This.ncodt
-	goApp.npara11 = this.tipocot
+	goApp.npara11 = This.tipocot
 	goApp.npara12 = ""
 	goApp.npara13 = ""
 	goApp.npara14 = ""
@@ -1051,29 +1055,29 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
-	FUNCTION listarpsys(Ccursor)
-	IF this.idsesion>0 then
-	   SET DATASESSION TO this.idsesion
-	ENDIF    
-	TEXT TO lc NOSHOW TEXTMERGE 
+	Endfunc
+	Function listarpsys(Ccursor)
+	If This.idsesion>0 Then
+		Set DataSession To This.idsesion
+	Endif
+	TEXT TO lc NOSHOW TEXTMERGE
     SELECT  `a`.`idart` ,  `b`.`descri`,  `b`.`unid` ,  `a`.`cant` AS `cant`,
     `a`.`prec` ,  `b`.`pre1`      AS `premay`,  `b`.`pre2`      AS `premen`,  `c`.`fech` ,  `c`.`idautop`, `c`.`impo`,  `c`.`ndoc`,
     `c`.`aten` ,  `c`.`forma`     AS `forma`,  `c`.`plazo`,  `c`.`validez`   AS `validez`,
     `c`.`entrega`,  `c`.`detalle` ,  `d`.`idclie`    AS `idclie`,
     `d`.`razo` ,  `d`.`nruc` ,  `d`.`dire` ,  `c`.`rped_mone`,
-    `d`.`ciud`,  `d`.`fono` ,  `d`.`fax` ,  `a`.`idped`     AS `nreg`,  `c`.`idven` 
-    FROM `fe_ped` `a` 
+    `d`.`ciud`,  `d`.`fono` ,  `d`.`fax` ,  `a`.`idped`     AS `nreg`,  `c`.`idven`
+    FROM `fe_ped` `a`
     JOIN `fe_rped` `c`   ON `a`.`idautop` = `c`.`idautop`
     JOIN `fe_art` `b`   ON `b`.`idart` = `a`.`idart`
     LEFT JOIN `fe_clie` `d` ON `d`.`idclie` = `c`.`idclie`
     WHERE `a`.`acti` <> 'I' AND `c`.`acti` <> 'I' and c.idautop=<<this.nidautop>> order by idped
-	ENDTEXT 
-	IF this.ejecutaconsulta(lc,ccursor)<1 then
-	    RETURN 0
-	ENDIF 
-	RETURN 1    
-	ENDFUNC 
+	ENDTEXT
+	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 	Function Grabar(Cestado)
 	Set Procedure To d:\capass\modelos\correlativos Additive
 	ocorr = Createobject("Correlativo")

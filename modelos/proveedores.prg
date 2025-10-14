@@ -9,7 +9,6 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	ndni	   = ""
 	Tipo	   = ""
 	correo	   = ""
-	Vendedor   = 0
 	Usuario	   = 0
 	pc		   = ""
 	Celular	   = ""
@@ -17,7 +16,6 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	linea	   = 0
 	Rpm		   = ""
 	zona	   = 0
-	idsegmento = 0
 	cubigeo = ""
 	Cmensaje   = ""
 	distrito   = ""
@@ -51,37 +49,35 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Local lC, lp
 	m.lC		  = 'funcreaproveedor'
 	cur			  = "xt"
+	*cnruc,crazo,cdire,cciud,cfono,cfax,crpm,cemail,crefe,ccelu,nidus,cidpc
 	goApp.npara1  = This.nruc
 	goApp.npara2  = This.nombre
 	goApp.npara3  = This.Direccion
 	goApp.npara4  = This.ciudad
 	goApp.npara5  = This.fono
 	goApp.npara6  = This.fax
-	goApp.npara7  = This.ndni
-	goApp.npara8  = This.Tipo
-	goApp.npara9  = This.correo
-	goApp.npara10 = This.Vendedor
+	goApp.npara7  = This.Rpm
+	goApp.npara8  = This.correo
+	goApp.npara9  = This.refe
+	goApp.npara10 = This.Celular
 	goApp.npara11 = This.Usuario
 	goApp.npara12 = This.pc
-	goApp.npara13 = This.Celular
-	goApp.npara14 = This.Refe
-	goApp.npara15 = This.linea
-	goApp.npara16 = This.Rpm
-	goApp.npara17 = This.zona
 	Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
+	      ?goapp.npara10,?goapp.npara11,?goapp.npara12)
 	Endtext
 	nid=This.EJECUTARf(m.lC, m.lp, cur)
 	IF m.nid <1 Then
 		Return 0
-	Endif
+	ENDIF
+	this.Cmensaje='ok'
 	Return m.nid
 	Endfunc
 	Procedure Actualizaproveedor
 	Local lC, lp
 	m.lC		  = 'proactualizaproveedor'
 	cur			  = ""
+	*nid,cnruc,crazo,cdire,cciud,cfono,cfax,cemail,nidus,ccelu,crefe,crpm
 	goApp.npara1  = This.Codigo
 	goApp.npara2  = This.nruc
 	goApp.npara3  = This.nombre
@@ -89,23 +85,19 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	goApp.npara5  = This.ciudad
 	goApp.npara6  = This.fono
 	goApp.npara7  = This.fax
-	goApp.npara8  = This.ndni
-	goApp.npara9  = This.Tipo
-	goApp.npara10 = This.correo
-	goApp.npara11 = This.Vendedor
-	goApp.npara12 = This.Usuario
-	goApp.npara13 = This.Celular
-	goApp.npara14 = This.Refe
-	goApp.npara15 = This.linea
-	goApp.npara16 = This.Rpm
-	goApp.npara17 = This.zona
+	goApp.npara8  = this.correo
+	goApp.npara9  = This.Usuario
+	goApp.npara10 = This.Celular
+	goApp.npara11 = This.refe
+	goApp.npara12 = This.rpm
 	Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
+	      ?goapp.npara10,?goapp.npara11,?goapp.npara12)
 	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) <1 Then
 		Return 0
 	Endif
+	this.Cmensaje='ok'
 	Return  1
 	Endproc
 	Procedure Listarproveedores

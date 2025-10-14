@@ -346,8 +346,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara3 = This.cope
 	goApp.npara4 = This.nmpago
 	goApp.npara5 = This.cdeta
-	goApp.npara6 = This.idcliE
-	goApp.npara7 = This.idprov
+	goApp.npara6 = goapp.nidusua
+	goApp.npara7 = 0
 	goApp.npara8 = This.cndoc
 	goApp.npara9 = This.idcta1
 	goApp.npara10 = This.ndebe
@@ -379,7 +379,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara10 = This.ndebe
 	goApp.npara11 = This.nhaber
 	goApp.npara12 = This.norden
-	goApp.npara13 = 0
+	goApp.npara13 = goapp.nidusua
 	goApp.npara14 = This.ndolar
 	If This.devolucion='S' Then
 		TEXT To lp Noshow
@@ -599,7 +599,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara10=This.ndebe
 	goApp.npara11=This.nhaber
 	goApp.npara12=This.norden
-	goApp.npara13=This.idcliE
+	goApp.npara13=goapp.nidusua
 	goApp.npara14=This.ctipo
 	TEXT to lp noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
@@ -683,7 +683,22 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Endif
 	This.Cmensaje='Ok'
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION listardepositos(ccursor)
+    f1=cfechas(this.dfi)
+    f2=cfechas(this.dff)
+    TEXT TO lc NOSHOW TEXTMERGE 
+    SELECT cban_fech AS fecha,cban_ndoc as nroingreso,cban_debe AS deposito,CONCAT(TRIM(t.`ctas_ctas`),' ',TRIM(b.`banc_nomb`)) AS banco,cban_deta AS detalle,u.nomb AS usuario,cban_fope AS hora FROM fe_cbancos AS c
+	INNER JOIN fe_usua AS u ON u.`idusua`=c.`cban_idus`
+    INNER JOIN fe_ctasb  AS t ON t.`ctas_idct`=c.`cban_idba`
+    INNER JOIN fe_bancos AS b ON b.`banc_idba`=t.`ctas_idba`
+	WHERE cban_acti='A' AND cban_debe>0 and cban_fech between '<<f1>>' and '<<f2>>' ORDER BY nomb
+    ENDTEXT 
+    IF this.ejecutaconsulta(lc,ccursor)<1 then
+       RETURN 0
+    ENDIF
+    RETURN 1   
+	ENDFUNC 
 Enddefine
 
 

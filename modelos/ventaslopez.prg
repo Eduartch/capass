@@ -239,9 +239,9 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		FROM `fe_rcred` `r`
 		JOIN `fe_cred` `c` ON `c`.`cred_idrc` = `r`.`rcre_idrc`
 		JOIN fe_rcom AS rr ON rr.idauto=r.rcre_idau
-		WHERE `r`.`rcre_Acti` = 'A'  AND `c`.`acti` = 'A' AND rr.tdoc='20' AND rr.fech BETWEEN   '<<dfi>>' AND '<<dff>>' 
+		WHERE `r`.`rcre_Acti` = 'A'  AND `c`.`acti` = 'A' AND rr.tdoc='20' AND rr.fech BETWEEN  '<<dfi>>' AND '<<dff>>' AND rr.codt=<<this.almacen>>
 		GROUP BY c.`ncontrol`,`c`.`mone`,r.rcre_idau HAVING (`saldo`=0)) AS yy ON yy.idauto=r.idauto
-		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form='C' AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>'  and rcom_idtr=0 and r.codt=<<this.almacen>> GROUP BY idauto
+		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form in('C','R') AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>'  and rcom_idtr=0 and r.codt=<<this.almacen>> GROUP BY idauto
 		ENDTEXT
 	Endif
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -768,7 +768,6 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 			Sw = 0
 			Exit
 		Endif
-
 		Select xvtas
 		Skip
 	Enddo
