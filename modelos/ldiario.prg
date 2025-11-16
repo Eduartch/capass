@@ -465,9 +465,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endif
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
-	      \ And ldia_codt=<<goApp.tienda>>
+	      \ And codt=<<goApp.tienda>>
 		Else
-	      \ And ldia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+	      \ And codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
 		Endif
 	Endif
 	\ Order By Ndoc, Tipo
@@ -900,63 +900,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
-*!*		select * FROM (ccursor) INTO TABLE ADDBS(SYS(5)+SYS(2003))+'rldsimpl'
 	Return 1
-*!*	    IF !USED("rldsimpl") then
-*!*	       USE D:\xmsys\rldsimpl IN  0 SHARED
-*!*	    ENDIF 
-   * SET FILTER TO ldia_idau=1811
-*!*		x=0
-*!*		ccampos=''
-*!*		cTitulos = 'Fecha Operación,Nro.Operación,Glosa de Operación'
-*!*		cwidth = '100,100,300'
-*!*		Create Cursor rlds(Fecha d, Ndoc c(12), Detalle c(100),idauto n(10))
-*!*		Select rldsimpl
-*!*		Go Top
-*!*		Do While !Eof()
-*!*			Select rldsimpl
-*!*			cndoc = rldsimpl.ldia_nume
-*!*			Cdetalle = Alltrim(rldsimpl.ldia_glosa)+' '+Alltrim(rldsimpl.Ndoc)
-*!*			cncta = Left(rldsimpl.ncta, 2)
-*!*			ccampo ='c_'+m.cncta
-*!*			Select rlds
-*!*			If Fsize(ccampo)=0 Then
-*!*				Alter Table rlds Add Column (ccampo) N(12, 2)
-*!*				m.ccampos=Iif(x=0,Trim(m.ccampos)+'sum('+(ccampo)+') as '+(ccampo),Trim(m.ccampos)+','+'sum('+(ccampo)+') as '+(ccampo))
-*!*				cTitulos=cTitulos+','+m.cncta
-*!*				cwidth = m.cwidth+','+'100'
-*!*			Endif
-*!*			tc = Iif(rldsimpl.ldia_debe>0,rldsimpl.ldia_debe,-rldsimpl.ldia_haber)
-*!*			x=x+1
-*!*			Select rlds
-*!*			If rldsimpl.ldia_idau>0 Then
-*!*				Locate For idauto = rldsimpl.ldia_idau
-*!*			Else
-*!*				Locate For Alltrim(Ndoc) = Alltrim(m.cndoc)
-*!*			Endif
-*!*			If !Found()
-*!*				Insert Into rlds(Fecha, Detalle, Ndoc,(ccampo),idauto)Values(rldsimpl.ldia_fech,m.Cdetalle,m.cndoc,m.tc,rldsimpl.ldia_idau)
-*!*			Else
-*!*				TEXT TO lr NOSHOW TEXTMERGE 
-*!*				replace <<ccampo>> with <<ccampo>>+<<m.tc>>
-*!*				ENDTEXT 
-*!*				Execscript(lr)
-*!*			Endif
-*!*			Select rldsimpl
-*!*			Skip
-*!*		Enddo
-*!*		Select rlds
-*!*		Alter Table rlds Drop Column 'idauto'
-*!*		Messagebox(m.ccampos)
-*!*		If Len(Alltrim(m.ccampos))>0 Then
-*!*			cad=[select dfecha2 as fecha,'' as ndoc,'TOTALES' as detalle,]+m.ccampos+' from rlds into cursor ttt'
-*!*	*		MESSAGEBOX(m.cad)
-*!*			Execscript(cad)
-*!*			Select rlds
-*!*			Append From Dbf("ttt")
-*!*			Go Top
-*!*		Endif
-	Endfunc
+	ENDFUNC
+
 Enddefine
 
 

@@ -1,6 +1,6 @@
 Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	idcta = 0
-	ctab=""
+	ctab = ""
 	dFecha = Date()
 	cope = ""
 	nmpago = 0
@@ -19,23 +19,23 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	idb = 0
 	nserie = 0
 	Cmoneda = ""
-	ctipo=""
-	idserie=0
-	nsgte=0
-	nidauto=0
-	devolucion=''
-	dfi=Date()
-	dff=Date()
+	Ctipo = ""
+	Idserie = 0
+	Nsgte = 0
+	niDAUTO = 0
+	devolucion = ''
+	dfi = Date()
+	dff = Date()
 	Function ReporteBancos(dfi, dff, ccta, Calias)
-	IF dff-dfi>31 then
-	   this.cmensaje='No Mayor a 31 días'
-	   RETURN 0
-	ENDIF    
+	If dff - dfi > 31 Then
+		This.Cmensaje = 'No Mayor a 31 días'
+		Return 0
+	Endif
 	Local lC
 	f1 = Cfechas(dfi)
 	f2 = Cfechas(dff)
 	Local lC
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	   SELECT a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,if(a.cban_debe>0,ifnull(m.razo,''),ifnull(n.razo,'')) as razon,
 	   a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,a.cban_dola as dolar,cban_tran,
 	   cban_ttra as ttra,if(cban_debe<>0,'I','S') as tipo
@@ -45,21 +45,21 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	   left join fe_prov as n on n.idprov=a.cban_idpr
 	   inner join fe_plan as c on c.idcta=a.cban_idct
 	   where a.cban_acti='A' AND a.cban_fech between '<<f1>>' and '<<f2>>'  and a.cban_idba=<<cta>> order by a.cban_fech,tipo,a.cban_ndoc
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function ReporteBancospsysn(Calias)
-	IF this.dff-this.dfi>31 then
-	   this.cmensaje='No Mayor a 31 días'
-	   RETURN 0
-	ENDIF  
+	If This.dff - This.dfi > 31 Then
+		This.Cmensaje = 'No Mayor a 31 días'
+		Return 0
+	Endif
 	Local lC
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	   select a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,if(a.cban_debe>0,ifnull(m.razo,''),ifnull(n.razo,'')) as razon,
 	   a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,a.cban_dola as dolar,cban_tran,
 	   cban_ttra as ttra,if(cban_debe<>0,'I','S') as tipo,cban_devo,d1.razo AS devo1,d2.`razo` AS devo2
@@ -71,7 +71,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	   LEFT JOIN fe_prov AS d1 ON d1.`idprov`=a.`cban_idpr`
 	   LEFT JOIN fe_clie AS d2 ON d2.`idclie`=a.`cban_idcl`
 	   where a.cban_acti='A' AND a.cban_fech between '<<f1>>' and '<<f2>>'  and a.cban_idba=<<this.idcta>> order by a.cban_fech,tipo,a.cban_ndoc
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
@@ -79,11 +79,11 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Endfunc
 	Function Saldoinicialbancos(Df, cta)
 	F = Cfechas(Df)
-	TEXT To lC Noshow Textmerge Pretext 7
+	Text To lC Noshow Textmerge Pretext 7
        SELECT CAST(ifnull(SUM(a.cban_debe)-SUM(a.cban_haber),0) AS DECIMAL(12,2)) AS si
 	   FROM fe_cbancos AS a
 	   WHERE a.cban_acti='A' AND a.cban_fech<='<<F>>'  AND a.cban_idba=<<cta>> AND a.cban_idct>0
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'iniciobancos') < 1 Then
 		Return 0
 	Endif
@@ -92,9 +92,9 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Function MuestraLCaja(np1, Ccursor)
 	lC = 'PROMUESTRALCAJA'
 	goApp.npara1 = np1
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Else
@@ -108,7 +108,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 		Endif
 	Else
 		Create Cursor t_ctasb From Array cfieldsfectasb
-		cfilejson = Addbs(Sys(5) + Sys(2003)) + 't' + Alltrim(Str(goApp.xopcion)) + '.json'
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 't' + Alltrim(Str(goApp.Xopcion)) + '.json'
 		conerror = 0
 		If File(m.cfilejson) Then
 			oResponse = nfJsonRead( m.cfilejson )
@@ -149,10 +149,10 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara11 = np11
 	goApp.npara12 = np12
 	goApp.npara13 = np13
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-	ENDTEXT
+	Endtext
 	nidb = This.EJECUTARf(lC, lp, cur)
 	If nidb < 1 Then
 		Return 0
@@ -176,10 +176,10 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara12 = np12
 	goApp.npara13 = np13
 	goApp.npara14 = np14
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-	ENDTEXT
+	Endtext
 	nidb = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -191,7 +191,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	Calias = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT a.banc_nomb as banco,b.ctas_ctas as numerocta,cban_fech,cban_nume,c.razo,cban_debe as impo,
 	ifnull(acta,cast(0 as unsigned)) as acta,cban_idcl,cban_idco,cban_ndoc FROM fe_cbancos as d
 	inner join fe_ctasb as b on b.ctas_idct=d.cban_idba
@@ -199,7 +199,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	inner join fe_clie as c on c.idclie=d.cban_idcl
 	left join (select sum(acta) as acta,cred_idcb from fe_cred where acti='A' and acta>0 and cred_idcb>0 group by cred_idcb )as x on
 	x.cred_idcb=d.cban_idco where cban_acti='A'  and cban_tipo='P' and cban_idcl=<<this.idclpr>>;
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Calias) < 1
 		Return 0
 	Endif
@@ -224,10 +224,10 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara12 = np12
 	goApp.npara13 = np13
 	goApp.npara14 = np14
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1  Then
 		Return 0
@@ -236,9 +236,9 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Endfunc
 	Function listarBancos(cb, Ccursor)
 	lC = "ProMuestraBancos"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	    ('<<cb>>')
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -270,8 +270,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
     \Order By a.ctas_ctas
 	Set Textmerge Off
 	Set Textmerge To
-  *  MESSAGEBOX(goapp.tiendas)
-	*MESSAGEBOX(lc)
+*  MESSAGEBOX(goapp.tiendas)
+*MESSAGEBOX(lc)
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -320,9 +320,9 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function consultardatamediospago(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
      SELECT pago_deta,pago_codi,pago_idpa  FROM fe_mpago  WHERE pago_acti='A' ORDER BY pago_deta
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -346,7 +346,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara3 = This.cope
 	goApp.npara4 = This.nmpago
 	goApp.npara5 = This.cdeta
-	goApp.npara6 = goapp.nidusua
+	goApp.npara6 = goApp.nidusua
 	goApp.npara7 = 0
 	goApp.npara8 = This.cndoc
 	goApp.npara9 = This.idcta1
@@ -355,10 +355,10 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara12 = This.norden
 	goApp.npara13 = This.idcajae
 	goApp.npara14 = This.ndolar
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -379,17 +379,17 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara10 = This.ndebe
 	goApp.npara11 = This.nhaber
 	goApp.npara12 = This.norden
-	goApp.npara13 = goapp.nidusua
+	goApp.npara13 = goApp.nidusua
 	goApp.npara14 = This.ndolar
-	If This.devolucion='S' Then
-		TEXT To lp Noshow
+	If This.devolucion = 'S' Then
+		Text To lp Noshow
         (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-		ENDTEXT
+		Endtext
 		lC = 'FUNIngresaCajaBancosD'
 	Else
-		TEXT To lp Noshow
+		Text To lp Noshow
         (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-		ENDTEXT
+		Endtext
 		lC = 'FUNIngresaCajaBancos2'
 	Endif
 	nid = This.EJECUTARf(lC, lp, cur)
@@ -403,15 +403,15 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	ocajae = Createobject("cajae")
 	ocorr = Createobject("correlativo")
 	odiario = Createobject("ldiario")
-	If ocorr.buscarseries(This.nserie, 'LC', 'series') < 1 Then
+	If ocorr.BuscarSeries(This.nserie, 'LC', 'series') < 1 Then
 		This.Cmensaje = ocorr.Cmensaje
 		Return 0
 	Endif
 	This.idcta = This.idcta
 	This.ndolar = fe_gene.dola
 	This.nmpago = 1
-	ocorr.nsgte = series.nume
-	ocorr.idserie = series.idserie
+	ocorr.Nsgte = series.nume
+	ocorr.Idserie = series.Idserie
 	ocajae.ndolar = fe_gene.dola
 	ocajae.nidusua = goApp.nidusua
 	ocajae.Cmoneda = This.Cmoneda
@@ -419,7 +419,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	odiario.nttd = 0
 	odiario.ntth = 0
 	odiario.cTdoc = ""
-	odiario.nidauto = 0
+	odiario.niDAUTO = 0
 	odiario.nidprovision = 0
 	odiario.nidclie = 0
 	odiario.nidprov = 0
@@ -427,17 +427,17 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	This.idcliE = 0
 	This.idprov = 0
 	Sw = 1
-	If This.iniciatransaccion() <1  Then
+	If This.IniciaTransaccion() < 1  Then
 		Return 0
 	Endif
 	Select ctas
 	Scan All
 		ocajae.dFecha = ctas.Fecha
-		This.dFecha=ctas.Fecha
-		cdcto = Right("0000" + Alltrim(Str(This.nserie)), 3) + Right('000000000' + Alltrim(Str(ocorr.nsgte)), 7)
+		This.dFecha = ctas.Fecha
+		cdcto = Right("0000" + Alltrim(Str(This.nserie)), 3) + Right('000000000' + Alltrim(Str(ocorr.Nsgte)), 7)
 		If ctas.Importe > 0 Then
 			If ctas.idcta = fe_gene.gene_idca Then
-				ocajae.cdetalle = "Ret. y Dep. a la Cuenta:" + Alltrim(This.ctab)
+				ocajae.Cdetalle = "Ret. y Dep. a la Cuenta:" + Alltrim(This.ctab)
 				ocajae.Ndoc = m.cdcto
 				ocajae.nidcta = ctas.idcta
 				ocajae.ndebe = 0
@@ -477,7 +477,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 			Endif
 		Else
 			If ctas.idcta = fe_gene.gene_idca Then
-				ocajae.cdetalle = "Dep.Caja desde la Cta.:" + Alltrim(This.ctab)
+				ocajae.Cdetalle = "Dep.Caja desde la Cta.:" + Alltrim(This.ctab)
 				ocajae.Ndoc = m.cdcto
 				ocajae.nidcta = ctas.idcta
 				ocajae.ndebe = Abs(ctas.Importe)
@@ -532,7 +532,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 						odiario.ndebe = provi.debe
 						odiario.nhaber = provi.haber
 						odiario.cglosa = Alltrim(provi.Detalle) + ' ' + m.cdcto
-						odiario.ctipo = provi.Tipo
+						odiario.Ctipo = provi.Tipo
 						odiario.cndoc = m.cnume
 						odiario.ccond = provi.cond
 						odiario.Nitem = m.ni
@@ -555,7 +555,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 			Sw = 0
 			Exit
 		Endif
-		ocorr.nsgte =	ocorr.nsgte + 1
+		ocorr.Nsgte =	ocorr.Nsgte + 1
 	Endscan
 	If  Sw = 0 Then
 		This.DEshacerCambios()
@@ -567,17 +567,17 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarsaldosctasbancos(Ccursor)
-	If This.Idsesion>0 Then
+	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT TO lc NOSHOW TEXTMERGE
+	Text To lC Noshow Textmerge
 	SELECT CONCAT(TRIM(banc_nomb),' ',TRIM(fe_ctasb.ctas_ctas)) AS ctas,saldo FROM(
 	SELECT SUM(cban_debe-cban_haber) AS saldo,cban_idba FROM fe_cbancos
 	WHERE cban_acti='A' GROUP BY cban_idba) AS w
 	INNER JOIN fe_ctasb ON fe_ctasb.`ctas_idct`=w.`cban_idba`
 	INNER JOIN fe_bancos AS b ON b.`banc_idba`=fe_ctasb.`ctas_idba`
-	ENDTEXT
-	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -585,49 +585,49 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Function registradepositos()
 	Set Procedure To d:\capass\modelos\correlativos Additive
 	ocorr = Createobject("correlativo")
-	lC='FUNIngresaCajaBancos1'
-	cur="Xn"
-	goApp.npara1=This.idcta
-	goApp.npara2=This.dFecha
-	goApp.npara3=This.cope
-	goApp.npara4=This.nmpago
-	goApp.npara5=This.cdeta
-	goApp.npara6=0
-	goApp.npara7=This.idcliE
-	goApp.npara8=This.cndoc
-	goApp.npara9=This.idcta1
-	goApp.npara10=This.ndebe
-	goApp.npara11=This.nhaber
-	goApp.npara12=This.norden
-	goApp.npara13=goapp.nidusua
-	goApp.npara14=This.ctipo
-	TEXT to lp noshow
+	lC = 'FUNIngresaCajaBancos1'
+	cur = "Xn"
+	goApp.npara1 = This.idcta
+	goApp.npara2 = This.dFecha
+	goApp.npara3 = This.cope
+	goApp.npara4 = This.nmpago
+	goApp.npara5 = This.cdeta
+	goApp.npara6 = 0
+	goApp.npara7 = This.idcliE
+	goApp.npara8 = This.cndoc
+	goApp.npara9 = This.idcta1
+	goApp.npara10 = This.ndebe
+	goApp.npara11 = This.nhaber
+	goApp.npara12 = This.norden
+	goApp.npara13 = goApp.nidusua
+	goApp.npara14 = This.Ctipo
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-	ENDTEXT
-	If This.iniciatransaccion()<1 Then
+	Endtext
+	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	nid=This.EJECUTARf(lC,lp,cur)
-	If nid<1 Then
+	nid = This.EJECUTARf(lC, lp, cur)
+	If nid < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
 	ocorr.Ndoc = This.cndoc
-	ocorr.nsgte = This.nsgte
-	ocorr.idserie = This.idserie
+	ocorr.Nsgte = This.Nsgte
+	ocorr.Idserie = This.Idserie
 	If ocorr.GeneraCorrelativo() < 1 Then
-		This.Cmensaje=ocorr.Cmensaje
+		This.Cmensaje = ocorr.Cmensaje
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	If This.GRabarCambios()<1 Then
+	If This.GRabarCambios() < 1 Then
 		Return 0
 	Endif
-	This.Cmensaje='Ok'
+	This.Cmensaje = 'Ok'
 	Return 1
 	Endfunc
-	Function listardepositosporcliente(nidcl,Ccursor)
-	TEXT TO lc NOSHOW TEXTMERGE
+	Function listardepositosporcliente(nidcl, Ccursor)
+	Text To lC Noshow Textmerge
 	SELECT a.banc_nomb as banco,b.ctas_ctas as numerocta,cban_fech,cban_nume,c.razo,cban_debe as impo,
 	ifnull(acta,cast(0 as unsigned)) as acta,cban_idcl,cban_idco,cban_ndoc FROM fe_cbancos as d
 	inner join fe_ctasb as b on b.ctas_idct=d.cban_idba
@@ -635,8 +635,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	inner join fe_clie as c on c.idclie=d.cban_idcl
 	left join (select sum(acta) as acta,cred_idcb from fe_cred where acti='A' and acta>0 and cred_idcb>0 group by cred_idcb )as x on x.cred_idcb=d.cban_idco
 	where cban_acti='A'  and cban_tipo='P' and cban_idcl=<<m.nidcl>> order by cban_debe
-	ENDTEXT
-	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -644,62 +644,81 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Function registraingresoscontarjetas()
 	Set Procedure To d:\capass\modelos\correlativos Additive
 	ocorr = Createobject("correlativo")
-	If ocorr.buscarseries(Alltrim(_Screen.seriebcos),'LC','serieb')<1 Then
-		This.Cmensaje=ocorr.Cmensaje
+	If ocorr.BuscarSeries(Alltrim(_Screen.seriebcos), 'LC', 'serieb') < 1 Then
+		This.Cmensaje = ocorr.Cmensaje
 		Return 0
 	Endif
-	cserie=Right("000"+Alltrim(_Screen.seriebcos),3)
-	cnumero=Right("00000000"+Alltrim(Str(serieb.nume)),7)
-	This.nsgte=serieb.nume
-	This.idserie=serieb.idserie
-	lC='ProIngresaTrajetaBancos'
-	cur="Xn"
-	goApp.npara1=This.idcta
-	goApp.npara2=This.dFecha
-	goApp.npara3=This.cope
-	goApp.npara4=This.nmpago
-	goApp.npara5=This.cdeta
-	goApp.npara6=0
-	goApp.npara7=This.idcliE
-	goApp.npara8=m.cserie+m.cnumero
-	goApp.npara9=This.idcta1
-	goApp.npara10=This.ndebe
-	goApp.npara11=This.nhaber
-	goApp.npara12=This.norden
-	goApp.npara13=This.nidauto
-	goApp.npara14=This.ctipo
-	TEXT to lp noshow
+	Cserie = Right("000" + Alltrim(_Screen.seriebcos), 3)
+	cnumero = Right("00000000" + Alltrim(Str(serieb.nume)), 7)
+	This.Nsgte = serieb.nume
+	This.Idserie = serieb.Idserie
+	lC = 'ProIngresaTrajetaBancos'
+	cur = "Xn"
+	goApp.npara1 = This.idcta
+	goApp.npara2 = This.dFecha
+	goApp.npara3 = This.cope
+	goApp.npara4 = This.nmpago
+	goApp.npara5 = This.cdeta
+	goApp.npara6 = 0
+	goApp.npara7 = This.idcliE
+	goApp.npara8 = m.Cserie + m.cnumero
+	goApp.npara9 = This.idcta1
+	goApp.npara10 = This.ndebe
+	goApp.npara11 = This.nhaber
+	goApp.npara12 = This.norden
+	goApp.npara13 = This.niDAUTO
+	goApp.npara14 = This.Ctipo
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-	ENDTEXT
-	If This.EJECUTARP(lC,lp,cur)<1 Then
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
-	ocorr.Ndoc = m.cserie+m.cnumero
-	ocorr.nsgte = This.nsgte
-	ocorr.idserie = This.idserie
+	ocorr.Ndoc = m.Cserie + m.cnumero
+	ocorr.Nsgte = This.Nsgte
+	ocorr.Idserie = This.Idserie
 	If ocorr.GeneraCorrelativo1() < 1 Then
-		This.Cmensaje=ocorr.Cmensaje
+		This.Cmensaje = ocorr.Cmensaje
 		Return 0
 	Endif
-	This.Cmensaje='Ok'
+	This.Cmensaje = 'Ok'
 	Return 1
-	ENDFUNC
-	FUNCTION listardepositos(ccursor)
-    f1=cfechas(this.dfi)
-    f2=cfechas(this.dff)
-    TEXT TO lc NOSHOW TEXTMERGE 
+	Endfunc
+	Function listardepositos(Ccursor)
+	f1 = Cfechas(This.dfi)
+	f2 = Cfechas(This.dff)
+	Text To lC Noshow Textmerge
     SELECT cban_fech AS fecha,cban_ndoc as nroingreso,cban_debe AS deposito,CONCAT(TRIM(t.`ctas_ctas`),' ',TRIM(b.`banc_nomb`)) AS banco,cban_deta AS detalle,u.nomb AS usuario,cban_fope AS hora FROM fe_cbancos AS c
 	INNER JOIN fe_usua AS u ON u.`idusua`=c.`cban_idus`
     INNER JOIN fe_ctasb  AS t ON t.`ctas_idct`=c.`cban_idba`
     INNER JOIN fe_bancos AS b ON b.`banc_idba`=t.`ctas_idba`
 	WHERE cban_acti='A' AND cban_debe>0 and cban_fech between '<<f1>>' and '<<f2>>' ORDER BY nomb
-    ENDTEXT 
-    IF this.ejecutaconsulta(lc,ccursor)<1 then
-       RETURN 0
-    ENDIF
-    RETURN 1   
-	ENDFUNC 
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function muestralcajaxid(nid, Ccursor)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Text To lC Noshow Textmerge
+	SELECT a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,IF(a.cban_debe>0,m.razo,n.razo) AS razon,a.cban_idba,a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,
+	a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,cban_clpr,a.cban_idca,cban_dola FROM fe_cbancos AS a
+	INNER JOIN fe_mpago AS b ON b.pago_idpa=a.cban_idmp
+	LEFT JOIN fe_clie AS m ON m.idclie=a.cban_idcl
+	LEFT JOIN fe_prov AS n ON n.idprov=a.cban_idpr
+	INNER JOIN fe_plan AS c ON c.idcta=a.cban_idct
+	WHERE a.cban_acti='A' AND cban_idco=<<nid>>
+	Endtext    
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

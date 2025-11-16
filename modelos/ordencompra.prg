@@ -4,6 +4,8 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	Nprecio = 0
 	Ncantidad = 0
 	ndscto = 0
+	nstock=0
+	ncodt=0
 	Cestado = ""
 	AutoC = 0
 	Accion = ""
@@ -23,7 +25,8 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	Idserie = 0
 	Nsgte = 0
 	Empresa = ""
-	Cestado=""
+	Cestado = ""
+	Tdoc=""
 	Function Registraocompra
 	lC = 'FUNINGRESAORDENCOMPRA'
 	cur = "oc"
@@ -48,9 +51,8 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
-	Else
-		Return nid
 	Endif
+	Return nid
 	Endfunc
 	Function IngresaDetalleOrdendeCompra
 	lC = 'PROINGRESADETALLEOCOMPRA'
@@ -60,10 +62,11 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	goApp.npara3 = This.Ncantidad
 	goApp.npara4 = This.Nprecio
 	goApp.npara5 = This.Cestado
+	goApp.npara6 = This.ndscto
 	Do Case
 	Case This.Empresa = 'Norplast'
 		TEXT To lp Noshow
-	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
+	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
 		ENDTEXT
 	Case This.Empresa = 'lopezycia'
 		If goApp.OrdendeCompra = 'N' Then
@@ -107,9 +110,8 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	ENDTEXT
 	If  This.EJECUTARP(lC, lp, '') < 1 Then
 		Return 0
-	Else
-		Return 1
 	Endif
+	Return 1
 	Endfunc
 	Function DesactivaPedidoOrdendeCompra
 	lC = 'PROActualizaOCOMPRAXD'
@@ -132,10 +134,11 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	goApp.npara3 = This.CodProducto
 	goApp.npara4 = This.Ncantidad
 	goApp.npara5 = This.Nprecio
+	goApp.npara6 = This.ndscto
 	Do Case
 	Case This.Empresa = 'Norplast'
 		TEXT To lp Noshow
-			    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
+			    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
 		ENDTEXT
 	Case This.Empresa = 'lopezycia'
 		If goApp.OrdendeCompra = 'N' Then
@@ -343,10 +346,10 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	Create Cursor (Calias)(Coda N(8), Descri c(150), Unid c(4), cant N(10, 3), Prec N(14, 6), d1 N(7, 4), Nreg N(8), Ndoc c(10), Nitem N(5), uno N(10, 2), Dos N(10, 2), ;
-		Incluido c(1), Razo c(120), aten c(120), Moneda c(20), facturar c(200), despacho c(200), Forma c(100), observa c(200), fech d, rotacion N(12,2) Default 0,;
-		tipro c(1), come N(8, 2), Comc N(8, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), Impo N(12, 2), Valida c(1), Codigo c(20), ;
+		Incluido c(1), Razo c(120), aten c(120), Moneda c(20), facturar c(200), despacho c(200), Forma c(100), observa c(200), fech d, rotacion N(12, 2) Default 0, ;
+		tipro c(1), come N(8, 2), Comc N(8, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), Impo N(12, 2), Valida c(1), Codigo c(20), totalstock N(12, 2), ;
 		despacharpor c(100), ructr c(11), direcciont c(100), contactot c(100), telefonot c(20), valor N(12, 2), igv N(12, 2), Total N(12, 2), Usuario c(100), Peso N(10, 2), ;
-		rucproveedor c(11))
+		rucproveedor c(11),idautooc n(8))
 	Select (Calias)
 	Index On Descri Tag Descri
 	Index On Nitem Tag Items
@@ -398,23 +401,34 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function mostrarocompra(cndoc, Ccursor)
-	TEXT To lC Noshow Textmerge
-	  SELECT
-	  `b`.`doco_iddo`  AS `doco_iddo`,	  `b`.`doco_coda`  AS `doco_coda`,	  `b`.`doco_cant`  AS `doco_cant`,	  `b`.`doco_prec`  AS `doco_prec`,
-	  `c`.`descri`     AS `descri`,	  `c`.`prod_smin`  AS `prod_smin`,
-	  `c`.`unid`       AS `unid`,c.prod_cod1,	  `c`.`prod_smax`  AS `prod_smax`,	  `a`.`ocom_valor` AS `ocom_valor`,
-	  `a`.`ocom_igv`   AS `ocom_igv`,	  `a`.`ocom_impo`  AS `ocom_impo`,	  `a`.`ocom_idroc` AS `ocom_idroc`,	  `a`.`ocom_fech`  AS `ocom_fech`,
-	  `a`.`ocom_idpr`  AS `ocom_idpr`,	  `a`.`ocom_desp`  AS `ocom_desp`,	  `a`.`ocom_form`  AS `ocom_form`,	  `a`.`ocom_mone`  AS `ocom_mone`,
-	  `a`.`ocom_ndoc`  AS `ocom_ndoc`,	  `a`.`ocom_tigv`  AS `ocom_tigv`,	  `a`.`ocom_obse`  AS `ocom_obse`,	  `a`.`ocom_aten`  AS `ocom_aten`,
-	  `a`.`ocom_deta`  AS `ocom_deta`,	  `a`.`ocom_idus`  AS `ocom_idus`,	  `a`.`ocom_fope`  AS `ocom_fope`,	  `a`.`ocom_idpc`  AS `ocom_idpc`,
-	  `a`.`ocom_idac`  AS `ocom_idac`,	  `a`.`ocom_fact`  AS `ocom_fact`,	  `d`.`razo`       AS `razo`,	  `e`.`nomb`       AS `nomb`
-	 FROM `fe_rocom` `a`
-     JOIN `fe_docom` `b`    ON `b`.`doco_idro` = `a`.`ocom_idroc`
-     JOIN `fe_art` `c`       ON `b`.`doco_coda` = `c`.`idart`
-     JOIN `fe_prov` `d`       ON `d`.`idprov` = `a`.`ocom_idpr`
-     JOIN `fe_usua` `e`     ON `e`.`idusua` = `a`.`ocom_idus`
-     WHERE `a`.`ocom_acti` <> 'I'   AND `b`.`doco_acti` <> 'I' and a.ocom_ndoc='<<cndoc>>'
-	ENDTEXT
+	If  Type('oempresa') = 'U' Then
+		Cnruc = fe_gene.nruc
+	Else
+		Cnruc = Oempresa.nruc
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\  Select `b`.`doco_iddo`, `b`.`doco_coda` , `b`.`doco_cant`,	  `b`.`doco_prec`,
+	\  `c`.`Descri` ,	  `c`.`prod_smin`,
+	\  `c`.`Unid`,c.prod_cod1,	  `c`.`prod_smax`  As `prod_smax`,	  `a`.`ocom_valor` As `ocom_valor`,
+	\  `a`.`ocom_igv`,	  `a`.`ocom_impo`  As `ocom_impo`,	  `a`.`ocom_idroc` As `ocom_idroc`,	  `a`.`ocom_fech`  As `ocom_fech`,
+	\  `a`.`ocom_idpr`,	  `a`.`ocom_desp` ,	  `a`.`ocom_form`  As `ocom_form`,	  `a`.`ocom_mone`  As `ocom_mone`,
+	\  `a`.`ocom_ndoc`,	  `a`.`ocom_tigv` ,	  `a`.`ocom_obse`  As `ocom_obse`,	  `a`.`ocom_aten`  As `ocom_aten`,
+	\  `a`.`ocom_deta`,	  `a`.`ocom_idus`,	  `a`.`ocom_fope`  As `ocom_fope`,	  `a`.`ocom_idpc`  As `ocom_idpc`,
+	\  `a`.`ocom_idac`,	  `a`.`ocom_fact`,	  `d`.`Razo`,	  `e`.`nomb`
+	If m.Cnruc = '20601140625' Then
+	  \,c.uno+c.Dos+c.tre+c.die+c.onc As totalstock
+	Else
+	 \,c.uno+c.Dos+c.tre+c.cua As totalstock
+	Endif
+	\ From `fe_rocom` `a`
+    \ Join `fe_docom` `b`    On `b`.`doco_idro` = `a`.`ocom_idroc`
+    \ Join `fe_art` `c`       On `b`.`doco_coda` = `c`.`idart`
+    \ Join `fe_prov` `d`       On `d`.`idprov` = `a`.`ocom_idpr`
+    \ Join `fe_usua` `e`     On `e`.`idusua` = `a`.`ocom_idus`
+    \ Where `a`.`ocom_acti` <> 'I'   And `b`.`doco_acti` <> 'I' And a.ocom_ndoc='<<cndoc>>'
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -424,7 +438,7 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	TEXT To lC Noshow Textmerge
 	  SELECT
 	  `b`.`doco_iddo`  AS `doco_iddo`,	  `b`.`doco_coda`  AS `doco_coda`,	  `b`.`doco_cant`  AS `doco_cant`,	  `b`.`doco_prec`  AS `doco_prec`,
-	  `c`.`descri`     AS `descri`,	  `c`.`prod_smin`  AS `prod_smin`,
+	  `c`.`descri`     AS `descri`,	  `c`.`prod_smin`  AS `prod_smin`,doco_dsct,
 	  `c`.`unid`       AS `unid`,c.prod_cod1,	  `c`.`prod_smax`  AS `prod_smax`,	  `a`.`ocom_valor` AS `ocom_valor`,
 	  `a`.`ocom_igv`   AS `ocom_igv`,	  `a`.`ocom_impo`  AS `ocom_impo`,	  `a`.`ocom_idroc` AS `ocom_idroc`,	  `a`.`ocom_fech`  AS `ocom_fech`,
 	  `a`.`ocom_idpr`  AS `ocom_idpr`,	  `a`.`ocom_desp`  AS `ocom_desp`,	  `a`.`ocom_form`  AS `ocom_form`,	  `a`.`ocom_mone`  AS `ocom_mone`,
@@ -503,6 +517,10 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function Anular(nid)
+	If nid<1 Then
+		This.Cmensaje='Seleccione una Orden de Compra'
+		Return 0
+	Endif
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -525,25 +543,43 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function listarresumen(nmes,na,Ccursor)
-	If This.Idsesion>0 Then
+	Function listarresumen(nmes, Na, Ccursor)
+	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select  'OC' As tdoc,ocom_ndoc As Ndoc,ocom_fech,Razo,ocom_mone,ocom_valor,ocom_igv,ocom_impo,ocom_idroc  As Idauto From fe_rocom As r
-	\INNER Join fe_prov As p On p.idprov=r.`ocom_idpr`
+	\inner Join fe_prov As p On p.idprov=r.`ocom_idpr`
 	\Where  ocom_acti='A' And Month(ocom_fech)=<<nmes>> And Year(ocom_fech)=<<na>>
-	If This.Codproveedor>0 Then
-    \ and ocom_idpr=<<this.Codproveedor>>
+	If This.Codproveedor > 0 Then
+    \ And ocom_idpr=<<This.Codproveedor>>
 	Endif
-	If Len(Alltrim(This.Cestado))>0 Then
-	\ and ocom_esta='<<this.cestado>>'
+	If Len(Alltrim(This.Cestado)) > 0 Then
+	\ And ocom_esta='<<this.cestado>>'
 	Endif
-    \ORDER BY ocom_fech desc
+	If Len(Alltrim(This.Tdoc))>0 Then
+	\ and ocom_tdoc='<<this.tdoc>>'
+	Endif
+    \Order By ocom_fech Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listarresumenrqcompra(nmes, Na, Ccursor)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select  ocom_tdoc As tdoc,ocom_ndoc As Ndoc,ocom_fech,"" as Razo,ocom_mone,ocom_valor,ocom_igv,ocom_impo,ocom_idroc  As Idauto From fe_rocom As r
+	\Where  ocom_acti='A' And Month(ocom_fech)=<<nmes>> And Year(ocom_fech)=<<na>>  and ocom_tdoc='RQ' Order By ocom_fech Desc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -559,17 +595,290 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarporacepar(Ccursor)
-	Ccursor='c_'+Sys(2015)
-	TEXT TO Lc NOSHOW TEXTMERGE
+	Ccursor = 'c_' + Sys(2015)
+	TEXT To lC Noshow Textmerge
 	select ocom_idroc  as auto FROM fe_rocom WHERE ocom_acti='A' AND ocom_esta='P'  limit 1
 	ENDTEXT
-	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
-	If Auto>0 Then
+	If Auto > 0 Then
 		Return 1
 	Endif
 	Return 0
 	Endfunc
+	Function GrabarRQ()
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	This.AutoC = This.RegistraRqCompra()
+	If This.AutoC < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.grabardetalleRQcompra() < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GeneraCorrelativo(This.Nsgte, This.Idserie) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	This.CONTRANSACCION = ""
+	Return 1
+	Endfunc
+	Function RegistraRqCompra
+	lC = 'FunIngresaRQCompra'
+	cur = "oc"
+	goApp.npara1 = This.dFecha
+	goApp.npara2 = This.Codproveedor
+	goApp.npara3 = This.cmone
+	goApp.npara4 = This.cndoc
+	goApp.npara5 = This.ctigv
+	goApp.npara6 = This.cobse
+	goApp.npara7 = This.caten
+	goApp.npara8 = This.cdeta
+	goApp.npara9 = Id()
+	goApp.npara10 = goApp.nidusua
+	goApp.npara11 = This.cdesp
+	goApp.npara12 = This.cforma
+	goApp.npara13 = This.Nv
+	goApp.npara14 = This.nigv
+	goApp.npara15 = This.ncodt
+	TEXT To lp Noshow
+	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
+	ENDTEXT
+	nid = This.EJECUTARf(lC, lp, cur)
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	ENDFUNC
+	Function RegistraCotCompra
+	lC = 'FunIngresaCotCompra'
+	cur = "oc"
+	goApp.npara1 = This.dFecha
+	goApp.npara2 = This.Codproveedor
+	goApp.npara3 = This.cmone
+	goApp.npara4 = This.cndoc
+	goApp.npara5 = This.ctigv
+	goApp.npara6 = This.cobse
+	goApp.npara7 = This.caten
+	goApp.npara8 = This.cdeta
+	goApp.npara9 = Id()
+	goApp.npara10 = goApp.nidusua
+	goApp.npara11 = ""
+	goApp.npara12 = This.cforma
+	goApp.npara13 = This.Nv
+	goApp.npara14 = This.nigv
+	goApp.npara15 = This.ncodt
+	TEXT To lp Noshow
+	(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
+	ENDTEXT
+	nid = This.EJECUTARf(lC, lp, cur)
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
+	Function IngresaDetalleRQComppra
+	lC = 'ProIngresaDetalleRQCompra'
+	cur = ""
+	goApp.npara1 = This.AutoC
+	goApp.npara2 = This.CodProducto
+	goApp.npara3 = This.Ncantidad
+	goApp.npara4 = This.nstock
+	TEXT To lp Noshow
+	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
+	ENDTEXT
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function grabardetalleRQcompra()
+	Sw = 1
+	Select otmpp
+	Set Deleted Off
+	Go Top
+	Do While !Eof()
+		If Empty(otmpp.Coda)
+			Select otmpp
+			Skip
+			Loop
+		Endif
+		This.CodProducto = otmpp.Coda
+		This.Ncantidad = otmpp.cant
+		This.nstock = otmpp.totalstock
+		If Deleted()
+			If otmpp.Nreg > 0
+				This.Idr = otmpp.Nreg
+				This.Accion = 'E'
+				If This.ActualizaDetalleRQCompra() < 1 Then
+					Sw = 0
+					Exit
+				Endif
+			Endif
+			Select  otmpp
+			Skip
+			Loop
+		Endif
+		If otmpp.Nreg = 0
+			If This.IngresaDetalleRQComppra() < 1 Then
+				Sw = 0
+				Exit
+			Endif
+		Else
+			This.Idr = otmpp.Nreg
+			This.Accion = 'M'
+			If This.ActualizaDetalleRQCompra() < 1 Then
+				Sw = 0
+				Exit
+			Endif
+		Endif
+		Select otmpp
+		Skip
+	Enddo
+	Set Deleted On
+	Return Sw
+	Endfunc
+	Function  ActualizaDetalleRQCompra
+	lC = 'ProActualizaRQCompra'
+	goApp.npara1 = This.Idr
+	goApp.npara2 = This.Accion
+	goApp.npara3 = This.CodProducto
+	goApp.npara4 = This.Ncantidad
+	goApp.npara5 = This.nstock
+	TEXT To lp Noshow
+	(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
+	ENDTEXT
+	If This.EJECUTARP(lC, lp, "") < 1 Then
+		Return 0
+	Endif
+	Return  1
+	Endfunc
+	Function ActualizarRQ()
+	This.CONTRANSACCION = 'S'
+	If This.IniciaTransaccion() < 1 Then
+		Return 1
+	Endif
+	If This.Actualizaocompra() < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	This.AutoC = This.Idr
+	If This.grabardetalleRQcompra() < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	This.CONTRANSACCION = ""
+	Return 1
+	ENDFUNC
+	Function mostrarrqcompra(cndoc, Ccursor)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\  Select `b`.`doco_iddo`, `b`.`doco_coda` , `b`.`doco_cant`,	  `b`.`doco_prec`, `c`.`Descri` ,	  `c`.`prod_smin`,
+	\  `c`.`Unid`,c.prod_cod1,	  `c`.`prod_smax`  As `prod_smax`,	  `a`.`ocom_valor` As `ocom_valor`,
+	\  `a`.`ocom_igv`,	  `a`.`ocom_impo` ,	  `a`.`ocom_idroc` ,	  `a`.`ocom_fech`  As `ocom_fech`,
+	\  CAST(0 as unsigned) as `ocom_idpr`,	  `a`.`ocom_desp` ,	  `a`.`ocom_form`,	  `a`.`ocom_mone`,
+	\  `a`.`ocom_ndoc`,	  `a`.`ocom_tigv` ,	  `a`.`ocom_obse`,	  `a`.`ocom_aten`,
+	\  `a`.`ocom_deta`,	  `a`.`ocom_idus`,	  `a`.`ocom_fope`  As `ocom_fope`,	  `a`.`ocom_idpc`  As `ocom_idpc`,
+	\  `a`.`ocom_idac`,	  `a`.`ocom_fact`,	 '' as razo,	  `e`.`nomb`,doco_stock As totalstock
+	\ From `fe_rocom` `a`
+    \ Join `fe_docom` `b`  On `b`.`doco_idro` = `a`.`ocom_idroc`
+    \ Join `fe_art` `c`    On `b`.`doco_coda` = `c`.`idart`
+    \ Join `fe_usua` `e`   On `e`.`idusua` = `a`.`ocom_idus`
+    \ Where `a`.`ocom_acti` = 'A'   And `b`.`doco_acti` ='A' And a.ocom_ndoc='<<cndoc>>'
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function GrabarCotizacion()
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	This.AutoC = This.RegistraCotCompra()
+	If This.AutoC < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.grabardetalleocompra() < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GeneraCorrelativo(This.Nsgte, This.Idserie) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	This.CONTRANSACCION = ""
+	Return 1
+	Endfunc
+	Function ActualizarCotizacion()
+	This.CONTRANSACCION = 'S'
+	If This.IniciaTransaccion() < 1 Then
+		Return 1
+	Endif
+	If This.Actualizaocompra() < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	This.AutoC = This.Idr
+	If This.grabardetalleocompra() < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	This.CONTRANSACCION = ""
+	Return 1
+	ENDFUNC
+	Function mostrarcotcompra(cndoc, Ccursor)
+	If  Type('oempresa') = 'U' Then
+		Cnruc = fe_gene.nruc
+	Else
+		Cnruc = Oempresa.nruc
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\  Select `b`.`doco_iddo`, `b`.`doco_coda` , `b`.`doco_cant`,	  `b`.`doco_prec`,
+	\  `c`.`Descri` ,	  `c`.`prod_smin`,
+	\  `c`.`Unid`,c.prod_cod1,	  `c`.`prod_smax`  As `prod_smax`,	  `a`.`ocom_valor` As `ocom_valor`,
+	\  `a`.`ocom_igv`,	  `a`.`ocom_impo`  As `ocom_impo`,	  `a`.`ocom_idroc` As `ocom_idroc`,	  `a`.`ocom_fech`  As `ocom_fech`,
+	\  `a`.`ocom_idpr`,	  `a`.`ocom_desp` ,	  `a`.`ocom_form`  As `ocom_form`,	  `a`.`ocom_mone`  As `ocom_mone`,
+	\  `a`.`ocom_ndoc`,	  `a`.`ocom_tigv` ,	  `a`.`ocom_obse`  As `ocom_obse`,	  `a`.`ocom_aten`  As `ocom_aten`,
+	\  `a`.`ocom_deta`,	  `a`.`ocom_idus`,	  `a`.`ocom_fope`  As `ocom_fope`,	  `a`.`ocom_idpc`  As `ocom_idpc`,
+	\  `a`.`ocom_idac`,	  `a`.`ocom_fact`,	  `d`.`Razo`,	  `e`.`nomb`
+	If m.Cnruc = '20601140625' Then
+	  \,c.uno+c.Dos+c.tre+c.die+c.onc As totalstock
+	Else
+	 \,c.uno+c.Dos+c.tre+c.cua As totalstock
+	Endif
+	\ From `fe_rocom` `a`
+    \ Join `fe_docom` `b`  On `b`.`doco_idro` = `a`.`ocom_idroc`
+    \ Join `fe_art` `c`    On `b`.`doco_coda` = `c`.`idart`
+    \ Join `fe_prov` `d`   On `d`.`idprov` = `a`.`ocom_idpr`
+    \ Join `fe_usua` `e`   On `e`.`idusua` = `a`.`ocom_idus`
+    \ Where `a`.`ocom_acti` ='A'   And `b`.`doco_acti` = 'A' And a.ocom_ndoc='<<cndoc>>' and ocom_tdoc='CO'
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+

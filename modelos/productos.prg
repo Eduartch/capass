@@ -818,6 +818,20 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		Return 0
 	Endif
 	Return 1
+	ENDFUNC
+	Function calcularstockproductopsysr(nidart, nalma, Ccursor)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	TEXT To lC Noshow Textmerge
+	 SELECT a.tcompras- a.tventas as stock
+	 FROM (SELECT b.idart,SUM(IF(b.tipo='C',b.cant,0)) AS tcompras,SUM(IF(b.tipo='V',b.cant,0)) AS tventas,b.alma
+	 FROM fe_kar AS b WHERE b.acti<>'I' and b.alma=<<nalma>> and TRIM(b.idart)='<<nidart>>' GROUP BY  idart) AS a;
+	ENDTEXT
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 	Function MuestraTProductosDescCod(np1, np2, np3, np4, Ccursor)
 	lC = 'PromuestraTodoslosproductos'

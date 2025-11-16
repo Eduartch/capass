@@ -601,6 +601,13 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	Return nidc
 	Endfunc
 	Function reportecajapsysrx(Ccursor)
+	If !Pemstatus(goApp,'soloestatienda',5) Then
+		AddProperty(goApp,'soloestatienda',0)
+	Endif
+	If goApp.Soloestatienda=1 And  This.codt<>goApp.tienda Then
+		This.Cmensaje='NO Permitido'
+		Return 0
+	Endif
 	dFecha = Cfechas(This.dFecha)
 	*		if(lcaj_acre<>0,0,if(lcaj_form='E',if(lcaj_efec>0,lcaj_efec,ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0))) as ingresos,
 	*IF(lcaj_acre<>0,0,IF(lcaj_form='E',IF(lcaj_efec>0,lcaj_efec,IFNULL(ROUND(k.cant*k.prec,2),a.lcaj_deud)),0)) AS ingresos,
@@ -688,6 +695,13 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	Return 1
 	Endfunc
 	Function saldoanteriorpsysrx()
+	If !Pemstatus(goApp,'soloestatienda',5) Then
+		AddProperty(goApp,'soloestatienda',0)
+	Endif
+	If goApp.Soloestatienda=1 And  This.codt<>goApp.tienda Then
+		This.Cmensaje='NO Permitido'
+		Return 0
+	Endif
 	lC = 'FunSaldoCaja'
 	Calias = 'c_' + Sys(2015)
 	dFecha = Cfechas(This.dFecha)

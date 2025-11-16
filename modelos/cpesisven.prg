@@ -227,33 +227,33 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function consultarguiasxenviaralpharmaco(Ccursor)
 	TEXT To lC Noshow Textmerge
-	   SELECT fech,ndoc,cliente,Transportista,idguia,motivo,ticket FROM
+	      SELECT fech,ndoc,cliente,Transportista,idguia,motivo,ticket FROM
           (SELECT fech,ndoc,cliente,Transportista,idguia,'V' AS motivo,guia_tick AS ticket FROM  vguiasventas
-           WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'
-           UNION ALL
-           SELECT guia_fech AS guia_fech,guia_ndoc AS ndoc,c.razo AS cliente,t.razon AS transportista,guia_idgui AS idguia,guia_moti AS motivo,
-           guia_tick AS ticket FROM fe_guias AS g
-           INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-           INNER JOIN fe_clie AS c ON c.idclie=g.`guia_idcl`
-           WHERE  guia_acti='A' AND LEFT(guia_mens,1)<>'0' AND guia_moti='v'
-           UNION ALL
-           SELECT fech,ndoc,cliente,Transportista,idguia,'D' AS motivo,guia_tick AS ticket FROM  vguiasdevolucion
-           WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'
-           UNION ALL
-           SELECT fech,ndoc,cliente,Transportista,idguia,'C' AS motivo,guia_tick AS ticket FROM  vguiasrcompras
-           WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'
-           UNION ALL
-           SELECT guia_fech AS fech,guia_ndoc AS ndoc,c.razo AS cliente,t.razon AS Transportista,guia_idgui AS idguia,'N' AS motivo,guia_tick FROM  fe_guias
-            AS g
-            INNER JOIN fe_clie AS c ON c.idclie=g.guia_idcl
-            INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
-            WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A'
-           UNION ALL
-           SELECT guia_fech AS fech,guia_ndoc AS ndoc,g.empresa AS cliente,t.razon AS Transportista,
-           guia_idgui AS idguia,'T' AS Motivo,guia_tick  AS ticket FROM fe_guias AS a
-           INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
-           WHERE LEFT(guia_ndoc,1)='T'  AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A')AS w
-           GROUP BY fech,ndoc,cliente,Transportista,idguia,motivo,ticket  ORDER BY fech,ndoc
+          WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'
+          UNION ALL
+          SELECT guia_fech AS guia_fech,guia_ndoc AS ndoc,c.razo AS cliente,t.razon AS transportista,guia_idgui AS idguia,guia_moti AS motivo,
+          guia_tick AS ticket FROM fe_guias AS g
+          INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+          INNER JOIN fe_clie AS c ON c.idclie=g.`guia_idcl`
+          WHERE  guia_acti='A' AND LEFT(guia_mens,1)<>'0' AND guia_moti='v'
+          UNION ALL
+          SELECT fech,ndoc,cliente,Transportista,idguia,'D' AS motivo,guia_tick AS ticket FROM  vguiasdevolucion
+          WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'
+          UNION ALL
+          SELECT fech,ndoc,cliente,Transportista,idguia,'C' AS motivo,guia_tick AS ticket FROM  vguiasrcompras
+          WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'
+          UNION ALL
+          SELECT guia_fech AS fech,guia_ndoc AS ndoc,c.razo AS cliente,t.razon AS Transportista,guia_idgui AS idguia,'N' AS motivo,guia_tick FROM  fe_guias
+          AS g
+          INNER JOIN fe_clie AS c ON c.idclie=g.guia_idcl
+          INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+          WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A'
+          UNION ALL
+          SELECT guia_fech AS fech,guia_ndoc AS ndoc,g.empresa AS cliente,t.razon AS Transportista,
+          guia_idgui AS idguia,'T' AS Motivo,guia_tick  AS ticket FROM fe_guias AS a
+          INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
+          WHERE LEFT(guia_ndoc,1)='T'  AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A')AS w
+          GROUP BY fech,ndoc,cliente,Transportista,idguia,motivo,ticket  ORDER BY fech,ndoc
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -931,7 +931,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
-	\    a.igv,a.Impo,rcom_hash,rcom_mens,rcom_arch,mone,a.Tdoc,Idauto,b.ndni,b.clie_corr,
+	\    a.igv,a.Impo,rcom_mens,rcom_arch,mone,a.Tdoc,Idauto,b.ndni,b.clie_corr,rcom_hash,
 	\    nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,tcom,Tdoc,a.vigv,rcom_dsct,Ndoc,a.rcom_carg
 	\    From fe_rcom As a
 	\    Join fe_clie As b On (a.idcliente=b.idclie)
@@ -944,7 +944,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	\    Union All
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
-	\    a.igv,a.Impo,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Idauto,b.ndni,b.clie_corr,
+	\    a.igv,a.Impo,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Idauto,b.ndni,b.clie_corr,a.rcom_hash,
 	\    nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,a.tcom,w.Tdoc,a.vigv,a.rcom_dsct,a.Ndoc,a.rcom_carg
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
@@ -1514,7 +1514,13 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	If !Pemstatus(goApp,'vtascondetraccion',5) Then
 		AddProperty(goApp, 'vtascondetraccion', '')
-	Endif
+	ENDIF
+	If !Pemstatus(goApp,'vtascondetraccion',5) Then
+		AddProperty(goApp, 'vtascondetraccion', '')
+	ENDIF
+	IF !PEMSTATUS(goApp,'Clientesconretencion',5) then
+	   ADDPROPERTY(goApp,'Clientesconretencion','')
+    ENDIF 	   
 	Set Textmerge On
 	Set  Textmerge To Memvar lC Noshow Textmerge
    \ Select  r.Idauto,r.Ndoc,r.Tdoc,r.fech As dFecha,r.mone,valor,Cast(0 As Decimal(12,2)) As inafectas,Cast(0 As Decimal(12,2)) As gratificaciones,
@@ -1531,7 +1537,10 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	If goApp.Vtascondetraccion='S' Then
 	   \,r.rcom_mdet
-	Endif
+	ENDIF
+	If goApp.Clientesconretencion='S' Then
+	   \,r.rcom_mret
+	ENDIF
    \ From fe_rcom r
    \ INNER Join fe_clie c On c.idclie=r.idcliente
    \ INNER Join fe_kar k On k.Idauto=r.Idauto
@@ -1698,7 +1707,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
     \Select a.Ndoc As dcto,a.fech,b.razo,If(a.mone='S','Soles','Dólares') As Moneda,a.valor,a.rcom_exon,rcom_otro,
-    \a.igv,a.Impo,rcom_mens,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,
+    \a.igv,a.Impo,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,rcom_mens,
 	\ndo2,tcom,Tdoc,rcom_dsct,vigv,a.rcom_hash,b.nruc
 	\From fe_rcom As a
 	\Join fe_clie As b On (a.idcliente=b.idclie)
@@ -1712,7 +1721,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	\Union All
 	\Select a.Ndoc As dcto,a.fech,b.razo,If(a.mone='S','Soles','Dólares') As Moneda,a.valor,a.rcom_exon,a.rcom_otro,
-	\a.igv,a.Impo,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,
+	\a.igv,a.Impo,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,a.rcom_mens,
 	\a.ndo2,a.tcom,w.Tdoc,a.rcom_dsct,a.vigv,a.rcom_hash,b.nruc
 	\From fe_rcom As a
 	\Join fe_clie As b On (a.idcliente=b.idclie)
@@ -1743,7 +1752,6 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Set Procedure To d:\Librerias\nfjsoncreate, d:\Librerias\nfcursortojson.prg, ;
 		d:\Librerias\nfcursortoobject, d:\Librerias\nfJsonRead.prg, ;
 		d:\Librerias\_.prg  Additive
-*!*		cdata = nfcursortojson(.T.)
 	Obj = Createobject("empty")
 	With _(m.Obj)
 		.Moneda = m.objfe.Moneda
@@ -1884,14 +1892,14 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	"ruc":"<<cruc>>",
 	"tdoc":"<<ctdoc>>",
 	"serie":"<<cserie>>",
-	"cndoc":"<<cnumero>>",
+	"cndoc":"<<ALLTRIM(cnumero)>>",
 	"cfecha":"<<dfecha>>",
 	"cimporte":"<<nimpo>>"
 	}
 	ENDTEXT
 *!*	wait WINDOW cserie
 *!*	wait WINDOW cnumero
-*!*	MESSAGEBOX(cdata)
+*!*		MESSAGEBOX(cdata)
 	oHTTP = Createobject("MSXML2.XMLHTTP")
 	oHTTP.Open("post", pURL_WSDL, .F.)
 	oHTTP.setRequestHeader("Content-Type", "application/json")

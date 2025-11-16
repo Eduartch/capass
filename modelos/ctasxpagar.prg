@@ -384,11 +384,6 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function editaregistro()
-	If This.estado = "C"
-		nimpo = This.nimpo
-	Else
-		nacta = This.nimpo
-	Endif
 	Df = Cfechas(This.dFech)
 	dFv = Cfechas(This.dfevto)
 	If This.IniciaTransaccion() < 1 Then
@@ -415,7 +410,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function quitarRegistro()
 	If This.estado = 'C' Then
-		If This.DesactivaDeudas(This.rdeud) < 1 Then
+		If This.DesactivaDeudas(This.nidrd) < 1 Then
 			Return 0
 		Endif
 	Else
@@ -823,7 +818,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
       SELECT b.ndoc AS docd,d.fech,d.fevto,a.importe,b.impo AS impc,b.idauto,"" AS banco,d.tipo,a.ncontrol,c.rdeu_mone AS mone,
        d.nrou,d.ndoc FROM  (SELECT ncontrol,MIN(fech) AS fech,MAX(fevto) AS fevto,SUM(a.impo-a.acta) AS importe FROM fe_deu AS a WHERE  ncontrol=?niden
        GROUP BY ncontrol) AS a
-       INNER JOIN fe_deu AS d ON d.`iddeu`=a.ncontrol      
+       INNER JOIN fe_deu AS d ON d.`iddeu`=a.ncontrol
        INNER JOIN fe_rdeu AS c ON c.rdeu_idrd=d.deud_idrd
        LEFT JOIN fe_rcom AS b  ON b.idauto=c.rdeu_idau
 	ENDTEXT

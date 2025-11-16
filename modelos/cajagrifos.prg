@@ -148,7 +148,16 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		        \ And lect_idco In(5,6,7,8)
 			Endcase
 		Case fe_gene.nruc = '20609681609'
-              \  and lect_idco=<<this.nisla>>
+            	Do Case
+			Case This.nisla = 1
+		        \ And lect_idco In(1,2)
+			Case This.nisla = 2
+		        \ And lect_idco In(3,4)
+			Case This.nisla = 3
+		        \ And lect_idco In(5,6)
+		   Case This.nisla = 4
+		        \ And lect_idco In(7,8)     
+			Endcase
 		Otherwise
 			Do Case
 			Case This.nisla = 1

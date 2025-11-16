@@ -24,7 +24,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	Else
 		m.nflete = 0
 	Endif
-	If goApp.Proyecto='psys' Then
+	If ALLTRIM(goApp.Proyecto)=='psys' Then
 		NAuto = IngresaTraspasoAlmacenEnviado(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, goApp.Tienda, 0, 0, 0, 0, 0, 'P')
 	Else
 		NAuto = IngresaResumenTraspasos(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, goApp.Tienda, 0, 0, 0, 0, m.nflete)

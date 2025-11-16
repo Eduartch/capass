@@ -14,7 +14,7 @@ Define Class ventasx3 As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Endif
 	Return  1
 	Endfunc
-	Function listardctonotascredtito(nid, Ccursor)
+	Function listardctonotascredito(nid, Ccursor)
 	Text To lC Noshow Textmerge
 	    SELECT a.idart,a.descri,a.unid,k.cant,k.prec,rOUND(k.cant*k.prec,2) as importe,
 	    k.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi as comi,k.alma,

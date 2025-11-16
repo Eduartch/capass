@@ -26,7 +26,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT a.idauto,a.alma,a.idkar,a.idart,a.cant,a.prec,c.ndoc AS dcto,c.vigv,valor,c.igv,impo,
 	c.fech,c.fecr,c.form,c.deta,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,c.pimpo,u.nomb AS usuario,
 	c.tdoc,c.ndoc,c.dolar,c.mone,b.descri,b.unid,c.rcom_hash,c.impo,rcom_arch,rcom_mret,IFNULL(t.nomb,f.ptop) AS ptop,rcom_detr,
@@ -38,7 +38,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	INNER JOIN fe_usua AS u ON u.idusua=c.idusua
 	LEFT JOIN fe_sucu AS t ON t.idalma=c.codt,fe_gene AS f
 	WHERE c.idauto=<<this.nreg>> aND a.acti='A';
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -63,7 +63,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	nigv = Kardex.igv
 	nimpo = Kardex.Impo
 	dFecha = Kardex.fech
-	cformapago=kardex.form 
+	cformapago=Kardex.Form
 	nexonerado = Kardex.rcom_exon
 	clugar = Kardex.rcom_lope
 	nirta = Kardex.rcom_irta
@@ -74,7 +74,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 		nf = nf + 1
 		Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc, hash, nruc, razon, Direccion, fech, dni, Mone,  Usuario, Tigv, codc);
 			Values(Kardex.idart, Kardex.Descri, Kardex.Unid, Kardex.cant, Kardex.Prec, Kardex.Ndoc, Kardex.rcom_hash, Kardex.nruc, Kardex.Razo, ;
-			  Alltrim(Kardex.Dire) + ' ' + Alltrim(Kardex.ciud), Kardex.fech, Kardex.ndni, Kardex.Mone, Kardex.Usuario, Kardex.vigv, Kardex.Idcliente)
+			Alltrim(Kardex.Dire) + ' ' + Alltrim(Kardex.ciud), Kardex.fech, Kardex.ndni, Kardex.Mone, Kardex.Usuario, Kardex.vigv, Kardex.Idcliente)
 	Endscan
 	Local Cimporte
 	Cimporte = Diletras(m.nneto, cmone)
@@ -87,20 +87,20 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Select tmpv
 	Replace All Ndoc With cndoc, cletras With Cimporte, Mone With cmone, hash With chash, Detalle With cdeta1, ;
 		Tdoc With cTdoc, valor With nvalor, igv With nigv, Total With nimpo, fech With dFecha, exonerado With m.nexonerado, ;
-		lugar With clugar, irta With nirta, neto With m.nneto,form WITH m.cformapago
+		lugar With clugar, irta With nirta, neto With m.nneto,Form With m.cformapago
 	Go Top In tmpv
 	Return 1
 	Endfunc
 	Function creartmp(Calias)
 	Create Cursor (Calias)(Coda N(8), Desc c(120), Unid c(4), Prec N(13, 8), cant N(10, 3), ;
-		  Ndoc c(12), Nreg N(8), alma N(10, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
-		  pos N(2), costo N(10, 2), uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), ;
-		  Nitem N(3), Valida c(1), Impo N(10, 2), Acti c(1), tipro c(1), idcosto N(10), aprecios c(1), Modi c(1), ;
-		  cletras c(120), Precio N(13, 8), hash c(30), fech d, codc N(5), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
-		  neto N(12, 2), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Form c(30), valor N(12, 2), exonerado N(12, 2), igv N(12, 2), Total N(12, 2), caant N(10, 2), ;
-		  Detalle c(200), valida1 c(1), Archivo c(120), Tdoc c(2), Peso N(10, 2), valido c(1), costoRef N(13, 8), ;
-		  fechav d, Retencion N(8, 2), como N(7, 3), copia c(1), ptop c(150), Idauto N(8), comi N(5, 3), ;
-		  detraccion N(8, 2), coddetrac c(10), Tigv N(8, 2), irta N(8, 5), lugar c(200), Usuario c(100))
+		Ndoc c(12), Nreg N(8), alma N(10, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
+		pos N(2), costo N(10, 2), uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), ;
+		Nitem N(3), Valida c(1), Impo N(10, 2), Acti c(1), tipro c(1), idcosto N(10), aprecios c(1), Modi c(1), ;
+		cletras c(120), Precio N(13, 8), hash c(30), fech d, codc N(5), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
+		neto N(12, 2), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Form c(30), valor N(12, 2), exonerado N(12, 2), igv N(12, 2), Total N(12, 2), caant N(10, 2), ;
+		Detalle c(200), valida1 c(1), Archivo c(120), Tdoc c(2), Peso N(10, 2), valido c(1), costoRef N(13, 8), ;
+		fechav d, Retencion N(8, 2), como N(7, 3), copia c(1), ptop c(150), Idauto N(8), comi N(5, 3), ;
+		detraccion N(8, 2), coddetrac c(10), Tigv N(8, 2), irta N(8, 5), lugar c(200), Usuario c(100))
 	Endfunc
 	Function listarxinformarsunat(Ccursor)
 	If This.Idsesion > 1 Then
@@ -130,13 +130,13 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Else
 		Cruc = Oempresa.nruc
 	Endif
-	Text To cdata Noshow Textmerge
+	TEXT To cdata Noshow Textmerge
 	{
     "nruc":"<<cruc>>",
     "idauto":<<this.nreg>>,
     "empresa":"<<goapp.empresanube>>"
     }
-	Endtext
+	ENDTEXT
 *!*		Messagebox(cdata)
 	Set Procedure To d:\Librerias\nfcursortojson, d:\Librerias\nfcursortoobject, d:\Librerias\nfJsonRead.prg Additive
 	oHTTP = Createobject("MSXML2.XMLHTTP")
@@ -148,15 +148,18 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 		Return 0
 	Endif
 	lcHTML = oHTTP.responseText
+	Strtofile(lcHTML,Addbs(Sys(5)+Sys(2003))+'rpta.txt')
 *!*		Messagebox(lcHTML)
 	orpta = nfJsonRead(lcHTML)
 	If  Vartype(orpta.rpta) <> 'U' Then
-		This.Cmensaje = orpta.rpta
-		If Left(orpta.rpta, 1) = '0' Then
-			crpta = orpta.rpta
+		If Left(orpta.rpta,1)='0' Then
+			This.Cmensaje = Alltrim(orpta.rpta)
+		Else
+			This.Cmensaje = Left(Alltrim(orpta.rpta),200)
+			Return 0
 		Endif
 	Else
-		This.Cmensaje = Alltrim(lcHTML)
+		This.Cmensaje = Alltrim(Left(lcHTML,220))
 		Return 0
 	Endif
 	Return 1
@@ -210,9 +213,9 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	If IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
      ('<<This.cTdoc>>', '<<Left(This.cforma, 1)>>', '<<This.cndoc>>', '<<cfechas(This.dFecha)>>',<<this.nreg>>, '<<This.cdetalle>>',<<This.nimpo1>>, <<This.nimpo6>>, <<This.nimpo8>>,'<<This.clugar>>', '<<This.Cmoneda>>', '<<this.ndolar>>', <<this.vigv>>, '<<1>>', <<This.nidprov>>, '<<1>>', <<goApp.nidusua>>, <<this.nirta>>,<<This.codt>>, <<this.nidcta1>>, <<this.nidctai>>, <<this.nidctat>>, <<this.nimpo5>>, <<This.npercepcion>>)
-	Endtext
+	ENDTEXT
 	If This.ejecutarp(lC, lp, '') < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -337,7 +340,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Replace  All cletras With  ccletras, dni With This.Cndni, exonerado With This.nimpo5, ;
 		irta With This.nirta, neto With This.nneto, valor With This.nimpo1, exonerado With This.nimpo5, ;
 		igv With This.nimpo6, Total With This.nimpo8, Mone With This.Cmoneda,  ;
-		razon With This.Crazon, Direccion With This.Cdireccion, fech With This.dFecha,form WITH this.cforma,;
+		razon With This.Crazon, Direccion With This.Cdireccion, fech With This.dFecha,Form With This.cforma,;
 		lugar With This.clugar, Detalle With This.cdetalle, Ndoc With This.cndoc  In tmpv
 	Select tmpv
 	Go Top
@@ -375,9 +378,9 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
      ('<<This.cTdoc>>', '<<Left(This.cforma, 1)>>', '<<This.cndoc>>', '<<cfechas(This.dFecha)>>','<<cfechas(This.dfechar)>>', '<<This.cdetalle>>',  <<This.nimpo1>>, <<This.nimpo6>>, <<This.nimpo8>>,'<<This.clugar>>', '<<This.Cmoneda>>', '<<this.ndolar>>', <<this.vigv>>, '<<1>>', <<This.nidprov>>, '<<1>>', <<goApp.nidusua>>, <<this.nirta>>,<<This.codt>>, <<this.nidcta1>>, <<this.nidctai>>, <<this.nidctat>>, <<this.nimpo5>>, <<This.npercepcion>>)
-	Endtext
+	ENDTEXT
 	NAuto = This.EJECUTARf(lC, lp, cur)
 	If NAuto < 1 Then
 		This.DEshacerCambios()

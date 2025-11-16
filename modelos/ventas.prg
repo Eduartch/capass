@@ -1072,8 +1072,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function Registroventaspsystr(Ccursor)
-	If (This.fechaf-This.fechai)>31 Then
-		This.Cmensaje="Máximo 31 Días"
+	If (This.fechaf-This.fechai)>180 Then
+		This.Cmensaje="Máximo 180 Días"
 		Return 0
 	Endif
 	If !Pemstatus(goapp, 'cdatos', 5) Then
@@ -2836,7 +2836,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\ Select  `c`.`rcom_icbper` As `rcom_icbper`, `a`.`kar_icbper`  As `kar_icbper`, `c`.`rcom_mens`   As `rcom_mens`,ifnull(m.Fevto,c.fech) As fvto,
+	\ Select  `c`.`rcom_icbper` , `a`.`kar_icbper` , `c`.`rcom_mens` ,ifnull(m.Fevto,c.fech) As fvto,
 	\  `c`.`idusua`      As `idusua`, `a`.`kar_comi`    As `kar_comi`, `a`.`Codv`        As `Codv`,`a`.`Idauto`      As `Idauto`,
 	\  `a`.`alma`        As `alma`, `a`.`kar_idco`    As `idcosto`, `a`.`idkar`       As `idkar`, `a`.`idart`       As `Coda`,
 	\  `a`.`cant`        As `cant`, `a`.`Prec`        As `Prec`, `c`.`valor`       As `valor`, `c`.`igv`         As `igv`,
@@ -2848,7 +2848,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	\  `b`.`Unid`        As `Unid`, `b`.`pre1`        As `pre1`, `b`.`peso`        As `peso`, `b`.`pre2`        As `pre2`,
 	\  `c`.`vigv`        As `vigv`, `a`.`dsnc`        As `dsnc`, `a`.`dsnd`        As `dsnd`, `a`.`gast`,m.dmar,
 	\  `c`.`idcliente`   As `idcliente`, `c`.`codt`        As `codt`, `b`.`pre3`        As `pre3`, `b`.`cost`        As `costo`,
-	\  `b`.`uno`         As `uno`, `b`.`Dos`         As `Dos`, (`b`.`uno` + `b`.`Dos`) As `TAlma`, `c`.`FUsua`       As `FUsua`,rcom_otro,
+	\  `b`.`uno`, `b`.`Dos`,b.tre,b.cua, (`b`.`uno` + `b`.`Dos`+b.tre+b.cua) As `TAlma`, `c`.`FUsua`,rcom_otro,
 	\  `p`.`nomv`        As `Vendedor`, `q`.`nomb`        As `Usuario`, `c`.`rcom_idtr`   As `rcom_idtr`, `c`.`rcom_tipo`   As `rcom_tipo`
 	If goapp.Clienteconproyectos = 'S' Then
 	\ , `c`.`alma`        As `codproyecto`
@@ -3902,5 +3902,23 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 		Return 0
 	Endif
 	Return 1
+	Endfunc
+	Function listardctonotascredito(nid, Ccursor)
+	If This.idsesion>0 Then
+		Set DataSession To This.idsesion
+	Endif
+	TEXT To lC Noshow Textmerge
+	    SELECT a.idart,a.descri,kar_unid as unid,k.cant,k.prec,rOUND(k.cant*k.prec,2) as importe,
+	    k.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi as comi,k.alma,
+		r.fech,r.ndoc,r.tdoc,r.dolar as dola,r.vigv,r.rcom_exon,tcom,k.idkar,if(k.prec=0,kar_cost,0) as costoref,
+		kar_equi,prod_cod1,kar_cost,codv from fe_rcom r
+		inner join fe_kar k on k.idauto=r.idauto
+		inner join fe_art a on a.idart=k.idart
+		where k.acti='A' and r.acti='A' and r.idauto=<<nid>>  order by idkar
+	ENDTEXT
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return  1
 	Endfunc
 Enddefine

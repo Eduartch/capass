@@ -611,7 +611,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	dff=cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\select vendedor,importe,CAST(cuota as decimal(12,2)) as cuota,if(cuota>0,Round((importe*100)/cuota,2),0) As por1,(importe-costo)/importe as por2 from(
+	\select vendedor,importe,CAST(cuota as decimal(12,2)) as cuota,if(cuota>0,Round((importe*100)/cuota,2),0) As por1,ROUND(((importe-costo)/importe *100),2)as por2 from(
 	\SELECT v.nomv AS vendedor,timporte AS importe,costo,
 	\vend_cuot AS cuota
     \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,a.`codv`,SUM(cant*kar_cost) as costo FROM fe_rcom AS e

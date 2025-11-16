@@ -3,17 +3,30 @@
 #Define MENSAJE3       "Ya se envio correctamente pero la respuesta no se recibio Correctamente-(Consultar con Clave Sol en www.sunat.gob.pe)"
 Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	todos = 0
+	dfecha=Date()
 	cTdoc = ""
 	Cserie = ""
 	ndesde = 0
 	nhasta = 0
+	nimpo=0
+	nvalor=0
+	nexon=0
+	ninafectas=0
+	nigv=0
+	ngrati=0
+	cxml=""
+	chash=""
+	cfile=""
 	estado = ""
 	cticket = ""
+	crespuesta=""
+	ncodt=0
 	nidr = 0
+*curb.fech, curb.Tdoc, curb.Serie, curb.desde, curb.hasta, curb.Impo, curb.valor, curb.Exon, curb.inafectas, curb.igv, curb.gratificaciones,  carxml, crhash, goApp.cArchivo, cresp
 	conmensajerapido = ""
 	Function ConsultaBoletasyNotasporenviar(f1, f2)
 	Local lC
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    SELECT resu_fech,enviados,resumen,resumen-enviados,enviados-resumen
 		FROM(SELECT resu_fech,CAST(SUM(enviados) AS DECIMAL(12,2)) AS enviados,CAST(SUM(resumen) AS DECIMAL(12,2))AS resumen FROM(
 		SELECT resu_fech,CASE tipo WHEN 1 THEN resu_impo ELSE 0 END AS enviados,
@@ -29,7 +42,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 		WHERE  f.fech between '<<f1>>' and '<<f2>>' and f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1) in('F','B') AND w.tdoc='03' AND f.idcliente>0) AS x)
 		AS y GROUP BY resu_fech ORDER BY resu_fech) AS zz  WHERE resumen-enviados>=1
-	Endtext
+	ENDTEXT
 	If  This.EJECutaconsulta(lC, 'rbolne') < 1 Then
 		Return 0
 	Endif
@@ -95,24 +108,24 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function solounticketenvio(Df, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    select resu_tick,resu_arch FROM fe_resboletas f
         where f.resu_acti='A' and (LEFT(resu_mens,1)<>'0' OR ISNULL(resu_mens)) and resu_fech='<<df>>' and length(TRIM(resu_tick))>0 limit 1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function mostrardetalleboletasxenviarurl(Df, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT tdoc,ndoc,fech,impo,idauto FROM fe_rcom WHERE tdoc='03' AND acti='A' AND idcliente>0 AND fech='<<df>>'
 	UNION ALL
 	SELECT f.tdoc,f.ndoc,f.fech,f.impo,f.idauto FROM fe_rcom  AS f
 	INNER JOIN fe_ncven g ON g.ncre_idan=f.idauto
 	INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 	WHERE f.tdoc="07"  AND f.acti='A' AND f.idcliente>0 AND w.tdoc='03' AND f.fech='<<df>>'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -126,7 +139,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Else
 		Cruc = Oempresa.nruc
 	Endif
-	Text To cdata Noshow Textmerge
+	TEXT To cdata Noshow Textmerge
 	{
 	"ruc":"<<cruc>>",
 	"ndoc":"<<cndoc>>",
@@ -136,7 +149,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	"ticket":"<<cticket>>",
 	"idauto":"<<nidauto>>"
 	}
-	Endtext
+	ENDTEXT
 	oHTTP = Createobject("MSXML2.XMLHTTP")
 	oHTTP.Open("post", pURL_WSDL, .F.)
 	oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -156,13 +169,13 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Set Procedure To d:\Librerias\json Additive
 	m.lcURL		= "http://companiasysven.com/apisunat20.php"
 	m.loXmlHttp	= Createobject("Microsoft.XMLHTTP")
-	Text To cdata Noshow Textmerge
+	TEXT To cdata Noshow Textmerge
 	{
 	"fi":"<<fi>>",
 	"ff":"<<ff>>",
 	"ruc":"<<cruc>>"
 	}
-	Endtext
+	ENDTEXT
 	m.loXmlHttp.Open('POST', m.lcURL, .F.)
 	m.loXmlHttp.setRequestHeader("Content-Type", "application/json")
 	m.loXmlHttp.Send(cdata)
@@ -183,11 +196,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			ovalor = otc._Data.Get(x)
 			If (Vartype(ovalor) = 'O') Then
 				niDAUTO	 = Val(ovalor.Get("idauto"))
-				dFecha	 = ovalor.Get("fech")
+				dfecha	 = ovalor.Get("fech")
 				cndoc	 = ovalor.Get('ndoc')
 				Cmensaje = ovalor.Get("mensaje")
 				cticket	 = ovalor.Get("ticket")
-				Df = Ctod(Right(dFecha, 2) + '/' + Substr(dFecha, 6, 2) + '/' + Left(dFecha, 4))
+				Df = Ctod(Right(dfecha, 2) + '/' + Substr(dfecha, 6, 2) + '/' + Left(dfecha, 4))
 				Insert Into boletas(Idauto, Ndoc, fech, Mensaje, ticket)Values(niDAUTO, cndoc, Df, Cmensaje, cticket)
 			Endif
 			x = x + 1
@@ -215,9 +228,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 *totenvio=totenvio+boletas.importe
 			Cmensaje = boletas.Mensaje
 *	Wait Window cticket
-			Text To lC Noshow Textmerge
+			TEXT To lC Noshow Textmerge
 	           UPDATE fe_rcom SET rcom_mens='<<boletas.mensaje>>',rcom_fecd=curdate() WHERE idauto=<<boletas.idauto>>
-			Endtext
+			ENDTEXT
 			If This.Ejecutarsql(lC) < 1 Then
 				Sw = 0
 				Exit
@@ -228,9 +241,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		If Sw = 0 Then
 			Exit
 		Endif
-		Text To lcc Noshow Textmerge
+		TEXT To lcc Noshow Textmerge
 		  UPDATE fe_resboletas SET resu_mens='<<cmensaje>>',resu_feen=curdate() WHERE resu_tick='<<cticket>>'
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(lcc) < 1 Then
 			Sw = 0
 			Exit
@@ -258,10 +271,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	dATOSGLOBALES()
-	Set Classlib To d:\Librerias\fe.vcx Additive
+	Set Classlib To d:\Librerias\fe.Vcx Additive
 	ocomp = Createobject("comprobante")
 	F	  = Cfechas(Df)
-	dFecha = Date()
+	dfecha = Date()
 	If This.getallboletas(Df, 'rmbol', 'rb1') < 1 Then
 		Return 0
 	Endif
@@ -277,17 +290,17 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	ocomp.FechaDocumentos = Alltrim(Str(Year(Df))) + '-' + Iif(Month(Df) <= 9, '0' + Alltrim(Str(Month(Df))), Alltrim(Str(Month(Df)))) + '-' + Iif(Day(Df) <= 9, '0' + Alltrim(Str(Day(Df))), Alltrim(Str(Day(Df))))
-	cnombreArchivo		  = Alltrim(Str(Year(dFecha))) + Iif(Month(dFecha) <= 9, '0' + Alltrim(Str(Month(dFecha))), Alltrim(Str(Month(dFecha)))) + Iif(Day(dFecha) <= 9, '0' + Alltrim(Str(Day(dFecha))), Alltrim(Str(Day(dFecha))))
+	cnombreArchivo		  = Alltrim(Str(Year(dfecha))) + Iif(Month(dfecha) <= 9, '0' + Alltrim(Str(Month(dfecha))), Alltrim(Str(Month(dfecha)))) + Iif(Day(dfecha) <= 9, '0' + Alltrim(Str(Day(dfecha))), Alltrim(Str(Day(dfecha))))
 	ocomp.Moneda		  = 'PEN'
 	ocomp.Tigv			  = '10'
 	ocomp.vigv			  = '18'
-	ocomp.fechaemision	  = Alltrim(Str(Year(dFecha))) + '-' + Iif(Month(dFecha) <= 9, '0' + Alltrim(Str(Month(dFecha))), Alltrim(Str(Month(dFecha)))) + '-' + Iif(Day(dFecha) <= 9, '0' + Alltrim(Str(Day(dFecha))), Alltrim(Str(Day(dFecha))))
+	ocomp.fechaemision	  = Alltrim(Str(Year(dfecha))) + '-' + Iif(Month(dfecha) <= 9, '0' + Alltrim(Str(Month(dfecha))), Alltrim(Str(Month(dfecha)))) + '-' + Iif(Day(dfecha) <= 9, '0' + Alltrim(Str(Day(dfecha))), Alltrim(Str(Day(dfecha))))
 	If Type('oempresa') = 'U' Then
 		ocomp.rucfirma			 = fe_gene.rucfirmad
 		ocomp.nombrefirmadigital = fe_gene.razonfirmad
 		ocomp.rucemisor			 = fe_gene.nruc
 		ocomp.razonsocialempresa = fe_gene.Empresa
-		ocomp.ubigeo			 = fe_gene.ubigeo
+		ocomp.Ubigeo			 = fe_gene.Ubigeo
 		ocomp.direccionempresa	 = fe_gene.ptop
 		ocomp.ciudademisor		 = fe_gene.ciudad
 		ocomp.distritoemisor	 = fe_gene.distrito
@@ -297,7 +310,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		ocomp.nombrefirmadigital = Oempresa.razonfirmad
 		ocomp.rucemisor			 = Oempresa.nruc
 		ocomp.razonsocialempresa = Oempresa.Empresa
-		ocomp.ubigeo			 = Oempresa.ubigeo
+		ocomp.Ubigeo			 = Oempresa.Ubigeo
 		ocomp.direccionempresa	 = Oempresa.ptop
 		ocomp.ciudademisor		 = Oempresa.ciudad
 		ocomp.distritoemisor	 = Oempresa.distrito
@@ -372,9 +385,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 				dfenvio	= fe_gene.fech
 				np3		= "0 El Resumen de Boletas ha sido aceptada " + goApp.ticket
 				dfenvio	= Cfechas(fe_gene.fech)
-				Text To lC Noshow
+				TEXT To lC Noshow
                     UPDATE fe_rcom SET rcom_mens=?np3,rcom_fecd=?dfenvio WHERE idauto=?np1
-				Endtext
+				ENDTEXT
 				If  This.Ejecutarsql(lC) < 0 Then
 					This.Cmensaje = 'No se Grabo el mensaje de Respuesta'
 					v = 0
@@ -396,14 +409,14 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		goApp.AddProperty("cdatos", "")
 	Endif
 	dATOSGLOBALES()
-	Set Classlib To d:\Librerias\fe.vcx Additive
+	Set Classlib To d:\Librerias\fe.Vcx Additive
 	ocomp = Createobject("comprobante")
 	F	  = Cfechas(Df)
-	dFecha = Date()
+	dfecha = Date()
 *	WAIT WINDOW 'aqui  '+goapp.cdatos
 	If goApp.Cdatos = 'S' Then
-		nidt = goApp.Tienda
-		Text To lC Noshow Textmerge
+		nidt = goApp.tienda
+		TEXT To lC Noshow Textmerge
 		SELECT fech,tdoc,
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,
 		If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
@@ -436,11 +449,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
         inner join fe_clie c on c.idclie=f.idcliente
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>>
-		Endtext
+		ENDTEXT
 		If This.EJECutaconsulta(lC, "rboletas") < 1 Then
 			Return 0
 		Endif
-		Text To lcx Noshow Textmerge
+		TEXT To lcx Noshow Textmerge
 		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo
 		from(select
@@ -463,9 +476,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		FROM fe_rcom f
 		inner join fe_ncven g on g.ncre_idan=f.idauto inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>>  order by f.ndoc) as x group by serie
-		Endtext
+		ENDTEXT
 	Else
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 		SELECT fech,tdoc,
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,
 		If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
@@ -497,11 +510,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
         inner join fe_clie c on c.idclie=f.idcliente
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>'
-		Endtext
+		ENDTEXT
 		If This.EJECutaconsulta(lC, "rboletas") < 1 Then
 			Return 0
 		Endif
-		Text To lcx Noshow Textmerge
+		TEXT To lcx Noshow Textmerge
 		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo
 		from(select
@@ -526,7 +539,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		inner join fe_ncven g on g.ncre_idan=f.idauto
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>'  order by f.ndoc) as x group by serie
-		Endtext
+		ENDTEXT
 	Endif
 	If This.EJECutaconsulta(lcx, "rb1") < 1 Then
 		Return 0
@@ -550,17 +563,17 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 *	Return 0
 	Endif
 	ocomp.FechaDocumentos = Alltrim(Str(Year(Df))) + '-' + Iif(Month(Df) <= 9, '0' + Alltrim(Str(Month(Df))), Alltrim(Str(Month(Df)))) + '-' + Iif(Day(Df) <= 9, '0' + Alltrim(Str(Day(Df))), Alltrim(Str(Day(Df))))
-	cnombreArchivo		  = Alltrim(Str(Year(dFecha))) + Iif(Month(dFecha) <= 9, '0' + Alltrim(Str(Month(dFecha))), Alltrim(Str(Month(dFecha)))) + Iif(Day(dFecha) <= 9, '0' + Alltrim(Str(Day(dFecha))), Alltrim(Str(Day(dFecha))))
+	cnombreArchivo		  = Alltrim(Str(Year(dfecha))) + Iif(Month(dfecha) <= 9, '0' + Alltrim(Str(Month(dfecha))), Alltrim(Str(Month(dfecha)))) + Iif(Day(dfecha) <= 9, '0' + Alltrim(Str(Day(dfecha))), Alltrim(Str(Day(dfecha))))
 	ocomp.Moneda		  = 'PEN'
 	ocomp.Tigv			  = '10'
 	ocomp.vigv			  = '18'
-	ocomp.fechaemision	  = Alltrim(Str(Year(dFecha))) + '-' + Iif(Month(dFecha) <= 9, '0' + Alltrim(Str(Month(dFecha))), Alltrim(Str(Month(dFecha)))) + '-' + Iif(Day(dFecha) <= 9, '0' + Alltrim(Str(Day(dFecha))), Alltrim(Str(Day(dFecha))))
+	ocomp.fechaemision	  = Alltrim(Str(Year(dfecha))) + '-' + Iif(Month(dfecha) <= 9, '0' + Alltrim(Str(Month(dfecha))), Alltrim(Str(Month(dfecha)))) + '-' + Iif(Day(dfecha) <= 9, '0' + Alltrim(Str(Day(dfecha))), Alltrim(Str(Day(dfecha))))
 	If Type('oempresa') = 'U' Then
 		ocomp.rucfirma			 = fe_gene.rucfirmad
 		ocomp.nombrefirmadigital = fe_gene.razonfirmad
 		ocomp.rucemisor			 = fe_gene.nruc
 		ocomp.razonsocialempresa = fe_gene.Empresa
-		ocomp.ubigeo			 = fe_gene.ubigeo
+		ocomp.Ubigeo			 = fe_gene.Ubigeo
 		ocomp.direccionempresa	 = fe_gene.ptop
 		ocomp.ciudademisor		 = fe_gene.ciudad
 		ocomp.distritoemisor	 = fe_gene.distrito
@@ -570,7 +583,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		ocomp.nombrefirmadigital = Oempresa.razonfirmad
 		ocomp.rucemisor			 = Oempresa.nruc
 		ocomp.razonsocialempresa = Oempresa.Empresa
-		ocomp.ubigeo			 = Oempresa.ubigeo
+		ocomp.Ubigeo			 = Oempresa.Ubigeo
 		ocomp.direccionempresa	 = Oempresa.ptop
 		ocomp.ciudademisor		 = Oempresa.ciudad
 		ocomp.distritoemisor	 = Oempresa.distrito
@@ -630,7 +643,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		carxml = ""
 		cresp = Alltrim(Str(Year(curb.fech))) + Alltrim(Str(Month(curb.fech))) + Alltrim(Str(Day(curb.fech))) + '-' + Alltrim(Str(x))
 		If RegistraResumenBoletas(curb.fech, curb.Tdoc, curb.Serie, curb.desde, curb.hasta, curb.Impo, curb.valor, curb.Exon, curb.inafectas, curb.igv, curb.gratificaciones, ;
-				  carxml, "", goApp.cArchivo, cresp) = 0 Then
+				carxml, "", goApp.cArchivo, cresp) = 0 Then
 			This.Cmensaje = "NO se Registro el Informe de Envío de Boletas en Base de Datos"
 			Vdvto = 0
 			Exit
@@ -642,7 +655,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 1
 	Endif
 	Endfunc
-	Function getallboletas(dFecha, Ccursor, Ccursor1)
+	Function getallboletas(dfecha, Ccursor, Ccursor1)
 	If !Pemstatus(goApp, 'cdatos', 5)
 		goApp.AddProperty("cdatos", "")
 	Endif
@@ -652,10 +665,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Df = Cfechas(dFecha)
+	Df = Cfechas(dfecha)
 	If This.todos = 0 Then
-			Set Textmerge On
-			Set Textmerge To Memvar lC Noshow Textmerge
+		Set Textmerge On
+		Set Textmerge To Memvar lC Noshow Textmerge
 			\	Select fech,Tdoc,
 			\	Left(Ndoc,4) As Serie,Substr(Ndoc,5) As numero,If(Length(Trim(c.ndni))<8,'0','1') As tipodoc,If(Length(Trim(c.ndni))<8,'00000000',c.ndni) As ndni,
 		    \    c.razo,If(F.mone='S',valor,valor*dolar) As valor,If(F.mone='S',rcom_exon,rcom_exon*dolar) As rcom_exon,If(F.mone='S',igv,igv*dolar) As igv,
@@ -851,15 +864,15 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function generaserieboletas()
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    UPDATE fe_gene as g SET gene_nres=gene_nres+1 WHERE idgene=1
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    select gene_nres FROM fe_gene WHERE idgene=1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -905,9 +918,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Local lC, lcr
 	np3		= "0 El Resumen de Boletas ha sido aceptado desde API-SUNAT"
 	dfenvio	= Cfechas(fe_gene.fech)
-	Text To lcr Noshow Textmerge
+	TEXT To lcr Noshow Textmerge
      UPDATE fe_resboletas SET resu_mens='<<np3>>',resu_feen=CURDATE() WHERE resu_tick='<<cticket>>';
-	Endtext
+	ENDTEXT
 	Sw	 = 1
 	Select * From rmvtos Where Alltrim(rmvtos.resu_tick) = cticket Into Cursor ax
 	Select ax
@@ -921,10 +934,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Else
 			Cserie = ax.resu_serie
 		Endif
-		Text To lC Noshow
+		TEXT To lC Noshow
 			Select  idauto,	numero,tdoc,fech,Impo,ndoc FROM (Select  idauto,	ndoc,Cast(mid(ndoc, 5) As unsigned) As numero,tdoc,	fech,Impo From fe_rcom F
 			Where tdoc = ?ctdoc And Acti = 'A'  And idcliente > 0 and impo<>0) As x where numero Between ?ndesde And ?nhasta And Left(ndoc, 4) = ?cserie
-		Endtext
+		ENDTEXT
 		If  This.EJECutaconsulta(lC, 'crb') < 1 Then
 			Sw = 0
 			Exit
@@ -936,9 +949,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			odvto = ConsultaApisunat(crb.Tdoc, Left(crb.Ndoc, 4), Trim(Substr(crb.Ndoc, 5)), Dtoc(crb.fech), Alltrim(Str(crb.Impo, 12, 2)))
 			If odvto.Vdvto = '1' Then
 				Mensaje(odvto.Mensaje + ' ' + crb.Ndoc)
-				Text  To lC Noshow Textmerge Pretext 7
+				TEXT  To lC Noshow Textmerge Pretext 7
                  UPDATE fe_rcom SET rcom_mens='<<np3>>',rcom_fecd='<<dfenvio>>' WHERE idauto=<<np1>>
-				Endtext
+				ENDTEXT
 				If This.Ejecutasql(lC) < 1 Then
 					Sw = 0
 					Exit
@@ -965,9 +978,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	np3 = "0 El Resumen de Boletas ha sido aceptado "
 	dfenvio = Cfechas(fe_gene.fech)
 	Sw = 1
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
    	select resu_desd,resu_hast,resu_tdoc,resu_serie FROM fe_resboletas where resu_tick='<<ALLTRIM(this.cticket)>>' AND resu_acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, 'ax') < 1 Then
 		This.cticket = ""
 		Return 0.
@@ -987,11 +1000,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Else
 			Cserie = ax.resu_serie
 		Endif
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 			select idauto,numero from(
 			SELECT idauto,ndoc,cast(mid(ndoc,5) as unsigned) as numero FROM fe_rcom f where tdoc='<<ctdoc>>' and acti='A' and idcliente>0) as x
 			where numero between <<ndesde>> and <<nhasta>> and LEFT(ndoc,4)='<<cserie>>'
-		Endtext
+		ENDTEXT
 		If This.EJECutaconsulta(lC, 'crb') < 1 Then
 			Sw = 0
 			Exit
@@ -999,9 +1012,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Select crb
 		Go Top
 		Scan All
-			Text  To lC Noshow Textmerge Pretext 7
+			TEXT  To lC Noshow Textmerge Pretext 7
              UPDATE fe_rcom SET rcom_mens='<<np3>>',rcom_fecd='<<dfenvio>>' WHERE idauto=<<crb.idauto>>
-			Endtext
+			ENDTEXT
 			If This.Ejecutarsql(lC) < 1 Then
 				Sw = 0
 				Exit
@@ -1010,9 +1023,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Select ax
 	Endscan
 	If Sw = 1 Then
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
         UPDATE fe_resboletas SET resu_mens='<<np3>>',resu_feen=CURDATE() WHERE resu_tick='<<this.cticket>>';
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(lC) < 1 Then
 			Return 0
 		Endif
@@ -1029,9 +1042,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Endfunc
 	Function Anularenvio()
-	Text  To lC Noshow Textmerge
+	TEXT  To lC Noshow Textmerge
         UPDATE fe_resboletas SET resu_acti='I' WHERE resu_idre=<<this.nidr>>
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -1111,7 +1124,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	crespuesta	 = ls_fileName
 	Do Case
 	Case  goApp.ose = 'conastec'
-		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		<soapenv:Header>
 		<wsse:Security   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -1128,9 +1141,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		</ser:getStatus>
 		</soapenv:Body>
 		</soapenv:Envelope>
-		Endtext
+		ENDTEXT
 	Case goApp.ose = "efact"
-		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" xmlns:wsse="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 	   <soapenv:Header>
 	   <wsse:Security soapenv:mustUnderstand="0" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1146,9 +1159,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	     </ser:getStatus>
 	   </soapenv:Body>
 	</soapenv:Envelope>
-		Endtext
+		ENDTEXT
 	Case  goApp.ose = 'bizlinks'
-		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 			<soapenv:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 			<wsse:Security soap:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="soap">
@@ -1164,9 +1177,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			      </ser:getStatus>
 			   </soapenv:Body>
 			</soapenv:Envelope>
-		Endtext
+		ENDTEXT
 	Otherwise
-		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 			<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 				<soapenv:Header>
@@ -1183,7 +1196,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 					</ser:getStatus>
 				</soapenv:Body>
 			</soapenv:Envelope>
-		Endtext
+		ENDTEXT
 	Endcase
 	If goApp.ose = 'bizlinks' Then
 		oXMLHttp = Createobject("MSXML2.XMLHTTP.6.0")
@@ -1309,36 +1322,37 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Endfunc
 ***********************************
-	Function RegistraResumenBoletasConbaja(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15)
+	Function RegistraResumenBoletasConbaja()
+*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15
 	Local lC, lp
 	lC			  = "proIngresaResumenBoletasconbaja"
-	goApp.npara1  = np1
-	goApp.npara2  = np2
-	goApp.npara3  = np3
-	goApp.npara4  = np4
-	goApp.npara5  = np5
-	goApp.npara6  = np6
-	goApp.npara7  = np7
-	goApp.npara8  = np8
-	goApp.npara9  = np9
-	goApp.npara10 = np10
-	goApp.npara11 = np11
-	goApp.npara12 = np12
-	goApp.npara13 = np13
-	goApp.npara14 = np14
-	goApp.npara15 = np15
-	Text To lp Noshow
+	goApp.npara1  = This.dfecha
+	goApp.npara2  = This.cTdoc
+	goApp.npara3  = This.Cserie
+	goApp.npara4  = This.ndesde
+	goApp.npara5  = This.nhasta
+	goApp.npara6  = This.nimpo
+	goApp.npara7  = This.nvalor
+	goApp.npara8  = This.nexon
+	goApp.npara9  = This.ninafectas
+	goApp.npara10 = This.nigv
+	goApp.npara11 = This.ngrati
+	goApp.npara12 = This.cxml
+	goApp.npara13 = This.chash
+	goApp.npara14 = This.cfile
+	goApp.npara15 = This.cticket
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, '') < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function AnuladesdesRboletas()
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
    	select resu_desd,resu_hast,resu_tdoc,resu_serie FROM fe_resboletas where resu_tick='<<this.cticket>>' AND resu_acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, 'ax') < 1 Then
 		Return 0
 	Endif
@@ -1350,22 +1364,22 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Else
 		Cserie = ax.resu_serie
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 			select idauto,numero,tech,tdoc from(
 			SELECT idauto,ndoc,cast(mid(ndoc,5) as unsigned) as numero,fech,tdoc FROM fe_rcom f where tdoc='<<ctdoc>>' and acti='A' and idcliente>0) as x
 			where numero between <<ndesde>> and <<nhasta>> and LEFT(ndoc,4)='<<cserie>>'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, 'crb') < 1 Then
 		Sw = 0
 		Exit
 	Endif
 	Select crb
 	Go Top
-	cdetalle = 'Baja con Código 3'
+	Cdetalle = 'Baja con Código 3'
 	Sw = 1
-	dFecha = fe_gene.fech
+	dfecha = fe_gene.fech
 	Scan All
-		If AnulaTransaccionConMotivo('', '', 'V', crb.Idauto, goApp.nidusua, 'S', crb.fech, goApp.uauto, cdetalle) = 0 Then
+		If AnulaTransaccionConMotivo('', '', 'V', crb.Idauto, goApp.nidusua, 'S', crb.fech, goApp.uauto, Cdetalle) = 0 Then
 			This.Cmensaje = "NO  Se Anulo Correctamente de la Base de Datos"
 			Sw = 0
 			Exit
@@ -1379,9 +1393,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function estadoenvio()
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    select resu_esta FROM fe_resboletas where resu_acti='A' ALLTRIM(resu_tick)='<<this.cticket>>'  limit 1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1435,9 +1449,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			Go Top
 			Scan All
 				np1 = crb.Idauto
-				Text  To lC Noshow Textmerge
+				TEXT  To lC Noshow Textmerge
                   UPDATE fe_rcom SET rcom_mens='<<np3>>' WHERE idauto=<<np1>>
-				Endtext
+				ENDTEXT
 				If This.Ejecutarsql(lC) < 1 Then
 					Sw = 0
 					Exit
@@ -1454,11 +1468,49 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
-	FUNCTION getAllboletaspsys()
-
-	ENDFUNC 
+	Endfunc
+	Function RegistraResumenBoletas()
+*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15
+	Local lC, lp
+*:Global cur
+	If !Pemstatus(goApp,'cdatos',5) Then
+		AddProperty(goApp,'cdatos','')
+	Endif
+	lC			  = "proIngresaResumenBoletas"
+	goApp.npara1  = This.dfecha
+	goApp.npara2  = This.cTdoc
+	goApp.npara3  = This.Cserie
+	goApp.npara4  = This.ndesde
+	goApp.npara5  = This.nhasta
+	goApp.npara6  = This.nimpo
+	goApp.npara7  = This.nvalor
+	goApp.npara8  = This.nexon
+	goApp.npara9  = This.ninafectas
+	goApp.npara10 = This.nigv
+	goApp.npara11 = This.ngrati
+	goApp.npara12 = This.cxml
+	goApp.npara13 = This.chash
+	goApp.npara14 = This.cfile
+	goApp.npara15 = This.cticket
+	If goApp.Cdatos='S' Then
+		goApp.npara16=goApp.tienda
+		TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16)
+		ENDTEXT
+	Else
+		TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
+		ENDTEXT
+	Endif
+	If This.EJECUTARP(lC, lp, "") < 1Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
 
 
 

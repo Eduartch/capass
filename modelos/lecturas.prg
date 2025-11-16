@@ -92,9 +92,24 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 			ENDTEXT
 		Endcase
 	Case fe_gene.nruc='20609681609'
-		TEXT TO lscierra NOSHOW TEXTMERGE
-			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco=<<goapp.isla>> AND lect_acti='A' AND lect_esta='A'
-		ENDTEXT
+		Do Case
+		Case goApp.Isla = 1
+			TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (1, 2) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT
+		Case goApp.Isla = 2
+			TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (3,4) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT
+		Case goApp.Isla = 3
+			TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (5,6) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT
+		Case goApp.Isla = 4
+			TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (7,8) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT	
+		Endcase
 	Otherwise
 		Do Case
 		Case goApp.Isla = 1
@@ -223,14 +238,29 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 			ENDTEXT
 		Endcase
 	Case fe_gene.nruc='20609681609'
-		TEXT TO lscierra NOSHOW TEXTMERGE
-			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco=<<goapp.isla>> AND lect_acti='A' AND lect_esta='A'
-		ENDTEXT
+		Do Case
+		Case goApp.Isla = 1
+			TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (1,2) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT
+		Case goApp.Isla = 2
+			TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (3,4) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT
+		Case goApp.Isla = 3
+			TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (5,6) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT
+		Case goApp.Isla = 4
+			TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (7,8) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT	
+		Endcase
 	Otherwise
 		Do Case
 		Case goApp.Isla = 1
 			TEXT TO lscierra NOSHOW  TEXTMERGE
-			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (1, 2) AND lect_acti='A' AND lect_esta='A'
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (1,2) AND lect_acti='A' AND lect_esta='A'
 			ENDTEXT
 		Case goApp.Isla = 2
 			TEXT TO lscierra NOSHOW  TEXTMERGE
@@ -245,19 +275,19 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Do Case
 	Case goApp.Isla = 1
 		TEXT To lcx Noshow Textmerge
-          UPDATE fe_gene  SET idle1=<<nsgtelectura>>
+          UPDATE fe_gene SET idle1=<<nsgtelectura>> where idgene=1
 		ENDTEXT
 	Case goApp.Isla = 2
 		TEXT To lcx Noshow Textmerge
-          UPDATE fe_gene  SET idle2=<<nsgtelectura>>
+          UPDATE fe_gene SET idle2=<<nsgtelectura>> where idgene=1
 		ENDTEXT
 	Case goApp.Isla = 3
 		TEXT To lcx Noshow Textmerge
-          UPDATE fe_gene   SET idle3=<<nsgtelectura>>
+          UPDATE fe_gene SET idle3=<<nsgtelectura>> where idgene=1
 		ENDTEXT
 	Case goApp.Isla = 4
 		TEXT To lcx Noshow Textmerge
-          UPDATE fe_gene SET idle4=<<nsgtelectura>>
+          UPDATE fe_gene SET idle4=<<nsgtelectura>> where idgene=1
 		ENDTEXT
 	Endcase
 	If This.IniciaTransaccion() < 1 Then
@@ -287,7 +317,16 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 				nislax = 2
 			Endcase
 		Case  fe_gene.nruc = '20609681609'
-			nislax = liq.Surtidor
+				Do Case
+			Case liq.Surtidor = 1 Or  liq.Surtidor = 2
+				nislax = 1
+			Case liq.Surtidor = 3 Or  liq.Surtidor = 4
+				nislax = 2
+			Case liq.Surtidor = 5 Or  liq.Surtidor = 6 
+				nislax = 3
+			Case liq.Surtidor = 7 Or  liq.Surtidor = 8
+				nislax = 4	
+			Endcase
 		Otherwise
 			Do Case
 			Case liq.Surtidor = 1 Or  liq.Surtidor = 2
@@ -315,15 +354,15 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 		Do Case
 		Case goApp.Isla = 1
 			TEXT To lC Noshow Textmerge
-          UPDATE fe_gene SET idtu1=<<nsgte>>
+             UPDATE fe_gene SET idtu1=<<nsgte>>
 			ENDTEXT
 		Case goApp.Isla = 2
 			TEXT To lC Noshow Textmerge
-          UPDATE fe_gene SET idtu2=<<nsgte>>
+            UPDATE fe_gene SET idtu2=<<nsgte>>
 			ENDTEXT
 		Case goApp.Isla = 3
 			TEXT To lC Noshow Textmerge
-          UPDATE fe_gene SET idtu3=<<nsgte>>
+            UPDATE fe_gene SET idtu3=<<nsgte>>
 			ENDTEXT
 		Case goApp.Isla = 4
 			TEXT To lC Noshow Textmerge
