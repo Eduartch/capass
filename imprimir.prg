@@ -231,6 +231,14 @@ Define Class Imprimir As Custom
 				This.Archivo = Cruta + 'Ocompra.frx'
 				car = 'ocompra.frx'
 				Calias = "otmpp"
+			Case This.Tdoc = 'RQ'
+				This.Archivo = Cruta + 'RQcompra.frx'
+				car = 'RQCompra.frx'
+				Calias = "otmpp"
+			Case This.Tdoc = 'CO'
+				This.Archivo = Cruta + 'cotcompra.frx'
+				car = 'cotCompra.frx'
+				Calias = "otmpp"
 			Case This.Tdoc = 'TT'
 				This.Archivo = Cruta + 'traspaso.frx'
 				car = 'traspaso.frx'

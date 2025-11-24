@@ -446,7 +446,7 @@ Endfunc
 *******************************************************
 Function IngresaCabeceraCreditos(nauto,nidcliente,dFecha,nidven,nimpoo,nidus,nidtda,ninic,cpc)
 If SQLExec(goapp.bdconn,"SELECT FUNINGRESARCREDITOS(?nauto,?nidcliente,?dfecha,?nidven,?nimpoo,?nidus,?nidtda,?ninic,?cpc) AS IDC","RCRE")<0 Then
-	errorbd(ERRORPROC+' '+" Ingresando Cabecera de Créditos") 
+	errorbd(ERRORPROC+' '+" Ingresando Cabecera de Créditos")
 *!*		=Aerror(laError)
 *!*		 FOR n = 1 TO 7  && Display all elements of the array
 *!*	      ? laError(n)
@@ -2540,7 +2540,7 @@ TEXT to lp noshow
 	     (?goapp.npara1)
 ENDTEXT
 If EJECUTARF(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+ 'Verificando Si Tiene Pagos ACuenta')
+	errorbd(ERRORPROC+ 'Verificando Si Tiene Pagos A Cuenta')
 	Return 0
 Else
 	Return idcanjepagadoC.Id
@@ -4197,19 +4197,13 @@ Endif
 Endfunc
 **********************************************
 Function MuestraUsuarios1(np1,np2,np3,ccur)
-lc="ProMuestraUsuarios"
-goapp.npara1=np1
-goapp.npara2=np2
-goapp.npara3=np3
-TEXT to lp noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-ENDTEXT
-If EJECUTARP(lc,lp,ccur)=0 Then
-	errorbd(ERRORPROC+ ' No Se Puede Mostrar los Usuarios del Sistema')
+Set Procedure To d:\capass\modelos\usuarios Additive
+ousuarios=Createobject("usuarios")
+If ousuarios.MostrarUsuarios1(np1,np2,np3,ccur)<1 Then
+	aviso(ousuarios.cmensaje)
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
 Endfunc
 *************************************************
 Function ActualizaMargenesVtas(np1,np2,np3,np4)
@@ -6453,9 +6447,8 @@ ENDTEXT
 If EJECUTARP(lc,lp,cur)=0 Then
 	errorbd(ERRORPROC+ ' Actualizando Precios al Producto ')
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
 Endfunc
 *********************************************
 Function ActualizaCostosCdscto(np1,np2,np3,np4,np5)
@@ -7184,47 +7177,6 @@ Else
 Endif
 Endfunc
 ************************************
-Function IngresaTraspasoAlmacenEnviado(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11,np12,np13,np14,np15,np16,np17,np18,np19,np20,np21,np22,np23,np24,np25)
-lc='FUNingresaCabeceraTraspaso'
-cur="Xn"
-goapp.npara1=np1
-goapp.npara2=np2
-goapp.npara3=np3
-goapp.npara4=np4
-goapp.npara5=np5
-goapp.npara6=np6
-goapp.npara7=np7
-goapp.npara8=np8
-goapp.npara9=np9
-goapp.npara10=np10
-goapp.npara11=np11
-goapp.npara12=np12
-goapp.npara13=np13
-goapp.npara14=np14
-goapp.npara15=np15
-goapp.npara16=np16
-goapp.npara17=np17
-goapp.npara18=np18
-goapp.npara19=np19
-goapp.npara20=np20
-goapp.npara21=np21
-goapp.npara22=np22
-goapp.npara23=np23
-goapp.npara24=np24
-goapp.npara25=np25
-TEXT to lp noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
-      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-ENDTEXT
-If EJECUTARF(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+' Ingresando Cabecera de Documento')
-	Return 0
-Else
-	Return Xn.Id
-Endif
-Endfunc
-***************************************
 Function  VerificaDescripcionProducto(np1,np2)
 Local cur As String
 lc='FunverificaNombredeProducto'
@@ -10505,21 +10457,6 @@ If nmonto<=ndisponible
 	Return 1
 Else
 	Return 0
-Endif
-Endfunc
-********************************
-Function MuestraPlanCuentasX(np1,cur)
-lc="PROMUESTRAPLANCUENTAS"
-goapp.npara1=np1
-goapp.npara2=Val(goapp.año)
-TEXT to lp noshow
-       (?goapp.npara1,?goapp.npara2)
-ENDTEXT
-If EJECUTARP(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+ ' Mostrando Plan de Cuentas Contables ')
-	Return 0
-Else
-	Return 1
 Endif
 Endfunc
 ********************

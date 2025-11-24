@@ -152,14 +152,14 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	    inner join fe_rcred as b ON(b.rcre_idrc=a.cred_idrc)
 	    left join fe_rcom as c ON(c.idauto=b.rcre_idau)
 	    left join fe_vend as d ON(d.idven=b.rcre_codv)
-	    WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'    and a.acti<>'I' and rcre_acti<>'I'  and (a.impo<>0 or a.acta<>0) 
+	    WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'    and a.acti<>'I' and rcre_acti<>'I'  and (a.impo<>0 or a.acta<>0)
 	    ORDER BY a.ncontrol,a.idcred,a.fech
 	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function estadodecuentaporclientexsysg(nidclie, Cmoneda, Ccursor)
 	TEXT To lC Noshow Textmerge
 	    SELECT b.rcre_idcl,a.fech AS fepd,a.fevto AS fevd,a.ndoc,b.rcre_impc AS impc,b.rcre_inic AS inic,a.impo AS impd,a.acta AS actd,a.dola,
@@ -169,7 +169,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	    LEFT JOIN fe_rcom AS c ON(c.idauto=b.rcre_idau)
 	    LEFT JOIN fe_vend AS d ON(d.idven=b.rcre_codv)
 	    LEFT JOIN (SELECT rcre_idrc,rcre_impc FROM fe_rcred  WHERE rcre_acti='A') AS m ON m.rcre_idrc=a.cred_anti
-	    WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'   AND a.acti<>'I' AND b.rcre_acti<>'I'  AND (a.impo<>0 OR a.acta<>0) 
+	    WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'   AND a.acti<>'I' AND b.rcre_acti<>'I'  AND (a.impo<>0 OR a.acta<>0)
 	    ORDER BY a.ncontrol,a.idcred,a.fech,cred_idant
 	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
@@ -178,22 +178,33 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function estadodecuentaporcliente10(nidclie, Cmoneda, Ccursor)
+	If !Pemstatus(goApp,'proyecto',5) Then
+		AddProperty(goApp,'proyecto','')
+	Endif
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
-	    SELECT b.rcre_idcl,a.fech as fepd,a.fevto as fevd,a.ndoc,b.rcre_impc as impc,b.rcre_inic as inic,a.impo as impd,a.acta as actd,a.dola,
-	    a.tipo,a.banc,ifnull(c.ndoc,'00000000000') as docd,a.mone as mond,a.estd,a.idcred as nr,b.rcre_idrc,
-	    b.rcre_codv as codv,b.rcre_idau as idauto,ifnull(c.tdoc,'00') as refe,d.nomv,ifnull(w.ctas_ctas,'') as bancos,ifnull(w.cban_ndoc,'') as nban,
-	    cred_idcb,ifnull(t.nomb,'') as tienda,ifnull(cban_debe,CAST(0 as decimal(12,2)))  as deposito FROM fe_cred as a
-	    inner join fe_rcred as b ON(b.rcre_idrc=a.cred_idrc)
-	    left join fe_rcom as c ON(c.idauto=b.rcre_idau)
-	    inner join fe_vend as d ON(d.idven=b.rcre_codv)
-	    left join fe_sucu as t on t.idalma=b.rcre_codt
-	    left join (SELECT cban_nume,cban_ndoc,g.ctas_ctas,cban_idco,cban_debe FROM   fe_cbancos f  inner join fe_ctasb g on g.ctas_idct=f.cban_idba where cban_acti='A')
-        as w on w.cban_idco=a.cred_idcb
-        WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'  and a.acti<>'I' and rcre_acti<>'I'  ORDER BY a.ncontrol,a.idcred,a.fech
-	ENDTEXT
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\    SELECT b.rcre_idcl,a.fech as fepd,a.fevto as fevd,a.ndoc,b.rcre_impc as impc,b.rcre_inic as inic,a.impo as impd,a.acta as actd,a.dola,
+	\    a.tipo,a.banc,ifnull(c.ndoc,'00000000000') as docd,a.mone as mond,a.estd,a.idcred as nr,b.rcre_idrc,
+	\    b.rcre_codv as codv,b.rcre_idau as idauto,ifnull(c.tdoc,'00') as refe,d.nomv,ifnull(w.ctas_ctas,'') as bancos,ifnull(w.cban_ndoc,'') as nban,
+	\    cred_idcb,ifnull(t.nomb,'') as tienda,
+	If goApp.proyecto='psysn' Then
+	  \ifnull(cban_debe,cred_tpag)  as deposito
+	Else
+	  \ifnull(cban_debe,CAST(0 as decimal(12,2)))  as deposito
+	Endif
+	\FROM fe_cred as a
+	\    inner join fe_rcred as b ON(b.rcre_idrc=a.cred_idrc)
+	\    left join fe_rcom as c ON(c.idauto=b.rcre_idau)
+	\    inner join fe_vend as d ON(d.idven=b.rcre_codv)
+	\    left join fe_sucu as t on t.idalma=b.rcre_codt
+	\    left join (SELECT cban_nume,cban_ndoc,g.ctas_ctas,cban_idco,cban_debe FROM fe_cbancos f  inner join fe_ctasb g on g.ctas_idct=f.cban_idba where cban_acti='A')
+    \    as w on w.cban_idco=a.cred_idcb
+    \    WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'  and a.acti<>'I' and rcre_acti<>'I'  ORDER BY a.ncontrol,a.idcred,a.fech
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1268,6 +1279,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return idrc
 	Endfunc
 	Function CancelaCreditos(objdetalle)
+	If !Pemstatus(goApp,'proyecto',5) Then
+		AddProperty(goApp,'proyecto','')
+	Endif
 	lc='FUNINGRESAPAGOSCREDITOS'
 	goApp.npara1 = objdetalle.cndoc
 	goApp.npara2 = objdetalle.nacta
@@ -1282,9 +1296,16 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara11 = objdetalle.nidrc
 	goApp.npara12 = Id()
 	goApp.npara13= goApp.nidusua
-	TEXT To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-	ENDTEXT
+	If goApp.proyecto='psysn' Then
+		goApp.npara14=objdetalle.tpago
+		TEXT To lp Noshow
+        (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+		ENDTEXT
+	Else
+		TEXT To lp Noshow
+        (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
+		ENDTEXT
+	Endif
 	nid = This.EJECUTARf(lc, lp, 'nidcreditos')
 	If nid < 1 Then
 		Return 0
@@ -1302,6 +1323,40 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Select (Ccursor)
 	If REgdvto(Ccursor)>0
 		This.cmensaje="Documento de Referencia Ya Registrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscardctopago(cndoc)
+	Ccursor='c_'+Sys(2015)
+	cdcto=Trim(m.cndoc)
+	TEXT TO lc NOSHOW
+	SELECT idcred as vdvto FROM fe_cred WHERE TRIM(ndoc)=?cdcto AND estd='P' AND acti='A'  limit 1;
+	ENDTEXT
+	If This.EJECutaconsulta(lc,Ccursor)<1
+		Return 0
+	Endif
+	Select (Ccursor)
+	If REgdvto(Ccursor)>0
+		This.cmensaje="Documento de Referencia Ya Registrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listarSaldosporfecha(Df,Ccursor)
+	F=Cfechas(Df)
+	If This.idsesion>0 Then
+		Set DataSession To This.idsesion
+	Endif
+	TEXT TO lc NOSHOW TEXTMERGE PRETEXT 7
+        select c.nruc,c.razo as proveedor,c.fono,saldo  as tsoles, CAST(0 as decimal(12,2)) as tdolar,'S' as mone,c.clie_idzo,c.idclie as codp
+        FROM (SELECT SUM(impo-acta) AS saldo,rcre_idcl,s.`ncontrol` FROM fe_rcred AS r
+		INNER JOIN fe_cred AS s ON s.cred_idrc=r.rcre_idrc
+		WHERE r.rcre_fech='<<f>>' AND r.`rcre_Acti`='A' AND s.`acti`='A'
+		GROUP BY r.`rcre_idcl`,s.`ncontrol` HAVING saldo<>0) AS s
+		INNER JOIN fe_clie AS c ON c.idclie=s.rcre_idcl order by razo
+	ENDTEXT
+	If This.EJECutaconsulta(lc,Ccursor)<1 Then
 		Return 0
 	Endif
 	Return 1

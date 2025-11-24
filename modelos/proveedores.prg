@@ -100,11 +100,10 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	this.Cmensaje='ok'
 	Return  1
 	Endproc
-	Procedure Listarproveedores
-	Lparameters	np1, np2, np3, nombrecursor
+	Procedure Listarproveedores(np1, np2, np3, nombrecursor)
 	Local lparametros
 	cproc		 = 'promuestraproveedor'
-	goApp.npara1 = CHRTRAN(m.np1,' ','%')
+	goApp.npara1 = alltrim(CHRTRAN(m.np1,' ','%'))
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
 	If This.Idsesion > 1 Then

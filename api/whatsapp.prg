@@ -6,7 +6,6 @@ Define Class whatsapp As  Custom
 	Function _clipboard(taFileList)
 	Local lnDataLen, lcDropFiles, llOk, i, lhMem, lnPtr, lCurData
 	#Define CF_HDROP 15
-
 	If Type(taFileList,1) != 'A'
 		lCurData = taFileList
 		Dimension taFileList(1)

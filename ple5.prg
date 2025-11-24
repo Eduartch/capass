@@ -296,6 +296,15 @@ Set Textmerge Off
 Endfunc
 ****************************************
 Function GeneraDiarioPle5(np1, np2, mes, Na)
+cpropiedad = "cdatos"
+If !Pemstatus(goApp, cpropiedad, 5)
+	goApp.AddProperty("cdatos", "")
+Endif
+If goApp.cdatos='S' Then
+	m.cnruc=oempresa.nruc
+Else
+	m.cnruc=fe_gene.nruc
+Endif
 *:Global cr1, cruta, nl
 Select;
 	Cast(Alltrim(Str(Na)) + Iif(nmes <= 9, '0' + Alltrim(Str(nmes)), Alltrim(Str(nmes))) + '00' As Integer) As Periodo, ;
@@ -306,7 +315,7 @@ Select;
 	' ' As Ccostos, ;
 	'PEN' As Moneda, ;
 	'6' As tipodcto, ;
-	Alltrim(fe_gene.nruc) + Space(4) As nruc, ;
+	Alltrim(m.cnruc) + Space(4) As nruc, ;
 	'00' As Tdoc, ;
 	'     ' As  Serie, ;
 	Auto As Ndoc, ;
@@ -368,6 +377,15 @@ Set Textmerge Off
 Endfunc
 ****************************************
 Function GeneraMayorPle5(np1, np2, nmes, Na)
+cpropiedad = "cdatos"
+If !Pemstatus(goApp, cpropiedad, 5)
+	goApp.AddProperty("cdatos", "")
+Endif
+If goApp.cdatos='S' Then
+	m.cnruc=oempresa.nruc
+Else
+	m.cnruc=fe_gene.nruc
+Endif
 *:Global cr1, cruta, nl
 Cruta = Addbs(Justpath(np1)) + np2
 cr1	  = Cruta + '.txt'
@@ -380,7 +398,7 @@ Select;
 	' ' As Ccostos, ;
 	'PEN' As Moneda, ;
 	'6' As tipodcto, ;
-	fe_gene.nruc As nruc, ;
+	m.cnruc As nruc, ;
 	'00' As Tdoc, ;
 	'      ' As Serie, ;
 	ldia_nume As Ndoc, ;
@@ -737,9 +755,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.nubefact.com/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "efact"
 		Do Case
@@ -750,9 +768,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.efact.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "bizlinks"
 		Do Case
@@ -763,9 +781,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = Alltrim(fe_gene.nruc) + 'BIZLINKS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.bizlinks.com.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "conastec"
 		Do Case
@@ -776,9 +794,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://prod.conose.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Endcase
 Else
@@ -800,14 +818,14 @@ Else
 			goApp.urlsunat =  "https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
 		Endif
 		lsURL		  =  Alltrim(goApp.urlsunat)
-		ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-		ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-		ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+		ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+		ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+		ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 	Otherwise
 		lsURL		  = "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
-		ls_ruc_emisor = Iif(Type("oempresa") = "U", fe_gene.nruc, Oempresa.nruc)
-		ls_pwd_sol	  = Iif(Type("oempresa") = "U", Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-		ls_user		  = ls_ruc_emisor + Iif(Type("oempresa") = "U", Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+		ls_ruc_emisor = Iif(Type("oempresa") = "U", fe_gene.nruc, oempresa.nruc)
+		ls_pwd_sol	  = Iif(Type("oempresa") = "U", Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+		ls_user		  = ls_ruc_emisor + Iif(Type("oempresa") = "U", Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 	Endcase
 Endif
 npos		   = At('.', goApp.cArchivo)
@@ -961,9 +979,9 @@ If Type('oempresa') = 'U' Then
 	cDirDesti = Addbs( Sys(5) + Sys(2003) + '\SunatXML')
 	cfilerpta = Addbs( Sys(5) + Sys(2003) + '\SunatXML') + 'R-' + carchivozip + '.XML'
 Else
-	cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(Oempresa.nruc)) + crespuesta
-	cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc))
-	cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc)) + 'R-' + carchivozip + '.XML'
+	cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(oempresa.nruc)) + crespuesta
+	cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc))
+	cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc)) + 'R-' + carchivozip + '.XML'
 Endif
 If !Directory(cDirDesti) Then
 	Md (cDirDesti)
@@ -988,17 +1006,17 @@ If Type('oempresa') = 'U' Then
 	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta
 	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta)
 Else
-	If !Directory(Sys(5) + Sys(2003) + "\sunatxml\" + Alltrim(Oempresa.nruc)) Then
-		ccarpeta = Sys(5) + Sys(2003) + "\sunatxml\" + Alltrim(Oempresa.nruc)
+	If !Directory(Sys(5) + Sys(2003) + "\sunatxml\" + Alltrim(oempresa.nruc)) Then
+		ccarpeta = Sys(5) + Sys(2003) + "\sunatxml\" + Alltrim(oempresa.nruc)
 		Mkdir (ccarpeta)
 	Endif
-	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta
-	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta)
+	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta
+	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta)
 Endif
 If Len(Alltrim(rptaSunat)) <= 100 Then
 	GuardaPk(pk, crptahash, cfilecdr, cTdoc)
 Else
-	Messagebox(rptaSunat, 64, MSGTITULO)
+	aviso(rptaSunat)
 	Return 0
 Endif
 Do Case
@@ -1006,10 +1024,10 @@ Case Left(rptaSunat, 1) = '0'
 	Mensaje(rptaSunat)
 	Return 1
 Case Empty(rptaSunat)
-	Messagebox(rptaSunat, 64, 'Sisven')
+	Aviso(rptaSunat)
 	Return 5000
 Otherwise
-	Messagebox(rptaSunat, 64, 'Sisven')
+	Aviso(rptaSunat)
 	Return 0
 Endcase
 Endproc
@@ -1120,8 +1138,6 @@ Local ls_ruc_emisor, ls_user
 Set Library To Locfile("vfpcompression.fll")
 ZipfileQuick(goApp.cArchivo)
 zipclose()
-
-
 cpropiedad = "ose"
 If !Pemstatus(goApp, cpropiedad, 5)
 	goApp.AddProperty("ose", "")
@@ -1145,9 +1161,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.nubefact.com/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "efact"
 		Do Case
@@ -1158,9 +1174,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.efact.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "bizlinks"
 		Do Case
@@ -1171,9 +1187,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = Alltrim(fe_gene.nruc) + 'BIZLINKS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.bizlinks.com.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "conastec"
 		Do Case
@@ -1184,9 +1200,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://prod.conose.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Endcase
 Else
@@ -1207,9 +1223,9 @@ Else
 		Else
 			lsURL = Alltrim(goApp.urlsunat)
 		Endif
-		ls_ruc_emisor = Iif(Type("oempresa") = "U", fe_gene.nruc, Oempresa.nruc)
-		ls_pwd_sol	  = Iif(Type("oempresa") = "U", Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-		ls_user		  = ls_ruc_emisor + Iif(Type("oempresa") = "U", Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+		ls_ruc_emisor = Iif(Type("oempresa") = "U", fe_gene.nruc, oempresa.nruc)
+		ls_pwd_sol	  = Iif(Type("oempresa") = "U", Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+		ls_user		  = ls_ruc_emisor + Iif(Type("oempresa") = "U", Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 	Otherwise
 		lsURL		  = "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
 		ls_ruc_emisor = fe_gene.nruc
@@ -1306,7 +1322,6 @@ Otherwise
 				</soapenv:Envelope>
 	ENDTEXT
 Endcase
-******************
 If goApp.ose = 'bizlinks' Then
 	oXMLHttp = Createobject("MSXML2.XMLHTTP.6.0")
 Else
@@ -1344,9 +1359,9 @@ If (oXMLHttp.Status <> 200) Then
 	CMensajedetalle	= leerXMl(Alltrim(oXMLHttp.responseText), "<detail>", "</detail>")
 	CMensajeM	= leerXMl(Alltrim(oXMLHttp.responseText), "<message>", "</message>")
 	If !Empty(CmensajeError) Or !Empty(CMensajeMensaje) Or !Empty(CMensajeM) Then
-		Messagebox(('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Alltrim(CmensajeError) + ' ' + Alltrim(CMensajeMensaje) + ' ' + Alltrim(CMensajedetalle) + ' ' + Alltrim(CMensajeM)), 16, 'Sisven')
+		Aviso(('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Alltrim(CmensajeError) + ' ' + Alltrim(CMensajeMensaje) + ' ' + Alltrim(CMensajedetalle) + ' ' + Alltrim(CMensajeM)))
 	Else
-		Messagebox('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Nvl(oXMLHttp.responseText, ''), 16, MSGTITULO)
+		Aviso('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Nvl(oXMLHttp.responseText, ''))
 	Endif
 	Return 0
 Endif
@@ -1385,7 +1400,7 @@ Scan All
 			carxml = ""
 		Endif
 		If RegistraResumenBajas(curb.fech, curb.Tdoc, curb.Serie, curb.numero, curb.Motivo, carxml, cresp, goApp.cArchivo, crhash, curb.Idauto) = 0 Then
-			Messagebox("NO se Registro EL Informe de BAJA en Base de Datos", 16, MSGTITULO)
+			Aviso("NO se Registro EL Informe de BAJA en Base de Datos")
 			Exit
 		Endif
 	Else
@@ -1394,14 +1409,30 @@ Scan All
 		Else
 			carxml = ""
 		Endif
+		_Screen.orboletas.dfecha=curb.fech
+		_Screen.orboletas.cTdoc = curb.Tdoc
+		_Screen.orboletas.Cserie =curb.Serie
+		_Screen.orboletas.ndesde = curb.desde
+		_Screen.orboletas.nhasta = curb.hasta
+		_Screen.orboletas.nimpo=curb.Impo
+		_Screen.orboletas.nvalor=curb.valor
+		_Screen.orboletas.nexon=curb.Exon
+		_Screen.orboletas.ninafectas=curb.inafectas
+		_Screen.orboletas.nigv=curb.igv
+		_Screen.orboletas.ngrati=curb.gratificaciones
+		_Screen.orboletas.cxml=carxml
+		_Screen.orboletas.chash=crhash
+		_Screen.orboletas.cfile=goApp.cArchivo
+		_Screen.orboletas.estado = ""
+		_Screen.orboletas.cticket = cresp
 		If EstadoBoleta = '3' Then
-			If _Screen.orboletas.RegistraResumenBoletasConbaja(curb.fech, curb.Tdoc, curb.Serie, curb.desde, curb.hasta, curb.Impo, curb.valor, curb.Exon, curb.inafectas, curb.igv, curb.gratificaciones,   carxml, crhash, goApp.cArchivo, cresp) < 1 Then
+			If _Screen.orboletas.RegistraResumenBoletasConbaja() < 1 Then
 				Aviso(_Screen.orboletas.Cmensaje)
 				Exit
 			Endif
 		Else
-			If RegistraResumenBoletas(curb.fech, curb.Tdoc, curb.Serie, curb.desde, curb.hasta, curb.Impo, curb.valor, curb.Exon, curb.inafectas, curb.igv, curb.gratificaciones,  carxml, crhash, goApp.cArchivo, cresp) = 0 Then
-				Messagebox("NO se Registro el Informe de Envío de Boletas en Base de Datos", 16, MSGTITULO)
+			If _Screen.orboletas.RegistraResumenBoletas() <1 Then
+				Aviso(_Screen.orboletas.Cmensaje)
 				Exit
 			Endif
 		Endif
@@ -1454,9 +1485,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.nubefact.com/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "efact"
 		Do Case
@@ -1467,9 +1498,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.efact.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "bizlinks"
 		Do Case
@@ -1480,9 +1511,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = Alltrim(fe_gene.nruc) + 'BIZLINKS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.bizlinks.com.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "conastec"
 		Do Case
@@ -1493,9 +1524,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://prod.conose.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 
 	Endcase
@@ -1517,9 +1548,9 @@ Else
 		Else
 			lsURL = Alltrim(goApp.urlsunat)
 		Endif
-		ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-		ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-		ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+		ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+		ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+		ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 	Otherwise
 		lsURL		  = "https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
 		ls_ruc_emisor = fe_gene.nruc
@@ -1676,10 +1707,10 @@ If Type('oempresa') = 'U' Then
 	cfilerpta = Addbs( Sys(5) + Sys(2003) + '\SunatXML') + 'R-' + carchivozip + '.XML'
 	cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML')
 Else
-	cnombre = VerificaArchivoRespuesta(Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(Oempresa.nruc)) + crespuesta, crespuesta, cticket)
+	cnombre = VerificaArchivoRespuesta(Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(oempresa.nruc)) + crespuesta, crespuesta, cticket)
 *cnombre=Sys(5)+Sys(2003)+'\SunatXml\'+Alltrim(oempresa.nruc)+"\"+crespuesta
-	cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc)) + 'R-' + carchivozip + '.XML'
-	cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc))
+	cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc)) + 'R-' + carchivozip + '.XML'
+	cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc))
 Endif
 If !Directory(cDirDesti)
 	Md (cDirDesti)
@@ -1700,8 +1731,8 @@ If Type('oempresa') = 'U' Then
 	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta)
 	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta
 Else
-	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta)
-	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta
+	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta)
+	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta
 Endif
 If !Empty(rptaSunat)
 	If Len(Alltrim(rptaSunat)) <= 100 Then
@@ -1757,11 +1788,11 @@ If Type('oempresa') = 'U' Then
 	Endif
 	carchivopdf = Addbs(Addbs(Sys(5) + Sys(2003)) + 'PDF') + filepdf
 Else
-	If !Directory(Addbs(Cruta + 'pdf') + Alltrim(Oempresa.nruc)) Then
-		ccarpeta = Addbs(Cruta + "pdf") + Alltrim(Oempresa.nruc)
+	If !Directory(Addbs(Cruta + 'pdf') + Alltrim(oempresa.nruc)) Then
+		ccarpeta = Addbs(Cruta + "pdf") + Alltrim(oempresa.nruc)
 		Mkdir (ccarpeta)
 	Endif
-	carchivopdf  = Addbs(Addbs(Addbs(Sys(5) + Sys(2003)) + 'PDF') + Alltrim(Oempresa.nruc)) + filepdf
+	carchivopdf  = Addbs(Addbs(Addbs(Sys(5) + Sys(2003)) + 'PDF') + Alltrim(oempresa.nruc)) + filepdf
 Endif
 cpropiedad = "Impresoranormal"
 If !Pemstatus(goApp, cpropiedad, 5)
@@ -2395,7 +2426,7 @@ nigv   = Kardex.igv
 nTotal = Kardex.Impo
 nexon = Kardex.rcom_exon
 Cruc = Kardex.nruc
-dFecha = Kardex.fech
+dfecha = Kardex.fech
 ndetra = Kardex.rcom_mdet
 cforma = Kardex.Form
 ccoddetra = Kardex.rcom_detr
@@ -2430,7 +2461,7 @@ For x = 1 To fe_gene.Items - nf
 Next
 Select tmpv
 Replace All Ndoc With cndoc, cletras With Cimporte, Mone With cmone, hash With chash, Referencia With cdeta1, ;
-	Tigv With vvigv, dias With ndias, fechav With dfvto, valor With nvalor, igv With nigv, Exon With nexon, Total With nimpo, Tdoc With cTdoc, nruc With Cruc, fech With dFecha, ;
+	Tigv With vvigv, dias With ndias, fechav With dfvto, valor With nvalor, igv With nigv, Exon With nexon, Total With nimpo, Tdoc With cTdoc, nruc With Cruc, fech With dfecha, ;
 	Importe With nimpo, detraccion With ndetra, Forma With cforma, coddetrac With ccoddetra, anticipo With nanti, refanticipo With crefan
 Go Top In tmpv
 Endproc
@@ -3320,12 +3351,12 @@ Else
 Endif
 Df = dfi - 1
 TEXT To lC Noshow
-	   Select  z.ncta, z.nomb, If(z.debe > z.haber, z.debe - z.haber, 0) As adeudor, If(z.haber > z.debe, z.haber - z.debe, 0) As aacreedor,
-			   idcta  From
-				 (Select  b.ncta, b.nomb, Sum(A.ldia_debe - A.ldia_itrd) As debe, Sum(A.ldia_haber - A.ldia_itrh) As haber,
-						  b.idcta,  Max(A.ldia_nume) As ldia_nume From fe_ldiario As A
-					  inner Join fe_plan As b	  On b.idcta = A.ldia_idcta
-					  Where A.ldia_acti = 'A'	  And ldia_fech <= ?df  And ldia_tran <> 'T'  Group By A.ldia_idcta) As z
+Select  z.ncta, z.nomb, If(z.debe > z.haber, z.debe - z.haber, 0) As adeudor, If(z.haber > z.debe, z.haber - z.debe, 0) As aacreedor,
+idcta  From
+(Select  b.ncta, b.nomb, Sum(A.ldia_debe - A.ldia_itrd) As debe, Sum(A.ldia_haber - A.ldia_itrh) As haber,
+b.idcta,  Max(A.ldia_nume) As ldia_nume From fe_ldiario As A
+inner Join fe_plan As b	  On b.idcta = A.ldia_idcta
+Where A.ldia_acti = 'A'	  And ldia_fech <= ?df  And ldia_tran <> 'T'  Group By A.ldia_idcta) As z
 ENDTEXT
 ncon = AbreConexion()
 If SQLExec(ncon, lC, 'mayora') < 0 Then
@@ -3338,11 +3369,11 @@ Select * From mayora Where (adeudor + aacreedor) > 0 Into Cursor rlmayora
 Select mayor
 Append From Dbf("rlmayora")
 TEXT To lC Noshow
-	   Select  z.ncta,z.nomb,z.debe,z.haber,idcta  From (Select  b.ncta,
-						  b.nomb,Sum(A.ldia_debe - A.ldia_itrd) As debe,Sum(A.ldia_haber - A.ldia_itrh) As haber,b.idcta
-					  From fe_ldiario As A
-					  inner Join fe_plan As b  On b.idcta = A.ldia_idcta
-					  Where A.ldia_acti = 'A'  And ldia_fech Between ?dfi And ?dff  And ldia_tran <> 'T' Group By A.ldia_idcta) As z
+Select  z.ncta,z.nomb,z.debe,z.haber,idcta  From (Select  b.ncta,
+b.nomb,Sum(A.ldia_debe - A.ldia_itrd) As debe,Sum(A.ldia_haber - A.ldia_itrh) As haber,b.idcta
+From fe_ldiario As A
+inner Join fe_plan As b  On b.idcta = A.ldia_idcta
+Where A.ldia_acti = 'A'  And ldia_fech Between ?dfi And ?dff  And ldia_tran <> 'T' Group By A.ldia_idcta) As z
 ENDTEXT
 ncon = AbreConexion()
 If SQLExec(ncon, lC, 'rlmayor') < 0 Then
@@ -3434,7 +3465,7 @@ If !Pemstatus(goApp, cpropiedad, 5)
 Endif
 loXmlHttp  = Createobject("MSXML2.ServerXMLHTTP.6.0")
 loXMLBody  = Createobject("MSXML2.DOMDocument.6.0")
-crespuesta = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
+crespuesta = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
 If !Empty(goApp.ose) Then
 	Do Case
 	Case goApp.ose = "nubefact"
@@ -3446,9 +3477,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.nubefact.com/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		   <soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -3518,9 +3549,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = Alltrim(fe_gene.nruc) + 'BIZLINKS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.bizlinks.com.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 		cnum = Right("00000000" + Alltrim(cnumero), 8)
 		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
@@ -3594,9 +3625,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.efact.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
@@ -3662,9 +3693,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://prod.conose.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
@@ -3724,15 +3755,15 @@ If !Empty(goApp.ose) Then
 		ArchivoRespuestaSunat.LoadXML(loXmlHttp.responseText)			&&Llenamos el archivo de respuesta
 		TxtB64 = ArchivoRespuestaSunat.selectSingleNode("//content")  &&Ahora Buscamos el nodo "applicationResponse" llenamos la variable TxtB64 con el contenido del nodo "applicationResponse"
 	Endcase
-	crptaxmlcdr = 'R-' + Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.XML'
+	crptaxmlcdr = 'R-' + Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.XML'
 	If Type('oempresa') = 'U' Then
 		cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml') + crespuesta
 		cDirDesti = Addbs( Sys(5) + Sys(2003) + '\SunatXML')
 		cfilerpta = Addbs( Sys(5) + Sys(2003) + '\SunatXML') + crptaxmlcdr
 	Else
-		cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(Oempresa.nruc)) + crespuesta
-		cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc))
-		cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc)) + crptaxmlcdr
+		cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(oempresa.nruc)) + crespuesta
+		cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc))
+		cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc)) + crptaxmlcdr
 	Endif
 	If !Directory(cDirDesti) Then
 		Md (cDirDesti)
@@ -3757,8 +3788,8 @@ If !Empty(goApp.ose) Then
 		rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta)
 		cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta
 	Else
-		rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta)
-		cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + + Alltrim(Oempresa.nruc) + "\" + cfilerpta
+		rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta)
+		cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + + Alltrim(oempresa.nruc) + "\" + cfilerpta
 	Endif
 	If Len(Alltrim(rptaSunat)) > 100 Then
 		Messagebox(rptaSunat, 64, MSGTITULO)
@@ -3979,7 +4010,7 @@ car1 = Sys(5) + Sys(2003) + "\FirmaXML\" + Alltrim(fe_gene.nruc) + "-" + Alltrim
 If File(car1) Then
 	car = car1
 Else
-	car = Sys(5) + Sys(2003) + "\FirmaXML\" + Alltrim(Oempresa.nruc) + "\" + Alltrim(fe_gene.nruc) + "-" + Alltrim(np3) + "-" + Left(np2, 4) + '-' + Alltrim(Substr(np2, 5)) + ".xml"
+	car = Sys(5) + Sys(2003) + "\FirmaXML\" + Alltrim(oempresa.nruc) + "\" + Alltrim(fe_gene.nruc) + "-" + Alltrim(np3) + "-" + Left(np2, 4) + '-' + Alltrim(Substr(np2, 5)) + ".xml"
 Endif
 If File((car)) Then
 	TEXT To lC Noshow Textmerge
@@ -4175,31 +4206,31 @@ Next lnI
 Return cvalor
 Endfunc
 ***************************************
-Function VerificaArchivoRespuesta(cFile, crpta, cticket)
+Function VerificaArchivoRespuesta(cfile, crpta, cticket)
 *:Global car, car1, cruta, npos
-If !File(cFile) Then
-	Return cFile
+If !File(cfile) Then
+	Return cfile
 Endif
-Return cFile
+Return cfile
 car	  = ""
 npos  = At("-", crpta, 3)
-Cruta = Justpath(cFile)
+Cruta = Justpath(cfile)
 car	  = Substr(crpta, 1, At('.', crpta) - 1)
 Do While .T.
 	generaCorrelativoEnvioResumenBoletas()
 	goApp.datosg = ''
 	dATOSGLOBALES()
 	car1  = Stuff(car, npos + 1, 3, Alltrim(Str(fe_gene.gene_nres)))
-	cFile = Addbs(Alltrim(Cruta)) + Alltrim(car1) + '.zip'
-	If !File(cFile)
+	cfile = Addbs(Alltrim(Cruta)) + Alltrim(car1) + '.zip'
+	If !File(cfile)
 		ActualizarArchivoEnvio(cticket)
 		Exit
 	Endif
 Enddo
-Return cFile
+Return cfile
 Endfunc
 ************************
-Procedure ActualizarArchivoEnvio(cFile, cticket)
+Procedure ActualizarArchivoEnvio(cfile, cticket)
 Local lC
 TEXT To lC Noshow
    UPDATE fe_resboletas SET resu_arch=?cfile WHERE resu_tick=?cticket
@@ -4584,8 +4615,8 @@ If Type('oempresa') = 'U' Then
 	Ccorreo		= Alltrim(fe_gene.correo)
 	clavecorreo	= fe_gene.gene_ccor
 Else
-	Ccorreo		= Alltrim(Oempresa.correo)
-	clavecorreo	= Oempresa.gene_ccor
+	Ccorreo		= Alltrim(oempresa.correo)
+	clavecorreo	= oempresa.gene_ccor
 Endif
 If Empty(Ccorreo)  Then
 	Return ' '
@@ -5007,7 +5038,7 @@ Define Class comprobantex As Custom
 	ArchivoPdf	  = ""
 	Archivoxmlcdr = ""
 	ccRUC		  = ""
-	dFecha		  = Ctod("  /  /    ")
+	dfecha		  = Ctod("  /  /    ")
 	ccNDOC		  = ""
 	Importe		  = 0
 	ctdoc1		  = ""
@@ -5018,7 +5049,7 @@ Define Class comprobantex As Custom
 	pURL_WSDL = This.curl
 	Cruc	  = This.ccRUC
 	niDAUTO	  = This.niDAUTO
-	df1		  = This.dFecha
+	df1		  = This.dfecha
 	cdoc	  = This.ccNDOC
 
 	nimpo  = Abs(This.Importe)
@@ -5138,7 +5169,7 @@ Scan All
 	If ocomx.VerificaAceptado() > 0 Then
 		Df			  = renvia.fech
 		df1			  = Alltrim(Str(Year(Df))) + '-' + Alltrim(Str(Month(Df))) + '-' + Alltrim(Str(Day(Df)))
-		ocomx.dFecha  = df1
+		ocomx.dfecha  = df1
 		ocomx.ccNDOC  = renvia.Ndoc
 		ocomx.ctdoc1  = renvia.Tdoc
 		ocomx.Importe = renvia.Impo
@@ -5156,14 +5187,14 @@ Scan All
 			carpdf				= Left(carfile, npos - 1) + '.Pdf'
 			Cpdf				= Addbs(Sys(5) + Sys(2003) + '\PDF') + carpdf
 		Else
-			ocomx.ccRUC			= Oempresa.nruc
-			ocomx.ArchivoXml	= Addbs(Sys(5) + Sys(2003) + '\FirmaXML\' + Alltrim(Oempresa.nruc)) + Justfname(lR.rcom_arch)
+			ocomx.ccRUC			= oempresa.nruc
+			ocomx.ArchivoXml	= Addbs(Sys(5) + Sys(2003) + '\FirmaXML\' + Alltrim(oempresa.nruc)) + Justfname(lR.rcom_arch)
 			cdr					= "R-" + Justfname(lR.rcom_arch)
-			ocomx.Archivoxmlcdr	= Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc)) + cdr
+			ocomx.Archivoxmlcdr	= Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc)) + cdr
 			carfile				= Justfname(lR.rcom_arch)
 			npos				= At(".", carfile)
 			carpdf				= Left(carfile, npos - 1) + '.Pdf'
-			Cpdf				= Addbs(Sys(5) + Sys(2003)) + Oempresa.nruc + '\PDF\' + carpdf
+			Cpdf				= Addbs(Sys(5) + Sys(2003)) + oempresa.nruc + '\PDF\' + carpdf
 		Endif
 
 		If Len(Alltrim(ocomx.correocliente)) > 1 Then
@@ -5259,9 +5290,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.nubefact.com/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "bizlinks"
 		Do Case
@@ -5272,9 +5303,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = Alltrim(fe_gene.nruc) + 'BIZLINKS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.bizlinks.com.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "conastec"
 		Do Case
@@ -5286,9 +5317,9 @@ If !Empty(goApp.ose) Then
 			ls_user		  = ls_ruc_emisor + 'MODDATOS'
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://prod.conose.pe/ol-ti-itcpe/billService"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 	Case goApp.ose = "efact"
 		Do Case
@@ -5300,13 +5331,13 @@ If !Empty(goApp.ose) Then
 		Case goApp.tipoh = 'P'
 			lsURL		  =  "https://ose.efact.pe/ol-ti-itcpe/billService"
 			lsURL		  =  "https://e-guiaremision.sunat.gob.pe/ol-ti-itemision-guia-gem/billService?wsdl"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 			lsURL		  =  "https://e-guiaremision.sunat.gob.pe/ol-ti-itemision-guia-gem/billService?wsdl"
-			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol2), Alltrim(Oempresa.gene_csol))
-			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_usol2), Alltrim(Oempresa.Gene_usol))
+			ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol2), Alltrim(oempresa.gene_csol))
+			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_usol2), Alltrim(oempresa.Gene_usol))
 
 		Endcase
 	Endcase
@@ -5325,14 +5356,14 @@ Else
 	Case goApp.tipoh = 'P'
 		lsURL		  =  "https://e-guiaremision.sunat.gob.pe/ol-ti-itemision-guia-gem/billService"
 		lsURL		  =  "https://e-guiaremision.sunat.gob.pe/ol-ti-itemision-guia-gem/billService?wsdl"
-		ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-		ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-		ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+		ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+		ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+		ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 	Otherwise
 		lsURL		  = "https://e-guiaremision.sunat.gob.pe/ol-ti-itemision-guia-gem/billService"
-		ls_ruc_emisor = Iif(Type("oempresa") = "U", fe_gene.nruc, Oempresa.nruc)
-		ls_pwd_sol	  = Iif(Type("oempresa") = "U", Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-		ls_user		  = ls_ruc_emisor + Iif(Type("oempresa") = "U", Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+		ls_ruc_emisor = Iif(Type("oempresa") = "U", fe_gene.nruc, oempresa.nruc)
+		ls_pwd_sol	  = Iif(Type("oempresa") = "U", Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+		ls_user		  = ls_ruc_emisor + Iif(Type("oempresa") = "U", Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 	Endcase
 Endif
 *wait WINDOW 'aca'+ goapp.tipoh
@@ -5399,8 +5430,8 @@ If Type('oempresa') = 'U' Then
 	cnombre	  = Sys(5) + Sys(2003) + '\SunatXml\' + crespuesta
 	cDirDesti = Sys(5) + Sys(2003) + '\SunatXML\'
 Else
-	cnombre	  = Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(Oempresa.nruc) + "\" + crespuesta
-	cDirDesti = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\"
+	cnombre	  = Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(oempresa.nruc) + "\" + crespuesta
+	cDirDesti = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\"
 Endif
 decodefile(TxtB64.Text, cnombre)
 oShell	  = Createobject("Shell.Application")
@@ -5415,8 +5446,8 @@ If Type('oempresa') = 'U' Then
 	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta)
 	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta
 Else
-	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta)
-	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta
+	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta)
+	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta
 Endif
 If Len(Alltrim(rptaSunat)) <= 100 Then
 	GuardaPkGuia(pk, crptahash, cfilecdr)
@@ -5755,7 +5786,7 @@ cpropiedad = "Grabarxmlbd"
 If !Pemstatus(goApp, cpropiedad, 5)
 	goApp.AddProperty("Grabarxmlbd", "")
 Endif
-crespuesta = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
+crespuesta = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
 *lsURL  =  "https://e-factura.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
 TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe"
@@ -5829,15 +5860,15 @@ If Vartype(TxtB64) <> 'O' Then
 	Aviso("No se puede LEER el Contenido del Archivo XML de SUNAT")
 	Return 0
 Endif
-crptaxmlcdr = 'R-' + Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.XML'
+crptaxmlcdr = 'R-' + Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.XML'
 If Type('oempresa') = 'U' Then
 	cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml') + crespuesta
 	cDirDesti = Addbs( Sys(5) + Sys(2003) + '\SunatXML')
 	cfilerpta = Addbs( Sys(5) + Sys(2003) + '\SunatXML') + crptaxmlcdr
 Else
-	cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(Oempresa.nruc)) + crespuesta
-	cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc))
-	cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc)) + crptaxmlcdr
+	cnombre	  = Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(oempresa.nruc)) + crespuesta
+	cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc))
+	cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc)) + crptaxmlcdr
 Endif
 If !Directory(cDirDesti) Then
 	Md (cDirDesti)
@@ -5863,8 +5894,8 @@ If Type('oempresa') = 'U' Then
 	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta)
 	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta
 Else
-	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta)
-	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta
+	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta)
+	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta
 Endif
 *MESSAGEBOX(rptaSunat,16,'SISVEN')
 Do Case
@@ -5916,8 +5947,8 @@ dATOSGLOBALES()
 Set Classlib To d:\Librerias\fe.vcx Additive
 ocomp = Createobject("comprobante")
 F	  = Cfechas(Df)
-dFecha = Date()
-If goApp.Cdatos = 'S' Then
+dfecha = Date()
+If goApp.cdatos = 'S' Then
 	nidt = goApp.Tienda
 	TEXT To lC Noshow Textmerge
 		fech,tdoc,
@@ -5952,7 +5983,6 @@ If goApp.Cdatos = 'S' Then
         inner join fe_clie c on c.idclie=f.idcliente
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>> and f.impo<>0
 	ENDTEXT
-
 	If EJECutaconsulta(lC, "rboletas") < 1 Then
 		Return 0
 	Endif
@@ -5980,7 +6010,6 @@ If goApp.Cdatos = 'S' Then
 		inner join fe_ncven g on g.ncre_idan=f.idauto inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>> order by f.ndoc) as x group by serie
 	ENDTEXT
-
 Else
 	TEXT To lC Noshow Textmerge
 		fech,tdoc,
@@ -6065,11 +6094,11 @@ If tr = 0 Then
 	Return 0
 Endif
 ocomp.FechaDocumentos = Alltrim(Str(Year(Df))) + '-' + Iif(Month(Df) <= 9, '0' + Alltrim(Str(Month(Df))), Alltrim(Str(Month(Df)))) + '-' + Iif(Day(Df) <= 9, '0' + Alltrim(Str(Day(Df))), Alltrim(Str(Day(Df))))
-cnombreArchivo		  = Alltrim(Str(Year(dFecha))) + Iif(Month(dFecha) <= 9, '0' + Alltrim(Str(Month(dFecha))), Alltrim(Str(Month(dFecha)))) + Iif(Day(dFecha) <= 9, '0' + Alltrim(Str(Day(dFecha))), Alltrim(Str(Day(dFecha))))
+cnombreArchivo		  = Alltrim(Str(Year(dfecha))) + Iif(Month(dfecha) <= 9, '0' + Alltrim(Str(Month(dfecha))), Alltrim(Str(Month(dfecha)))) + Iif(Day(dfecha) <= 9, '0' + Alltrim(Str(Day(dfecha))), Alltrim(Str(Day(dfecha))))
 ocomp.Moneda		  = 'PEN'
 ocomp.Tigv			  = '10'
 ocomp.vigv			  = '18'
-ocomp.fechaemision	  = Alltrim(Str(Year(dFecha))) + '-' + Iif(Month(dFecha) <= 9, '0' + Alltrim(Str(Month(dFecha))), Alltrim(Str(Month(dFecha)))) + '-' + Iif(Day(dFecha) <= 9, '0' + Alltrim(Str(Day(dFecha))), Alltrim(Str(Day(dFecha))))
+ocomp.fechaemision	  = Alltrim(Str(Year(dfecha))) + '-' + Iif(Month(dfecha) <= 9, '0' + Alltrim(Str(Month(dfecha))), Alltrim(Str(Month(dfecha)))) + '-' + Iif(Day(dfecha) <= 9, '0' + Alltrim(Str(Day(dfecha))), Alltrim(Str(Day(dfecha))))
 If Type('oempresa') = 'U' Then
 	ocomp.rucfirma			 = fe_gene.rucfirmad
 	ocomp.nombrefirmadigital = fe_gene.razonfirmad
@@ -6079,17 +6108,17 @@ If Type('oempresa') = 'U' Then
 	ocomp.direccionempresa	 = fe_gene.ptop
 	ocomp.ciudademisor		 = fe_gene.ciudad
 	ocomp.distritoemisor	 = fe_gene.distrito
-	Cnruc					 = fe_gene.nruc
+	cnruc					 = fe_gene.nruc
 Else
-	ocomp.rucfirma			 = Oempresa.rucfirmad
-	ocomp.nombrefirmadigital = Oempresa.razonfirmad
-	ocomp.rucemisor			 = Oempresa.nruc
-	ocomp.razonsocialempresa = Oempresa.Empresa
-	ocomp.ubigeo			 = Oempresa.ubigeo
-	ocomp.direccionempresa	 = Oempresa.ptop
-	ocomp.ciudademisor		 = Oempresa.ciudad
-	ocomp.distritoemisor	 = Oempresa.distrito
-	Cnruc					 = Oempresa.nruc
+	ocomp.rucfirma			 = oempresa.rucfirmad
+	ocomp.nombrefirmadigital = oempresa.razonfirmad
+	ocomp.rucemisor			 = oempresa.nruc
+	ocomp.razonsocialempresa = oempresa.Empresa
+	ocomp.ubigeo			 = oempresa.ubigeo
+	ocomp.direccionempresa	 = oempresa.ptop
+	ocomp.ciudademisor		 = oempresa.ciudad
+	ocomp.distritoemisor	 = oempresa.distrito
+	cnruc					 = oempresa.nruc
 Endif
 
 nrbol = _Screen.orboletas.generaserieboletas()
@@ -6128,13 +6157,10 @@ cpropiedad = "Firmarcondll"
 If !Pemstatus(goApp, cpropiedad, 5)
 	goApp.AddProperty("Firmarcondll", "")
 Endif
-
-
 cpropiedad = "multiempresa"
 If !Pemstatus(goApp, cpropiedad, 5)
 	goApp.AddProperty("multiempresa", "")
 Endif
-
 ocomp.Cmulti = goApp.Multiempresa
 ocomp.FirmarconDLL = goApp.FirmarconDLL
 If nres = 0 Then
@@ -6146,7 +6172,7 @@ If nres = 0 Then
 	nres = fe_gene.gene_nres
 Endif
 Cserie = cnombreArchivo + "-" + Alltrim(Str(nres))
-If ocomp.generaxmlrboletas(Cnruc, Cserie) = 1 Then
+If ocomp.generaxmlrboletas(cnruc, Cserie) = 1 Then
 	generaCorrelativoEnvioResumenBoletas()
 Else
 	Return 0
@@ -6272,11 +6298,11 @@ Endif
 
 loXmlHttp	  = Createobject("MSXML2.ServerXMLHTTP.6.0")
 loXMLBody	  = Createobject("MSXML2.DOMDocument.6.0")
-crespuesta	  = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
+crespuesta	  = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
 lsURL		  =  "https://e-factura.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
-ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc)
-ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
-ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
+ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
+ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
+ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		   <soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -6340,8 +6366,8 @@ If Type('oempresa') = 'U' Then
 	cnombre	  = Sys(5) + Sys(2003) + '\SunatXml\' + crespuesta
 	cDirDesti = Sys(5) + Sys(2003) + '\SunatXML\'
 Else
-	cnombre	  = Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(Oempresa.nruc) + "\" + crespuesta
-	cDirDesti = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\"
+	cnombre	  = Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(oempresa.nruc) + "\" + crespuesta
+	cDirDesti = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\"
 Endif
 decodefile(TxtB64.Text, cnombre)
 oShell	  = Createobject("Shell.Application")
@@ -6356,8 +6382,8 @@ If Type('oempresa') = 'U' Then
 	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta)
 	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + cfilerpta
 Else
-	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta)
-	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta
+	rptaSunat = LeerRespuestaSunat(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta)
+	cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cfilerpta
 Endif
 Do Case
 Case Left(rptaSunat, 1) = '0'
@@ -6514,78 +6540,85 @@ Index On Nitem Tag Items
 Endfunc
 ****************************
 Function ActualizaTipoCambioSunat(nm, Na)
-Local Sw As Integer
-*:Global df, tcc, tcv
-tcc	= 0
-tcv	= 0
-Sw	= 1
-Df	= Ctod("01/" + Alltrim(Str(nm)) + "/" + Alltrim(Str(Na))) - 1
-F	= Cfechas(Df)
-TEXT To lC Noshow Textmerge
-    valor,venta FROM fe_mon WHERE fech='<<f>>'
-ENDTEXT
-If EJECutaconsulta(lC, 'tca') < 1 Then
-	Return  0
+Set Procedure To  d:\capass\modelos\importadatos Additive
+oimp=Createobject("importadatos")
+If oimp.ActualizaTipoCambioSunat(nm, Na)<1 Then
+	Aviso(oimp.Cmensaje)
+	Return
 Endif
-attca = tca.valor
-attcv = tca.venta
-TEXT To lC Noshow Textmerge
-         fech,valor,venta,idmon FROM fe_mon WHERE MONTH(fech)=<<nm>> AND YEAR(fech)=<<na>> ORDER BY fech
-ENDTEXT
-If EJECutaconsulta(lC, 'atca') < 1 Then
-	Return 0
-Endif
-ImportaTCSunat(nm, Na)
-If VerificaAlias("curTcambio") = 1 Then
-	If IniciaTransaccion() = 0 Then
-		DEshacerCambios()
-		Return 0
-	Endif
-	Select atca
-	Go Top
-	Do While !Eof()
-		x	   = Day(atca.fech)
-		nidmon = atca.idmon
-		Select CurTCambio
-		Locate For DIA = x
-		If Found()
-			tcc	  = CurTCambio.TC_COMPRA
-			tcv	  = CurTCambio.TC_VENTA
-			attca = CurTCambio.TC_COMPRA
-			attcv = CurTCambio.TC_VENTA
-		Else
-			tcc	= attca
-			tcv	= attcv
-		Endif
-		TEXT To lC Noshow
-            UPDATE fe_mon SET valor=?tcc,venta=?tcv WHERE idmon=?nidmon
-		ENDTEXT
-		If SQLExec(goApp.bdConn, lC) < 0 Then
-			Sw = 0
-			Exit
-		Endif
-		Select atca
-		Skip
-	Enddo
-	If Sw = 0 Then
-		DEshacerCambios()
-		Errorbd(lC + ' Actualizando Tipo Cambio desde  www.Sunat.gob.pe')
-		Return 0
-	Else
-		GRabarCambios()
-* tcv > fe_gene.dola
-		If   nm = Month(fe_gene.fech) And Na = Year(fe_gene.fech) Then
-			TEXT To lC Noshow
-               UPDATE fe_gene SET dola=?tcv WHERE idgene=1
-			ENDTEXT
-			If SQLExec(goApp.bdConn, lC) < 0 Then
-				Return  0
-			Endif
-		Endif
-		Mensaje("Tipo de Cambio Actualizado Correctamente")
-		Return 1
-	Endif
-Endif
+Mensaje(oimp.Cmensaje)
+*!*	Local Sw As Integer
+*!*	*:Global df, tcc, tcv
+*!*	tcc	= 0
+*!*	tcv	= 0
+*!*	Sw	= 1
+*!*	Df	= Ctod("01/" + Alltrim(Str(nm)) + "/" + Alltrim(Str(Na))) - 1
+*!*	F	= Cfechas(Df)
+*!*	TEXT To lC Noshow Textmerge
+*!*	    valor,venta FROM fe_mon WHERE fech='<<f>>'
+*!*	ENDTEXT
+*!*	If EJECutaconsulta(lC, 'tca') < 1 Then
+*!*		Return  0
+*!*	Endif
+*!*	attca = tca.valor
+*!*	attcv = tca.venta
+*!*	TEXT To lC Noshow Textmerge
+*!*	         fech,valor,venta,idmon FROM fe_mon WHERE MONTH(fech)=<<nm>> AND YEAR(fech)=<<na>> ORDER BY fech
+*!*	ENDTEXT
+*!*	If EJECutaconsulta(lC, 'atca') < 1 Then
+*!*		Return 0
+*!*	Endif
+*!*	ImportaTCSunat(nm, Na)
+*!*	If VerificaAlias("curTcambio") = 1 Then
+*!*		If IniciaTransaccion() = 0 Then
+*!*			DEshacerCambios()
+*!*			Return 0
+*!*		Endif
+*!*		Select atca
+*!*		Go Top
+*!*		Do While !Eof()
+*!*			x	   = Day(atca.fech)
+*!*			nidmon = atca.idmon
+*!*			Select CurTCambio
+*!*			Locate For DIA = x
+*!*			If Found()
+*!*				tcc	  = CurTCambio.TC_COMPRA
+*!*				tcv	  = CurTCambio.TC_VENTA
+*!*				attca = CurTCambio.TC_COMPRA
+*!*				attcv = CurTCambio.TC_VENTA
+*!*			Else
+*!*				tcc	= attca
+*!*				tcv	= attcv
+*!*			Endif
+*!*			TEXT To lC Noshow
+*!*	            UPDATE fe_mon SET valor=?tcc,venta=?tcv WHERE idmon=?nidmon
+*!*			ENDTEXT
+*!*			If SQLExec(goApp.bdConn, lC) < 0 Then
+*!*				Sw = 0
+*!*				Exit
+*!*			Endif
+*!*			Select atca
+*!*			Skip
+*!*		Enddo
+*!*		If Sw = 0 Then
+*!*			DEshacerCambios()
+*!*			Errorbd(lC + ' Actualizando Tipo Cambio desde  www.Sunat.gob.pe')
+*!*			Return 0
+*!*		Else
+*!*			GRabarCambios()
+*!*	* tcv > fe_gene.dola
+*!*			If   nm = Month(fe_gene.fech) And Na = Year(fe_gene.fech) Then
+*!*				TEXT To lC Noshow
+*!*	               UPDATE fe_gene SET dola=?tcv WHERE idgene=1
+*!*				ENDTEXT
+*!*				If SQLExec(goApp.bdConn, lC) < 0 Then
+*!*					Return  0
+*!*				Endif
+*!*			Endif
+*!*			Mensaje("Tipo de Cambio Actualizado Correctamente")
+*!*			Return 1
+*!*		Endif
+*!*	Endif
 Endfunc
 *******************************
 Procedure ImportaTCSunat(nmes, nanio)
@@ -6697,15 +6730,15 @@ If ff.fechaservidor <= fe_gene.fech Then
 	nmes = Month(fe_gene.fech)
 Else
 	oWSH  = Createobject("WScript.Shell")
-	cFile = Addbs(Sys(5) + Sys(2003)) + 'Copia.exe'
-	If File(cFile) Then
+	cfile = Addbs(Sys(5) + Sys(2003)) + 'Copia.exe'
+	If File(cfile) Then
 		Copianube = Addbs(Sys(5) + Sys(2003)) + 'Copia.exe'
 		oWSH.Run(Copianube, 0, .F.)
 	Endif
 	nmes   = Month(ff.fechaservidor)
-	dFecha = ff.fechaservidor
+	dfecha = ff.fechaservidor
 	nanio  = Year(ff.fechaservidor)
-	fe	   = Cfechas(dFecha)
+	fe	   = Cfechas(dfecha)
 	TEXT To cupdate Noshow Textmerge
        UPDATE fe_gene SET fech='<<fe>>',año=<<nanio>>,gene_nbaj=1,gene_nres=<<ninicioenvios>>,mes=<<nmes>> WHERE idgene=1
 	ENDTEXT
@@ -6722,9 +6755,9 @@ Else
 		Return
 	Endif
 	If REgdvto("ya") = 0 Then
-		If Dow(dFecha) = 1 Then
-			ndia = Day(dFecha)
-			dfan = dFecha - ndia
+		If Dow(dfecha) = 1 Then
+			ndia = Day(dfecha)
+			dfan = dfecha - ndia
 			nma	 = Month(dfan)
 			naan = Year(dfan)
 			If nma <> nm Then
@@ -6761,13 +6794,13 @@ If ff.fechaservidor <= fe_gene.fech Then
 Else
 
 	oWSH  = Createobject("WScript.Shell")
-	cFile = Addbs(Sys(5) + Sys(2003)) + 'Copia.exe'
-	If File(cFile) Then
+	cfile = Addbs(Sys(5) + Sys(2003)) + 'Copia.exe'
+	If File(cfile) Then
 		Copianube = Addbs(Sys(5) + Sys(2003)) + 'Copia.exe'
 		oWSH.Run(Copianube, 0, .F.)
 	Endif
 	nmes   = Month(ff.fechaservidor)
-	dFecha = ff.fechaservidor
+	dfecha = ff.fechaservidor
 	Na	   = Year(ff.fechaservidor)
 	If !Pemstatus(goApp, cpropiedad, 5)
 		goApp.AddProperty("inicioenvios", 1)
@@ -7747,7 +7780,7 @@ Else
 Endif
 Endfunc
 **********************
-Function IngresaResumenDctosT(cTdoc, cndoc, dFecha, Nv, nigv, Nt, cmvto, cdeta, cndo2, nidtda, nidusua, Nitem)
+Function IngresaResumenDctosT(cTdoc, cndoc, dfecha, Nv, nigv, Nt, cmvto, cdeta, cndo2, nidtda, nidusua, Nitem)
 Local nigv1
 *:Global nd
 nigv1 = fe_gene.igv
@@ -7812,7 +7845,7 @@ Define Class Resumenboletas As Custom
 	If !Pemstatus(goApp, cpropiedad, 5)
 		goApp.AddProperty("cdatos", "")
 	Endif
-	If goApp.Cdatos = 'S' Then
+	If goApp.cdatos = 'S' Then
 		TEXT To lC Noshow Textmerge
 	    resu_fech,enviados,resumen,resumen-enviados,enviados-resumen
 		FROM(SELECT resu_fech,CAST(SUM(enviados) AS DECIMAL(12,2)) AS enviados,CAST(SUM(resumen) AS DECIMAL(12,2))AS resumen FROM(
@@ -7872,8 +7905,8 @@ Define Class cpe As Custom
 		crutaxml	= Addbs(Sys(5) + Sys(2003) + '\Firmaxml') + carfile
 		crutaxmlcdr	= Addbs(Sys(5) + Sys(2003) + '\SunatXML') + cdr
 	Else
-		crutaxml	= Addbs(Sys(5) + Sys(2003) + '\Firmaxml\' + Alltrim(Oempresa.nruc)) + carfile
-		crutaxmlcdr	= Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc)) + cdr
+		crutaxml	= Addbs(Sys(5) + Sys(2003) + '\Firmaxml\' + Alltrim(oempresa.nruc)) + carfile
+		crutaxmlcdr	= Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(oempresa.nruc)) + cdr
 	Endif
 	If File(crutaxml) Then
 *ocomx.ArchivoXml=Addbs(Sys(5)+Sys(2003)+'\FirmaXML\')+carfile
@@ -7919,8 +7952,8 @@ Define Class cpe As Custom
 		crutaxml	= Addbs(Sys(5) + Sys(2003)) + 'Firmaxml\' + carfile
 		crutaxmlcdr	= Addbs(Sys(5) + Sys(2003) + '\SunatXML\') + cdr
 	Else
-		crutaxml	= Addbs(Sys(5) + Sys(2003)) + 'Firmaxml\' + Alltrim(Oempresa.nruc) + "\" + carfile
-		crutaxmlcdr	= Addbs(Sys(5) + Sys(2003)) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cdr
+		crutaxml	= Addbs(Sys(5) + Sys(2003)) + 'Firmaxml\' + Alltrim(oempresa.nruc) + "\" + carfile
+		crutaxmlcdr	= Addbs(Sys(5) + Sys(2003)) + '\SunatXML\' + Alltrim(oempresa.nruc) + "\" + cdr
 	Endif
 
 	If File(crutaxml) Then
@@ -8078,9 +8111,9 @@ Enddefine
 
 
 **********************************
-Function Cmes(dFecha)
+Function Cmes(dfecha)
 *:Global aMeses[1]
-If Type('dFecha') # 'D'	Or Empty(dFecha)
+If Type('dFecha') # 'D'	Or Empty(dfecha)
 	Return ''
 Endif
 Local cDevuelve
@@ -8098,13 +8131,13 @@ aMeses(9)  = 'Septiembre'
 aMeses(10) = 'Octubre'
 aMeses(11) = 'Noviembre'
 aMeses(12) = 'Diciembre'
-cDevuelve  = aMeses(Month(dFecha))
+cDevuelve  = aMeses(Month(dfecha))
 Return cDevuelve
 Endfunc
 ***********************************
-Function Cdia(dFecha)
+Function Cdia(dfecha)
 *:Global adias[1]
-If Type('dFecha') # 'D'	Or Empty(dFecha)
+If Type('dFecha') # 'D'	Or Empty(dfecha)
 	Return ''
 Endif
 Local cDevuelve
@@ -8117,7 +8150,7 @@ adias(4)  = 'Miercoles'
 adias(5)  = 'Jueves'
 adias(6)  = 'Viernes'
 adias(7)  = 'Sábado'
-cDevuelve = adias(Dow(dFecha))
+cDevuelve = adias(Dow(dfecha))
 Return cDevuelve
 Endfunc
 *****************************
@@ -8416,7 +8449,7 @@ Return 1
 Endfunc
 *******************************
 Function ConsultaApisunat
-Lparameters cTdoc, Cserie, cnumero, dFecha, nimpo
+Lparameters cTdoc, Cserie, cnumero, dfecha, nimpo
 Local Obj As "empty"
 Local oHTTP As "MSXML2.XMLHTTP"
 Local lcHTML
@@ -8425,7 +8458,7 @@ pURL_WSDL = "http://companiasysven.com/ccpe.php"
 If Type('oempresa') = 'U' Then
 	Cruc = fe_gene.nruc
 Else
-	Cruc = Oempresa.nruc
+	Cruc = oempresa.nruc
 Endif
 *MESSAGEBOX(cruc,16,'Hola')
 TEXT To cdata Noshow Textmerge
@@ -8478,7 +8511,7 @@ pURL_WSDL = "http://companiasysven.com/apisunat1.php"
 If Type('oempresa') = 'U' Then
 	Cruc = fe_gene.nruc
 Else
-	Cruc = Oempresa.nruc
+	Cruc = oempresa.nruc
 Endif
 *MESSAGEBOX(cruc,16,'Hola')
 TEXT To cdata Noshow Textmerge
@@ -8521,7 +8554,7 @@ Return Obj
 Endfunc
 *******************************
 Function ConsultaApisunat2
-Lparameters cTdoc, Cserie, cnumero, dFecha, nimpo, token
+Lparameters cTdoc, Cserie, cnumero, dfecha, nimpo, token
 Local Obj As "empty"
 Local oHTTP As "MSXML2.XMLHTTP"
 Local lcHTML
@@ -8531,7 +8564,7 @@ pURL_WSDL = "http://companiasysven.com/apisunat2.php"
 If Type('oempresa') = 'U' Then
 	Cruc = fe_gene.nruc
 Else
-	Cruc = Oempresa.nruc
+	Cruc = oempresa.nruc
 Endif
 *MESSAGEBOX(cruc,16,'Hola')
 TEXT To cdata Noshow Textmerge
@@ -8942,15 +8975,16 @@ Endfunc
 *************************************
 Function CreatemporalCotizaciones(Calias)
 Create Cursor Precios(Precio N(14, 8), Coda N(8), iden N(1), Nitem N(3))
-Create  Cursor (Calias) (Coda N(8), Descri c(120), Unid c(4), Precio1 N(13, 8),cant N(10, 3),Prec N(14, 8), Nreg N(8), idco N(8), ;
+Create  Cursor (Calias) (Coda N(8), idco N(8), Descri c(120), Unid c(4), Precio1 N(13, 8),cant N(10, 3),Prec N(14, 8), Nreg N(8), ;
 	Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Valida c(1), pos N(5), costo N(13, 8), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
-	uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10,2),sei N(10,2),calma c(20), aprecios c(1), come N(7), a1 c(15), idped N(10), valida1 c (1), permitido N(1), ;
+	uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10,2),sei N(10,2),sie N(10,2),och N(10,2),nue N(10,2),die N(10,2),onc N(10,2),;
+	calma c(20), aprecios c(1), come N(7), a1 c(15), idped N(10), valida1 c (1), permitido N(1), ;
 	Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), detalle c(180), ;
 	nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), pmenor N(8, 2), pmayor N(8, 2),  ;
 	Contacto c(120), Transportista c(120), dire1 c(120), fono1 c(20), dias N(2), Vendedor c(100), tipro c(1), Item N(4), ;
 	codc N(6), razon c(120), fech d, Cod c(20), orden N(3), coda1 c(15), pre0 N(13, 8), cantoferta N(10, 2),  Tdoc c(2), swd N(1) Default 0, como N(7, 3), ;
-	Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), foco c(1) Default 'N', Form c(1), cantmayor N(8, 2),;
-	equi N(10,2),prem N(10,2),duni c(10),idepta N(8),grati c(1),cuno N(10,3),cdos N(10,3),tuno N(10,2),tdos N(10,2),cuno1 N(10,2),cdos1 N(10,2),Modi c(1))
+	Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), foco c(1) Default 'N', Form c(1), cantmayor N(8, 2),premax N(13,5),precioreg c(1),;
+	equi N(10,2),prem N(10,2),duni c(20),idepta N(8),grati c(1),cuno N(10,3),cdos N(10,3),tuno N(10,2),tdos N(10,2),cuno1 N(10,2),cdos1 N(10,2),Modi c(1))
 Select  (Calias)
 Index On Descri Tag Descri
 Index On Nitem Tag Items
@@ -10219,10 +10253,10 @@ Do Foxypreviewer.App With "Release"
 Endfunc
 ***********************************
 Function dATOSGLOBALES()
-cFile = Addbs(Sys(5) + Sys(2003)) + 'envio.exe'
-If File(cFile)
+cfile = Addbs(Sys(5) + Sys(2003)) + 'envio.exe'
+If File(cfile)
 	oWSH = Createobject("WScript.Shell")
-	oWSH.Run(cFile, 0, .F.)
+*	oWSH.Run(cFile, 0, .F.)
 Endif
 Set Procedure To d:\Librerias\nfcursortojson, d:\Librerias\nfcursortoobject, d:\Librerias\nfJsonRead.prg, d:\Librerias\nfjsontocursor, ;
 	d:\capass\modelos\appsysven Additive
@@ -10495,6 +10529,12 @@ c10 = Addbs(Sys(5) + Sys(2003)) + 'mca*.json'
 c11= Addbs(Sys(5) + Sys(2003)) + 'fl*.json'
 c12 = Addbs(Sys(5) + Sys(2003)) + 'g*.json'
 c13 = Addbs(Sys(5) + Sys(2003)) + 'lna*.json'
+c14 = Addbs(Sys(5) + Sys(2003)) +"empl*.json"
+c15 = Addbs(Sys(5) + Sys(2003)) + 'l*.json'
+c16 = Addbs(Sys(5) + Sys(2003)) + 'ctascv*.json'
+c18 = Addbs(Sys(5) + Sys(2003)) + 'ctasct*.json'
+c17 = Addbs(Sys(5) + Sys(2003)) + 'ctasci*.json'
+c19 = Addbs(Sys(5) + Sys(2003)) + 'm*.json'
 Delete File (c1)
 Delete File (c2)
 Delete File (c3)
@@ -10508,6 +10548,12 @@ Delete File (c10)
 Delete File (c11)
 Delete File (c12)
 Delete File (c13)
+Delete File (c14)
+Delete File (c15)
+Delete File (c16)
+Delete File (c17)
+Delete File (c18)
+Delete File (c19)
 Quit
 Endfunc
 ********************
@@ -10611,7 +10657,8 @@ Return 1
 Endfunc
 ****************
 Function settingsclass()
-Set Procedure To d:\capass\modelos\otrascompras, ;
+Set Procedure To;
+	d:\capass\modelos\otrascompras, ;
 	d:\capass\modelos\guiasremision, ;
 	d:\capass\modelos\Rboletas, ;
 	d:\capass\modelos\guiasremisionxvtas, ;
@@ -10638,6 +10685,8 @@ Set Procedure To d:\capass\modelos\otrascompras, ;
 	d:\capass\modelos\bancos,;
 	d:\capass\modelos\Ccostos,;
 	d:\capass\modelos\zonas,;
+	d:\capass\modelos\importadatos,;
+	d:\capass\modelos\proveedores,;
 	d:\capass\modelos\inventarios Additive
 AddProperty(_Screen, 'ordcompra', Createobject("OrdendeCompra"))
 AddProperty(_Screen, 'otrascompras', Createobject("otrascompras"))
@@ -10667,6 +10716,8 @@ AddProperty(_Screen, 'oexcel', Createobject("exportar"))
 AddProperty(_Screen, 'occostos',Createobject("ccostos"))
 AddProperty(_Screen, 'oinventarios',Createobject("inventarios"))
 AddProperty(_Screen, 'ozonas',Createobject("zona"))
+AddProperty(_Screen, 'oproveedores',Createobject("proveedor"))
+AddProperty(_Screen, 'oimportar',Createobject("importadatos"))
 Endfunc
 *****************************
 Function ActualizaCursorStockx(nidtda, Calias)
@@ -10710,11 +10761,11 @@ Function Aviso(tcMensaje As String)
 Messagebox(m.tcMensaje, 64, MSGTITULO)
 Endfunc
 **********************
-Function esFechaValidaftraslado(dFecha)
+Function esFechaValidaftraslado(dfecha)
 Local tnAnio, tnMes, tnDia
-tnAnio = Year(dFecha)
-tnMes = Month(dFecha)
-tnDia = Day(dFecha)
+tnAnio = Year(dfecha)
+tnMes = Month(dfecha)
+tnDia = Day(dfecha)
 Return ;
 	Vartype(tnAnio) = "N" And ;
 	Vartype(tnMes) = "N" And ;
@@ -10723,7 +10774,7 @@ Return ;
 	Between(tnMes, 1, 12) And ;
 	Between(tnDia, 1, 31) And ;
 	Not Empty(Date(tnAnio, tnMes, tnDia));
-	And (dFecha - fe_gene.fech) <= 1
+	And (dfecha - fe_gene.fech) <= 1
 Endfunc
 ***********************
 Function Menuexportar()
@@ -10961,7 +11012,8 @@ Obj = Createobject('custom')
 If m.rucvalido = 'S' Then
 	Set Procedure To d:\capass\modelos\importadatos Additive
 	objruc = Createobject("importadatos")
-	objruc.Ruc = Cruc
+*wait WINDOW m.Cruc
+	objruc.ruc = Cruc
 	ocliente = objruc.importaruc()
 	If ocliente.valor < 1 Then
 		AddProperty(Obj, 'cmensaje', ocliente.Mensaje)
@@ -11266,11 +11318,11 @@ Endif
 Return lcRetorno
 Endfunc
 *************************************
-Function esFechaValidaAdelantada(dFecha)
+Function esFechaValidaAdelantada(dfecha)
 Local tnAnio, tnMes, tnDia
-tnAnio=Year(dFecha)
-tnMes=Month(dFecha)
-tnDia=Day(dFecha)
+tnAnio=Year(dfecha)
+tnMes=Month(dfecha)
+tnDia=Day(dfecha)
 Return ;
 	VARTYPE(tnAnio) = "N" And ;
 	VARTYPE(tnMes) = "N" And ;
@@ -11432,4 +11484,55 @@ If m.nd<1 Then
 	Endif
 Endif
 Return nd
+Endfunc
+*********************
+Function MuestraPlanCuentasX(np1,cur)
+Set Procedure To  d:\capass\modelos\planctas Additive
+oplan=Createobject("planctas")
+If oplan.MuestraPlanCuentasX(np1, cur )<1 Then
+	Aviso(oplan.Cmensaje)
+	Return 0
+Endif
+Return 1
+Endfunc
+*******************
+Function IngresaTraspasoAlmacenEnviado(np1,np2,np3,np4,np5,np6,np7,np8,np9,np10,np11,np12,np13,np14,np15,np16,np17,np18,np19,np20,np21,np22,np23,np24,np25)
+lc='FUNingresaCabeceraTraspaso'
+cur="Xn"
+goapp.npara1=np1
+goapp.npara2=np2
+goapp.npara3=np3
+goapp.npara4=np4
+goapp.npara5=np5
+goapp.npara6=np6
+goapp.npara7=np7
+goapp.npara8=np8
+goapp.npara9=np9
+goapp.npara10=np10
+goapp.npara11=np11
+goapp.npara12=np12
+goapp.npara13=np13
+goapp.npara14=np14
+goapp.npara15=np15
+goapp.npara16=np16
+goapp.npara17=np17
+goapp.npara18=np18
+goapp.npara19=np19
+goapp.npara20=np20
+goapp.npara21=np21
+goapp.npara22=np22
+goapp.npara23=np23
+goapp.npara24=np24
+goapp.npara25=np25
+TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
+      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
+ENDTEXT
+If EJECUTARF(lc,lp,cur)=0 Then
+	errorbd(ERRORPROC+' Ingresando Cabecera de Documento')
+	Return 0
+Else
+	Return Xn.Id
+Endif
 Endfunc

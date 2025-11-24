@@ -1882,7 +1882,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	If IngresaDatosLCajaEFectivo12(This.Fecha, "", This.clienteseleccionado, This.cta3, This.Monto, 0, 'S', fe_gene.dola, goapp.nidusua, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, goapp.tienda) < 1 Then
+	If IngresaDatosLCajaEFectivo12(This.Fecha, "", This.clienteseleccionado, This.cta3, This.Monto, 0, 'S', fe_gene.dola, goapp.idcajero, This.Codigo, NAuto, Left(This.formaPago, 1), This.Serie + This.numero, This.Tdoc, goapp.tienda) < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -2499,7 +2499,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lC Noshow
 	\Select a.Ndoc As dcto,a.fech,b.nruc,b.Razo,Mone,a.valor,a.rcom_exon,Cast(0 As Decimal(12,2)) As inafecto,
 	\a.igv,a.Impo,rcom_mens,rcom_fecd,u.nomb,FUsua,rcom_hash,a.Tdoc,a.Ndoc,Idauto,rcom_arch,b.clie_corr,tcom,b.fono,b.celu,Ndo2,
-	\Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Dire,rcom_otro,b.ndni,nruc,Form,dolar,a.codt,a.tipom,a.idusua,Deta,a.vigv
+	\Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Dire,rcom_otro,b.ndni,nruc as ruc,Form,dolar,a.codt,a.tipom,a.idusua,Deta,a.vigv
 	If goapp.Proyecto = 'xsysg' Or goapp.Proyecto = 'psysw' Then
 	  \,rcom_otro
 	Endif
@@ -2763,7 +2763,6 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Endif
 	Endif
 	Insert Into cabecera(idcab)Values(This.Idauto)
-
 	Return 1
 	Endfunc
 	Function ActualizaresumentDctoCanjeado(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17, np18, np19, np20, np21, np22, np23, np24, np25)
@@ -3920,5 +3919,5 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 		Return 0
 	Endif
 	Return  1
-	Endfunc
+	ENDFUNC
 Enddefine

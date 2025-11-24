@@ -809,7 +809,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		Return 0
 	Endif
 	TEXT To lC  Noshow Textmerge
-      UPDATE fe_ldiario SET ldia_acti='I' WHERE ldia_nume='<<nid>>'
+      UPDATE fe_ldiario SET ldia_acti='I' WHERE TRIM(ldia_nume)='<<TRIM(nid)>>' AND ldia_acti='A'
 	ENDTEXT
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0

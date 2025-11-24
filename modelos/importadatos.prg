@@ -2,7 +2,7 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	Ruc = ""
 	dni = ""
 	Url = 'http://companiasysven.com'
-	Urlimgcompras = 'https://companysysven.com/app88/sendgemini.php'
+	Urlimgcompras = 'https://companiasysven.com/app88/parsearxml.php'
 	Function consultardata(Ccursor)
 	TEXT To lC Noshow Textmerge
     select fech,CAST(valor as decimal(5,3)) as valor,CAST(venta as decimal(5,3)) as venta,idmon FROM fe_mon ORDER BY fech
@@ -278,16 +278,17 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	lcURL = Textmerge(This.Urlimgcompras)
 	ls_contentFile = Filetostr(cFile)
 	ls_base64	   = Strconv(ls_contentFile, 13)
+	cdata=FILETOSTR(cFile)
 	cad = "data:image/jpg;base64,"
 *!*		STRTOFILE(ls_base64,ADDBS(SYS(5)+SYS(2003))+'b64.txt')
-	TEXT To cdata Noshow Textmerge
-	{
-	"imagen":"<<cad+ls_base64>>"
-	}
-	ENDTEXT
+*!*		TEXT To cdata Noshow Textmerge
+*!*		{
+*!*		"imagen":"<<cad+ls_base64>>"
+*!*		}
+*!*		ENDTEXT
 	loXmlHttp = Createobject("Microsoft.XMLHTTP")
 	loXmlHttp.Open('POST', lcURL, .F.)
-	loXmlHttp.setRequestHeader("Content-Type", "application/json")
+	loXmlHttp.setRequestHeader("Content-Type",  "text/xml; charset=utf-8")
 	loXmlHttp.Send(cdata)
 	orpta = Createobject("empty")
 	AddProperty(orpta, 'estado', 0)

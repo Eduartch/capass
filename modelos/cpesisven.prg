@@ -1366,7 +1366,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,rcom_otro,
 	\    a.igv,a.Impo,rcom_hash,rcom_mens,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,
-	\    ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,tcom,Tdoc
+	\    ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,tcom,Tdoc,cast(DATEDIFF(curdate(), a.fech)  as unsigned) as dias 
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
 	\    Where  a.Acti<>'I' And Left(Ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'  And  (Impo<>0 Or rcom_otro>0)   And a.Tdoc='01'
@@ -1379,7 +1379,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\    Union All
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,a.rcom_otro,
 	\    a.igv,a.Impo,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,
-	\    a.ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,a.tcom,w.Tdoc
+	\    a.ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,a.tcom,w.Tdoc,cast(DATEDIFF(curdate(), a.fech)  as unsigned) as dias 
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
 	\    INNER Join fe_ncven g On g.ncre_idan=a.Idauto
