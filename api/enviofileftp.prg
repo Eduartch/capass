@@ -46,7 +46,7 @@ Define Class envioftpcorreo As Custom
 		cpara = 'S'
 	Endif
 	oWSH = Createobject("WScript.Shell")
-	cad = Sys(5) + Sys(2003) + "\ftp.exe"
+	cad = ADDBS(Sys(5) + Sys(2003)) + "ftp.exe"
 	concopia=Iif(!Empty(fe_gene.correo),Alltrim(fe_gene.correo),'')
 	If This.unsolofile = 1 Then
 		Cexe =  cad + ' ' + '1' + ' ' + This.cFile
@@ -54,7 +54,6 @@ Define Class envioftpcorreo As Custom
 		cmensajeenvio = This.mensajeenvio
 		casunto = This.asunto
 		unsolofile = 'S'
-
 		TEXT To cdata Noshow Textmerge
 			{
 			"emailcliente":"<<this.emailcliente>>",

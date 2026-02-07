@@ -1470,9 +1470,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function RegistraResumenBoletas()
-*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15
 	Local lC, lp
-*:Global cur
 	If !Pemstatus(goApp,'cdatos',5) Then
 		AddProperty(goApp,'cdatos','')
 	Endif

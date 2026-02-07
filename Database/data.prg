@@ -157,16 +157,15 @@ Define Class Odata As Custom
 	Endif
 	If m.lR > 0 Then
 		This.conerror = 0
+		this.Cmensaje='Ok'
 		Return Evaluate(m.NCursor + '.id')
 	Else
-		csql		  = 'Select  ' + m.tcComando + Alltrim(m.lp)
-		If Aerror(laError) > 0
+    	If Aerror(laError) > 0
 			This.Cmensaje = This.mensajeError(@laError)
 		Endif
 		This.conerror = 1
 		Return 0
 	ENDIF
-	this.Cmensaje='Ok'
 	Endfunc
 	Function Ejecutarsql(tcComando As String, lp As String, NCursor As String )
 	Local lR As Integer
@@ -225,6 +224,7 @@ Define Class Odata As Custom
 	Function GRabarCambios()
 	If SQLExec(goApp.bdConn, "COMMIT") > 0
 		This.contransaccion = ""
+		this.Cmensaje='Ok'
 		Return 1
 	Else
 		= Aerror(laError)
@@ -233,7 +233,6 @@ Define Class Odata As Custom
 		This.contransaccion = ""
 		Return 0
 	Endif
-	this.Cmensaje='Ok'
 	Endfunc
 	Function Abreconexion1(nopcion)
 	If Len(Alltrim(_Screen.conector)) = 0 Then

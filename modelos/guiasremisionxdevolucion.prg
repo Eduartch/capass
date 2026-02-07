@@ -97,7 +97,8 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	If This.GeneraCorrelativo() = 1  And s = 1 Then
 		If This.GRabarCambios() = 0 Then
 			Return 0
-		Endif
+		ENDIF
+		this.idautog=m.nidg
 		If This.Proyecto = 'xsysz' Then
 			This.Imprimirguiaxsysz("tmpvg", 'S')
 		Else
@@ -269,7 +270,6 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Go Top
 	Do While !Eof()
 		nidkar=0
-
 		If This.condsctostock='S' Then
 			If fe_gene.alma_nega = 0 Then
 				If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
@@ -321,7 +321,6 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		objdetalle.ncant=tmpvg.cant
 		objdetalle.nidg=m.nidg
 		objdetalle.nidkar=m.nidkar
-
 		If  This.registradetalleguia(objdetalle)<1 Then
 			s = 0
 			Exit

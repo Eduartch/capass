@@ -268,7 +268,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	\INNER Join fe_rcred As xx  On xx.rcre_idrc=a.cred_idrc
 	\Where a.fech<='<<df>>'  And  a.Acti<>'I' And xx.rcre_Acti<>'I'
 	If This.chkformapago = 1 Then
-     \And rcre_form='<<this.cformapago>>'
+     \ And rcre_form='<<this.cformapago>>'
 	Endif
 	If This.chkTIENDA = 1 Then
 	\ And rcre_codt=<<This.Tienda>>
@@ -510,7 +510,6 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		This.nidrc = pdtes.rcre_idrc
 		This.nidanticipocr = m.objant1.nidanticipocr
 		This.NidAnticipo = m.objant1.NidAnticipo
-*	If This.CancelaCreditosanticipos(cndoc, pdtes.Montoc, 'P', 'S', cdeta, dFech, dFech, Ctipo, pdtes.Ncontrol, '', pdtes.rcre_idrc, Id(), goApp.nidusua, NidAnticipo) < 1 Then
 		If This.CancelaCreditosanticipos() < 1 Then
 			x = 0
 			Exit

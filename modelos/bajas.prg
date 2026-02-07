@@ -47,10 +47,10 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 			Endif
 		Case Lower(odcto.Proc) = 'rnftr'
 			Set Procedure To (odcto.Proc) Additive
-			If AnulaTransaccionN('', '', 'V', odcto.Idauto, odcto.Idusua, "", Ctod(odcto.fech), goApp.idcajero, 0) = 0 Then
+			If AnulaTransaccionN('', '', 'V', odcto.Idauto, odcto.Idusua, "S", Ctod(odcto.fech), goApp.idcajero, 0) = 0 Then
 				This.Cmensaje = mensajeError
 				Return 0
-			Endif
+			ENDIF
 		Case  Lower(odcto.Proc) = 'rnnr' OR Lower(odcto.Proc) = 'rnzapateria'
 			Set Procedure To (odcto.Proc) Additive
 			If  AnulaTransaccionN('', '', 'V', odcto.Idauto, odcto.Idusua, 'S', Ctod(odcto.fech), goApp.uauto, 0) = 0 Then
@@ -70,19 +70,19 @@ Define Class bajas As OData Of 'd:\capass\database\data.prg'
 				Return 0
 			Endif
 		Case Lower(odcto.Proc) = 'rnss'  Or Lower(odcto.Proc) = 'rnlopez' Or Lower(odcto.Proc) = 'rnmovizach' Or Lower(odcto.Proc) = 'rnhu'
-			Set Procedure To (goApp.Proc) Additive
+			Set Procedure To (odcto.Proc) Additive
 			If AnulaTransaccionN('', '', 'V', odcto.Idauto, odcto.Idusua, 'S', Ctod(odcto.fech), goApp.uauto) = 0 Then
 				This.Cmensaje = mensajeError
 				Return 0
 			Endif
 		Case Lower(odcto.Proc) = 'rnw'
-			Set Procedure To (goApp.Proc) Additive
+			Set Procedure To (odcto.Proc) Additive
 			If AnulaTransaccionN('', '', 'V', odcto.Idauto, odcto.Idusua, 'S', Ctod(odcto.fech), goApp.uauto, 0) = 0 Then
 				This.Cmensaje = mensajeError
 				Return 0
 			Endif
 		Case Lower(odcto.Proc) = 'rndmoviza'
-			Set Procedure To (goApp.Proc) Additive
+			Set Procedure To (odcto.Proc) Additive
 			If AnulaTransaccionConMotivo('', '', 'V', odcto.Idauto, odcto.Idusua, 'S', Ctod(odcto.fech), goApp.uauto, odcto.Detalle) = 0 Then
 				This.Cmensaje = mensajeError
 				Return 0

@@ -1,6 +1,6 @@
 Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremision'
 	Function listaritemsparaguiaotros(nids, Calias)
-	TEXT To lc Noshow Textmerge
+	Text To lc Noshow Textmerge
 	       SELECT a.idart AS coda,entr_cant AS cant,g.guia_fech AS fech,r.idcliente AS idclie,k.idkar,guia_idgui,
 	       c.razo,c.nruc,c.dire,c.ciud,c.ndni,r.tdoc,a.descri,a.unid,a.peso,guia_ndoc AS ndoc,guia_idau AS idauto,entr_iden
 	       FROM fe_guias AS g
@@ -17,18 +17,18 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	       INNER JOIN fe_ent AS e ON e.entr_idgu=g.guia_idgui
 	       INNER JOIN fe_art AS a ON a.idart=e.`entr_idar`,fe_gene AS v
 	       WHERE guia_idgui=<<nids>> AND guia_acti='A'  AND entr_acti='A' AND guia_idre=0 ORDER BY entr_iden
-	ENDTEXT
+	Endtext
 	If This.EjecutaConsulta(lc, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function GrabarguiaremitenteOtros()
-	objdetalle=Createobject("empty")
-	AddProperty(objdetalle,'nidart',0)
-	AddProperty(objdetalle,'ncant',0)
-	AddProperty(objdetalle,'nidg',0)
-	AddProperty(objdetalle,'nidkar',0)
+	objdetalle = Createobject("empty")
+	AddProperty(objdetalle, 'nidart', 0)
+	AddProperty(objdetalle, 'ncant', 0)
+	AddProperty(objdetalle, 'nidg', 0)
+	AddProperty(objdetalle, 'nidkar', 0)
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -47,12 +47,11 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	Go Top
 	s = 1
 	Do While !Eof()
-		objdetalle.nidart=tmpvg.coda
-		objdetalle.ncant=tmpvg.cant
-		objdetalle.nidg=m.nidg
-		objdetalle.nidkar=tmpvg.nidkar
-		If This.registradetalleguia(objdetalle)<1 Then
-*	GrabaDetalleGuias(tmpvg.nidkar, tmpvg.cant, nidg) = 0 Then
+		objdetalle.nidart = tmpvg.coda
+		objdetalle.ncant = tmpvg.cant
+		objdetalle.nidg = m.nidg
+		objdetalle.nidkar = tmpvg.nidkar
+		If This.registradetalleguia(objdetalle) < 1 Then
 			s = 0
 			Exit
 		Endif
@@ -67,6 +66,7 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 		If This.GrabarCambios() = 0 Then
 			Return 0
 		Endif
+		This.idautog = m.nidg
 		This.imprimir('S')
 		Return  1
 	Else
@@ -75,11 +75,11 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	Endif
 	Endfunc
 	Function ActualizarguiaremitenteOtros()
-	objdetalle=Createobject("empty")
-	AddProperty(objdetalle,'nidart',0)
-	AddProperty(objdetalle,'ncant',0)
-	AddProperty(objdetalle,'nidg',0)
-	AddProperty(objdetalle,'nidkar',0)
+	objdetalle = Createobject("empty")
+	AddProperty(objdetalle, 'nidart', 0)
+	AddProperty(objdetalle, 'ncant', 0)
+	AddProperty(objdetalle, 'nidg', 0)
+	AddProperty(objdetalle, 'nidkar', 0)
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -96,11 +96,11 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	Go Top
 	s = 1
 	Do While !Eof()
-		objdetalle.nidart=tmpvg.coda
-		objdetalle.ncant=tmpvg.cant
-		objdetalle.nidg=m.nidg
-		objdetalle.nidkar=tmpvg.nidkar
-		If This.registradetalleguia(objdetalle)<1 Then
+		objdetalle.nidart = tmpvg.coda
+		objdetalle.ncant = tmpvg.cant
+		objdetalle.nidg = m.nidg
+		objdetalle.nidkar = tmpvg.nidkar
+		If This.registradetalleguia(objdetalle) < 1 Then
 *	GrabaDetalleGuias(tmpvg.nidkar, tmpvg.cant, nidg) = 0 Then
 			s = 0
 			Exit
@@ -131,7 +131,7 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	goApp.npara2  = Alltrim(This.ptop)
 	goApp.npara3  = Alltrim(This.ptoll)
 	goApp.npara4  = This.idauto
-	goApp.npara5  =This.fechat
+	goApp.npara5  = This.fechat
 	goApp.npara6  = goApp.nidusua
 	goApp.npara7  = This.detalle
 	goApp.npara8  = This.Idtransportista
@@ -139,9 +139,9 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	goApp.npara10 = goApp.Tienda
 	goApp.npara11 = This.ubigeocliente
 	goApp.npara12 = This.Codigo
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
-	ENDTEXT
+	Endtext
 	nidgg = This.EJECUTARf(lc, lp, cur)
 	If nidgg < 1 Then
 		Return 0
@@ -159,19 +159,19 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
 	Return 1
 	Endfunc
 	Function RegistraRelacionGuias(nidg)
-	TEXT To lc Noshow Textmerge
+	Text To lc Noshow Textmerge
 	   UPDATE fe_guias SET guia_idre=<<nidg>> where guia_idgui=<<this.nautor>>;
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function buscarxid(nid,ccursor)
-	If This.idsesion>0 Then
+	Function buscarxid(nid, ccursor)
+	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	TEXT TO lc NOSHOW TEXTMERGE
+	Text To lc Noshow Textmerge
 	 SELECT guia_ndoc AS ndoc,guia_fech AS fech,guia_fect AS fechat,
      LEFT(guia_ndoc,4) AS serie,SUBSTR(guia_ndoc,5) AS numero,
      a.descri,IFNULL(unid_codu,'NIU')AS unid,e.entr_cant AS cant,a.peso,g.guia_ptoll AS ptollegada,
@@ -187,10 +187,11 @@ Define Class guiaremisionxotros As GuiaRemision Of 'd:\capass\modelos\guiasremis
      LEFT JOIN fe_unidades AS u ON u.unid_codu=a.unid
      INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr,fe_gene AS v
      WHERE guia_idgui=<<nid>>  order by entr_iden
-	ENDTEXT
-	If This.EjecutaConsulta(lc,ccursor)<1 Then
+	Endtext
+	If This.EjecutaConsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return  1
 	Endfunc
 Enddefine
+

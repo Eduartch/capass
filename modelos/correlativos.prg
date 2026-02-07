@@ -10,26 +10,26 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	letras = ""
 	ncodt = 0
 	Function Listar(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
      select serie,t.nomb,nume,ifnull(a.nomb,'') as tienda,items,'' as letra,s.tdoc,seri_idal,idserie
      FROM fe_serie s
      INNER JOIN fe_tdoc t ON t.tdoc=s.tdoc
      left join fe_sucu a on a.sucuidserie=s.serie
      ORDER BY serie
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function Listarx(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
      select serie,t.nomb,serie,nume,ifnull(a.nomb,'') as nomb,items,letra,s.tdoc,seri_idal,idserie
      FROM fe_serie s
      INNER JOIN fe_tdoc t ON t.tdoc=s.tdoc
      left join fe_sucu a on a.sucuidserie=s.serie
      ORDER BY serie
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -53,13 +53,13 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	This.nserie = Cserie
 	lista = This.ObtenerSerie(Cserie)
 	If This.conletras = 'S' Then
-		TEXT To m.lC Noshow Textmerge
+		Text To m.lC Noshow Textmerge
 		Select  serie From fe_serie Where serie=<<lista.nserie>> And codt=<<m.nidtda>> And tdoc ='<<ctdoc>>' AND TRIM(letra)='<<lista.cletras>>'  limit 1
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To m.lC Noshow Textmerge
+		Text To m.lC Noshow Textmerge
 		Select  serie From fe_serie Where serie=<<lista.nserie>> And codt=<<m.nidtda>> And tdoc ='<<ctdoc>>' limit 1
-		ENDTEXT
+		Endtext
 	Endif
 	If This.EJECutaconsulta(m.lC, Ccursor) < 1 Then
 		Return 0
@@ -84,9 +84,9 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 		goApp.npara1 = This.Nsgte + 1
 		goApp.npara2 = This.Idserie
 		cur = ""
-		TEXT To lp Noshow
+		Text To lp Noshow
         (?goapp.npara1,?goapp.npara2)
-		ENDTEXT
+		Endtext
 		If This.EJECUTARP(lC, lp, cur) < 1 Then
 			Return 0
 		Endif
@@ -103,9 +103,9 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Ccursor = 'c_' + Sys(2015)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\SELECT nume,items,idserie FROM fe_serie WHERE serie=<<lista.nserie>> AND tdoc='<<this.ctdoc>>'
+	\Select nume,Items,Idserie From fe_serie Where Serie=<<lista.nserie>> And tdoc='<<this.ctdoc>>'
 	If This.conletras = 'S' Then
-	  \AND TRIM(letra)='<<lista.cletras>>'
+	  \And Trim(letra)='<<lista.cletras>>'
 	Endif
 	\limit  1
 	Set Textmerge Off
@@ -149,13 +149,13 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	If This.conletras = 'S' Then
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
           SELECT nume,items,idserie FROM fe_serie WHERE serie=<<ns>> AND tdoc='<<ctdoc>>' AND TRIM(letra)='<<this.letras>>' limit 1
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
          SELECT nume,items,idserie FROM fe_serie WHERE serie=<<ns>> AND tdoc='<<ctdoc>>' limit 1
-		ENDTEXT
+		Endtext
 	Endif
 *wait WINDOW Idserie
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -165,27 +165,25 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Do Case
 	Case Idserie > 0
 *!*		     	wait WINDOW 'hola mayor A 0'
-*!*			If cTdoc = '01' Or cTdoc = '03' Or cTdoc = '20' Or cTdoc = '09' Or cTdoc = "07" Or cTdoc = "08"  Or cTdoc = "12" Or cTdoc = "SC" OR cTdoc='OC' Then
-*!*				Try
-*!*					Do Case
-*!*					Case cTdoc = "01" Or cTdoc = '12'
-*!*						cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'factura' + Alltrim(Str(ns)) + '.frx'
-*!*					Case cTdoc = "03"
-*!*						cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'boleta' + Alltrim(Str(ns)) + '.frx'
-*!*					Case cTdoc = "20" Or cTdoc = "SC"
-*!*						cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'notasp.frx'
-*!*					Case cTdoc = "09"
-*!*						cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'guia' + Alltrim(Str(ns)) + '.frx'
-*!*					Case cTdoc = "07" Or cTdoc = "08"
-*!*						cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'notasc1.frx'
-*!*					Endcase
-*!*					goApp.reporte = cArchivo
-*!*					If !File(cArchivo)
-*!*					Endif
-*!*				Catch To oerror
-*!*					This.Cmensaje = "No es Posible Imprimir este Comprobante"
-*!*				Finally
-*!*				Endtry
+		If cTdoc = '01' Or cTdoc = '03' Or cTdoc = '20' Or cTdoc = '09' Or cTdoc = "07" Or cTdoc = "08"  Or cTdoc = "12" Or cTdoc = "SC" Or cTdoc = 'OC' Then
+			Do Case
+			Case cTdoc = "01" Or cTdoc = '12'
+				cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'factura' + Alltrim(Str(ns)) + '.frx'
+			Case cTdoc = "03"
+				cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'boleta' + Alltrim(Str(ns)) + '.frx'
+			Case cTdoc = "20" Or cTdoc = "SC"
+				cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'notasp.frx'
+			Case cTdoc = "09"
+				cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'guia' + Alltrim(Str(ns)) + '.frx'
+			Case cTdoc = "07" Or cTdoc = "08"
+				cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'notasc1.frx'
+			OTHERWISE
+			  	cArchivo = Addbs(Sys(5) + Sys(2003) + '\comp') + 'factura' + Alltrim(Str(ns)) + '.frx'
+			Endcase
+			goApp.reporte = cArchivo
+			If !File(cArchivo)
+			Endif
+		Endif
 *!*			Else
 *!*				Return 1
 *!*			Endif
@@ -241,16 +239,16 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Return nroserie
 	Endfunc
 	Function correlativosirecompras()
-	TEXT To lC Textmerge Noshow
+	Text To lC Textmerge Noshow
 	 UPDATE fe_gene SET gene_corc=gene_corc+1 WHERE idgene=1
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Ccursor = 'c' + Sys(2015)
-	TEXT To lg Textmerge Noshow
+	Text To lg Textmerge Noshow
 	  select gene_corc FROM fe_gene WHERE idgene=1;
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lg, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -261,9 +259,9 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	lC = "ProGeneraCorrelativo"
 	goApp.npara1 = This.Nsgte + 1
 	goApp.npara2 = This.Idserie
-	TEXT To lp Noshow
+	Text To lp Noshow
         (?goapp.npara1,?goapp.npara2)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
@@ -275,9 +273,9 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    SELECT nume,items,idserie FROM fe_serie WHERE serie=<<this.nserie>> AND tdoc='<<this.ctdoc>>' limit  1;
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		This.Ndoc = ""
 		Return 0
@@ -303,9 +301,9 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function Buscarsiestaregistrado(Cserie, cTdoc)
-	TEXT To lsql Noshow Textmerge
+	Text To lsql Noshow Textmerge
        select serie FROM fe_serie WHERE serie='<<cserie>>' AND tdoc='<<ctdoc>>'
-	ENDTEXT
+	Endtext
 	Ccursor = 'c_' + Sys(2015)
 	If This.EJECutaconsulta(lsql, Ccursor) < 1 Then
 		Return 0
@@ -319,9 +317,9 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function ActualizarSeriesDctos()
 	lC = "ProActulizaSeriesDctos"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
         (<<this.nserie>>,<<this.numero>>,'<<this.ctdoc>>',<<this.Items>>,<<this.ncodt>>,<<this.Idserie>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
@@ -329,9 +327,9 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function RegistraSeriesDctos()
 	lC = "FunCreaSeriesDctos"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
         (<<this.nserie>>,<<this.numero>>,'<<this.ctdoc>>',<<this.Items>>,<<this.ncodt>>)
-	ENDTEXT
+	Endtext
 	Vdvto = This.EJECUTARf(lC, lp, "ids")
 	If m.Vdvto < 1 Then
 		Return 0
@@ -367,24 +365,38 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	lC = "PROBUSCASERIES"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
         (<<ns>>,'<<ctdoc>>')
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function GeneraCorrelativootraserie(nn, ns)
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
        UPDATE fe_serie  as f SET numebnotas=f.numebnotas+1 WHERE idserie=<<ns>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lp) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function BuscarSeriesRetencion(ns, Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Text To lC Noshow Textmerge
+    SELECT nume,items,idserie FROM fe_serie WHERE serie=<<ns>> AND tdoc_sunat='20' limit 1
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
 
 
 

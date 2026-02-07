@@ -41,6 +41,7 @@ Define Class guiaremisionxcompras As GuiaRemision Of 'd:\capass\modelos\guiasrem
 		If This.GRabarCambios() = 0 Then
 			Return 0
 		Endif
+		This.Idautog = m.nidg
 		This.Imprimir('S')
 		Return  1
 	Else
@@ -103,8 +104,8 @@ Define Class guiaremisionxcompras As GuiaRemision Of 'd:\capass\modelos\guiasrem
 		This.Cmensaje = "Ingrese El Proveedor"
 		Return 0
 	Case This.rucremitente = Cruc
-			This.Cmensaje = "El Remitente no puede Ser la misma Empresa"
-			Return 0
+		This.Cmensaje = "El Remitente no puede Ser la misma Empresa"
+		Return 0
 	Endcase
 	If This.VAlidar() < 1 Then
 		Return 0
@@ -165,7 +166,7 @@ Define Class guiaremisionxcompras As GuiaRemision Of 'd:\capass\modelos\guiasrem
 	Go Top
 	s = 1
 	Do While !Eof()
-		If This.GrabaDetalleGuiasRCompras(tmpvg.Coda, tmpvg.cant, this.idautog, tmpvg.Codigo) < 1  Then
+		If This.GrabaDetalleGuiasRCompras(tmpvg.Coda, tmpvg.cant, This.Idautog, tmpvg.Codigo) < 1  Then
 			s = 0
 			Exit
 		Endif
@@ -193,6 +194,7 @@ Define Class guiaremisionxcompras As GuiaRemision Of 'd:\capass\modelos\guiasrem
 	Return  1
 	Endfunc
 Enddefine
+
 
 
 

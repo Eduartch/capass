@@ -8,7 +8,6 @@ Define Class alerta As Form
 	AlwaysOnTop = .T.
 	BackColor = Rgb(14, 173, 241)
 	Name = "Aviso"
-
 	Add Object edtmensagem As EditBox With ;
 		FontSize = 20, ;
 		Alignment = 2, ;
@@ -21,8 +20,6 @@ Define Class alerta As Form
 		Width = 370, ;
 		IntegralHeight = .T., ;
 		Name = "edtmensagem"
-
-
 	Procedure visualizar
 	Parameters m.lnA As Integer
 	Local m.lnInicio As Integer, m.lnFim As Integer, m.lnStep As Integer
@@ -34,8 +31,6 @@ Define Class alerta As Form
 		_Sol_SetLayeredWindowAttributes(Thisform.HWnd, 0, m.loop1, 2)
 	Endfor
 	Endproc
-
-
 	Procedure mensagem
 	Parameters m.lcmensagem
 	Thisform.edtmensagem.Value = m.lcmensagem
@@ -47,8 +42,6 @@ Define Class alerta As Form
 	_Sol_SetLayeredWindowAttributes(Thisform.HWnd, 0, 0, 2)
 	Thisform.Visible = .F.
 	Endproc
-
-
 	Procedure Init
 	Zoom Window alerta Max
 	m.lnHeight = This.Height

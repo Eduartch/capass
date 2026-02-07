@@ -15,27 +15,27 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	nprec = 0
 	solocontable = 0
 	tipro = ""
-	ccodart=""
+	ccodart = ""
 	contraspasos = 0
 	tipoinventario = ""
 	agrupadopordia = ""
 	stockinicial = 0
-	FUNCTION consultaroperacionesparacostos(ccursor)
-	TEXT TO lc NOSHOW
+	Function consultaroperacionesparacostos(ccursor)
+	Text To lc Noshow
 	  select a.idart,cant,if(tipo='C',a.prec*if(d.mone<>'S',d.dolar,1),1) as precio,tipo from fe_kar as a
-	  inner join fe_rcom as d ON(d.idauto=a.idauto)  
+	  inner join fe_rcom as d ON(d.idauto=a.idauto)
 	  where a.acti<>'I' and d.acti<>'I' and d.tcom<>'T'  order by a.idart,d.fech,a.tipo
-    ENDTEXT
-    If this.ejecutaconsulta(lc,ccursor)<1 then
-		RETURN 0
-    ENDIF
-    RETURN 1
-	ENDFUNC 
-	Function saldosinicialeskardexunidades(Df, ncoda, nalma, Ccursor)
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function saldosinicialeskardexunidades(Df, ncoda, nalma, ccursor)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
-    \Select k.idart,Sum(If(Tipo='C',cant*kar_equi,-cant*kar_equi)) As inicial From fe_rcom As r
-	\INNER Join fe_kar As k On k.`Idauto`=r.`Idauto`
+	Set Textmerge To Memvar lc Noshow Textmerge
+    \Select k.idart,Sum(If(Tipo='C',cant*kar_equi,-cant*kar_equi)) As Inicial From fe_rcom As r
+	\inner Join fe_kar As k On k.`Idauto`=r.`Idauto`
 	\Where fech<'<<df>>' And idart=<<ncoda>> And r.Acti='A' And k.Acti='A'
 	If nalma > 0 Then
 	   \And k.alma=<<nalma>>
@@ -43,16 +43,16 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Group By idart
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function saldosinicialeskardex(Df, ncoda, nalma, Ccursor)
+	Function saldosinicialeskardex(Df, ncoda, nalma, ccursor)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
-    \Select k.idart,Sum(If(Tipo='C',cant,-cant)) As inicial From fe_rcom As r
-	\INNER Join fe_kar As k On k.`Idauto`=r.`Idauto`
+	Set Textmerge To Memvar lc Noshow Textmerge
+    \Select k.idart,Sum(If(Tipo='C',cant,-cant)) As Inicial From fe_rcom As r
+	\inner Join fe_kar As k On k.`Idauto`=r.`Idauto`
 	\Where fech<'<<df>>' And idart=<<ncoda>> And r.Acti='A' And k.Acti='A' And r.rcom_ccaj<>'C'
 	If nalma > 0 Then
 	   \And k.alma=<<nalma>>
@@ -60,33 +60,33 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Group By idart
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function saldosinicialeskardexpsysr(Df, ncoda, nalma, Ccursor)
+	Function saldosinicialeskardexpsysr(Df, ncoda, nalma, ccursor)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
-    \Select k.idart,Sum(If(Tipo='C',cant,-cant)) As inicial From fe_rcom As r
-	\INNER Join fe_kar As k On k.`Idauto`=r.`Idauto`
-	\Where fech<'<<df>>' And TRIM(idart)='<<ncoda>>' And r.Acti='A' And k.Acti='A' And r.rcom_ccaj<>'C'
+	Set Textmerge To Memvar lc Noshow Textmerge
+    \Select k.idart,Sum(If(Tipo='C',cant,-cant)) As Inicial From fe_rcom As r
+	\inner Join fe_kar As k On k.`Idauto`=r.`Idauto`
+	\Where fech<'<<df>>' And Trim(idart)='<<ncoda>>' And r.Acti='A' And k.Acti='A' And r.rcom_ccaj<>'C'
 	If nalma > 0 Then
 	   \And k.alma=<<nalma>>
 	Endif
 	\Group By idart
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function saldosinicialeskardexuidadescontable(Df, ncoda, nalma, Ccursor)
+	Function saldosinicialeskardexuidadescontable(Df, ncoda, nalma, ccursor)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
-    \Select k.idart,Sum(If(Tipo='C',cant,-cant)) As inicial From fe_rcom As r
-	\INNER Join fe_kar As k On k.`Idauto`=r.`Idauto`
+	Set Textmerge To Memvar lc Noshow Textmerge
+    \Select k.idart,Sum(If(Tipo='C',cant,-cant)) As Inicial From fe_rcom As r
+	\inner Join fe_kar As k On k.`Idauto`=r.`Idauto`
 	\Where fech<'<<df>>' And idart=<<ncoda>> And r.Acti='A' And k.Acti='A' And Tdoc Not In('GI','20')
 	If nalma > 0 Then
 	   \And k.alma=<<nalma>>
@@ -94,13 +94,13 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Group By idart
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function inventarioresumidoconii(dfi, dff, dfii, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function inventarioresumidoconii(dfi, dff, dfii, ccursor)
+	Text To lc Noshow Textmerge
 	   	Select a.idart,descri,unid,cant,if(tipo='C',a.prec*if(b.mone<>'S',b.dolar,1),1) as precio,tipo,b.fech
         From fe_kar as a
         inner join fe_rcom as b on b.idauto=a.idauto
@@ -112,14 +112,14 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		inner join fe_art as p on p.idart=z.invi_idar
 		Where z.invi_acti='A' and p.tipro<>'S'
 		and z.invi_fech='<<dfii>>' 	order by idart,fech,tipo
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function inventarioresumidoconiicontable(dfi, dff, dfii, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function inventarioresumidoconiicontable(dfi, dff, dfii, ccursor)
+	Text To lc Noshow Textmerge
 	  SELECT a.idart AS idart,c.descri,c.unid,cant,CAST(IF(mone='S',a.prec,a.prec*dolar)  AS DECIMAL(12,6))AS  precio,
 	  tipo,rcom_fech AS fech,d.ndoc
 	  FROM fe_rcom AS d
@@ -131,19 +131,19 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  FROM fe_inicial AS z
 	  INNER JOIN fe_art AS p ON p.idart=z.invi_idar
 	  WHERE z.invi_acti='A'   AND z.invi_fech='<<dfii>>' and invi_acti='A' ORDER BY idart,fech,tipo,ndoc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function KardexIndividualcontable(ncoda, fi, ff, fii, Ccursor)
+	Function KardexIndividualcontable(ncoda, fi, ff, fii, ccursor)
 	Set  Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select b.rcom_fech As fech, b.Ndoc, IFNULL(b.Tdoc, '') As Tdoc, a.Tipo, a.cant, Round(a.Prec, 2) As Prec,
 	\b.Mone, b.Idcliente, c.Razo As Cliente, b.idprov, e.Razo As proveedor,
 	\b.dolar As dola, b.vigv As igv, b.Idauto, a.idart  From fe_kar As a
-	\INNER Join fe_rcom As b  On(b.Idauto = a.Idauto)
+	\inner Join fe_rcom As b  On(b.Idauto = a.Idauto)
 	\Left Join fe_prov As e On (e.idprov = b.idprov)
 	\Left Join fe_clie As c  On (c.idclie = b.Idcliente)
 	\Where  b.rcom_fech  Between '<<fi>>' And '<<ff>>' And a.Acti <> 'I' And b.Acti <> 'I' And b.tcom <> 'T' And rcom_tipo = 'C'
@@ -161,13 +161,13 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\ Order By fech, Tipo, Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function consultamvtosresumidos(fi, ff, fii, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function consultamvtosresumidos(fi, ff, fii, ccursor)
+	Text To lc Noshow Textmerge
 	       SELECT q.coda,b.descri,b.unid,si,compras,ventas,stock  FROM (
 		   SELECT x.coda,sum(si) as si,Sum(compras) As compras,Sum(ventas) As ventas,sum(si)+Sum(compras)-Sum(ventas) As stock from(
 		   Select idart as coda,a.alma,cast(000000.00 as decimal(12,2)) as Si,cant As compras,cast(000000.00 as decimal(12,2)) As ventas
@@ -184,13 +184,13 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		   From fe_inicial as z
 		   Where z.invi_acti='A' AND invi_fech='<<fii>>')
 		   as x group by x.coda) as q  inner join fe_art as b ON b.idart=q.coda where  si<>0 or compras<>0 or ventas<>0  order by b.descri
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function consultamvtosresumidos1(fi, ff, fii, Ccursor)
+	Function consultamvtosresumidos1(fi, ff, fii, ccursor)
 *!*		       SELECT q.coda,b.descri,b.unid,si,compras,ventas,stock  FROM (
 *!*			   SELECT x.coda,sum(si) as si,Sum(compras) As compras,Sum(ventas) As ventas,sum(si)+Sum(compras)-Sum(ventas) As stock from(
 *!*			   Select idart as coda,a.alma,cast(000000.00 as decimal(12,2)) as Si,cant As compras,cast(000000.00 as decimal(12,2)) As ventas
@@ -209,7 +209,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 *!*			   Where z.acti='A' AND z.fech<='<<fii>>' and tdoc not in('GI','20') group By idart)
 *!*			   as x group by x.coda) as q
 *!*			   inner join fe_art as b ON b.idart=q.coda where  si<>0 or compras<>0 or ventas<>0  order by b.descri
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 		  select q.coda,b.descri,b.unid,si,compras,ventas,stock,0 As cmd,DATE(b.`fechc`) AS fechaUltimaCompra,b.`prec` AS preciosingiv,b.`prod_cod1` AS codigoFabrica,
 		   m.dmar AS marca,ca.`dcat` AS linea,g.`desgrupo` AS grupo  FROM (
 		   SELECT x.coda,sum(si) as si,Sum(compras) As compras,Sum(ventas) As ventas,sum(si)+Sum(compras)-Sum(ventas) As stock from(
@@ -231,40 +231,40 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		   INNER JOIN fe_cat AS ca ON (b.`idcat`=ca.`idcat`)
 		   INNER JOIN fe_grupo AS g ON (ca.`idgrupo`=g.`idgrupo`)
 		   where  si<>0 or compras<>0 or ventas<>0  order by b.descri
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function RegistraInventarioInicial(Df, Ccursor)
-	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	Function RegistraInventarioInicial(Df, ccursor)
+	ccursor = 'c_' + Sys(2015)
+	Text To lc Noshow Textmerge
 	     select invi_idar as idart FROM fe_inicial WHERE YEAR(fech)=<<YEAR(df)>> limit 1
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
-	Select (Ccursor)
+	Select (ccursor)
 	If idart > 0 Then
 		This.Cmensaje = "Ya existe un Inventario Inicial"
 		Return 0
 	Endif
 	Sw = 1
-	lC = 'ProIngresaInventarioInicial'
+	lc = 'ProIngresaInventarioInicial'
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	Select (Ccursor)
+	Select (ccursor)
 	Scan All
 		goApp.npara1 = inventario.Coda
 		goApp.npara2 = inventario.alma
 		goApp.npara3 = inventario.costo
 		goApp.npara4 = Df
-		TEXT To lp Noshow
+		Text To lp Noshow
        (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-		ENDTEXT
-		If This.EJECUTARP(lC, lp) < 1 Then
+		Endtext
+		If This.EJECUTARP(lc, lp) < 1 Then
 			Sw = 0
 			Exit
 		Endif
@@ -281,10 +281,10 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function CalCularStock()
 	Local cur As String
-	lC = 'CalcularStock'
+	lc = 'CalcularStock'
 	cur = ""
 	lp = ""
-	If This.EJECUTARP(lC, lp, cur) < 1 Then
+	If This.EJECUTARP(lc, lp, cur) < 1 Then
 		Return 0
 	Else
 		Return 1
@@ -292,19 +292,19 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function CalCularStockContable()
 	Local cur As String
-	lC = 'CalcularStock1'
-	If This.EJECUTARP(lC, "", "") < 1 Then
+	lc = 'CalcularStock1'
+	If This.EJECUTARP(lc, "", "") < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportienda(Ccursor)
+	Function calcularstockportienda(ccursor)
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow
+	Set Textmerge To Memvar lc Noshow
 	\Select xx.idart As Nreg,xx.idart,Descri As Descr,Unid,Cast(IFNULL(b.ultimacompra,'2000-1-1') As Date) As ultimacompra,
 	\m.dmar As Marca,xx.uno,xx.Dos,xx.tres,xx.cuatro,xx.cin,xx.sei,a.idmar,alma,prod_cod1,
 	\If(tmon = 'S', a.Prec, a.Prec * v.dola) As costo
@@ -335,16 +335,16 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	   \,Cast(0 As unsigned) As alma
 	Endif
       \From fe_kar As a
-      \INNER Join fe_rcom As c  On c.Idauto=a.Idauto, fe_gene As v
+      \inner Join fe_rcom As c  On c.Idauto=a.Idauto, fe_gene As v
       \Where  c.fech<='<<f1>>' And c.Acti<>'I'  And a.Acti<>'I'
 	If This.tipoinventario == 'C' Then
 	    \ And c.Tdoc  Not In("20","GI")
 	Endif
      \  Group By a.idart) As xx
-      \INNER Join fe_art As a On a.idart=xx.idart
-      \INNER Join fe_mar As m On m.idmar=a.idmar
+      \inner Join fe_art As a On a.idart=xx.idart
+      \inner Join fe_mar As m On m.idmar=a.idmar
       \Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
-      \INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
+      \inner Join fe_rcom As r On r.`Idauto`=k.`Idauto`
       \Where k.Acti<>'I' And  r.`Acti`<>'I' And Tipo='C' Group By idart) As b On b.idart=xx.idart,fe_gene As v
       \Where prod_acti<>'I'
 	If This.Linea > 0 Then
@@ -356,18 +356,18 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	 \ Order By Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendapsystr(Ccursor)
+	Function calcularstockportiendapsystr(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow
+	Set Textmerge To Memvar lc Noshow
 	 \Select xx.idart As Nreg,xx.idart,Descri As Descr,Unid,Cast(IFNULL(b.ultimacompra,'2000-1-1') As Date) As ultimacompra,
  	 \m.dmar As Marca,prod_cod1,xx.uno,xx.Dos,xx.tres,xx.cuatro,xx.cin,xx.sei,a.idmar,alma,
 	 \If(tmon = 'S', a.Prec, a.Prec * v.dola) As costo
@@ -398,16 +398,16 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
      \ ,Cast(0 As unsigned) As alma
 	Endif
      \ From fe_kar As a
-     \ INNER Join fe_rcom As c  On c.Idauto=a.Idauto, fe_gene As v
+     \ inner Join fe_rcom As c  On c.Idauto=a.Idauto, fe_gene As v
      \ Where  c.fech<='<<f1>>' And c.Acti<>'I'  And a.Acti<>'I'
 	If This.codtienda > 0 Then
 	     \And a.alma=<<This.codtienda>>
 	Endif
      \ Group By a.idart) As xx
-     \ INNER Join fe_art As a On a.idart=xx.idart
-     \ INNER Join fe_mar As m On m.idmar=a.idmar
+     \ inner Join fe_art As a On a.idart=xx.idart
+     \ inner Join fe_mar As m On m.idmar=a.idmar
      \ Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
-     \ INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
+     \ inner Join fe_rcom As r On r.`Idauto`=k.`Idauto`
      \ Where k.Acti='A' And  r.`Acti`='A' And Tipo='C' Group By idart) As b On b.idart=xx.idart,fe_gene As v
      \ Where prod_acti='A'
 	If This.Linea > 0 Then
@@ -419,18 +419,18 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\ Order By Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendapsysm(Ccursor)
+	Function calcularstockportiendapsysm(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow
+	Set Textmerge To Memvar lc Noshow
 	  \Select Nreg,a.idart,Descr,Unid,Cast(IFNULL(b.ultimacompra,'2000-1-1') As Date) As ultimacompra,Marca,uno,Dos,tres,cuatro,cinco,seis,idmar,alma From(
       \Select a.idart As Nreg,a.idart,b.Descri As Descr,b.Unid,
       \Sum(Case a.alma When 1 Then If(Tipo='C',cant,-cant) Else 0 End) As uno,
@@ -458,9 +458,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  \,Cast(0 As unsigned) As alma
 	Endif
       \From fe_kar As a
-      \INNER Join fe_art As b On a.idart=b.idart
-      \INNER Join fe_mar As m On m.idmar=b.idmar
-      \INNER Join fe_rcom As c  On c.Idauto=a.Idauto
+      \inner Join fe_art As b On a.idart=b.idart
+      \inner Join fe_mar As m On m.idmar=b.idmar
+      \inner Join fe_rcom As c  On c.Idauto=a.Idauto
       \Where  c.fech<='<<f1>>' And c.Acti<>'I' And b.prod_acti<>'I' And a.Acti<>'I'
 	If This.Linea > 0 Then
         \And b.idcat=<<This.Linea>>
@@ -473,11 +473,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	  \Group By a.idart) As a
       \Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
-      \INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
+      \inner Join fe_rcom As r On r.`Idauto`=k.`Idauto`
       \Where k.Acti='A' And  r.`Acti`='A' And Tipo='C' Group By idart) As b   On b.idart=a.idart
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -486,12 +486,12 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Na = Alltrim(Str(Year(dff)))
 	todos = 0
 	Create Cursor k(fech D, Tdoc c(2), Serie c(4), Ndoc c(8), ct c(1), Razo c(80)Null, ingr N(10, 2), prei N(10, 2), ;
-		impi N(10, 2), egre N(10, 2), pree N(10, 2), impe N(10, 2), stock N(10, 2), cost N(10, 2), saldo N(10, 2), ;
-		Desc c(100), Unid c(10), Coda N(8), fechaUltimaCompra D, preciosingiv N(10, 2), codigoFabrica c(50), Marca c(50), ;
-		Linea c(50), grupo c(50), Idauto N(12) Default 0, Importe N(12, 2), Cestado c(1) Default 'C', Nreg N(12))
+		  impi N(10, 2), egre N(10, 2), pree N(10, 2), impe N(10, 2), stock N(10, 2), cost N(10, 2), saldo N(10, 2), ;
+		  Desc c(100), Unid c(10), Coda N(8), fechaUltimaCompra D, preciosingiv N(10, 2), codigoFabrica c(50), Marca c(50), ;
+		  Linea c(50), grupo c(50), Idauto N(12) Default 0, Importe N(12, 2), Cestado c(1) Default 'C', Nreg N(12))
 	Select Coda, Descri As Desc, Unid From lx Into Cursor xc Order By Descri
 	ff = Cfechas(dff)
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 		    select b.fech,b.ndoc,b.tdoc,a.tipo,ROUND(a.cant*a.kar_equi,2) as cant,
 			ROUND(a.prec,2) as prec,b.mone,b.idcliente,
 			c.razo as cliente,b.idprov,e.razo as proveedor,
@@ -502,8 +502,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			LEFT JOIN fe_clie as c  ON (c.idclie=b.idcliente)
 			WHERE b.fech<='<<ff>>' and a.acti='A' and b.acti='A' and b.tcom<>'T'
 			OrDER BY b.fech,a.tipo,b.tdoc,b.ndoc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, 'kkxx') < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, 'kkxx') < 1 Then
 		Return 0
 	Endif
 	Select xc
@@ -626,7 +626,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 					Crazon = Iif(Isnull(Kardex.proveedor), "                                             ", Kardex.proveedor)
 					Insert Into k(fech, Tdoc, Serie, Ndoc, ct, Razo, ingr, prei, impi, stock, cost, saldo, Coda, Desc, Unid, Idauto, Nreg, Coda);
 						Values(Kardex.fech, cTdoc, Left(cndoc, 4), Substr(cndoc, 5), "I", Crazon, Kardex.cant, ;
-						xprec, xdebe, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.Idauto, Kardex.idkar, Kardex.idart)
+						  xprec, xdebe, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.Idauto, Kardex.idkar, Kardex.idart)
 				Else
 					egr = egr + cant
 					calma = calma - Kardex.cant
@@ -641,7 +641,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 
 					Insert Into k(fech, Tdoc, Serie, Ndoc, ct, Razo, egre, pree, impe, stock, cost, saldo, Coda, Desc, Unid, Coda);
 						Values(Kardex.fech, Kardex.Tdoc, Left(Kardex.Ndoc, 4), Substr(Kardex.Ndoc, 8), "S", Crazon, Kardex.cant, ;
-						costo, xhaber, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.idart)
+						  costo, xhaber, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.idart)
 				Endif
 			Endif
 		Endscan
@@ -656,12 +656,12 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Enddo
 	Return 1
 	Endfunc
-	Function calcularstockportiendapsysrx(Ccursor)
-	If !Pemstatus(goApp,'soloestatienda',5) Then
-		AddProperty(goApp,'soloestatienda',0)
-	ENDIF
-	If goApp.Soloestatienda=1 And  This.codtienda<>goApp.tienda Then
-		This.Cmensaje='No Permitido'
+	Function calcularstockportiendapsysrx(ccursor)
+	If !Pemstatus(goApp, 'soloestatienda', 5) Then
+		AddProperty(goApp, 'soloestatienda', 0)
+	Endif
+	If goApp.Soloestatienda = 1 And  This.codtienda <> goApp.tienda Then
+		This.Cmensaje = 'No Permitido'
 		Return 0
 	Endif
 	If This.Idsesion > 0 Then
@@ -669,7 +669,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select  q.idart As Nreg, q.idart, a.Descri As Descr, x.dmar, q.uno, q.Dos, q.tre, q.cua, q.cin, q.sei, q.sie, q.och, q.nue, q.die, q.onc, a.Peso, x.idmar, q.alma From
 	\(Select a.idart,
 	\Sum(Case a.alma When 1 Then If(Tipo = 'C', cant, - cant) Else 0 End) As uno,
@@ -723,34 +723,34 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  \,Cast(0 As unsigned) As alma
 	Endif
 	\From fe_kar As a
-	\INNER Join fe_rcom As c  On c.Idauto = a.Idauto Where c.fech <= '<<f1>>' And c.Acti <> 'I'  And a.Acti <> 'I' Group By a.idart)
+	\inner Join fe_rcom As c  On c.Idauto = a.Idauto Where c.fech <= '<<f1>>' And c.Acti <> 'I'  And a.Acti <> 'I' Group By a.idart)
 	\As q
-	\INNER Join fe_art a On a.idart = q.idart
-	\INNER Join fe_mar As x On x.idmar = a.idmar Where  a.tipro <> 'S' And a.prod_acti <> 'I'
-	If This.Linea > 0 Then
-        \And b.idcat=<<This.Linea>>
-	Endif
-	If This.Marca > 0 Then
-	      \And b.idmar=<<This.Marca>>
-	Endif
+	\inner Join fe_art a On a.idart = q.idart
+	\inner Join fe_mar As x On x.idmar = a.idmar Where  a.tipro <> 'S' And a.prod_acti <> 'I'
 	If This.codtienda > 0 Then
 	     \And <<ctienda>> <> 0
 	Endif
+	If This.Linea > 0 Then
+        \And a.idcat=<<This.Linea>>
+	Endif
+	If This.Marca > 0 Then
+	      \And a.idmar=<<This.Marca>>
+	Endif
 	\Order By a.Descri ;
-	Set Textmerge Off
+		Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendaxsys3(Ccursor)
+	Function calcularstockportiendaxsys3(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select  a.idart As Nreg, a.idart, b.Descri As Descr, b.prod_unid1, b.Unid, a.uno, a.Dos, a.tres, a.cuatro, (a.uno + a.Dos + a.tres + a.cuatro) As Total,
 	\b.prod_cost As costo,((a.uno + a.Dos + a.tres + a.cuatro) * b.prod_cost) As subtotal,b.prod_equi1 As equi,b.prod_cod1,Cast(alma As Decimal(10,2)) As alma
 	\From (Select idart, Sum(Case k.alma When 1 Then If(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) Else 0 End) As uno,
@@ -774,9 +774,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  \,Cast(0 As unsigned) As alma
 	Endif
 	\ From
-	\fe_kar As k INNER Join fe_rcom As r On r.Idauto = k.Idauto
+	\fe_kar As k inner Join fe_rcom As r On r.Idauto = k.Idauto
 	\Where r.fech <= '<<f1>>' And r.Acti <> 'I' And k.Acti <> 'I' Group By k.idart ) As a
-	\INNER Join fe_art As b On b.idart = a.idart
+	\inner Join fe_art As b On b.idart = a.idart
 	\Where b.prod_acti <> 'I'
 	If This.Linea > 0 Then
         \And b.idcat=<<This.Linea>>
@@ -787,58 +787,18 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\ Order By b.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendapsysn(Ccursor)
+	Function calcularstockportiendapsysn(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
-*!*
-*!*		  \Select Nreg,a.idart,Descr,Unid,Cast(IFNULL(b.ultimacompra,'2000-1-1') As Date) As ultimacompra,Marca,prod_cod1,uno,Dos,tres,cuatro,idmar,alma,costo From(
-*!*	      \Select a.idart As Nreg,a.idart,b.Descri As Descr,b.Unid,
-*!*	      \Sum(Case a.alma When 1 Then If(Tipo='C',cant,-cant) Else 0 End) As uno,
-*!*	      \Sum(Case a.alma When 2 Then If(Tipo='C',cant,-cant) Else 0 End) As Dos,
-*!*	      \Sum(Case a.alma When 3 Then If(Tipo='C',cant,-cant) Else 0 End) As tres,
-*!*	      \Sum(Case a.alma When 4 Then If(Tipo='C',cant,-cant) Else 0 End) As cuatro,
-*!*	      \b.idmar,m.dmar As Marca,prod_cod1,Round(If(tmon='S',a.Prec,a.Prec*g.dola),2)As costo
-*!*		If This.codtienda > 0 Then
-*!*			Do Case
-*!*			Case This.codtienda = 1
-*!*	             \,Sum(Case a.alma When 1 Then If(Tipo='C',cant,-cant) Else 0 End) As alma
-*!*			Case This.codtienda = 2
-*!*	             \,Sum(Case a.alma When 2 Then If(Tipo='C',cant,-cant) Else 0 End) As alma
-*!*			Case This.codtienda = 3
-*!*	             \,Sum(Case a.alma When 3 Then If(Tipo='C',cant,-cant) Else 0 End) As alma
-*!*	        Case This.codtienda = 4
-*!*	             \,Sum(Case a.alma When 4 Then If(Tipo='C',cant,-cant) Else 0 End) As alma
-*!*			Endcase
-*!*		Else
-*!*		  \,Cast(0 As unsigned) As alma
-*!*		Endif
-*!*	      \From fe_kar As a
-*!*	      \INNER Join fe_art As b On a.idart=b.idart
-*!*	      \INNER Join fe_mar As m On m.idmar=b.idmar
-*!*	      \INNER Join fe_rcom As c  On c.Idauto=a.Idauto,fe_gene As g
-*!*	      \Where  c.fech<='<<f1>>' And c.Acti<>'I' And b.prod_acti<>'I' And a.Acti<>'I'
-*!*		If This.Linea > 0 Then
-*!*	        \And b.idcat=<<This.Linea>>
-*!*		Endif
-*!*		If This.Marca > 0 Then
-*!*		      \And b.idmar=<<This.Marca>>
-*!*		Endif
-*!*		If This.codtienda > 0 Then
-*!*		     \And a.alma=<<This.codtienda>>
-*!*		Endif
-*!*		  \Group By a.idart) As a
-*!*	      \Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
-*!*	      \INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
-*!*	      \Where k.Acti='A' And  r.`Acti`='A' And Tipo='C' Group By idart) As b   On b.idart=a.idart
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow
+	Set Textmerge To Memvar lc Noshow
 	\Select a.idart As Nreg,a.idart,Descri As Descr,Unid,Cast(IFNULL(z.ultimacompra,'2000-1-1') As Date) As ultimacompra,dmar As Marca,
     \prod_cod1,a.uno,a.Dos,a.tres,a.cuatro,b.idmar,Round(If(tmon='S',b.Prec,b.Prec*g.dola),2)As costo,alma
     \From(
@@ -862,13 +822,13 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  \,Cast(0 As unsigned) As alma
 	Endif
     \   From fe_kar As a
-    \   INNER Join fe_rcom As c  On c.Idauto=a.Idauto
+    \   inner Join fe_rcom As c  On c.Idauto=a.Idauto
     \   Where  c.fech<='<<f1>>' And c.Acti<>'I' And a.Acti<>'I'
 	\Group By a.idart) As a
-    \   INNER Join fe_art As b On a.idart=b.idart
-    \   INNER Join fe_mar As m On m.idmar=b.idmar
+    \   inner Join fe_art As b On a.idart=b.idart
+    \   inner Join fe_mar As m On m.idmar=b.idmar
     \   Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
-    \   INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
+    \   inner Join fe_rcom As r On r.`Idauto`=k.`Idauto`
     \   Where k.Acti='A' And  r.`Acti`='A' And Tipo='C' Group By idart) As z   On z.idart=a.idart,fe_gene As g
     \   Where b.prod_acti<>'I'
 	If This.Linea > 0 Then
@@ -882,18 +842,18 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendapsystr1(Ccursor)
+	Function calcularstockportiendapsystr1(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow
+	Set Textmerge To Memvar lc Noshow
 	  \Select Nreg,a.idart,Descr,Unid,Cast(IFNULL(b.ultimacompra,'2000-1-1') As Date) As ultimacompra,Marca,prod_cod1,uno,Dos,tres,cuatro,cin,idmar,costo
 	  \From(
       \Select a.idart As Nreg,a.idart,b.Descri As Descr,b.Unid,
@@ -904,9 +864,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
       \Sum(Case a.alma When 5 Then If(Tipo='C',cant,-cant) Else 0 End) As cin,b.idmar,prod_cod1,m.dmar As Marca,
       \If(tmon = 'S', b.Prec, b.Prec * v.dola) As costo
       \From fe_kar As a
-      \INNER Join fe_art As b On a.idart=b.idart
-      \INNER Join fe_mar As m On m.idmar=b.idmar
-      \INNER Join fe_rcom As c  On c.Idauto=a.Idauto, fe_gene As v
+      \inner Join fe_art As b On a.idart=b.idart
+      \inner Join fe_mar As m On m.idmar=b.idmar
+      \inner Join fe_rcom As c  On c.Idauto=a.Idauto, fe_gene As v
       \Where  c.fech<='<<f1>>' And c.Acti<>'I' And b.prod_acti<>'I' And a.Acti<>'I'
 	If This.Linea > 0 Then
         \And b.idcat=<<This.Linea>>
@@ -916,16 +876,16 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
       \ Group By a.idart) As a
       \ Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
-      \ INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
+      \ inner Join fe_rcom As r On r.`Idauto`=k.`Idauto`
       \ Where k.Acti='A' And  r.`Acti`='A' And Tipo='C' Group By idart) As b   On b.idart=a.idart
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function inventarioporfechavtolote(Ccursor)
+	Function inventarioporfechavtolote(ccursor)
 	F = Cfechas(This.Fecha)
 *!*		TEXT To lC Noshow Textmerge
 *!*		 SELECT a.idart,descri,unid,prod_unid1,prod_equi1,prod_equi2,b.uno AS cant,kar_lote,kar_fvto,z.uno AS stock,dcat as linea,a.prod_cod1 FROM (
@@ -949,7 +909,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 *!*		 WHERE r.fech <= '<<f>>' AND r.Acti <> 'I' AND k.Acti <> 'I' GROUP BY k.idart HAVING uno>0  ORDER BY idart)
 *!*		 AS z ON z.idart=b.idart order by a.idart,kar_fvto desc
 *!*		ENDTEXT
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 	 SELECT a.idart,descri,unid,prod_unid1,prod_equi1,prod_equi2,b.uno AS cant,kar_lote,kar_fvto,z.uno AS stock,dcat AS linea,a.prod_cod1 FROM
     (SELECT idart, idkar,cant*kar_equi AS uno,CAST(0 AS DECIMAL(10,2)) AS dos,CAST(0 AS DECIMAL(10,2)) AS tres,
     CAST(0 AS DECIMAL(12,2)) AS cuatro,kar_lote,kar_fvto
@@ -968,15 +928,15 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	 INNER JOIN fe_rcom AS r ON r.Idauto = k.Idauto
 	 WHERE r.fech <= '<<f>>' AND r.Acti <> 'I' AND k.Acti <> 'I' GROUP BY k.idart HAVING uno>0  ORDER BY idart)
 	 AS z ON z.idart=b.idart ORDER BY idart,idkar DESC
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function inventarioporfechavtolotexproducto(Ccursor)
+	Function inventarioporfechavtolotexproducto(ccursor)
 	Calias = 'ls'
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 	 SELECT a.idart,descri,unid,prod_unid1,prod_equi1,prod_equi2,b.uno AS cant,kar_lote,kar_fvto,z.uno AS stock,dcat as linea,a.prod_cod1 FROM (
      SELECT idart, SUM(CASE k.alma WHEN 1 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS uno,
 	 SUM(CASE k.alma WHEN 2 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS Dos,
@@ -996,11 +956,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	 fe_kar AS k INNER JOIN fe_rcom AS r ON r.Idauto = k.Idauto
 	 WHERE  k.idart=<<this.nidart>> AND r.Acti <> 'I' AND k.Acti <> 'I' GROUP BY k.idart HAVING uno>0  ORDER BY idart)
 	 AS z ON z.idart=b.idart order by a.idart,kar_fvto desc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, 'ls') < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, 'ls') < 1 Then
 		Return 0
 	Endif
-	Create Cursor (Ccursor)(idart N(8), Descri c(120), Unid c(15), prod_unid1 c(15), prod_equi1 N(10, 2), prod_equi2 N(10, 2), cant N(10, 2), kar_lote c(20), kar_fvto D, stock N(10, 2), estado c(1), Linea c(100), prod_cod1 c(15))
+	Create Cursor (ccursor)(idart N(8), Descri c(120), Unid c(15), prod_unid1 c(15), prod_equi1 N(10, 2), prod_equi2 N(10, 2), cant N(10, 2), kar_lote c(20), kar_fvto D, stock N(10, 2), estado c(1), Linea c(100), prod_cod1 c(15))
 	Select (Calias)
 	Do While !Eof()
 		Select (Calias)
@@ -1019,15 +979,15 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			ncant = ncant + cant
 			If ncant > nstock Then
 				If Sw = 0 Then
-					Insert Into (Ccursor)(idart, Descri, Unid, prod_unid1, prod_equi1, prod_equi2, cant, kar_lote, kar_fvto,  estado, prod_cod1, Linea)Values;
+					Insert Into (ccursor)(idart, Descri, Unid, prod_unid1, prod_equi1, prod_equi2, cant, kar_lote, kar_fvto,  estado, prod_cod1, Linea)Values;
 						(ls.idart, ls.Descri, ls.Unid, ls.prod_unid1, ls.prod_equi1, ls.prod_equi2, ls.stock, ls.kar_lote, Iif(Isnull(ls.kar_fvto), Ctod("  /  /    "), ls.kar_fvto), 'A', ls.prod_cod1, ls.Linea)
 				Else
-					Insert Into (Ccursor)(idart, Descri, Unid, prod_unid1, prod_equi1, prod_equi2, cant, kar_lote, kar_fvto,  estado, prod_cod1, Linea)Values;
+					Insert Into (ccursor)(idart, Descri, Unid, prod_unid1, prod_equi1, prod_equi2, cant, kar_lote, kar_fvto,  estado, prod_cod1, Linea)Values;
 						(ls.idart, ls.Descri, ls.Unid, ls.prod_unid1, ls.prod_equi1, ls.prod_equi2, ls.stock - (ncant - ls.cant), ls.kar_lote, Iif(Isnull(ls.kar_fvto), Ctod("  /  /    "), ls.kar_fvto), 'A', ls.prod_cod1, ls.Linea)
 				Endif
 				Sw = 1
 			Else
-				Insert Into (Ccursor)(idart, Descri, Unid, prod_unid1, prod_equi1, prod_equi2, cant, kar_lote, kar_fvto, estado, prod_cod1, Linea)Values;
+				Insert Into (ccursor)(idart, Descri, Unid, prod_unid1, prod_equi1, prod_equi2, cant, kar_lote, kar_fvto, estado, prod_cod1, Linea)Values;
 					(ls.idart, ls.Descri, ls.Unid, ls.prod_unid1, ls.prod_equi1, ls.prod_equi2, ls.cant, ls.kar_lote, Iif(Isnull(ls.kar_fvto), Ctod("  /  /    "), ls.kar_fvto), 'A', ls.prod_cod1, ls.Linea)
 			Endif
 			Sw = Sw + 1
@@ -1036,8 +996,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Enddo
 	Return 1
 	Endfunc
-	Function consultamvtosresumidosunidades(fi, ff, fii, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function consultamvtosresumidosunidades(fi, ff, fii, ccursor)
+	Text To lc Noshow Textmerge
 	       SELECT q.coda,b.descri,b.unid,si,compras,ventas,stock  FROM (
 		   SELECT x.coda,sum(si) as si,Sum(compras) As compras,Sum(ventas) As ventas,sum(si)+Sum(compras)-Sum(ventas) As stock from(
 		   Select idart as coda,a.alma,cast(000000.00 as decimal(12,2)) as Si,cant*kar_equi As compras,cast(000000.00 as decimal(12,2)) As ventas
@@ -1055,19 +1015,19 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		   inner join fe_kar as a On a.idauto=c.idauto
 		   Where c.acti='A' and a.acti='A' AND c.fech='<<fii>>' and c.tcom<>'T' and  c.rcom_tipo='C')
 		   as x group by x.coda) as q  inner join fe_art as b ON b.idart=q.coda where  si<>0 or compras<>0 or ventas<>0  order by b.descri
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function KardexIndividualcontableunidades(ncoda, fi, ff, fii, Ccursor)
+	Function KardexIndividualcontableunidades(ncoda, fi, ff, fii, ccursor)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 		   \Select b.fech,b.Ndoc,b.Tdoc,a.Tipo,a.cant*kar_equi As cant,Round(a.Prec,4) As Prec,
 	       \b.Mone,b.Idcliente,c.Razo As Cliente,b.idprov,e.Razo As proveedor,
 	       \b.dolar As dola,b.vigv As igv,b.Idauto,a.idart,a.idkar  From fe_kar As a
-	       \INNER Join fe_rcom As b  On(b.Idauto=a.Idauto)
+	       \inner Join fe_rcom As b  On(b.Idauto=a.Idauto)
 	       \Left Join fe_prov As e On (e.idprov=b.idprov)
 	       \Left Join fe_clie As c  On (c.idclie=b.Idcliente)
 	       \Where   b.fech  Between '<<fi>>' And '<<ff>>' And a.Acti<>'I' And b.Acti<>'I'
@@ -1078,17 +1038,17 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	       \ Order By fech,Tipo,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function rotacionproductos(Ccursor)
+	Function rotacionproductos(ccursor)
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	cwhere = ""
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow  Textmerge
+	Set Textmerge To Memvar lc Noshow  Textmerge
 	\Select a.prod_cod1,a.Descri,a.Unid,m.dmar,b.stocki,b.tingresos,b.tegresos,(b.stocki+b.tingresos-b.tegresos) As sfinal,0 As reposicion,b.ulfc,b.ulfv,b.idart As Coda
 	\From (Select Sum(If(D.fech<'<<f1>>',If(Tipo='C',cant,-cant),0)) As stocki,
 	\Sum(If(D.fech Between '<<f1>>' And '<<f2>>',If(Tipo='C',cant,0),0)) As tingresos,
@@ -1101,14 +1061,14 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	\c.idart
 	\From fe_rcom As D
-	\INNER Join fe_kar As c On c.Idauto=D.Idauto
+	\inner Join fe_kar As c On c.Idauto=D.Idauto
 	\Where D.Acti='A' And c.Acti='A'
 	If This.codtienda > 0 Then
 	   \ And  c.alma=<<This.codtienda>>
 	Endif
 	\Group By c.idart) As b
-	\INNER Join fe_art As a On a.idart=b.idart
-	\INNER Join fe_mar As m On m.idmar=a.idmar
+	\inner Join fe_art As a On a.idart=b.idart
+	\inner Join fe_mar As m On m.idmar=a.idmar
 	If This.Marca > 0 Then
 	    \ Where  a.idmar=<<This.Marca>>
 	Endif
@@ -1122,26 +1082,26 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Order By a.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function Traspasosentrealmacenes(Ccursor)
+	Function Traspasosentrealmacenes(ccursor)
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select b.fech,b.Tdoc,b.Ndoc,c.tras_codt As alma,IFNULL(c.tras_codt1,1) As Ndo2,a.Tipo,a.cant,a.idart,b.FUsua,D.nomb As usua,
 	\    e.Descri,e.Unid,F.nomb As origen,g.nomb As destino,c.tras_idau As Idauto,b.Deta  As Refe,b.Impo
 	\    From fe_kar As a
-	\    INNER Join fe_art As e On(e.idart=a.idart)
-	\    INNER Join fe_rcom  As b On(b.Idauto=a.Idauto)
-	\    INNER Join (Select p.tras_idau,p.tras_idau1,p.tras_codt,p.tras_codt1
+	\    inner Join fe_art As e On(e.idart=a.idart)
+	\    inner Join fe_rcom  As b On(b.Idauto=a.Idauto)
+	\    inner Join (Select p.tras_idau,p.tras_idau1,p.tras_codt,p.tras_codt1
 	\    From  fe_traspaso As p Group By tras_idau,tras_idau1,tras_codt,tras_codt1) As c On (c.tras_idau=b.Idauto)
-	\    INNER Join fe_usua As D On(D.idusua=b.idusua)
-	\    INNER Join fe_sucu As F On(F.idalma=c.tras_codt)
-	\    INNER Join fe_sucu As g On(g.idalma=c.tras_codt1)
+	\    inner Join fe_usua As D On(D.idusua=b.idusua)
+	\    inner Join fe_sucu As F On(F.idalma=c.tras_codt)
+	\    inner Join fe_sucu As g On(g.idalma=c.tras_codt1)
 	\    Left Join fe_rcom As x  On x.Idauto=c.tras_idau1
 	\    Where b.tcom='T'  And b.Acti<>'I' And b.fech Between '<<f1>>' And '<<f2>>' And a.Acti='A'
 	If This.codtienda > 0 Then
@@ -1150,7 +1110,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Order By b.fech,b.Ndoc,a.Tipo
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1166,17 +1126,17 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	fi = Cfechas(This.dfi)
 	ff = Cfechas(This.dff)
 	fechaf = Cfechas(This.Fecha)
-	Create Cursor tmpk(Fecha D, Tdoc c(2), dcto c(12), Razo c(40), ingr N(12, 2), egre N(12, 2), saldo N(12, 2), Moneda c(12), Precio N(10, 2), Refe c(10)Null, usua c(30)Null, FUsua Datetime Null, usua1 c(10)Null, tipomvto c(20), Idauto N(8))
+	Create Cursor tmpk(Fecha D, Tdoc c(2), dcto c(12), Razo c(40), ingr N(12, 2), egre N(12, 2), saldo N(12, 2), Moneda c(12), Precio N(10, 2), Refe c(100)Null, usua c(30)Null, FUsua Datetime Null, usua1 c(10)Null, tipomvto c(20), Idauto N(8), Tipo c(1))
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select IFNULL(e.Ndoc,'')  As nped,D.Ndo2,D.fech,D.Ndoc,D.Tdoc,a.Tipo,D.Mone As Cmoneda,a.cant,D.FUsua,IFNULL(g.nomb,'') As usua1,D.codt,
 	\a.Prec,D.vigv As igv,D.dolar,F.nomb As usua,D.Idcliente As codc,b.Razo As Cliente,D.idprov As codp,c.Razo As proveedor,D.Deta,a.alma,D.Idauto
 	\From fe_kar As a
-	\INNER Join fe_rcom As D On (D.Idauto=a.Idauto)
+	\inner Join fe_rcom As D On (D.Idauto=a.Idauto)
 	\Left Join fe_prov As c On(D.idprov=c.idprov)
 	\Left Join fe_clie As b On(D.Idcliente=b.idclie)
 	\Left Join fe_rped As e On(e.idautop=D.idautop)
-	\INNER Join fe_usua As F On(F.idusua=D.idusua)
+	\inner Join fe_usua As F On(F.idusua=D.idusua)
 	\Left Join fe_usua As g   On (g.idusua=D.idusua1)
 	\Where a.idart=<<This.nidart>> And a.alma=<<This.codtienda>> And D.Acti<>'I' And D.fech Between  '<<fi>>' And '<<ff>>' And a.Acti<>'I'
 	If This.tipoinventario = 'C' Then
@@ -1185,7 +1145,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Order By D.fech,D.tipom,a.idkar
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, 'kardex') < 1
+	If This.ejecutaconsulta(lc, 'kardex') < 1
 		Return 0
 	Endif
 	If This.saldosinicialeskardex(fi, This.nidart, This.codtienda, 'iniciales') < 1 Then
@@ -1211,11 +1171,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		Else
 			Nprecio = Iif(Kardex.Tipo = "C", 0, Kardex.Prec)
 		Endif
-		If Tipo = "C"
+		If Kardex.Tipo = "C"
 			calma = calma + cant
 			ing = ing + cant
 			If Isnull(Kardex.proveedor)
-				If Almacenes.idalma = Val(Kardex.Ndo2)
+				If This.codtienda = Val(Kardex.Ndo2)
 					nh = Kardex.codt
 				Else
 					nh = Val(Kardex.Ndo2)
@@ -1240,27 +1200,23 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			Case Kardex.Tdoc = "99"
 				cm = "Reposiciones"
 			Endcase
-			Insert Into tmpk(Fecha, Tdoc, dcto, Razo, ingr, saldo, Moneda, Precio, usua, FUsua, usua1, tipomvto, Idauto);
-				Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, Kardex.Cmoneda, Nprecio, Kardex.usua, Kardex.FUsua, Kardex.usua1, cm, Kardex.Idauto)
+			Insert Into tmpk(Fecha, Tdoc, dcto, Razo, ingr, saldo, Moneda, Precio, usua, FUsua, usua1, tipomvto, Idauto, Tipo, Refe);
+				Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, Kardex.Cmoneda, Nprecio, Kardex.usua, Kardex.FUsua, Kardex.usua1, cm, Kardex.Idauto, 'C', Kardex.Deta)
 		Else
 			calma = calma - cant
 			egr = egr + cant
 			If Isnull(Kardex.Cliente)
-				If Almacenes.idalma = Val(Kardex.Ndo2)
+				If This.codtienda = Val(Kardex.Ndo2)
 					nh = Kardex.codt
 				Else
 					nh = Val(Kardex.Ndo2)
 				Endif
+				m.nindice = Ascan(_Screen.Tiendas, nh)
 				If m.nindice > 0 Then
-					m.nindice = Ascan(_Screen.Tiendas, nh)
-					If m.nindice > 0 Then
-						nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
-						Crazon = 'Salida A ' + Iif(m.nindice > 0, _Screen.Tiendas[m.nfila, 2], "")
-					Else
-						Crazon = 'Salida '
-					Endif
+					nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
+					Crazon = 'Salida A ' + Iif(m.nindice > 0, _Screen.Tiendas[m.nfila, 2], "")
 				Else
-					Crazon = ''
+					Crazon = 'Salida '
 				Endif
 			Else
 				Crazon = Kardex.Cliente
@@ -1273,8 +1229,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			Case Kardex.Tdoc = "99"
 				cm = "Reposiciones"
 			Endcase
-			Insert Into tmpk(Fecha, Tdoc, dcto, Razo, egre, saldo, Moneda, Precio, usua, FUsua, Refe, usua1, tipomvto, Idauto);
-				Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, Kardex.Cmoneda, Nprecio, Kardex.usua, Kardex.FUsua, Kardex.nped, Kardex.usua1, cm, Kardex.Idauto)
+			Insert Into tmpk(Fecha, Tdoc, dcto, Razo, egre, saldo, Moneda, Precio, usua, FUsua, Refe, usua1, tipomvto, Idauto, Tipo, Refe);
+				Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, Kardex.Cmoneda, Nprecio, Kardex.usua, Kardex.FUsua, Kardex.nped, Kardex.usua1, cm, Kardex.Idauto, 'V', Kardex.Deta)
 		Endif
 	Endscan
 	If Sw = 'N'  Then
@@ -1289,13 +1245,13 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendapsystrlyg(Ccursor)
+	Function calcularstockportiendapsystrlyg(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow
+	Set Textmerge To Memvar lc Noshow
 	  \Select Nreg,a.idart,Descr,Unid,Cast(IFNULL(b.ultimacompra,'2000-1-1') As Date) As ultimacompra,Marca,prod_cod1,uno,Dos,tres,cuatro,cin,sei,sie,och,nue,die,idmar,alma,If(tmon='S',costo,costo*v.dola) As costo,
 	  \prod_ubi1,prod_ubi2,prod_ubi3,prod_ubi4,prod_ubi5
 	  \From(
@@ -1339,9 +1295,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  \,Cast(0 As unsigned) As alma
 	Endif
       \From fe_kar As a
-      \INNER Join fe_art As b On a.idart=b.idart
-      \INNER Join fe_mar As m On m.idmar=b.idmar
-      \INNER Join fe_rcom As c  On c.Idauto=a.Idauto
+      \inner Join fe_art As b On a.idart=b.idart
+      \inner Join fe_mar As m On m.idmar=b.idmar
+      \inner Join fe_rcom As c  On c.Idauto=a.Idauto
       \Where  c.fech<='<<f1>>' And c.Acti<>'I' And b.prod_acti<>'I' And a.Acti<>'I'
 	If This.Linea > 0 Then
         \And b.idcat=<<This.Linea>>
@@ -1354,11 +1310,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	  \Group By a.idart) As a
       \Left Join (Select idart,Max(fech) As ultimacompra From fe_kar As k
-      \INNER Join fe_rcom As r On r.`Idauto`=k.`Idauto`
+      \inner Join fe_rcom As r On r.`Idauto`=k.`Idauto`
       \Where k.Acti='A' And  r.`Acti`='A' And Tipo='C' Group By idart) As b   On b.idart=a.idart,fe_gene As v
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -1383,7 +1339,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	NAuto = IngresaResumenDcto('AJ', 'E', cdf, fe_gene.fech, fe_gene.fech, 'Ajuste de Inventarios', 0, 0, 0, "", 'S', ;
-		fe_gene.dola, fe_gene.igv, '1', Val(goApp.Proveedorajuste), '1', goApp.nidusua, 0, This.codtienda, 0, 0, 0, 0, 0)
+		  fe_gene.dola, fe_gene.igv, '1', Val(goApp.Proveedorajuste), '1', goApp.nidusua, 0, This.codtienda, 0, 0, 0, 0, 0)
 	If NAuto < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -1432,7 +1388,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	This.Cmensaje = "Se Genero el Documento " + Alltrim(cdf)
 	Return 1
 	Endfunc
-	Function consultamvtosresumidosxsysg(dfi, dff, dfii, df2, Ccursor)
+	Function consultamvtosresumidosxsysg(dfi, dff, dfii, df2, ccursor)
 	fi = Cfechas(dfi)
 	ff = Cfechas(dff)
 	fii = Cfechas(dfii)
@@ -1443,12 +1399,12 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 *!*			   inner join fe_rcom as y  on  y.idauto=z.idauto
 *!*			   Where z.acti='A' and y.acti='A' AND  y.fech< '<<fii>>'  AND  y.tcom<>'T'
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\      Select q.Coda,b.Descri,b.Unid,si,compras,ventas,stock,0 As cmd  From (
 	\	   Select x.Coda,Sum(si) As si,Sum(compras) As compras,Sum(ventas) As ventas,Sum(si)+Sum(compras)-Sum(ventas) As stock From(
 	\	   Select idart As Coda,Cast(000000.00 As Decimal(12,2)) As si,cant As compras,Cast(000000.00 As Decimal(12,2)) As ventas
 	\	   From fe_kar As a
-	\	   INNER Join fe_rcom As b  On b.Idauto=a.Idauto
+	\	   inner Join fe_rcom As b  On b.Idauto=a.Idauto
 	\	   Where a.Tipo='C' And a.Acti='A' And b.Acti='A' And b.fech Between '<<fi>>' And '<<ff>>' And b.tcom<>'T'
 	If This.tipoinventario = 'C' Then
 	   \ And Tdoc Not  In('20','GI')
@@ -1456,7 +1412,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\	   Union All
 	\	   Select idart As Coda,Cast(000000.00 As Decimal(12,2)) As si,Cast(0000000.00 As Decimal(12,2))  As compras,cant As ventas
 	\	   From fe_kar As c
-	\	   INNER Join fe_rcom As D On D.Idauto=c.Idauto
+	\	   inner Join fe_rcom As D On D.Idauto=c.Idauto
 	\	   Where c.Tipo='V' And c.Acti='A' And D.Acti='A' And D.fech Between '<<fi>>' And '<<ff>>' And D.tcom<>'T'
 	If This.tipoinventario = 'C' Then
 	   \ And Tdoc Not  In('20','GI')
@@ -1464,17 +1420,17 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\	   Union All
 	\	   Select idart As Coda,If(Tipo='C',cant,-cant) As si,Cast(0000000.00 As Decimal(12,2))  As compras,Cast(000000.00 As Decimal(12,2)) As ventas
 	\	   From fe_kar As z
-	\	   INNER Join fe_rcom As Y  On  Y.Idauto=z.Idauto
+	\	   inner Join fe_rcom As Y  On  Y.Idauto=z.Idauto
 	\	   Where z.Acti='A' And Y.Acti='A' And Y.fech<'<<fii>>' And  Y.tcom<>'T'
 	If This.tipoinventario = 'C' Then
 	   \ And  Tdoc Not  In('20','GI')
 	Endif
 	\)
 	\	   As x Group By x.Coda) As q
-	\	   INNER Join fe_art As b On b.idart=q.Coda Where  prod_acti='A' And (si<>0 Or compras<>0 Or ventas<>0)   Order By b.Descri
+	\	   inner Join fe_art As b On b.idart=q.Coda Where  prod_acti='A' And (si<>0 Or compras<>0 Or ventas<>0)   Order By b.Descri
 	Set Textmerge To
 	Set Textmerge Off
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 *	Messagebox(lC)
@@ -1487,20 +1443,20 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	fii = Cfechas(dfi)
 	todos = 0
 	Create Cursor k(fech D, Tdoc c(2), Serie c(4), Ndoc c(8), ct c(1), Razo c(80)Null, ingr N(10, 2), prei N(10, 2), ;
-		impi N(10, 2), egre N(10, 2), pree N(10, 2), impe N(10, 2), stock N(10, 2), cost N(10, 2), saldo N(10, 2), ;
-		Desc c(100), Unid c(10), Coda N(8), fechaUltimaCompra D, preciosingiv N(10, 2), codigoFabrica c(50), Marca c(50), ;
-		Linea c(50), grupo c(50), Idauto N(12) Default 0, Importe N(12, 2), Cestado c(1) Default 'C', Nreg N(12), si N(12, 2), ;
-		codigoestab c(4), tipoope c(2))
+		  impi N(10, 2), egre N(10, 2), pree N(10, 2), impe N(10, 2), stock N(10, 2), cost N(10, 2), saldo N(10, 2), ;
+		  Desc c(100), Unid c(10), Coda N(8), fechaUltimaCompra D, preciosingiv N(10, 2), codigoFabrica c(50), Marca c(50), ;
+		  Linea c(50), grupo c(50), Idauto N(12) Default 0, Importe N(12, 2), Cestado c(1) Default 'C', Nreg N(12), si N(12, 2), ;
+		  codigoestab c(4), tipoope c(2))
 	Select Coda, Descri As Desc, Unid  From lx Into Cursor xc Order By Descri
 	ff = Cfechas(dff)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\		Select b.fech,b.Ndoc,b.Tdoc,a.Tipo,a.cant,
 	\		Round(a.Prec,2) As Prec,b.Mone,b.Idcliente,
 	\		c.Razo As Cliente,b.idprov,e.Razo As proveedor,
 	\		b.dolar As dola,b.vigv As igv,b.Idauto,a.idkar,a.idart,IFNULL(s.codigoestab,'') As codigoestab
 	\		From fe_kar As a
-	\		INNER Join fe_rcom As b On(b.Idauto=a.Idauto)
+	\		inner Join fe_rcom As b On(b.Idauto=a.Idauto)
 	\		Left Join fe_prov As e On (e.idprov=b.idprov)
 	\		Left Join fe_clie As c  On (c.idclie=b.Idcliente)
 	\		Left Join fe_sucu As s On s.idalma=a.alma
@@ -1511,7 +1467,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\		Order By b.fech,a.Tipo,b.Tdoc,b.Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, 'kkxx') < 1 Then
+	If This.ejecutaconsulta(lc, 'kkxx') < 1 Then
 		Return 0
 	Endif
 	Select xc
@@ -1536,7 +1492,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		saldoi = calma
 		Insert Into k(fech, Razo, stock, cost, saldo, Coda, Desc, Unid, Coda, fechaUltimaCompra, preciosingiv, codigoFabrica, Marca, Linea, grupo, si, codigoestab, tipoope);
 			Values(dfi, "Stock Inicial", calma, costo, Round(calma * costo, 2), ccoda, cdesc, cUnid, nidart, dfechaUltimaCompra, npreciosingiv, ;
-			ccodigoFabrica, cmarca, clinea, cgrupo, Round(calma * costo, 2), Kardex.codigoestab, '16')
+			  ccodigoFabrica, cmarca, clinea, cgrupo, Round(calma * costo, 2), Kardex.codigoestab, '16')
 		sa_to = Round(calma * costo, 2)
 		ing = 0
 		egr = 0
@@ -1602,8 +1558,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 				Crazon = Iif(Isnull(Kardex.proveedor), "                                             ", Kardex.proveedor)
 				Insert Into k(fech, Tdoc, Serie, Ndoc, ct, Razo, ingr, prei, impi, stock, cost, saldo, Coda, Desc, Unid, Idauto, Nreg, Coda, fechaUltimaCompra, preciosingiv, codigoFabrica, Marca, Linea, grupo, codigoestab, tipoope);
 					Values(Kardex.fech, cTdoc, Left(cndoc, 4), Substr(cndoc, 5), "I", Crazon, Kardex.cant, ;
-					xprec, xdebe, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.Idauto, Kardex.idkar, Kardex.idart, dfechaUltimaCompra, npreciosingiv, ;
-					ccodigoFabrica, cmarca, clinea, cgrupo, Kardex.codigoestab, '02')
+					  xprec, xdebe, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.Idauto, Kardex.idkar, Kardex.idart, dfechaUltimaCompra, npreciosingiv, ;
+					  ccodigoFabrica, cmarca, clinea, cgrupo, Kardex.codigoestab, '02')
 			Else
 				If This.agrupadopordia = 'S' Then
 					If m.dFecha = Kardex.fech Then
@@ -1639,8 +1595,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 					Crazon = Iif(Isnull(Kardex.Cliente), "                                             ", Kardex.Cliente)
 					Insert Into k(fech, Tdoc, Serie, Ndoc, ct, Razo, egre, pree, impe, stock, cost, saldo, Coda, Desc, Unid, Coda, fechaUltimaCompra, preciosingiv, codigoFabrica, Marca, Linea, grupo, codigoestab, tipoope);
 						Values(Kardex.fech, Kardex.Tdoc, Left(Kardex.Ndoc, 4), Substr(Kardex.Ndoc, 5), "S", Crazon, Kardex.cant, ;
-						costo, xhaber, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.idart, dfechaUltimaCompra, npreciosingiv, ;
-						ccodigoFabrica, cmarca, clinea, cgrupo, Kardex.codigoestab, '01')
+						  costo, xhaber, calma, costo, sa_to, ccoda, cdesc, cUnid, Kardex.idart, dfechaUltimaCompra, npreciosingiv, ;
+						  ccodigoFabrica, cmarca, clinea, cgrupo, Kardex.codigoestab, '01')
 				Endif
 			Endif
 		Endscan
@@ -1653,14 +1609,14 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		Else
 			Insert Into k(Razo, ingr, impi, egre, impe, Desc, Unid, Coda, Importe, Cestado, Coda, fechaUltimaCompra, preciosingiv, codigoFabrica, Marca, Linea, grupo) Values;
 				("TOTALES ->:", ing, xtdebe, egr, xthaber, cdesc, cUnid, ccoda, sa_to, 'T', nidart, dfechaUltimaCompra, npreciosingiv, ;
-				ccodigoFabrica, cmarca, clinea, cgrupo)
+				  ccodigoFabrica, cmarca, clinea, cgrupo)
 		Endif
 		Select xc
 		Skip
 	Enddo
 	Return 1
 	Endfunc
-	Function kardexindividualxsys3(Ccursor)
+	Function kardexindividualxsys3(ccursor)
 	If This.nidart < 1 Then
 		This.Cmensaje = 'Seleccione un Producto'
 		Return 0
@@ -1668,27 +1624,27 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	dfechaI = This.dfi
 	dfechaf = This.dff
 	F = Cfechas(This.dff)
-	Create Cursor (Ccursor)(Fecha D, Tdoc c(2), dcto c(12), Razo c(40), ingr N(12, 2), ;
-		egre N(12, 2), saldo N(12, 2), Fechavto D Null, lote c(30), Moneda c(12), Precio N(10, 2), Refe c(10)Null, usua c(10)Null, ;
-		FUsua Datetime Null, usua1 c(10)Null, tipomvto c(20), cant1 N(12, 2), Unidad c(20))
+	Create Cursor (ccursor)(Fecha D, Tdoc c(2), dcto c(12), Razo c(40), ingr N(12, 2), ;
+		  egre N(12, 2), saldo N(12, 2), Fechavto D Null, lote c(30), Moneda c(12), Precio N(10, 2), Refe c(10)Null, usua c(10)Null, ;
+		  FUsua Datetime Null, usua1 c(10)Null, tipomvto c(20), cant1 N(12, 2), Unidad c(20))
 	Set Textmerge On
 	Set Textmerge To Memvar ejecuta Noshow Textmerge
-	\   Select D.Ndo2,D.fech,D.Ndoc,D.Tdoc,a.Tipo,D.Mone As Cmoneda,a.cant*a.kar_equi As cant,D.FUsua,IFNULL(g.nomb,'') As usua1,
+	\   Select D.Ndo2,D.fech,D.Ndoc,D.Tdoc,a.Tipo,D.Mone As Cmoneda,a.cant*a.kar_equi As cant,D.FUsua,IFNULL(g.nomb,'') As usua1,D.codt,
 	\   a.Prec,D.vigv As igv,D.dolar,F.nomb As usua,D.Idcliente As codc,b.Razo As Cliente,D.idprov As codp,c.Razo As proveedor,D.Deta,a.kar_equi,a.kar_unid,
 	\   a.cant As Cantidad,a.kar_alma1
 	If Lower(Alltrim(Sys(2003))) = 'xsys3' Then
 	\,a.kar_fvto,a.kar_lote
 	Endif
 	\   From fe_kar As a
-	\   INNER Join fe_rcom As D On (D.Idauto=a.Idauto)
+	\   inner Join fe_rcom As D On (D.Idauto=a.Idauto)
 	\   Left Join fe_prov As c On(D.idprov=c.idprov)
 	\   Left Join fe_clie As b On(D.Idcliente=b.idclie)
-	\   INNER Join fe_usua As F On(F.idusua=D.idusua)
+	\   inner Join fe_usua As F On(F.idusua=D.idusua)
 	\   Left Join fe_usua As g On (g.idusua=D.idusua1)
 	\   Where a.idart=<<This.nidart>> And a.alma=<<This.codtienda>> And D.Acti<>'I' And D.fech<='<<f>>' And a.Acti<>'I' Order By D.fech,D.tipom,a.idkar
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(ejecuta, 'kardex') < 1
+	If This.ejecutaconsulta(ejecuta, 'kardex') < 1
 		Return 0
 	Endif
 	Sw = "N"
@@ -1719,10 +1675,22 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 				calma = calma + cant
 				ing = ing + cant
 				If Isnull(Kardex.proveedor)
-					Crazon = 'Ingresa Desde ' + Iif(Kardex.kar_alma1 > 0, RetornaNAlmacen(Kardex.kar_alma1), "")
+					If This.codtienda = Val(Kardex.Ndo2)
+						nh = Kardex.codt
+					Else
+						nh = Val(Kardex.Ndo2)
+					Endif
+					m.nindice = Ascan(_Screen.Tiendas, nh)
+					If m.nindice > 0 Then
+						nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
+						Crazon = 'Ingresa Desde ' + Iif(nh > 0, _Screen.Tiendas[m.nfila, 2], "")
+					Else
+						Crazon = ''
+					Endif
 				Else
 					Crazon = Kardex.proveedor
 				Endif
+
 				Do Case
 				Case Kardex.Tdoc = "01" Or Kardex.Tdoc = "09"
 					cm = "Compras"
@@ -1735,14 +1703,25 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 				Endcase
 				Insert Into tmpk(Fecha, Tdoc, dcto, Razo, ingr, saldo, Moneda, Precio, usua, FUsua, usua1, tipomvto, cant1, Unidad, Fechavto, lote);
 					Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, ;
-					Iif(Kardex.Cmoneda = 'S', 'Soles', 'Dólares'), Nprecio, Kardex.usua, Kardex.FUsua, Kardex.usua1, cm, Kardex.Cantidad, Kardex.kar_unid, dfvto, clote)
+					  Iif(Kardex.Cmoneda = 'S', 'Soles', 'Dólares'), Nprecio, Kardex.usua, Kardex.FUsua, Kardex.usua1, cm, Kardex.Cantidad, Kardex.kar_unid, dfvto, clote)
 			Else
 				calma = calma - cant
 				egr = egr + cant
 				If Isnull(Kardex.Cliente)
-					Crazon = 'Salida A ' + Iif(Val(Kardex.Ndo2) > 0, RetornaNAlmacen(Kardex.Ndo2), "")
+					If This.codtienda = Val(Kardex.Ndo2)
+						nh = Kardex.codt
+					Else
+						nh = Val(Kardex.Ndo2)
+					Endif
+					m.nindice = Ascan(_Screen.Tiendas, nh)
+					If m.nindice > 0 Then
+						nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
+						Crazon = 'Salida A ' + Iif(m.nindice > 0, _Screen.Tiendas[m.nfila, 2], "")
+					Else
+						Crazon = 'Salida '
+					Endif
 				Else
-					Crazon = Kardex.Cliente
+					Crazon = Alltrim(Kardex.Cliente)
 				Endif
 				Do Case
 				Case Kardex.Tdoc = "01" Or Kardex.Tdoc = "03" Or Kardex.Tdoc = "20"
@@ -1754,24 +1733,24 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 				Endcase
 				Insert Into tmpk(Fecha, Tdoc, dcto, Razo, egre, saldo, Moneda, Precio, usua, FUsua, Refe, usua1, tipomvto, cant1, Unidad, Fechavto, lote);
 					Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, Iif(Kardex.Cmoneda = 'S', 'Soles', 'Dólares'), Nprecio, ;
-					Kardex.usua, Kardex.FUsua, "", Kardex.usua1, cm, Kardex.Cantidad, Kardex.kar_unid, dfvto, clote)
+					  Kardex.usua, Kardex.FUsua, "", Kardex.usua1, cm, Kardex.Cantidad, Kardex.kar_unid, dfvto, clote)
 			Endif
 		Endif
 	Endscan
 	Insert Into tmpk(Razo, ingr, egre)Values("TOTALES ->:", ing, egr)
 	Return 1
 	Endfunc
-	Function calcularinventariocontable(Ccursor)
+	Function calcularinventariocontable(ccursor)
 	dFecha = Cfechas(This.Fecha)
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 	  select a.idart,c.descri,c.unid,cant,a.prec as  precio,
 	  tipo,d.dolar as dola,d.idauto,d.mone
 	  from fe_kar as a
 	  inner join fe_art as c on(c.idart=a.idart)
 	  inner join fe_rcom as d ON(d.idauto=a.idauto)
 	  where  fech<='<<dfecha>>' and a.acti<>'I' and d.acti<>'I'  and d.tcom<>'T' and tdoc not in('GI','20') order by a.idart,fech,a.tipo,d.tdoc,d.ndoc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, "inve") < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, "inve") < 1 Then
 		Return 0
 	Endif
 	Select idart, Descri, Unid, 0000000.00 As alma, 0000000.0000 As costo, 00000000.00 As Importe From inve Where idart = -1 Into Cursor inventario Readwrite
@@ -1838,18 +1817,18 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	TEXT To lC Noshow
+	Text To lc Noshow
 	   INSERT INTO fe_rcom(tdoc,form,ndoc,fech,fecr,deta,valor,igv,impo,ndo2,mone,dolar,vigv,tcom,idprov,tipom,fusua,idusua,codt)
 	   VALUES ('AJ','E',?cndoc,?df,?df,'',0,0,0,'','S',3.85,1.18,'1',0,'1',?dfo,3,1);
-	ENDTEXT
-	If This.Ejecutarsql(lC) < 1 Then
+	Endtext
+	If This.Ejecutarsql(lc) < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	TEXT To lC Noshow
+	Text To lc Noshow
       SELECT LAST_INSERT_ID() as u FROM fe_rcom
-	ENDTEXT
-	If This.EJECutaconsulta(lC, 'ul') < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, 'ul') < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -1860,10 +1839,10 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		nidart = xinv.Coda
 		ncant = (xinv.alma * (-1))
 		xprec = xinv.costo
-		TEXT To lC Noshow
+		Text To lc Noshow
             insert into fe_kar(idart,tipo,cant,prec,idauto)values(?nidart,'C',?ncant,?xprec,?nid)
-		ENDTEXT
-		If This.Ejecutarsql(lC) < 1
+		Endtext
+		If This.Ejecutarsql(lc) < 1
 			Sw = 0
 			Exit
 		Endif
@@ -1878,8 +1857,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	This.Cmensaje = 'Ok'
 	Return  1
 	Endfunc
-	Function mostrardiferenciasinventarios(Ccursor)
-	TEXT To lC Noshow Textmerge Pretext 7
+	Function mostrardiferenciasinventarios(ccursor)
+	Text To lc Noshow Textmerge Pretext 7
       SELECT idart,descri,unid,uno+dos+tre+cua as stocki,prod_stoc,if((uno+dos+tre)>0,if((uno+dos+tre+cua)-prod_stoc>0,(uno+dos+tre+cua)+prod_stoc,0),(uno+dos+tre+cua)) as difei,
       if(prod_stoc>0,if((prod_stoc-(uno+dos+tre+cua))>0,prod_stoc-(uno+dos+tre+cua),0),prod_stoc) as difec,
       ifnull(round(if(tmon='S',((a.prec*t.igv)+b.prec)*1.05,((a.prec*t.igv*if(prod_dola>0,prod_dola,t.dola))+b.prec)*1.05),2),0) as pre1,
@@ -1887,19 +1866,19 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
       ifnull(round(if(tmon='S',((a.prec*t.igv)+b.prec),((a.prec*t.igv*if(prod_dola>0,prod_dola,t.dola))+b.prec)),2),0) as Costoreferencial
       from fe_art as a
       inner join fe_fletes as b on b.idflete=a.idflete, fe_gene as t order by descri
-	ENDTEXT
-	If  This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If  This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendapsysu(Ccursor)
+	Function calcularstockportiendapsysu(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow
+	Set Textmerge To Memvar lc Noshow
 	\ Select a.idart As Nreg,a.idart,
 	\		Left(Concat(Trim(D.dcat),' ',Substr(b.Descri,Instr(b.Descri,',')+1),' ',Substr(b.Descri,1,Instr(b.Descri,',')-1)),150) As Descr,
 	\		b.Unid,b.prod_unid1,
@@ -1913,13 +1892,13 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\		From (Select Sum(Case a.alma When 1 Then If(Tipo='C',cant*a.kar_equi,-cant*a.kar_equi) Else 0 End) As uno,
 	\		Sum(Case a.alma When 2 Then If(Tipo='C',cant*a.kar_equi,-cant*a.kar_equi) Else 0 End) As Dos,idart
 	\		From fe_kar As a
-	\		INNER Join fe_rcom As c On c.Idauto=a.Idauto
+	\		inner Join fe_rcom As c On c.Idauto=a.Idauto
 	\		Where a.Acti='A' And c.Acti='A' And c.fech<='<<f1>>'
 	If This.codtienda > 0 Then
 	     \And a.alma=<<This.codtienda>>
 	Endif
 	\ Group By a.idart Having uno<>0 Or Dos<>0) As a
-	\		INNER Join fe_art As b On a.idart=b.idart INNER Join fe_cat As D On D.idcat=b.idcat
+	\		inner Join fe_art As b On a.idart=b.idart inner Join fe_cat As D On D.idcat=b.idcat
 	\		Where b.prod_acti<>'I'
 	If This.Linea > 0 Then
         \And b.idcat=<<This.Linea>>
@@ -1928,17 +1907,17 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	      \And b.idmar=<<This.Marca>>
 	Endif
 	\Order By b.Descri;
-	Set Textmerge Off
+		Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function kardexindividualcontableporEmpresa(Ccursor)
+	Function kardexindividualcontableporEmpresa(ccursor)
 *   and tdoc in("01","03","07","08","09","II")
 	fi = Cfechas(This.dff)
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
        SELECT b.fech,b.ndoc,b.tdoc,a.tipo,a.cant*kar_equi as cant,a.prec,b.mone,b.idcliente,c.razo as cliente,b.idprov,e.razo as proveedor,
        b.dolar as dola,b.vigv as igv,kar_equi from fe_kar as a
        inner join fe_rcom as b ON(b.idauto=a.idauto)
@@ -1948,15 +1927,15 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
        AND ((tdoc IN("01","03","07","08") AND tipo='V') OR (tdoc IN("01")  AND tipo='C'))
        and b.codt=<<this.codtienda>>
        OrDER BY b.fech,b.tipom,b.ndoc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function InventarioContableResumidoportienda(Ccursor)
+	Function InventarioContableResumidoportienda(ccursor)
 	Fecha = Cfechas(This.Fecha)
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 	  select a.idart,left(concat(trim(t.dcat),' ',substr(c.descri,instr(c.descri,',')+1),' ',substr(c.descri,1,instr(c.descri,',')-1)),150) as descri,
 	  c.prod_unid1 as unid,cant*kar_equi as cant,if(tipo='C',a.prec*if(d.mone<>'S',d.dolar,1),1) as precio,tipo,kar_equi from fe_kar as a
 	  inner join fe_art as c on(c.idart=a.idart)
@@ -1966,24 +1945,24 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
       AND ((tdoc IN("01","03","07","08") AND tipo='V') OR (tdoc IN("01")  AND tipo='C'))
 	  and d.codt=<<this.codtienda>>
 	  order by a.idart,d.fech,a.tipo
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function informeAjustes(Ccursor)
+	Function informeAjustes(ccursor)
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\   Select Ndoc As dcto,fech As Fecha,Deta As detalle,valor,igv,Impo,u.nomb As usuario,FUsua,Descri As Producto,Unid,cant As Cantidad,k.Prec As Precio,
 	\   T.nomb As tienda,r.Idauto
 	\   From fe_rcom As r
-	\   INNER Join fe_kar As k On k.Idauto=r.Idauto
-	\   INNER Join fe_art As a On a.idart=k.idart
-	\   INNER Join fe_sucu As T On T.idalma=r.codt
-	\   INNER Join fe_usua As u On u.`idusua`=r.`idusua`
+	\   inner Join fe_kar As k On k.Idauto=r.Idauto
+	\   inner Join fe_art As a On a.idart=k.idart
+	\   inner Join fe_sucu As T On T.idalma=r.codt
+	\   inner Join fe_usua As u On u.`idusua`=r.`idusua`
 	\    Where fech Between '<<f1>>' And '<<f2>>' And r.Acti='A' And k.Acti='A' And Tdoc='AJ'
 	If This.codtienda > 0 Then
 	\   And r.codt=<<This.codtienda>>
@@ -1991,18 +1970,42 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\    Order By fech,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockportiendaxpsysg(Ccursor)
+	Function informeAjustespsysg(ccursor)
+	f1 = Cfechas(This.dfi)
+	f2 = Cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\   Select Ndoc As dcto,fech As Fecha,Deta As detalle,valor,igv,Impo,u.nomb As usuario,FUsua,Descri As Producto,Unid,cant As Cantidad,k.Prec As Precio,
+	\   T.nomb As tienda,r.Idauto
+	\   From fe_rcom As r
+	\   inner Join fe_kar As k On k.Idauto=r.Idauto
+	\   inner Join fe_art As a On a.idart=k.idart
+	\   inner Join fe_sucu As T On T.idalma=r.codt
+	\   inner Join fe_usua As u On u.`idusua`=r.`idusua`
+	\    Where fech Between '<<f1>>' And '<<f2>>' And r.Acti='A' And k.Acti='A' And Tdoc In('AJ','II')
+	If This.codtienda > 0 Then
+	\   And r.codt=<<This.codtienda>>
+	Endif
+	\    Order By fech,Ndoc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function calcularstockportiendaxpsysg(ccursor)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	f1 = Cfechas(This.Fecha)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select  a.idart As Nreg, a.idart, b.Descri As Descr, b.prod_unid1, b.Unid, Cast(a.uno As Decimal(10,2)) As uno, Cast(a.Dos As Decimal(10,2)) As Dos,
 	\Cast(a.tres As Decimal(10,2)) As tres, Cast(a.cuatro As Decimal(10,2)) As cuatro,Cast(a.cinco As Decimal(10,2)) As cinco,Cast(a.seis As Decimal(10,2)) As seis,
 	\Cast((a.uno + a.Dos + a.tres + a.cuatro+a.cinco+a.seis) As Decimal(10,2)) As Total,
@@ -2032,9 +2035,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  \,Cast(0 As unsigned) As alma
 	Endif
 	\ From
-	\fe_kar As k INNER Join fe_rcom As r On r.Idauto = k.Idauto
+	\fe_kar As k inner Join fe_rcom As r On r.Idauto = k.Idauto
 	\Where r.fech <= '<<f1>>' And r.Acti <> 'I' And k.Acti <> 'I' Group By k.idart ) As a
-	\INNER Join fe_art As b On b.idart = a.idart,fe_gene As v
+	\inner Join fe_art As b On b.idart = a.idart,fe_gene As v
 	\Where b.prod_acti <> 'I'
 	If This.Linea > 0 Then
         \And b.idcat=<<This.Linea>>
@@ -2045,14 +2048,14 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\ Order By b.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function mostrarlistaparaajuste(Ccursor)
+	Function mostrarlistaparaajuste(ccursor)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
          \Select b.idart As Nreg,prod_cod1,b.Descri As Descr,b.Unid,
 	Do Case
 	Case This.codtienda  = 1
@@ -2071,25 +2074,25 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
      \,b.idart,If(tmon='S',Prec,Prec*v.dola) As costo From fe_art  As b, fe_gene As v Where prod_acti='A' Order By b.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listarTraspasosxrecibir(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function listarTraspasosxrecibir(ccursor)
+	Text To lc Noshow Textmerge
         select  ndoc,fech,y.nomb as salida,z.nomb as ingreso,idauto FROM fe_rcom as a
        INNER JOIN fe_sucu as y ON y.idalma=a.codt
        inner join fe_sucu as z on z.idalma=a.ndo2
        WHERE a.acti<>'I' and rcom_reci='P' AND tcom='T' and tdoc<>'PR'  ORDER BY ndoc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, "ldctos") < 1
+	Endtext
+	If This.ejecutaconsulta(lc, "ldctos") < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listarpendientesporentregar(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function listarpendientesporentregar(ccursor)
+	Text To lc Noshow Textmerge
     select a.idart AS coda,
     `a`.`descri` AS `Producto`,  `a`.`unid`   AS `Unidad`,  `a`.`peso`,  `a`.`uno`,  `a`.`dos`, `d`.`tdoc` ,  `d`.`ndoc`   AS `ndoc`,
     `d`.`idauto` AS `idauto`,  `e`.`razo`   AS `Cliente`,  `e`.`dire` ,`e`.`ciud`,  `e`.`nruc` ,  `d`.`fech`,  `e`.`ndni`,
@@ -2100,8 +2103,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
     JOIN `fe_clie` `e` ON `e`.`idclie` = `d`.`idcliente`
     JOIN `fe_usua` `f` ON `f`.`idusua` = `d`.`idusua`
     ORDER BY tdoc,ndoc,descri
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1
 		Return 0
 	Endif
 	Return 1
@@ -2113,9 +2116,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	TEXT To lcad Noshow Textmerge
+	Text To lcad Noshow Textmerge
      Update fe_rcom Set rcom_idtr = <<nit>> Where Idauto = <<nid>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lcad) < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -2123,18 +2126,18 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Select dvtas
 	Go Top
 	Scan All
-		TEXT To lkar Noshow Textmerge
+		Text To lkar Noshow Textmerge
 		    UPDATE fe_kar SET alma=0 where idkar=<<dvtas.idkar>>
-		ENDTEXT
+		Endtext
 		If This.Ejecutarsql(lkar) < 1 Then
 			xy = 0
 			Exit
 		Endif
-		lC = 'ProIngresaPdtesEntrega'
-		TEXT To lpent Noshow Textmerge
+		lc = 'ProIngresaPdtesEntrega'
+		Text To lpent Noshow Textmerge
         (<<dvtas.idart>>,<<dvtas.cant>>,<<dvtas.idauto>>,<<goapp.nidusua>>,'<<ID()>>',<<dvtas.prec>>)
-		ENDTEXT
-		If This.EJECUTARP(lC, lpent) < 1 Then
+		Endtext
+		If This.EJECUTARP(lc, lpent) < 1 Then
 			xy = 0
 			Exit
 		Endif
@@ -2155,11 +2158,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function listarpendientesxentregar(Ccursor)
+	Function listarpendientesxentregar(ccursor)
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 	  select  a.idart AS coda,
 	  `a`.`descri` AS `Producto`,  `a`.`unid`   AS `Unidad`,  `a`.`peso`   AS `peso`,  `a`.`uno`    AS `uno`,  `a`.`dos`    AS `dos`,  `d`.`tdoc`   AS `tdoc`,  `d`.`ndoc`   AS `ndoc`,  `d`.`idauto` AS `idauto`,  `e`.`razo`   AS `Cliente`,  `e`.`dire`   AS `dire`,  `e`.`ciud`   AS `ciud`,  `e`.`nruc`   AS `nruc`,  `d`.`fech`   AS `fech`,  `e`.`ndni`   AS `ndni`,
 	  `e`.`idclie` AS `idclie`,  `f`.`nomb`   AS `Usuario`,   p.pedido,p.entregado,p.saldo,pdte_prec   FROM
@@ -2169,8 +2172,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	  JOIN `fe_clie` `e` ON `e`.`idclie` = `d`.`idcliente`
 	  JOIN `fe_usua` `f` ON `f`.`idusua` = `d`.`idusua`
 	  ORDER BY tdoc,ndoc,descri
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2182,16 +2185,16 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	If This.IniciaTransaccion() < 1
 		Return 0
 	Endif
-	TEXT  To lcad Noshow Textmerge
+	Text  To lcad Noshow Textmerge
 	Update fe_rcom Set rcom_idtr = 0 Where Idauto = <<nidx>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lcad) < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	TEXT To lC1 Noshow Textmerge
+	Text To lC1 Noshow Textmerge
 	   UPDATE fe_ipdtes SET pdte_acti='I',pdte_idu1=<<goapp.nidusua>> WHERE pdte_idau=<<nidx>>;
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC1) < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -2199,9 +2202,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Select dvtas
 	Go Top
 	Scan All
-		TEXT To lkar Noshow Textmerge
+		Text To lkar Noshow Textmerge
              UPDATE fe_kar SET alma=<<goapp.tienda>> where idkar=<<dvtas.idkar>>
-		ENDTEXT
+		Endtext
 		If  This.Ejecutarsql(lkar) < 1 Then
 			xy = 0
 			Exit
@@ -2222,12 +2225,12 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function rotacionproductospsysm(Ccursor)
+	Function rotacionproductospsysm(ccursor)
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	cwhere = ""
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow  Textmerge
+	Set Textmerge To Memvar lc Noshow  Textmerge
 	\Select b.idart As prod_coda,a.Descri,a.Unid,m.dmar,b.stocki,b.tingresos,b.tegresos,(b.stocki+b.tingresos-b.tegresos) As sfinal,0 As reposicion,b.ulfc,b.ulfv,b.idart As Coda
 	\From (Select Sum(If(D.fech<'<<f1>>',If(Tipo='C',cant,-cant),0)) As stocki,
 	\Sum(If(D.fech Between '<<f1>>' And '<<f2>>',If(Tipo='C',cant,0),0)) As tingresos,
@@ -2240,14 +2243,14 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	\c.idart
 	\From fe_rcom As D
-	\INNER Join fe_kar As c On c.Idauto=D.Idauto
+	\inner Join fe_kar As c On c.Idauto=D.Idauto
 	\Where D.Acti='A' And c.Acti='A'
 	If This.codtienda > 0 Then
 	   \ And  c.alma=<<This.codtienda>>
 	Endif
    \Group By c.idart Having (stocki+tingresos+tegresos)>0 ) As b
-	\INNER Join fe_art As a On a.idart=b.idart
-	\INNER Join fe_mar As m On m.idmar=a.idmar
+	\inner Join fe_art As a On a.idart=b.idart
+	\inner Join fe_mar As m On m.idmar=a.idmar
 	If This.Marca > 0 Then
 	    \ Where  a.idmar=<<This.Marca>>
 		cwhere = 'S'
@@ -2262,26 +2265,26 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\Order By a.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function mvtospsysl(dFecha, Ccursor)
+	Function mvtospsysl(dFecha, ccursor)
 	F = Cfechas(dFecha)
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 	  select a.idart,c.descri,c.unid,cant,a.prec as  precio, tipo,d.dolar as dola,d.idauto,d.mone
 	  from fe_kar as a
 	  inner join fe_art as c on(c.idart=a.idart)
 	  inner join fe_rcom as d ON(d.idauto=a.idauto)
 	  where  fech<='<<f>>' and a.acti<>'I' and d.acti<>'I'  and d.tcom<>'T'  and tdoc not in('20','GI')   order by a.idart,fech,a.tipo,d.tdoc,d.ndoc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function rotacionproductosxsysg(Ccursor)
+	Function rotacionproductosxsysg(ccursor)
 	If (This.dff - This.dfi) > 60 Then
 		This.Cmensaje = 'Hasta 60 Días'
 		Return 0
@@ -2289,7 +2292,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow  Textmerge
+	Set Textmerge To Memvar lc Noshow  Textmerge
 	\Select a.Descri,a.Unid,b.stocki,Cast(0 As Decimal(14,2)) As impsi,tingresos,impi,b.tegresos As Venta,
     \b.tegresos*(impi/If(b.tingresos>0,b.tingresos,1)) As TcostoVtas,
     \b.Ajustes,Cast(0 As Decimal(10,2)) As impajustes,(b.stocki+b.tingresos-b.tegresos+b.Ajustes) As sfinal,
@@ -2301,37 +2304,37 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
     \Sum(If(D.fech Between '<<f1>>' And '<<f2>>',If(Tdoc='AJ',If(Tipo='C',cant,-cant),0),0)) As Ajustes,
 	\Sum(If(D.fech Between '<<f1>>' And '<<f2>>',If(Tipo='V',cant*Prec,0),0)) As mvtas,c.idart
 	\From fe_rcom As D
-	\INNER Join fe_kar As c On c.Idauto=D.Idauto
+	\inner Join fe_kar As c On c.Idauto=D.Idauto
 	\Where D.Acti='A' And c.Acti='A' And rcom_ccaj<>'C'
 	\Group By c.idart) As b
-	\INNER Join fe_art As a On a.idart=b.idart
+	\inner Join fe_art As a On a.idart=b.idart
     \Order By a.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
-	Select (Ccursor)
+	Select (ccursor)
 	Scan All
 		ncosto = This.costoinicial(Coda, This.dfi)
-		Replace costoi With ncosto, impsi With stocki * ncosto, impajustes With Ajustes * ncosto  In (Ccursor)
+		Replace costoi With ncosto, impsi With stocki * ncosto, impajustes With Ajustes * ncosto  In (ccursor)
 	Endscan
-	Select (Ccursor)
+	Select (ccursor)
 	Go Top
 	Return 1
 	Endfunc
-	Function kardexValorizadoxsysg(Ccursor)
+	Function kardexValorizadoxsysg(ccursor)
 	ff = Cfechas(This.dff)
 	fi =  Cfechas(This.dfi)
-	Create Cursor (Ccursor)(fech D, Tdoc c(2), Serie c(4), Ndoc c(8), ct c(1), Razo c(80)Null, ingr N(10, 2), prei N(10, 2), ;
-		impi N(10, 2), egre N(10, 2), pree N(10, 2), impe N(10, 2), stock N(10, 2), cost N(10, 2), saldo N(10, 2), Idauto N(12) Default 0)
+	Create Cursor (ccursor)(fech D, Tdoc c(2), Serie c(4), Ndoc c(8), ct c(1), Razo c(80)Null, ingr N(10, 2), prei N(10, 2), ;
+		  impi N(10, 2), egre N(10, 2), pree N(10, 2), impe N(10, 2), stock N(10, 2), cost N(10, 2), saldo N(10, 2), Idauto N(12) Default 0)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select b.fech,b.Ndoc,Tdoc,a.Tipo,a.cant,If(Mone='S',Round(a.Prec,2),Round(a.Prec*b.dolar,2)) As Prec,
 	\b.Mone,a.dsnc,a.dsnd,a.gast,b.Idcliente,c.Razo As Cliente,b.idprov,e.Razo As proveedor,
 	\b.dolar As dola,b.vigv As igv,b.Idauto From
 	\fe_kar As a
-	\INNER Join fe_rcom As b On(b.Idauto=a.Idauto)
+	\inner Join fe_rcom As b On(b.Idauto=a.Idauto)
 	\Left Join fe_prov As e On (e.idprov=b.idprov)
 	\Left Join fe_clie As c  On (c.idclie=b.Idcliente)
 	\Where a.idart=<<This.nidart>>  And  b.fech Between '<<fi>>' And '<<ff>>' And a.Acti<>'I' And b.Acti<>'I'  And b.tcom<>'T'
@@ -2345,7 +2348,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, "kardex") < 1 Then
+	If This.ejecutaconsulta(lc, "kardex") < 1 Then
 		Return 0
 	Endif
 	x = 0
@@ -2415,8 +2418,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 				Crazon = Iif(Isnull(Kardex.Cliente), "                                             ", Kardex.Cliente)
 				Insert Into tmp(fech, Tdoc, Serie, Ndoc, ct, Razo, egre, pree, impe, stock, cost, saldo);
 					Values(Kardex.fech, Kardex.Tdoc, Iif(Len(Alltrim(Kardex.Ndoc)) <= 10, Left(Kardex.Ndoc, 3), Left(Kardex.Ndoc, 4)), ;
-					Iif(Len(Alltrim(Kardex.Ndoc)) <= 10, Substr(Kardex.Ndoc, 4), Substr(Kardex.Ndoc, 5)), ;
-					"S", Crazon, Kardex.cant, costo, xhaber, calma, costo, sa_to)
+					  Iif(Len(Alltrim(Kardex.Ndoc)) <= 10, Substr(Kardex.Ndoc, 4), Substr(Kardex.Ndoc, 5)), ;
+					  "S", Crazon, Kardex.cant, costo, xhaber, calma, costo, sa_to)
 			Endif
 		Else
 			cTdoc = Kardex.Tdoc
@@ -2451,8 +2454,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			Crazon = Iif(Isnull(Kardex.proveedor), "                                             ", Kardex.proveedor)
 			Insert Into tmp(fech, Tdoc, Serie, Ndoc, ct, Razo, ingr, prei, impi, stock, cost, saldo, Idauto);
 				Values(Kardex.fech, cTdoc, Iif(Len(Alltrim(Kardex.Ndoc)) <= 10, Left(Kardex.Ndoc, 3), Left(Kardex.Ndoc, 4)), ;
-				Iif(Len(Alltrim(Kardex.Ndoc)) <= 10, Substr(Kardex.Ndoc, 4), Substr(Kardex.Ndoc, 5)), "I", Crazon, Kardex.cant, ;
-				costo, xdebe, calma, costo, sa_to, Kardex.Idauto)
+				  Iif(Len(Alltrim(Kardex.Ndoc)) <= 10, Substr(Kardex.Ndoc, 4), Substr(Kardex.Ndoc, 5)), "I", Crazon, Kardex.cant, ;
+				  costo, xdebe, calma, costo, sa_to, Kardex.Idauto)
 		Endif
 		Select Kardex
 	Endscan
@@ -2468,10 +2471,10 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Function costoinicial(nidart, dfi)
 	ff = Cfechas(dfi)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select a.Tipo,a.cant,If(Mone='S',Round(a.Prec,2),Round(a.Prec*b.dolar,2)) As Prec
 	\From fe_kar As a
-	\INNER Join fe_rcom As b On(b.Idauto=a.Idauto)
+	\inner Join fe_rcom As b On(b.Idauto=a.Idauto)
 	\Where a.idart=<<nidart>>  And  b.fech<'<<ff>>' And a.Acti<>'I' And b.Acti<>'I'  And b.tcom<>'T'
 	If This.solocontable = 1 Then
 	 \ And Tdoc Not In("20","GI")
@@ -2480,7 +2483,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge Off
 	Set Textmerge To
 	This.conerror = 0
-	If This.EJECutaconsulta(lC, "obcostoi") < 1 Then
+	If This.ejecutaconsulta(lc, "obcostoi") < 1 Then
 		This.conerror = 1
 		Return 0
 	Endif
@@ -2527,8 +2530,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	This.stockinicial = calma
 	Return costo
 	Endfunc
-	Function listarprestamos(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function listarprestamos(ccursor)
+	Text To lc Noshow Textmerge
 	    SELECT ndoc,fech,yy.nomb AS salida,z.nomb AS ingreso,
 		IF(tipom='C',CONCAT(TRIM(z.`nomb`),' Presta A ',TRIM(yy.`nomb`)),CONCAT(TRIM(yy.`nomb`),' Le Presta ',TRIM(z.`nomb`))) AS t,
 		x.idauto,tipom,r.codt FROM fe_rcom AS r INNER JOIN
@@ -2538,14 +2541,14 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		INNER JOIN fe_sucu AS yy ON yy.idalma=r.codt
 		INNER JOIN fe_sucu AS z ON z.idalma=r.ndo2
 		ORDER BY ndoc,fech desc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, "ldctos") < 1
+	Endtext
+	If This.ejecutaconsulta(lc, "ldctos") < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listardctoprestamo(nid, ncodt, Ccursor)
-	TEXT To lC Noshow Textmerge Pretext 7
+	Function listardctoprestamo(nid, ncodt, ccursor)
+	Text To lc Noshow Textmerge Pretext 7
 	    SELECT a.descri,a.unid,p.saldo AS cant,y.nomb AS salida,x.nomb AS ingresa,c.ndo2,f.nomb AS usua,c.fusua,c.ndoc,a.idart AS coda,
         c.idauto,c.codt,IF(a.tmon='S',a.prec*v.igv,a.prec*v.dola*v.igv) AS prec,c.fech,tipom,p.saldo FROM fe_rcom AS c INNER JOIN
         (SELECT r.idauto,idart,SUM(IF(tipo='C',cant,-cant)) AS saldo FROM fe_kar AS k
@@ -2556,24 +2559,24 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
         INNER JOIN fe_sucu AS x ON x.idalma=c.ndo2
         INNER JOIN fe_sucu AS y ON y.idalma=c.codt,fe_gene AS v
         order by a.descri
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function informeAjustesprestamostock(Ccursor)
+	Function informeAjustesprestamostock(ccursor)
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\   Select Ndoc As dcto,fech As Fecha,Deta As detalle,valor,igv,Impo,u.nomb As usuario,FUsua,Descri As Producto,Unid,cant As Cantidad,k.Prec As Precio,
 	\   T.nomb As tienda,r.Idauto,rcom_reci
 	\   From fe_rcom As r
-	\   INNER Join fe_kar As k On k.Idauto=r.Idauto
-	\   INNER Join fe_art As a On a.idart=k.idart
-	\   INNER Join fe_sucu As T On T.idalma=r.codt
-	\   INNER Join fe_usua As u On u.`idusua`=r.`idusua`
+	\   inner Join fe_kar As k On k.Idauto=r.Idauto
+	\   inner Join fe_art As a On a.idart=k.idart
+	\   inner Join fe_sucu As T On T.idalma=r.codt
+	\   inner Join fe_usua As u On u.`idusua`=r.`idusua`
 	\    Where fech Between '<<f1>>' And '<<f2>>' And r.Acti='A' And k.Acti='A' And Tdoc='PR'
 	If This.codtienda > 0 Then
 	\   And r.codt=<<This.codtienda>>
@@ -2581,40 +2584,40 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	\    Order By fech,Ndoc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function  verificasaldoprestamo(nid, nidart, ncant, ncodt)
-	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	ccursor = 'c_' + Sys(2015)
+	Text To lc Noshow Textmerge
 	    SELECT idart,SUM(IF(tipo='C',cant,-cant)) AS saldo FROM fe_kar AS k
         INNER JOIN fe_rcom AS r ON r.idauto=k.idauto
         WHERE tdoc='PR' AND r.acti='A' AND k.acti='A' AND r.idauto=<<nid>> AND idart=<<nidart>> and k.alma=<<ncodt>> GROUP BY r.idauto,idart HAVING  saldo>0
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
-	Select (Ccursor)
+	Select (ccursor)
 	If ncant > saldo Then
 		This.Cmensaje = ' Cantidad Mayor al Saldo'
 		Return 0
 	Endif
-	CierraCursor(Ccursor)
+	CierraCursor(ccursor)
 	Return 1
 	Endfunc
 	Function IngresaEntregas(obentrega)
-	lC = "PROingresaentregas"
-	TEXT To lp Noshow Textmerge
+	lc = "PROingresaentregas"
+	Text To lp Noshow Textmerge
 	(<<obentrega.cant>>,<<obentrega.idin>>,<<obentrega.nidguia>>)
-	ENDTEXT
-	If This.EJECUTARP(lC, lp, '') < 1 Then
+	Endtext
+	If This.EJECUTARP(lc, lp, '') < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function calcularstockxsysg(Ccursor)
+	Function calcularstockxsysg(ccursor)
 	dff = Cfechas(This.Fecha)
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
@@ -2623,12 +2626,12 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	  \Select b.Descri As Descr,b.Unid,alma,a.idart
       \From (Select a.idart,Sum(If(Tipo='C',cant,-cant)) As alma From fe_kar As a
-      \INNER Join fe_rcom As c On c.Idauto=a.Idauto
+      \inner Join fe_rcom As c On c.Idauto=a.Idauto
       \Where c.fech<='<<dff>>' And a.Acti<>'I' And c.Acti<>'I'  And c.rcom_ccaj<>'C'  Group By a.idart) As a
-      \INNER Join fe_art As b On a.idart=b.idart
+      \inner Join fe_art As b On a.idart=b.idart
       \Where b.prod_acti<>'I'
 	If This.tipro = 'C'
          \ And b.tipro='C'
@@ -2636,11 +2639,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
       \Order By b.Descri
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Select a.Descr, a.Unid, a.alma, Iif(!Isnull(x.costo), x.costo, 0) As costo, Iif(!Isnull(x.costo), Round(x.costo * a.alma, 2), 0) As valor, a.idart From ;
-		(m.Ccursor)  As a Left Join costos As x On x.idart = a.idart Where alma <> 0 Into Cursor (m.Ccursor)
+		(m.ccursor)  As a Left Join costos As x On x.idart = a.idart Where alma <> 0 Into Cursor (m.ccursor)
 	Return 1
 	Endfunc
 	Function calcularcostospromedio()
@@ -2648,12 +2651,12 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 	  select a.idart,cant,if(tipo='C',a.prec*if(d.mone<>'S',d.dolar,1),1) as precio,tipo from fe_kar as a
 	  inner join fe_rcom as d ON(d.idauto=a.idauto)
 	  where a.acti<>'I' and d.acti<>'I' and d.tcom<>'T' and d.fech<'<<df>>' and a.idart>0  order by a.idart,d.fech,a.tipo
-	ENDTEXT
-	If This.EJECutaconsulta(lC, "invec") < 1
+	Endtext
+	If This.ejecutaconsulta(lc, "invec") < 1
 		Return 0
 	Endif
 	Select idart, Precio As costo From invec Where idart = -1 Into Cursor costos Readwrite
@@ -2708,9 +2711,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Enddo
 	Return 1
 	Endfunc
-	Function consultarmvtosinventariopermanenteValorizado(dfi, dff, Ccursor)
+	Function consultarmvtosinventariopermanenteValorizado(dfi, dff, ccursor)
 	ff = Cfechas(dff)
-	TEXT To lC Noshow Textmerge
+	Text To lc Noshow Textmerge
 		select b.fech,b.ndoc,b.tdoc,a.tipo,a.cant,ROUND(a.prec,2) as prec,b.mone,b.idcliente,c.razo as cliente,b.idprov,e.razo as proveedor,
 		b.dolar as dola,b.vigv as igv,b.idauto,a.idkar,a.idart
 		from fe_kar as a
@@ -2719,23 +2722,33 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		LEFT JOIN fe_clie as c  ON (c.idclie=b.idcliente)
 		WHERE b.fech<='<<ff>>' and a.acti='A' and b.acti='A' and b.tcom<>'T' and b.tdoc not in("20","GI")
 		OrDER BY b.fech,a.tipo,b.tdoc,b.ndoc
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	Endtext
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function rotacionresumida(nidart, Ccursor)
+	Function rotacionresumida(nidart, ccursor)
 	f1 = Cfechas(This.dfi)
 	f2 = Cfechas(This.dff)
-	TEXT To lC Noshow Textmerge
-	SELECT SUM(IF(tipo='C',cant,0)) AS compras,SUM(IF(tipo='V',cant,0)) AS ventas
-	FROM fe_rcom AS r
-	INNER JOIN fe_kar AS k ON k.`idauto`=r.`idauto`
-	WHERE fech BETWEEN '<<f1>>' AND '<<f2>>' AND (idcliente>0 OR idprov>0) AND k.acti='A' AND r.`acti`='A' AND idart=<<m.nidart>>
-	GROUP BY idart
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\Select Sum(If(Tipo='C',cant,0)) As compras,Sum(If(Tipo='V',cant,0)) As ventas
+	\From fe_rcom As r
+	\inner Join fe_kar As k On k.`Idauto`=r.`Idauto`
+	\Where fech Between '<<f1>>' And '<<f2>>' And (Idcliente>0 Or idprov>0) And k.Acti='A' And r.`Acti`='A'
+	If goApp.proyecto = 'psysr' Or goApp.proyecto = 'psysrx' Then
+	\ And idart ='<<m.nidart>>'
+	Else
+	\	And idart =<<m.nidart>>
+	Endif
+	\Group By idart
+	Set Textmerge Off
+	Set Textmerge To
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -2754,9 +2767,9 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	ff = Cfechas(This.dff)
 	fechaf = Cfechas(This.Fecha)
 	Create Cursor (Calias)(Fecha D, Tdoc c(2), dcto c(12), Razo c(40), ingr N(12, 2), ;
-		egre N(12, 2), saldo N(12, 2), Moneda c(12), Precio N(10, 2), Refe c(10)Null, usua c(10)Null, ;
-		FUsua Datetime Null, usua1 c(10)Null, tipomvto c(20), cant1 N(12, 2), Unidad c(20), marcador N(2))
-	TEXT To ejecuta Noshow Textmerge
+		  egre N(12, 2), saldo N(12, 2), Moneda c(12), Precio N(10, 2), Refe c(10)Null, usua c(10)Null, ;
+		  FUsua Datetime Null, usua1 c(10)Null, tipomvto c(20), cant1 N(12, 2), Unidad c(20), marcador N(2))
+	Text To ejecuta Noshow Textmerge
 	   select ifnull(e.ndoc,'')  as nped,d.ndo2,d.fech,d.ndoc,d.tdoc,a.tipo,d.mone as cmoneda,a.cant*a.kar_equi as cant,d.fusua,ifnull(g.nomb,'') as usua1,
 	   a.prec,d.vigv as igv,d.dolar,f.nomb as usua,d.idcliente as codc,b.razo AS cliente,d.idprov as codp,c.razo AS proveedor,d.deta,a.kar_equi,a.kar_unid,
 	   a.cant as Cantidad,kar_chek,ifnull(w.nomv,'') as usuapedido,d.codt
@@ -2769,8 +2782,8 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	   left join fe_usua as g  ON (g.idusua=d.idusua1)
 	   left join fe_vend as w on w.idven=a.codv
 	   WHERE  a.idart=<<This.nidart>> And a.alma=<<This.codtienda>>  and d.acti<>'I'  and d.fech between '<<fi>>' and '<<ff>>' and a.acti<>'I' ORDER BY d.fech,d.tipom,a.idkar
-	ENDTEXT
-	If This.EJECutaconsulta(ejecuta, 'kardex') < 1
+	Endtext
+	If This.ejecutaconsulta(ejecuta, 'kardex') < 1
 		Return 0
 	Endif
 	If This.saldosinicialeskardexunidades(fi, This.nidart, This.codtienda, 'iniciales') < 1 Then
@@ -2795,7 +2808,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			calma = calma + cant
 			ing = ing + cant
 			If Isnull(Kardex.proveedor)
-				If Almacenes.idalma = Val(Kardex.Ndo2)
+				If This.codtienda = Val(Kardex.Ndo2)
 					nh = Kardex.codt
 				Else
 					nh = Val(Kardex.Ndo2)
@@ -2822,26 +2835,22 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			Endcase
 			Insert Into tmpk(Fecha, Tdoc, dcto, Razo, ingr, saldo, Moneda, Precio, usua, FUsua, usua1, tipomvto, marcador);
 				Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, ;
-				Kardex.Cmoneda, Nprecio, Kardex.usua, Kardex.FUsua, Kardex.usua1, cm, Kardex.kar_chek)
+				  Kardex.Cmoneda, Nprecio, Kardex.usua, Kardex.FUsua, Kardex.usua1, cm, Kardex.kar_chek)
 		Else
 			calma = calma - cant
 			egr = egr + cant
 			If Isnull(Kardex.Cliente)
-				If Almacenes.idalma = Val(Kardex.Ndo2)
+				If This.codtienda = Val(Kardex.Ndo2)
 					nh = Kardex.codt
 				Else
 					nh = Val(Kardex.Ndo2)
 				Endif
+				m.nindice = Ascan(_Screen.Tiendas, nh)
 				If m.nindice > 0 Then
-					m.nindice = Ascan(_Screen.Tiendas, nh)
-					If m.nindice > 0 Then
-						nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
-						Crazon = 'Salida A ' + Iif(m.nindice > 0, _Screen.Tiendas[m.nfila, 2], "")
-					Else
-						Crazon = 'Salida '
-					Endif
+					nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
+					Crazon = 'Salida A ' + Iif(m.nindice > 0, _Screen.Tiendas[m.nfila, 2], "")
 				Else
-					Crazon = ''
+					Crazon = 'Salida '
 				Endif
 			Else
 				Crazon = Kardex.Cliente
@@ -2856,11 +2865,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			Endcase
 			Insert Into tmpk(Fecha, Tdoc, dcto, Razo, egre, saldo, Moneda, Precio, usua, FUsua, Refe, usua1, tipomvto, cant1, Unidad, marcador);
 				Values(Kardex.fech, Kardex.Tdoc, Kardex.Ndoc, Crazon, Kardex.cant, calma, Kardex.Cmoneda, Nprecio, ;
-				Alltrim(Kardex.usua) + '-' + Alltrim(Kardex.usuapedido), Kardex.FUsua, Kardex.nped, Kardex.usua1, cm, Kardex.Cantidad, Kardex.kar_unid, Kardex.kar_chek)
+				  Alltrim(Kardex.usua) + '-' + Alltrim(Kardex.usuapedido), Kardex.FUsua, Kardex.nped, Kardex.usua1, cm, Kardex.Cantidad, Kardex.kar_unid, Kardex.kar_chek)
 		Endif
 	Endscan
 	If Sw = 'N'  Then
-		If oprod.calcularstockproductogmoviza(ccoda, Calmacen, 'sinn') < 1 Then
+		If oprod.calcularstockproductogmoviza(ccoda, This.codtienda, 'sinn') < 1 Then
 			This.Cmensaje = oprod.Cmensaje
 			Return 0
 		Endif
@@ -2871,11 +2880,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function kardexinternopsysr(Calias)
-	If !Pemstatus(goApp,'soloestatienda',5) Then
-		AddProperty(goApp,'soloestatienda',0)
+	If !Pemstatus(goApp, 'soloestatienda', 5) Then
+		AddProperty(goApp, 'soloestatienda', 0)
 	Endif
-	If goApp.Soloestatienda=1 And  This.codtienda<>goApp.tienda Then
-		This.Cmensaje='NO Permitido'
+	If goApp.Soloestatienda = 1 And  This.codtienda <> goApp.tienda Then
+		This.Cmensaje = 'NO Permitido'
 		Return 0
 	Endif
 	If Empty(This.ccodart) Then
@@ -2889,25 +2898,25 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	fechaf = Cfechas(This.Fecha)
 	Create Cursor tmpk(Fecha D, Tdoc c(2), dcto c(12), Razo c(40), ingr N(12, 2), egre N(12, 2), saldo N(12, 2), Moneda c(12), Precio N(10, 2), Refe c(10)Null, usua c(30)Null, FUsua Datetime Null, usua1 c(10)Null, tipomvto c(20), Idauto N(8))
 	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
+	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select IFNULL(e.Ndoc,'')  As nped,D.Ndo2,D.fech,D.Ndoc,D.Tdoc,a.Tipo,D.Mone As Cmoneda,a.cant,D.FUsua,IFNULL(g.nomb,'') As usua1,D.codt,
 	\a.Prec,D.vigv As igv,D.dolar,F.nomb As usua,D.Idcliente As codc,b.Razo As Cliente,D.idprov As codp,c.Razo As proveedor,D.Deta,a.alma,D.Idauto
 	\From fe_kar As a
-	\INNER Join fe_rcom As D On (D.Idauto=a.Idauto)
+	\inner Join fe_rcom As D On (D.Idauto=a.Idauto)
 	\Left Join fe_prov As c On(D.idprov=c.idprov)
 	\Left Join fe_clie As b On(D.Idcliente=b.idclie)
 	\Left Join fe_rped As e On(e.idautop=D.idautop)
-	\INNER Join fe_usua As F On(F.idusua=D.idusua)
+	\inner Join fe_usua As F On(F.idusua=D.idusua)
 	\Left Join fe_usua As g   On (g.idusua=D.idusua1)
-	\Where TRIM(a.idart)='<<This.ccodart>>' And a.alma=<<This.codtienda>> And D.Acti<>'I' And D.fech Between  '<<fi>>' And '<<ff>>' And a.Acti<>'I'
+	\Where Trim(a.idart)='<<This.ccodart>>' And a.alma=<<This.codtienda>> And D.Acti<>'I' And D.fech Between  '<<fi>>' And '<<ff>>' And a.Acti<>'I'
 	If This.tipoinventario = 'C' Then
 	\ And D.Tdoc Not In('20','GI')
 	Endif
 	\Order By D.fech,D.tipom,a.idkar
 	Set Textmerge Off
 	Set Textmerge To
-	*MESSAGEBOX(lc)
-	If This.EJECutaconsulta(lC, 'kardex') < 1
+*MESSAGEBOX(lc)
+	If This.ejecutaconsulta(lc, 'kardex') < 1
 		Return 0
 	Endif
 	If This.saldosinicialeskardexpsysr(fi, This.ccodart, This.codtienda, 'iniciales') < 1 Then
@@ -2937,7 +2946,7 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			calma = calma + cant
 			ing = ing + cant
 			If Isnull(Kardex.proveedor)
-				If Almacenes.idalma = Val(Kardex.Ndo2)
+				If This.codtienda = Val(Kardex.Ndo2)
 					nh = Kardex.codt
 				Else
 					nh = Val(Kardex.Ndo2)
@@ -2968,21 +2977,17 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 			calma = calma - cant
 			egr = egr + cant
 			If Isnull(Kardex.Cliente)
-				If Almacenes.idalma = Val(Kardex.Ndo2)
+				If This.codtienda = Val(Kardex.Ndo2)
 					nh = Kardex.codt
 				Else
 					nh = Val(Kardex.Ndo2)
 				Endif
+				m.nindice = Ascan(_Screen.Tiendas, nh)
 				If m.nindice > 0 Then
-					m.nindice = Ascan(_Screen.Tiendas, nh)
-					If m.nindice > 0 Then
-						nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
-						Crazon = 'Salida A ' + Iif(m.nindice > 0, _Screen.Tiendas[m.nfila, 2], "")
-					Else
-						Crazon = 'Salida '
-					Endif
+					nfila = Asubscript(_Screen.Tiendas, m.nindice, 1)
+					Crazon = 'Salida A ' + Iif(m.nindice > 0, _Screen.Tiendas[m.nfila, 2], "")
 				Else
-					Crazon = ''
+					Crazon = 'Salida '
 				Endif
 			Else
 				Crazon = Kardex.Cliente
@@ -3000,9 +3005,10 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		Endif
 	Endscan
 	If Sw = 'N'  Then
-		_Screen.oProductos.Idsesion = This.Idsesion
-		If _Screen.oProductos.calcularstockproductopsysr(TRIM(This.ccodart), This.codtienda, 'sinn') < 1 Then
-			This.Cmensaje = _Screen.oProductos.Cmensaje
+		Set Procedure To   D:\capass\modelos\productos Additive
+		oprod = Createobject("producto")
+		If oprod.calcularstockproductopsysr(Trim(This.ccodart), This.codtienda, 'sinn') < 1 Then
+			This.Cmensaje = oprod.Cmensaje
 			Return 0
 		Endif
 		Insert Into tmpk(Razo, saldo)Values("Stock", sinn.stock)
@@ -3011,7 +3017,41 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function consultarkardexgrifos(ccursor)
+	dfechaI = Cfechas(This.dfi)
+	dfechaf = Cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	   \Select '' As nped,D.Ndo2,D.fech,D.Ndoc,D.Tdoc,a.Tipo,D.Mone As Cmoneda,a.cant,D.FUsua,IFNULL(g.nomb,'') As usua1,
+	   \a.Prec,D.vigv As igv,D.dolar,F.nomb As usua,D.Idcliente As codc,b.Razo As Cliente,D.idprov As codp,c.Razo As proveedor,D.Deta,a.alma
+	   \From fe_kar As a
+	   \inner Join fe_rcom As D On (D.Idauto=a.Idauto)
+	   \Left Join fe_prov As c On(D.idprov=c.idprov)
+	   \Left Join fe_clie As b On(D.Idcliente=b.idclie)
+	   \inner Join fe_usua As F On(F.idusua=D.idusua)
+	   \Left Join fe_usua As g On (g.idusua=D.idusua1)
+	   \Where a.idart=<<This.nidart>> And D.Acti<>'I' And D.fech Between '<<dfechai>>' And  '<<dfechaf>>' And a.Acti<>'I' And D.rcom_ccaj<>'C'
+	If This.codtienda > 0 Then
+	     \ And a.alma=<<This.codtienda>>
+	Endif
+	If This.agrupadopordia = 'S' Then
+	   \Order By D.fech,a.Tipo,D.Tdoc,D.Ndoc
+	Else
+       \Order By D.FUsua,D.fech,D.tipom,D.FUsua
+	Endif
+	Set Textmerge Off
+	Set Textmerge To
+	If This.ejecutaconsulta(lc, ccursor) < 1 Then
+		Return  0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
 
 
 

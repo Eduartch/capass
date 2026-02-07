@@ -113,7 +113,7 @@ Endfunc
 Function preguntaguardar(cmsje)
 Local r As Integer
 cmensaje=Iif(Parameters()=0,"¿Desea Guardar Los Datos Ingresados [SI/NO/Cancelar]?",cmsje)
-r=Messagebox(cmensaje,32+3+0,"Sisven")
+r=Messagebox(cmensaje,35,MSGTITULO)
 Return r
 Endfunc
 ************************************
@@ -376,15 +376,6 @@ Else
 	Else
 		Return 1
 	Endif
-Endif
-Endfunc
-*****************************************************
-Function MuestraConceptos(ctipo)
-If SQLExec(goapp.bdconn,"call promuestraConceptos(?ctipo)","conceptos")<=0 Then
-	errorbd(ERRORPROC)
-	Return 0
-Else
-	Return 1
 Endif
 Endfunc
 ********************************
@@ -3493,11 +3484,10 @@ TEXT to lp noshow
      (?goapp.npara1)
 ENDTEXT
 If EJECUTARP(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+ 'Anulando Datos de Libro Caja y Bancos')
+	errorbd(ERRORPROC+ ' Anulando Datos de Libro Caja y Bancos')
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
 Endfunc
 ************************
 Function VerificaSiestaRcajayBancos(np1)
@@ -9359,9 +9349,8 @@ Function AnulaTransaccionConMotivo(ctdoc,cndoc,ctipo,nauto,cu,ga,df,cu1,cglosa)
 If SQLExec(goapp.bdconn,"call proAnulaTransacciones(@estado,?ctdoc,?cndoc,?ctipo,?nauto,?cu,?ga,?df,?cu1,?cglosa)") < 1
 	errorbd(ERRORPROC)
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
 Endfunc
 ************************************************
 Function IngresaDetalleVTa(np1,np2,np3,np4,np5,np6,np7)

@@ -16,6 +16,8 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 	dni = ""
 	cmodo = ""
 	Yaregistrado = ""
+	ccontacto=""
+	cfono=""
 	Function listarTransportistax(np1, np2, ccur)
 	Local lC, lp
 	m.lC		 = 'ProMuestraTransportista'
@@ -45,9 +47,9 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 	Case !Empty(This.Placa) And Len(Alltrim(This.Placa)) < 5
 		This.Cmensaje = 'Número de Placa NO Válida'
 		Return 0
-	Case Empty(This.Placa) AND !EMPTY(this.placa1)
+	Case Empty(This.Placa) And !Empty(This.placa1)
 		This.Cmensaje = 'Se debe registrar la Placa del vehiculo como Principal '
-		Return 0	
+		Return 0
 	Case This.Ruc=m.cnruc And This.TipoT='01'
 		This.Cmensaje='El Transportista debe ser Privado'
 		Return 0
@@ -96,6 +98,33 @@ Define Class Transportista As OData Of 'd:\capass\database\data.prg'
 		ENDTEXT
 	Endif
 	If This.EJECUTARP(lC, lp) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Actualizar10()
+	If This.VAlidar() < 1 Then
+		Return 0
+	Endif
+    goApp.npara1=this.Placa
+	goApp.npara2=this.nombre
+	goApp.npara3=this.Direccion
+	goApp.npara4=this.chofer
+	goApp.npara5=this.brevete
+	goApp.npara6=this.marca
+	goApp.npara7=this.registromtc
+	goApp.npara8=this.idtr
+	goApp.npara9=this.placa1
+	goApp.npara10=this.TipoT
+	goApp.npara11=this.Constancia
+	goApp.npara12=this.ccontacto
+	goApp.npara13=this.cfono
+	TEXT To lc NOSHOW 
+      UPDATE fe_tra SET placa=?goapp.npara1,razon=?goapp.npara2,dirtr=?goapp.npara3,nombr=?goapp.npara4,breve=?goapp.npara5,
+      marca=?goapp.npara6,cons=?goapp.npara7,placa1=?goapp.npara9,tran_tipo=?goapp.npara10,tran_cons1=?goapp.npara11,
+      tran_cont=?goapp.npara12,tran_fono=?goapp.npara13 where idtra=?goapp.npara8
+	ENDTEXT
+	If This.EJECUTARsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1

@@ -49,16 +49,16 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function Muestratiendasx(Ccursor)
-	IF this.idsesion>0 then
-	   SET DATASESSION TO this.idsesion
-	ENDIF    
+	If This.idsesion>0 Then
+		Set DataSession To This.idsesion
+	Endif
 	If Alltrim(goApp.datostdas) <> 'S' Then
 		If This.consultardata(Ccursor) < 1 Then
 			Return 0
 		Endif
 	Else
 		Create Cursor a_tdas From Array cfieldsfesucu
-		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goapp.xopcion)) + '.json'
+		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'a' + Alltrim(Str(goApp.xopcion)) + '.json'
 		conerror = 0
 		If File(m.cfilejson) Then
 			oResponse = nfJsonRead(m.cfilejson)
@@ -84,8 +84,8 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function almacenesmovizatrujillo(Ccursor)
-	If This.Idsesion > 0 Then
-		Set DataSession To This.Idsesion
+	If This.idsesion > 0 Then
+		Set DataSession To This.idsesion
 	Endif
 	TEXT To lC Noshow Textmerge
 	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2) ORDER BY nomb
@@ -96,8 +96,8 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function almaceneslyg(Ccursor)
-	If This.Idsesion > 0 Then
-		Set DataSession To This.Idsesion
+	If This.idsesion > 0 Then
+		Set DataSession To This.idsesion
 	Endif
 	TEXT To lC Noshow Textmerge
 	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9,10,11) ORDER BY idalma
@@ -108,11 +108,15 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function consultardata(Ccursor)
-	If This.Idsesion > 1 Then
-		Set DataSession To This.Idsesion
+	If This.idsesion > 1 Then
+		Set DataSession To This.idsesion
+	Endif
+	If !Pemstatus(goApp,'productoscp',5) Then
+		AddProperty(goApp,'productoscp','')
 	Endif
 	lC = "PROMUESTRAALMACENES"
-	If This.EJECUTARP(lC, "", Ccursor) < 1 Then
+	lp=""
+	If This.EJECUTARP(lC,lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)

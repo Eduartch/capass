@@ -232,7 +232,7 @@ Define Class E_MAIL As Custom
 	Endfunc
 *********************************
 	Function SolicitaContraseña(cemail)
-	URL=DOMINIO2+'i.php'
+	URL=DOMINIO2+'icorreo.php'
 	TEXT To cdata Noshow Textmerge
 	{
 	"correo":"<<cemail>>"

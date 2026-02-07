@@ -155,14 +155,17 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	Return 1
 	Endfunc
 	Function CreaProductospsysrx()
+	If This.buscarsiestacodigo(Trim(This.ccoda)) < 1 Then
+		Return 0
+	Endif
 	lC = 'FUNCREAPRODUCTOS'
 	cur = 'c_' + Sys(2015)
 	Set Textmerge On
 	Set Textmerge To Memvar lp Noshow Textmerge
-	\('<<this.ccoda>>', '<<this.cdesc>>', '<<this.cunid>>', << This.nprec >>, << This.ncosto >>,
-	\<< This.np1 >>, << This.np2 >>, << This.np3 >>,<< This.npeso >>, << This.ccat >>, << This.cmar >>, '<<this.ctipro>>', << This.nflete >>,
-	\'<<this.cm>>', '<<this.cidpc>>', << This.ncome >>, << This.ncomc >>,<< This.nutil1 >>, << This.nutil2 >>, << This.nutil3 >>, << goApp.nidusua >>,
-	\<< This.nsmax >>, << This.nsmin >>, << This.nidcosto >>, << This.ndolar >>
+	\('<<alltrim(this.ccoda)>>', '<<ALLTRIM(this.cdesc)>>', '<<this.cunid>>', <<This.nprec>>, <<This.ncosto>>,
+	\<<This.np1>>, <<This.np2>>, <<This.np3>>,<<This.npeso>>, <<This.ccat>>, <<This.cmar>>, '<<this.ctipro>>', <<This.nflete>>,
+	\'<<this.cm>>', '<<this.cidpc>>', <<This.ncome>>, <<This.ncomc>>,<<This.nutil1>>, <<This.nutil2>>, <<This.nutil3>>, <<goApp.nidusua>>,
+	\<<This.nsmax>>, <<This.nsmin>>, <<This.nidcosto>>, <<This.ndolar>>
 	If goApp.Lectorcodigobarras = 'S' Then
 		If _Screen.vtasexoneradas <> 'S' Then
 	  \,'<<this.ccodigo1>>')
@@ -178,9 +181,20 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
+*!*		MESSAGEBOX(lp)
 	nid = This.EJECUTARf(lC, lp, cur)
-	If Len(Alltrim(nid)) = 0 Then
-		Return 0
+	If Vartype(nid) = 'N' Then
+		If m.nid < 1 Then
+			Return 0
+		Endif
+	Else
+		If  Vartype(nid) = 'C' Then
+*!*		wait WINDOW 'hola'+VARTYPE(m.nid)
+*!*		wait WINDOW nid
+			If Len(Alltrim(nid)) = 0 Then
+				Return 0
+			Endif
+		Endif
 	Endif
 	Return 1
 	Endfunc
@@ -237,12 +251,30 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 		Return 0
 	Endif
 	If REgdvto(Ccursor) < 1 Then
-		This.Cmensaje="Código " + Alltrim(np1) + " NO Regsitrado"
+		This.Cmensaje = "Código " + Alltrim(np1) + " NO Regsitrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarsiestacodigo(ccoda)
+	Ccursor = 'c_' + Sys(2015)
+	Text To lC Noshow Textmerge
+	SELECT idart FROM fe_art WHERE idart='<<TRIM(ccoda)>>' AND prod_acti='A' LIMIT 1;
+	Endtext
+	If This.ejecutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor )
+	If Reccount() > 0 Then
+		This.Cmensaje = 'Código Ya Registrado'
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
+
 
 
 

@@ -124,6 +124,10 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 			TEXT TO lscierra NOSHOW TEXTMERGE
 			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (5,6,7,8) AND lect_acti='A' AND lect_esta='A'
 			ENDTEXT
+		Case goApp.Isla = 4
+			TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (9,10) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT	
 		Endcase
 	Endcase
 	q = 1
@@ -203,7 +207,6 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	\WHERE lect_acti='A' and lect_esta='A' and lect_idin=<<this.nidlectura>>
 	Set Textmerge Off
 	Set Textmerge To
-*and lect_fech='<<f>>'
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
@@ -270,6 +273,10 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 			TEXT TO lscierra NOSHOW TEXTMERGE
 			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (5,6,7,8) AND lect_acti='A' AND lect_esta='A'
 			ENDTEXT
+		Case goApp.Isla = 4
+			TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (9,10) AND lect_acti='A' AND lect_esta='A'
+			ENDTEXT	
 		Endcase
 	Endcase
 	Do Case
@@ -335,6 +342,8 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 				nislax = 2
 			Case liq.Surtidor = 5 Or  liq.Surtidor = 6 Or liq.Surtidor = 7 Or  liq.Surtidor = 8
 				nislax = 3
+			Case liq.Surtidor = 9 Or  liq.Surtidor = 10
+				nislax = 4	
 			Endcase
 		Endcase
 		Select islas
@@ -419,52 +428,6 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Function obteneractiva(dFecha, nturno, nisla)
 	Df = Cfechas(dFecha)
 	Ccursor = 'c_' + Sys(2015)
-*!*		Do Case
-*!*		Case nisla = 1
-*!*			Do Case
-*!*			Case  fe_gene.nruc = '20609310902' Then
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(1,2,3,4) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Case  fe_gene.nruc = '20609681609' Then
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(1) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Otherwise
-*!*				TEXT To lC Noshow Textmerge
-*!*		         SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(1,2) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Endcase
-*!*		Case nisla = 2
-*!*			Do Case
-*!*			Case  fe_gene.nruc = '20609310902'
-*!*				TEXT To lC Noshow Textmerge
-*!*		         SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Case  fe_gene.nruc = '20609681609'
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(2) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Otherwise
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(3,4) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Endcase
-*!*		Case nisla = 3
-*!*			If Case  fe_gene.nruc = '20609681609'
-*!*				TEXT To lC Noshow Textmerge
-*!*		         SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(3) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Else
-*!*				TEXT To lC Noshow Textmerge
-*!*		         SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin limit 1
-*!*				ENDTEXT
-*!*			Endif
-*!*		Case nisla = 4
-*!*			TEXT To lC Noshow Textmerge
-*!*		         SELECT lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_esta='A' AND lect_idco IN(4) GROUP BY lect_idin limit 1
-*!*			ENDTEXT
-*!*		Endcase
 	lC='ProObtenerlecturaActiva'
 	TEXT TO lp NOSHOW TEXTMERGE
       (<<nisla>>,'<<df>>')
@@ -482,55 +445,6 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function obtenerlecturas(dFecha, nturno, nisla, Ccursor)
 	Df = Cfechas(dFecha)
-*!*		Do Case
-*!*		Case nisla = 1
-*!*			Do Case
-*!*			Case  fe_gene.nruc = '20609310902'
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(1,2,3,4) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Case fe_gene.nruc = '20609681609'
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(1) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Otherwise
-*!*				TEXT To lC Noshow Textmerge
-*!*		        SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(1,2) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Endcase
-*!*		Case nisla = 2
-*!*			Do Case
-*!*			Case fe_gene.nruc = '20609310902'
-*!*				TEXT To lC Noshow Textmerge
-*!*		         SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Case fe_gene.nruc = '20609681609'
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(2) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Otherwise
-*!*				TEXT To lC Noshow Textmerge
-*!*		        SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(3,4) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Endcase
-*!*		Case nisla = 3
-*!*			If fe_gene.nruc = '20609681609' Then
-*!*				TEXT To lC Noshow Textmerge
-*!*		          SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(3) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Else
-*!*				TEXT To lC Noshow Textmerge
-*!*		        SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(5,6,7,8) GROUP BY lect_idin,lect_idtu
-*!*				ENDTEXT
-*!*			Endif
-*!*		Case nisla = 4
-*!*			TEXT To lC Noshow Textmerge
-*!*		          SELECT  CONCAT(CAST(lect_idtu AS CHAR),'-',CAST(lect_idin AS CHAR)) as lectura,lect_idin as idin FROM fe_lecturas WHERE lect_fech='<<df>>' AND lect_acti='A' AND lect_idco IN(4) GROUP BY lect_idin,lect_idtu
-*!*			ENDTEXT
-*!*		Endcase
-*!*	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
-*!*			Return 0
-*!*		Endif
 	lC='ProObtenerlecturas'
 	TEXT TO lp NOSHOW TEXTMERGE
       (<<nisla>>,'<<df>>')

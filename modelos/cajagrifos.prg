@@ -166,6 +166,8 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		        \ And lect_idco In(3,4)
 			Case This.nisla = 3
 		        \ And lect_idco In(5,6,7,8)
+		   	Case This.nisla = 4
+		        \ And lect_idco In(9,10)     
 			Endcase
 		Endcase
 	Endif

@@ -3,6 +3,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	#Define estado2  'RECHAZADA'
 	#Define estado3  'APROBADA'
 	dFech	  = Date()
+	cserie = ""
 	nidclie	  = 0
 	cndoc	  = ""
 	nTotal = 0
@@ -39,14 +40,15 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	tipocot = ""
 	Function Anular(nid)
 	lsql = "PROANULAPEDIDOS"
+	np1=m.nid
 	TEXT To lp Noshow
-	(?nid)
+	(@estado,?np1)
 	ENDTEXT
 	If This.ejecutarp(lsql, lp, '') < 1 Then
 		Return 0
 	Endif
 	This.Cmensaje = "Anulado"
-	Return
+	Return 1
 	Endfunc
 	Function cambiaestadocotizacion(nid, estado)
 	Local lC
@@ -161,11 +163,17 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function mostrarcotizacion1(opt, cndoc, Ccursor)
+	IF !PEMSTATUS(goapp,'productoscp',5) then
+	    ADDPROPERTY(goapp,'productooscp','')
+	ENDIF     
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 		   \Select  a.idart,a.Descri,a.Unid,a.cant,a.idven,a.Vendedor,a.Prec,a.premay,a.premen,a.fech,a.IDautoP,a.Impo,a.Ndoc,a.aten,
            \a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,a.idclie,a.razo,a.nruc,a.Dire,a.ciud,a.rped_mone,a.Nreg,ifnull(a.fono,'') As fono,ifnull(a.fax,'') As fax,
            \b.prod_come As come,b.prod_comc As Comc,
+           IF goapp.Productoscp='S' then
+            \ prod_ocan,prod_cmay, \IF(b.prod_uti0>1,ROUND(IF(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti0,((a.prec*v.igv*v.dola)+p.prec)*prod_uti0),0.5),0) AS pre0,
+           ENDIF 
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti1,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti1),2),0) As pre1,
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti2,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti2),2),0) As Pre2,
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti3,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti3),2),0) As Pre3,
@@ -689,7 +697,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Select (Ccursor)
 	If IDautoP > 0 Then
-		This.Cmensaje = 'Númnero de Cotización Ya Regisytado'
+		This.Cmensaje = 'Númnero de Cotización Ya Registado'
 		Return 0
 	Endif
 	Return 1
@@ -1133,8 +1141,8 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	AddProperty(objdetalle, 'nequi', 0)
 	AddProperty(objdetalle, 'npos', 0)
 	AddProperty(objdetalle, 'ctipo1', '')
-	If !Pemstatus(goApp,'proyecto',5) Then
-		AddProperty(goApp,'proyecto','')
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
 	Endif
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
@@ -1164,13 +1172,13 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		objdetalle.ncant = cant
 		objdetalle.nprec = Prec
 		objdetalle.niDAUTO = nid
-		If goApp.Proyecto='psysg' Then
-			objdetalle.nequi=idepta
-			objdetalle.npos=pos
-			objdetalle.nepta=idepta
+		If goApp.Proyecto = 'psysg' Then
+			objdetalle.nequi = idepta
+			objdetalle.npos = pos
+			objdetalle.nepta = idepta
 		Endif
 		If m.Cestado = 'N' Then
-			If goApp.Proyecto='psysg' Then
+			If goApp.Proyecto = 'psysg' Then
 				If This.ingresadetalleconunidades(objdetalle) < 1 Then
 					x = 0
 					Exit
@@ -1184,7 +1192,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		Else
 			Select (This.Calias)
 			If Nreg = 0 Then
-				If goApp.Proyecto='psysg' Then
+				If goApp.Proyecto = 'psysg' Then
 					If This.ingresadetalleconunidades(objdetalle) < 1 Then
 						x = 0
 						Exit
@@ -1200,9 +1208,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 				Select (This.Calias)
 				If Deleted()
 					objdetalle.Ctipo = 0
-					If goApp.Proyecto='psysg' Then
-					   objdetalle.Ctipo1 = 'A'
-					   If This.ActualizaDpedidosconUnidades(objdetalle) < 1 Then
+					If goApp.Proyecto = 'psysg' Then
+						objdetalle.Ctipo1 = 'A'
+						If This.ActualizaDpedidosconUnidades(objdetalle) < 1 Then
 							x = 0
 							Exit
 						Endif
@@ -1214,7 +1222,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 					Endif
 				Else
 					objdetalle.Ctipo = 1
-					If goApp.Proyecto='psysg' Then
+					If goApp.Proyecto = 'psysg' Then
 						objdetalle.Ctipo1 = ''
 						If This.ActualizaDpedidosconUnidades(objdetalle) < 1 Then
 							x = 0
@@ -1249,7 +1257,58 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return  1
 	Endfunc
+	Function listar(Ccursor)
+	fi=Cfechas(This.dfi)
+	ff=Cfechas(This.dff)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select a.Ndoc,a.fech,b.Descri,b.Unid,c.cant,c.Prec,Round(c.cant*c.Prec,2) As Importe,
+	\d.razo,e.nomv,a.idpcped,a.aten,a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,x.nomb As usua,
+	\If(tipopedido='P','Proforma','Nota Pedido') As tipopedido,a.IDautoP,a.fecho,a.rped_mone As Mone,
+    \a.idclie As codigo,b.idart From fe_rped As a
+	\	inner Join fe_ped As c On(c.IDautoP=a.IDautoP)
+	\	inner Join fe_art As b On(b.idart=c.idart)
+	\	inner Join fe_vend As e On(e.idven=a.idven)
+	\	Left Join fe_clie As d On(d.idclie=a.idclie)
+	\	inner Join fe_usua As x On x.Idusua=a.rped_idus
+	\	Where a.fech Between '<<fi>>' And '<<ff>>' and a.acti='A' and c.acti='A'
+	If This.nidclie > 0 Then
+		          \ And a.idclie=<<This.nidclie>>
+	Endif
+	If Len(Alltrim(This.cserie))>0 Then
+	\ and LEFT(a.ndoc,3)='<<this.cserie>>'
+	Endif
+	 \ Order By a.Ndoc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarcotizacionparafacturarpsysw(cnumero,Ccursor)
+	TEXT To lC Noshow Textmerge
+	select  a.descri,a.unid,b.prec,b.idart as coda,a.cost,
+		   b.cant,c.idclie as codc,x.nomb as usua,c.form,d.razo,d.dire,c.rped_idus,
+		   d.ciud,ifnull(d.ndni,'') as ndni,d.nruc,c.tdoc,c.idven,c.idautop,c.facturado,
+		   a.prod_idco,c.rped_tipo,c.ndoc,a.prod_come as comi,a.prod_cod1,c.detalle,cant as tcant,
+		   round(if(a.tmon='S',(a.prec*v.igv)+p.prec,(a.prec*v.igv*v.dola)+p.prec),2) as costo,uno,dos
+	       FROM fe_ped  as b
+	       INNER JOIN fe_art as a ON (a.idart=b.idart)
+	       INNER JOIN fe_rped as c ON(c.idautop=b.idautop)
+		   INNER JOIN fe_clie as d On(d.idclie=c.idclie)
+		   inner join fe_usua as x on x.idusua=c.rped_idus
+		   inner join fe_fletes as p on p.idflete=a.idflete, fe_gene v
+		   WHERE c.ndoc='<<cnumero>>' AND b.cant>0 and b.prec>0 and b.acti='A' and c.acti='A'
+	ENDTEXT
+	If this.EJECutaconsulta(lC,Ccursor) < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 

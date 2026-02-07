@@ -112,7 +112,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 *!*		MESSAGEBOX(lcHtml)
 	Set Procedure To d:\Librerias\nfJsonRead.prg Additive
 	orpta = nfJsonRead(lcHTML)
-	If  Vartype(orpta.estado) <> 'U'
+	If  Vartype(orpta.estado) <> 'U' then
 		If Left(orpta.estado, 1) = '0' Then
 			cdr = orpta.cdr
 			crpta = orpta.Mensaje
@@ -1365,7 +1365,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,rcom_otro,
-	\    a.igv,a.Impo,rcom_hash,rcom_mens,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,
+	\    a.igv,a.Impo,rcom_hash,rcom_mens,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,a.vigv,
 	\    ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,tcom,Tdoc,cast(DATEDIFF(curdate(), a.fech)  as unsigned) as dias 
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
@@ -1378,7 +1378,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	\    Union All
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,a.rcom_otro,
-	\    a.igv,a.Impo,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,
+	\    a.igv,a.Impo,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,a.vigv,
 	\    a.ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,a.tcom,w.Tdoc,cast(DATEDIFF(curdate(), a.fech)  as unsigned) as dias 
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)

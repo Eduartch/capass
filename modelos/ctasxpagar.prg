@@ -95,6 +95,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Sw = 1
+	m.vdvto=0
 	objdetalle.nidr=r
 	objdetalle.dFecha=This.dFech
 	objdetalle.ndolar=This.ndolar
@@ -108,8 +109,8 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 		objdetalle.nrou= tmpd.Ndoc
 		objdetalle.cdetalle=tmpd.Detalle
 		objdetalle.csitua='CA'
-		If This.IngresaDetalleDeudas(objdetalle)<1 Then
-* IngresaDetalleDeudas(r, tmpd.Ndoc, 'C', ,, tmpd.Tipo, , , goApp.nidusua, Id(), This.codt,, , 'CA') = 0 Then
+		vdvto= This.IngresaDetalleDeudas(objdetalle)
+		IF m.vdvto<1 Then
 			Sw = 0
 			Exit
 		Endif
@@ -117,7 +118,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	If Sw = 0 Then
 		Return 0
 	Endif
-	Return 1
+	Return m.vdvto
 	Endfunc
 	Function Registra1
 	Lparameters Calias, NAuto, Ncodigo, Cmoneda, dFecha, nTotal, ccta, ndolar
@@ -489,14 +490,14 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	\	If(p.rdeu_mone='S',Sum(a.Impo-a.acta),0) As tsoles,If(p.rdeu_mone='D',Sum(a.Impo-a.acta),0) As tdolar
 	\	From fe_deu As a
 	\	INNER Join fe_rdeu As p On p.rdeu_idrd=a.deud_idrd
-	\	INNER Join  fe_prov As b On b.idprov=p.rdeu_idpr
+	\	INNER Join fe_prov As b On b.idprov=p.rdeu_idpr
 	\	Left Join fe_rcom As T On T.Idauto=p.rdeu_idau
 	\	Where a.Acti<>'I' And p.rdeu_Acti='A'  And a.fech<='<<df>>'
 	If This.cmodo = 'C' Then
 	\  And p.rdeu_idct>0
 	Endif
 	\Group By p.rdeu_idrd,rdeu_mone)
-	\	As T Where T.tsoles<>0 Or T.tdolar<>0 Order By razo
+	\ As T Where T.tsoles<>0 Or T.tdolar<>0 Order By razo
 	Set Textmerge Off
 	Set Textmerge To
 	If This.ejecutaconsulta(lc, ccursor) < 1 Then
@@ -821,6 +822,28 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
        INNER JOIN fe_deu AS d ON d.`iddeu`=a.ncontrol
        INNER JOIN fe_rdeu AS c ON c.rdeu_idrd=d.deud_idrd
        LEFT JOIN fe_rcom AS b  ON b.idauto=c.rdeu_idau
+	ENDTEXT
+	If This.ejecutaconsulta(lc,ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listarcancelacionesctasxpagar(ccursor)
+	fi=Cfechas(This.dfi)
+	ff=Cfechas(This.dff)
+	IF this.idsesion>0 then
+	   SET DATASESSION TO this.idsesion
+	ENDIF    
+	TEXT to lc NOSHOW TEXTMERGE
+	    SELECT x.rdeu_idpr as idprov,c.razo,x.rdeu_idau as idauto,x.rdeu_mone as mone,
+	    if(x.rdeu_mone='S',x.rdeu_impc,x.rdeu_impc*if(a.dola=0,z.dola,a.dola)) as impoo,if(a.dola=0,z.dola,a.dola) as dola,
+		x.rdeu_fech as fech,a.tipo,a.banc,if(x.rdeu_mone='S',a.acta,a.acta*if(a.dola=0,z.dola,a.dola)) as importe,
+		x.rdeu_codt as codt,a.ncontrol,a.acti,ifnull(y.ndoc,'') as ndoc,a.fech as fechapago,a.ndoc as docp,ifnull(y.tdoc,'') as tdoc,x.rdeu_idrd
+		FROM fe_rdeu as x
+		inner join fe_deu as a  on x.rdeu_idrd=a.deud_idrd
+		inner join fe_prov as c on (c.idprov=x.rdeu_idpr)
+		left join fe_rcom as y on(y.idauto=x.rdeu_idau),fe_gene as z
+		where a.acti='A' and x.rdeu_acti='A' and a.acta<>0 and a.fech between '<<fi>>' and '<<ff>>'
 	ENDTEXT
 	If This.ejecutaconsulta(lc,ccursor)<1 Then
 		Return 0

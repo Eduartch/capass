@@ -152,7 +152,8 @@ Define Class guiaremisionxvtas As GuiaRemision Of 'd:\capass\modelos\guiasremisi
 	If  This.GeneraCorrelativo() = 1 And s = 1 Then
 		If This.GRabarCambios() = 0 Then
 			Return 0
-		Endif
+		ENDIF
+		this.idautog=m.nidg
 		If This.Proyecto = 'xsysz' Then
 			This.Imprimirguiaxsysz("tmpvg", 'S')
 		Else

@@ -28,7 +28,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	dff = Date()
 	Function ReporteBancos(dfi, dff, ccta, Calias)
 	If dff - dfi > 31 Then
-		This.Cmensaje = 'No Mayor a 31 días'
+		This.Cmensaje = 'NO Mayor a 31 días'
 		Return 0
 	Endif
 	Local lC
@@ -38,7 +38,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Text To lC Noshow Textmerge
 	   SELECT a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,if(a.cban_debe>0,ifnull(m.razo,''),ifnull(n.razo,'')) as razon,
 	   a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,a.cban_dola as dolar,cban_tran,
-	   cban_ttra as ttra,if(cban_debe<>0,'I','S') as tipo
+	   cban_ttra as ttra,if(cban_debe<>0,'I','S') as tipo,
+	   if(a.cban_debe>0,ifnull(m.nruc,''),ifnull(n.nruc,'')) as nruc,if(a.cban_debe>0,ifnull(m.ndni,''),ifnull(n.ndni,'')) as ndni
 	   from fe_cbancos as a
 	   inner join fe_mpago as b on  b.pago_idpa=a.cban_idmp
 	   left join fe_clie as m on m.idclie=a.cban_idcl
@@ -434,6 +435,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Scan All
 		ocajae.dFecha = ctas.Fecha
 		This.dFecha = ctas.Fecha
+		This.idprov = 0
+		This.idcliE = 0
 		cdcto = Right("0000" + Alltrim(Str(This.nserie)), 3) + Right('000000000' + Alltrim(Str(ocorr.Nsgte)), 7)
 		If ctas.Importe > 0 Then
 			If ctas.idcta = fe_gene.gene_idca Then
@@ -555,7 +558,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 			Sw = 0
 			Exit
 		Endif
-		ocorr.Nsgte =	ocorr.Nsgte + 1
+*!*			ocorr.Nsgte =	ocorr.Nsgte + 1
 	Endscan
 	If  Sw = 0 Then
 		This.DEshacerCambios()
@@ -594,6 +597,50 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	goApp.npara5 = This.cdeta
 	goApp.npara6 = 0
 	goApp.npara7 = This.idcliE
+	goApp.npara8 = This.cndoc
+	goApp.npara9 = This.idcta1
+	goApp.npara10 = This.ndebe
+	goApp.npara11 = This.nhaber
+	goApp.npara12 = This.norden
+	goApp.npara13 = goApp.nidusua
+	goApp.npara14 = This.Ctipo
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+	Endtext
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	nid = This.EJECUTARf(lC, lp, cur)
+	If nid < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	ocorr.Ndoc = This.cndoc
+	ocorr.Nsgte = This.Nsgte
+	ocorr.Idserie = This.Idserie
+	If ocorr.GeneraCorrelativo() < 1 Then
+		This.Cmensaje = ocorr.Cmensaje
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	This.Cmensaje = 'Ok'
+	Return 1
+	ENDFUNC
+	Function registraretiros()
+	Set Procedure To d:\capass\modelos\correlativos Additive
+	ocorr = Createobject("correlativo")
+	lC = 'FUNIngresaCajaBancos1'
+	cur = "Xn"
+	goApp.npara1 = This.idcta
+	goApp.npara2 = This.dFecha
+	goApp.npara3 = This.cope
+	goApp.npara4 = This.nmpago
+	goApp.npara5 = This.cdeta
+	goApp.npara6 = this.idprov
+	goApp.npara7 = 0
 	goApp.npara8 = This.cndoc
 	goApp.npara9 = This.idcta1
 	goApp.npara10 = This.ndebe
@@ -700,24 +747,50 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function muestralcajaxid(nid, Ccursor)
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
+	Endif
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	Text To lC Noshow Textmerge
-	SELECT a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,IF(a.cban_debe>0,m.razo,n.razo) AS razon,a.cban_idba,a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,
-	a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,cban_clpr,a.cban_idca,cban_dola FROM fe_cbancos AS a
-	INNER JOIN fe_mpago AS b ON b.pago_idpa=a.cban_idmp
-	LEFT JOIN fe_clie AS m ON m.idclie=a.cban_idcl
-	LEFT JOIN fe_prov AS n ON n.idprov=a.cban_idpr
-	INNER JOIN fe_plan AS c ON c.idcta=a.cban_idct
-	WHERE a.cban_acti='A' AND cban_idco=<<nid>>
-	Endtext    
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,If(a.cban_debe>0,m.razo,N.razo) As razon,a.cban_idba,a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,
+	\a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,cban_clpr,a.cban_idca,cban_dola
+	If Alltrim(goApp.proyecto) = 'psysn' Then
+	\ ,cban_idco1
+	Endif
+	\ From fe_cbancos As a
+	\inner Join fe_mpago As b On b.pago_idpa=a.cban_idmp
+	\Left Join fe_clie As m On m.idcliE=a.cban_idcl
+	\Left Join fe_prov As N On N.idprov=a.cban_idpr
+	\inner Join fe_plan As c On c.idcta=a.cban_idct
+	\Where a.cban_acti='A' And cban_idco=<<nid>>
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
+	Function buscaroperacion(coperacion)
+	Ccursor = 'c_' + Sys(2015)
+	Text To lC Noshow Textmerge
+    select cban_nume from fe_cbancos WHERE TRIM(cban_nume)='<<TRIM(coperacion)>>' AND cban_acti='A' limit 1
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If regdvto(Ccursor) > 0 Then
+		This.Cmensaje = "Operación Ya Registrada"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
 
 
 

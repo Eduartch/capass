@@ -16,6 +16,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	nformaplicar	 = 0
 	Cruc			 = ""
 	ntotalnc		 = 0
+	nidpagos=0
 	cTdoc = ""
 	cformapago = ""
 	cmotivo = ""
@@ -24,6 +25,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	nTotal = 0
 	ndolar = fe_gene.dola
 	ncodigocliente = 0
+	nidauto=0
 	nidven = 0
 	Cmoneda = ""
 	nidautoref = 0
@@ -74,7 +76,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Case !ValidaRuc(This.Cruc)  And This.ctdocref = '01'
 		This.Cmensaje = "RUC no Válido"
 		Return 0
-	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.Cdni)) <> 8 OR VAL(this.Cdni)=0) And This.ctdocref = '03'
+	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.Cdni)) <> 8 Or Val(This.Cdni)=0) And This.ctdocref = '03'
 		This.Cmensaje = "Es Necesario Ingresar el Nombre Completo de Cliente, DNI Válidos"
 		Return 0
 	Case  PermiteIngresox(This.dFecha) = 0
@@ -108,24 +110,24 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Local Obj As SerieProducto
 	Obj = Createobject("serieproducto")
 	Create Cursor tmpv(Coda N(10), Desc c(100), Unid c(4), cant N(12, 2), Prec N(12, 7), Ndoc c(12), cletras c(180), ;
-		  Nitem N(5), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), Tdoc c(2), ;
-		  Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', fech1 d, Tdoc1 c(2), dcto c(12), Referencia c(60), Archivo c(120))
+		Nitem N(5), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), Tdoc c(2), ;
+		Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', fech1 d, Tdoc1 c(2), dcto c(12), Referencia c(60), Archivo c(120))
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	If fe_gene.gene_exon = 'N' Then
 		NAuto = IngresaDocumentoElectronico(This.cTdoc, This.cformapago, This.Cserie + This.cnumero, This.dFecha, This.cmotivo, This.nvalor, This.nigv, This.nTotal, "", This.Cmoneda, ;
-			  This.ndolar, fe_gene.igv, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, 0, 0)
+			This.ndolar, fe_gene.igv, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, 0, 0)
 	Else
 		NAuto = IngresaDocumentoElectronico(This.cTdoc, This.cformapago, This.Cserie + This.cnumero, This.Cserie + This.cnumero, This.cmotivo, 0, 0, This.nTotal, "", This.Cmoneda, ;
-			  This.ndolar, 1, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, This.nvalor, 0)
+			This.ndolar, 1, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, This.nvalor, 0)
 	Endif
 	If NAuto < 1
 		This.DEshacerCambios()
 		Return 0
 	Endif
 	If IngresaDatosLCajaEFectivo12(This.dFecha, "", This.cnombrecliente, fe_gene.idctat, Nt, 0, 'S', fe_gene.dola, goApp.nidusua, This.ncodigocliente, NAuto, This.cformapago, This.Cserie + This.cnumero, ;
-			  This.ctdo, goApp.Tienda) = 0 Then
+			This.ctdo, goApp.Tienda) = 0 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -258,18 +260,36 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function verificancventas(niDAUTO)
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow Textmerge Pretext 7
-    select  ncre_idau as idauto FROM fe_ncven WHERE ncre_idau=<<nidauto>> AND ncre_acti='A'
-	Endtext
+	TEXT To lC Noshow Textmerge Pretext 7
+    select  ncre_idau as idauto FROM fe_ncven WHERE ncre_idau=<<nidauto>> AND ncre_acti='A' limit 1
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
 	If Idauto > 0 Then
+		This.Cmensaje='Documento Ya Tiene Nota de Crédito '
 		Return  0
 	Endif
 	Return  1
 	Endfunc
+	Function IngresarNotasCreditoVentas10()
+	Local lC, lp
+	lC			 = 'FUNINGRESANOTASCREDITOventas1'
+	cur			 = "xi"
+	goApp.npara1 = this.nidauto
+	goApp.npara2 = this.nidautoref
+	goApp.npara3 = this.nidpagos
+	goApp.npara4 = this.ntotalnc
+	TEXT To lp Noshow
+    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
+	ENDTEXT
+	nid= this.EJECUTARf(lC, lp, '') 
+	IF m.nid< 1 Then
+		Return 0
+	Endif
+	Return m.nid
+    Endfunc
 Enddefine
 
 

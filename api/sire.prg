@@ -1,4 +1,3 @@
-#Define MSGTITULO 'SISVEN'
 Define Class sire As Custom
 	Cmensaje = ""
 	nmonto = 0
@@ -18,21 +17,21 @@ Define Class sire As Custom
 		AddProperty(_Screen, 'conanuladas', '')
 	Endif
 	m.existegratuito = ''
-	m.existecodt=''
+	m.existecodt = ''
 	Select registro
 	If Fsize("tgrati") > 0 Then
 		m.existegratuito = 'S'
 		ccampo = ',tgrati'
 	Else
 		ccampo = ''
-	ENDIF
+	Endif
 	Select registro
 	If Fsize("codt") > 0 Then
 		m.existecodt = 'S'
 		ccampo1 = ',codt'
 	Else
 		ccampo1 = ''
-	ENDIF
+	Endif
 	If _Screen.conanuladas = 'S' Then
 		condicion = ''
 	Else
@@ -180,7 +179,7 @@ Define Class sire As Custom
 		ncta1;
 		From registro Where Left(Razo, 5) <> '-----'  Into Cursor lreg
 	Select lreg
-    Set Textmerge On Noshow
+	Set Textmerge On Noshow
 	Set Textmerge To ((cr1))
 	nl = 0
 	Scan
@@ -203,6 +202,7 @@ Define Class sire As Custom
 	Case  opt = 1
 		_Screen.ActiveForm.cmdaexcel.Click()
 		Vdvto = 1
+		Return Vdvto
 	Case opt = 2
 		Try
 			Set Procedure To CapaDatos, ple5 Additive
@@ -217,103 +217,165 @@ Define Class sire As Custom
 			This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
 			Vdvto = 1
 		Catch To oerror
-			This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
+			This.Cmensaje = oerror.Message
 			Vdvto = 0
 		Endtry
+		Return Vdvto
 	Case opt = 3
-*!*			Try
-		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
-		If This.nmonto > 0 Then
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021112"
-		Else
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021012"
+		Try
+			cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
+			If This.nmonto > 0 Then
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021112"
+			Else
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00140400021012"
+			Endif
+			This.generarvtas(cf, cr)
+			Cruta = Addbs(Justpath(cf)) + cr
+			This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
+			Vdvto = 1
+		Catch To oerror
+			This.Cmensaje = oerror.Message
+			Vdvto = 0
+		Endtry
+		Return Vdvto
+	Case opt = 4
+		If This.Idsesion > 0 Then
+			Set DataSession To This.Idsesion
 		Endif
-		This.generarvtas(cf, cr)
-		Cruta = Addbs(Justpath(cf)) + cr
-		This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
-		Vdvto = 1
-*!*			Catch To oerror
-*!*				This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
-*!*				vdvto = 0
-*!*			Endtry
+		Set Procedure To d:\capass\modelos\importadatos Additive
+		o = Createobject("importadatos")
+		If o.importacsvventas() < 1 Then
+			This.Cmensaje = o.Cmensaje
+			Return
+		Endif
+		Select propsunat
+		If Fsize("cliente") = 0 Or Fsize("clave") = 0 Or Fsize("total") < 1 Or Fsize("serie") < 1 Then
+			This.Cmensaje = 'Archivo no Cuenta con las Columnas Necesarias'
+			Return 0
+		Endif
+		Select fech, Tdoc, Serie, Ndoc, nruc, Razo As Cliente, Importe, 0000000000.00 As total_sunat, Trim(Tdoc) + Trim(Serie) + Alltrim(Str(Round(Val(Ndoc), 0) ))As clave;
+			From registro Into Cursor propsistema
+		Select * From propsistema Where Tdoc = '--' Into Cursor result Readwrite
+		Select propsunat
+		Scan All
+			Select propsistema
+			Locate For Trim(clave) = Trim(propsunat.clave)
+			If Found()
+				Insert Into result(fech, Tdoc, Serie, Ndoc, nruc, Cliente, Importe, total_sunat)Values;
+					(propsistema.fech, propsistema.Tdoc, propsistema.Serie, propsistema.Ndoc, propsistema.nruc, propsistema.Cliente, propsistema.Importe, propsunat.Total)
+			Else
+				Insert Into result(fech, Tdoc, Serie, Ndoc, nruc, Cliente, Importe, total_sunat)Values;
+					(propsunat.fecha, propsunat.Tdoc, propsunat.Serie, propsunat.numero, propsunat.nruc, propsunat.Cliente, 0, propsunat.Total)
+			Endif
+		Endscan
+		Select fech, Tdoc, Serie, Ndoc, nruc, Cliente, Importe, total_sunat, total_sunat - Importe As diferencia,;
+			Icase(total_sunat - Importe = 0, 'Coincide       ', total_sunat = 0, 'No hay sunat        ', Importe = 0, 'No hay sistema', 'Diferencia       ') As estado;
+			From result Into Cursor result Order By fech
+		Select result
+		Go Top
+		goapp.Form("ka_sireventas", This.Idsesion, 'result')
 	Endcase
-	Return Vdvto
 	Endfunc
 	Function opcioncompras(opt)
 	Do Case
 	Case opt = 1
 		_Screen.ActiveForm.cmdaexcel.Click()
 	Case opt = 2
-*Try
-		Set Procedure To CapaDatos, ple5 Additive
-		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
-		If This.nmonto > 0 Then
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001111"
-		Else
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001011"
-		Endif
-		This.GeneraPlE5Compras(cf, cr, This.nmes, This.Na)
-		Cruta = Addbs(Justpath(cf)) + cr
-		Messagebox("Se Genero el Archivo 1 de 2:" + Cruta + " Correctamente", 64, MSGTITULO)
-		Cruta = Addbs(Justpath(cf)) + cr
-		Text  To lC Noshow Textmerge
-            SELECT com1_fech,com1_tdoc,com1_ser1,com1_ndoc,com1_valo,com1_otro,com1_impo,
-			com1_tdoc1,com1_serie1,com1_año,com1_ndoc1,com1_rete,com1_mone,com1_dola,' ' as pais1,c.razo,concat(trim(c.dire),' ',trim(c.ciud)) as dire,
-			c.nruc,ifnull(e.nruc,' ') as ndni,ifnull(e.razo,'') as razo1,' ' as pais2,
-			com1_renta,com1_cost,com1_rneta,com1_vrenta,com1_irete,com1_conv,com1_exon,com1_trta,com1_modo,com1_aplica,com1_idau  as auto,com1_pais,com1_codp,
-			com1_codp1,com1_pais1,com1_vinc
-			FROM fe_rcom11 as a
-			inner join fe_prov as c on c.idprov=a.com1_codp
-			left join fe_prov as e on e.idprov=a.com1_codp1
-			where com1_ActI='A' and MONTH(com1_fecr)=<<this.nmes>> and YEAR(com1_fecr)=<<this.na>>
-		Endtext
-		ncon = AbreConexion()
-		If SQLExec(ncon, lC, 'lnd') < 0 Then
-			Errorbd(lC)
-			Return
-		Endif
-		CierraConexion(ncon)
-		If REgdvto("lnd") > 0 Then
-			cnombre = "00080200001111"
-		Else
-			cnombre = "00080200001011"
-		Endif
-		cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + cnombre
-		GeneraPlE5Compras1(cf, cr, This.nmes, Val(This.Na))
-		Messagebox("Se Genero el Archivo 2 de 2:" + Cruta + " Correctamente", 64, MSGTITULO)
-*Catch To oerror
-*	Messagebox("No se Genero El Archivo de Envio Correspondiente",16,MSGTITULO)
-*Endtry
+		conerror=0
+		Try
+			Set Procedure To CapaDatos, ple5 Additive
+			cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
+			If This.nmonto > 0 Then
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001111"
+			Else
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080100001011"
+			Endif
+			This.GeneraPlE5Compras(cf, cr, This.nmes, This.Na)
+			Cruta = Addbs(Justpath(cf)) + cr
+			aviso("Se Genero el Archivo 1 de 2:" + Cruta + " Correctamente")
+			Cruta = Addbs(Justpath(cf)) + cr
+			_Screen.ocompras.nmes = This.nmes
+			_Screen.ocompras.naño = This.Na
+			_Screen.ocompras.Idsesion = This.Idsesion
+			If _Screen.ocompras.registrocomprasNodomiciliados('lnd') < 1 Then
+				This.Cmensaje = _Screen.ocompras.Cmensaje
+				conerror=1
+			Endif
+			If REgdvto("lnd") > 0 Then
+				cnombre = "00080200001111"
+			Else
+				cnombre = "00080200001011"
+			Endif
+			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + cnombre
+			GeneraPlE5Compras1(cf, cr, This.nmes, Val(This.Na))
+			aviso("Se Genero el Archivo 2 de 2:" + Cruta + " Correctamente")
+		Catch To oerror
+			this.Cmensaje=oerror.Message
+		Endtry
 	Case opt = 3
-*!*			Try
-		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
-		If This.nmonto > 0 Then
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
-		Else
-			cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
-		Endif
-		This.tipog = 'R'
-		This.generacompras(cf, cr)
-		Cruta = Addbs(Justpath(cf)) + cr
-		This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
-		Vdvto = 1
-*!*			Catch To oerror
-*!*				This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
-*!*				vdvto = 0
-*!*			Endtry
+		Try
+			cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
+			If This.nmonto > 0 Then
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
+			Else
+				cr = Upper("LE" + Alltrim(This.nruc) + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))) + "00080400021112"
+			Endif
+			This.tipog = 'R'
+			This.generacompras(cf, cr)
+			Cruta = Addbs(Justpath(cf)) + cr
+			This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
+			Vdvto = 1
+		Catch To oerror
+			This.Cmensaje = oerror.Message
+			Vdvto = 0
+		Endtry
 	Case opt = 4
-*!*			Try
-		cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
-		cr = Alltrim(This.nruc) + '-CP-' + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))
-		This.tipog = 'C'
-		This.generacompras(cf, cr)
-		Cruta = Addbs(Justpath(cf)) + cr
-		This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
-		Vdvto = 1
-*!*			Catch To oerror
-*!*				This.Cmensaje = "No se Genero El Archivo de Envio Correspondiente"
-*!*				vdvto = 0
-*!*			Endtry
+		Try
+			cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
+			cr = Alltrim(This.nruc) + '-CP-' + Alltrim(This.Na) + Iif(This.nmes <= 9, '0' + Alltrim(Str(This.nmes)), Alltrim(Str(This.nmes)))
+			This.tipog = 'C'
+			This.generacompras(cf, cr)
+			Cruta = Addbs(Justpath(cf)) + cr
+			This.Cmensaje = "Se Genero el Archivo:" + Cruta + " Correctamente"
+			Vdvto = 1
+		Catch To oerror
+			This.Cmensaje = oerror.Message
+			Vdvto = 0
+		Endtry
+	Case opt = 5
+		If This.Idsesion > 0 Then
+			Set DataSession To This.Idsesion
+		Endif
+		Set Procedure To d:\capass\modelos\importadatos Additive
+		o = Createobject("importadatos")
+		If o.importacsv() < 1 Then
+			This.Cmensaje = o.Cmensaje
+			Return
+		ENDIF
+		Select propsunat
+		If Fsize("proveedor") < 1 Or Fsize("clave") < 1 Or Fsize("total") < 1 Or Fsize("serie") < 1  Then
+			This.Cmensaje = 'Archivo no Cuenta con las Columnas Necesarias'
+			Return 
+		Endif
+		Select fech, Tdoc, Serie, Ndoc, nruc, Razo As proveedor, Importe, 0000000000.00 As total_sunat, nruc + Trim(Tdoc) + Trim(Serie) + Alltrim(Str(Round(Val(Ndoc), 0) ))As clave;
+			From registro WHERE MONTH(fech)=this.nmes AND YEAR(fech)=VAL(this.na) Into Cursor result Readwrite
+		Select propsunat
+		Scan All
+			Select result
+			Locate For Trim(clave) = Trim(propsunat.clave)
+			If Found()
+				Replace total_sunat With propsunat.Total  In result
+			Else
+				Insert Into result(fech, Tdoc, Serie, Ndoc, nruc, proveedor, Importe, total_sunat)Values;
+					(propsunat.fecha, propsunat.Tdoc, propsunat.Serie, propsunat.numero, propsunat.nruc, propsunat.proveedor, 0, propsunat.Total)
+			Endif
+		Endscan
+		Select fech, Tdoc, Serie, Ndoc, nruc, proveedor, Importe, total_sunat, total_sunat - Importe As diferencia,;
+			Icase(total_sunat - Importe = 0, 'Coincide       ', total_sunat = 0, 'No hay sunat        ', Importe = 0, 'No hay sistema', 'Diferencia       ') As estado;
+			From result Into Cursor result Order By fech
+		Select result
+		Go Top
+		goapp.Form("ka_sirecompras", This.Idsesion, 'result')
 	Endcase
 	Endfunc
 	Function correlativocompras()
@@ -327,14 +389,14 @@ Define Class sire As Custom
 	This.ncorrcompras = Vdvto
 	Return This.ncorrcompras
 	Endfunc
-	Function GeneraPlE5Compras(np1, np2, nmes, Naño)
+	Function GeneraPlE5Compras(np1, np2, nmes, naño)
 *:Global ccuo, cpropiedad, cr1, cruta, nl, nlote, notros
 	cpropiedad = "RegimenContribuyente"
-	Na = Val(Naño)
-	If !Pemstatus(goApp, cpropiedad, 5)
-		goApp.AddProperty("RegimenContribuyente", "")
+	Na = Val(naño)
+	If !Pemstatus(goapp, cpropiedad, 5)
+		goapp.AddProperty("RegimenContribuyente", "")
 	Endif
-	If goApp.RegimenContribuyente = 'R' Then
+	If goapp.RegimenContribuyente = 'R' Then
 		ccuo = "M-RER"
 	Else
 		ccuo = 'M002'
@@ -414,9 +476,9 @@ Define Class sire As Custom
 	Scan
 		nlote = nrolote
 		If nl = 0 Then
-    \\<<Periodo>>|<<nrolote>>|<<esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
+    \\<<Periodo>>|<<nrolote>>|<<Esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
 		Else
-     \<<Periodo>>|<<nrolote>>|<<esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
+     \<<Periodo>>|<<nrolote>>|<<Esta>>|<<fechae>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<fdua>>|<<nrocomp>>|<<n1>>|<<tipodocp>>|<<nruc>>|<<Alltrim(proveedor)>>|<<Base>>|<<igv>>|<<Exon1>>|<<igvng>>|<<inafecta>>|<<igv1>>|<<Exon>>|<<isc>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<dadu>>|<<ndocn>>|<<fechad>>|<<nrod>>|<<reten>>|<<tipobien>>|<<proy>>|<<errtc>>|<<errpro1>>|<<errpro2>>|<<errpro3>>|<<Mpago>>|<<estado>>|
 		Endif
 		nl = nl + 1
 	Endscan
@@ -425,10 +487,10 @@ Define Class sire As Custom
 	Endfunc
 	Function GeneraPLE5VENTAS(np1, np2)
 	cpropiedad = "RegimenContribuyente"
-	If !Pemstatus(goApp, cpropiedad, 5)
-		goApp.AddProperty("RegimenContribuyente", "")
+	If !Pemstatus(goapp, cpropiedad, 5)
+		goapp.AddProperty("RegimenContribuyente", "")
 	Endif
-	If goApp.RegimenContribuyente = 'R' Then
+	If goapp.RegimenContribuyente = 'R' Then
 		ccuo = "M-RER"
 	Else
 		ccuo = 'M001'
@@ -442,7 +504,7 @@ Define Class sire As Custom
 		Cast(Alltrim(Str(Year(fech))) + Iif(Month(fech) <= 9, '0' + Alltrim(Str(Month(fech))), Alltrim(Str(Month(fech)))) + '00' As Integer) As Periodo, ;
 		Auto As nrolote, ;
 		Trim(ccuo + Alltrim(Str(Recno()))) As Esta, ;
-		fech As Fecha, ;
+		fech As fecha, ;
 		fech As fvto, ;
 		Tdoc As tipocomp, ;
 		Iif(Len(Alltrim(Serie)) <= 3, '0' + Trim(Serie), Trim(Serie)) As Serie, ;
@@ -483,9 +545,9 @@ Define Class sire As Custom
 	nl = 0
 	Scan
 		If nl = 0 Then
-   \\<<Periodo>>|<<nrolote>>|<<esta>>|<<Fecha>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
+   \\<<Periodo>>|<<nrolote>>|<<Esta>>|<<fecha>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
 		Else
-    \<<Periodo>>|<<nrolote>>|<<esta>>|<<Fecha>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
+    \<<Periodo>>|<<nrolote>>|<<Esta>>|<<fecha>>|<<fvto>>|<<tipocomp>>|<<Serie>>|<<nrocomp>>|<<consolidado>>|<<tipodocc>>|<<nruc>>|<<Alltrim(Cliente)>>|<<exporta>>|<<Base>>|<<dsctoigv>>|<<igv>>|<<dsctoigv1>>|<<Exon>>|<<inafecta>>|<<isc>>|<<pilado>>|<<igvp>>|<<icbper>>|<<otros>>|<<Total>>|<<Mone>>|<<Tipocambio>>|<<fechn>>|<<tipon>>|<<serien>>|<<ndocn>>|<<contrato>>|<<errtc>>|<<Mpago>>|<<estado>>|
 		Endif
 		nl = nl + 1
 	Endscan
@@ -493,6 +555,18 @@ Define Class sire As Custom
 	Set Textmerge Off
 	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

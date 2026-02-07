@@ -10,8 +10,8 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Return 0
 	Endif
 	NAuto = IngresaResumenDctovtascondetraccion(This.Tdoc, Left(This.formaPago, 1), This.Serie + This.numero, This.Fecha, This.Fecha, ;
-		  This.Detalle, This.valor, This.igv, This.Monto, '', Left(This.Moneda, 1), ;
-		  This.ndolar, This.vigv, 'S', This.Codigo, "D", goApp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, This.detraccion, This.coddetraccion)
+		This.Detalle, This.valor, This.igv, This.Monto, '', Left(This.Moneda, 1), ;
+		This.ndolar, This.vigv, 'S', This.Codigo, "D", goApp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, This.detraccion, This.coddetraccion)
 	If NAuto < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -70,7 +70,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Return 0
 	Endif
 	If ActualizaResumenDctovtascondetraccion(This.Tdoc, Left(This.formapagoPago, 1), cndoc, This.Fecha, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, "", Left(This.Moneda, 1), ;
-			  This.ndolar, This.vigv, 'S', This.Codigo, "V", goApp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, 0, This.detraccion, This.Idauto, This.coddetraccion) < 1 Then
+			This.ndolar, This.vigv, 'S', This.Codigo, "V", goApp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, 0, This.detraccion, This.Idauto, This.coddetraccion) < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -118,7 +118,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 			cx = This.Ctipovta
 		Endif
 		If cx = 'S' Then
-			Text To lC Noshow Textmerge
+			TEXT To lC Noshow Textmerge
 			    select 23 AS codv,c.idauto,detv_idvt AS idart,detv_cant as cant,detv_prec AS prec,c.codt AS alma,
           		c.tdoc AS tdoc1,CAST(0 AS DECIMAL(5,2)) AS costo,
 			    c.ndoc AS dcto,c.fech AS fech1,c.vigv,IFNULL(p.fevto,c.fech) AS fvto,
@@ -134,9 +134,9 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 			    left join (select idauto,min(c.fevto) as fevto from fe_cred as c where acti='A' and idauto=<<this.idauto>> group by idauto) as p on p.idauto=c.idauto
 			    left join fe_dpto as x on x.dpto_idpt=d.clie_idpt
             	where c.idauto=<<this.idauto>> and  detv_Acti='A' order by detv_ite1
-			Endtext
+			ENDTEXT
 		Else
-			Text To lC Noshow Textmerge
+			TEXT To lC Noshow Textmerge
 			    select a.codv,a.idauto,a.alma,a.idkar,a.idauto,a.idart,a.cant,ifnull(a.prec,CAST(0 as decimal(12,5))) as prec,a.alma,c.tdoc as tdoc1,
 			    c.ndoc as dcto,c.fech as fech1,rcom_arch,a.kar_cost as costo,ifnull(p.fevto,c.fech) as fvto,
 			    c.fech,c.fecr,c.form,c.deta,c.exon,c.ndo2,a.idclie,d.razo,d.nruc,d.dire,d.ciud,d.ndni,
@@ -151,10 +151,10 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 			    left join fe_dpto as x on x.dpto_idpt=d.clie_idpt
 			    left join (select idauto,min(c.fevto) as fevto from fe_cred as c where acti='A' and idauto=<<this.idauto>> group by idauto) as p on p.idauto=c.idauto
 			    where c.idauto=<<this.idauto>> and a.acti='A';
-			Endtext
+			ENDTEXT
 		Endif
 	Case This.Tdoc = '08'
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 			   select  r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,r.ndo2,
 		       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,' ' as nomv,r.form,ifnull(x.dpto_nomb,'') as dpto,c.clie_dist as distrito,
 		       abs(r.valor) as valor,ABS(r.rcom_otro) as gratuita,abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(0 as decimal(12,2))) as cant,
@@ -172,9 +172,9 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		       inner join fe_tdoc as w on w.idtdoc=f.idtdoc
 		       left join fe_dpto as x on x.dpto_idpt=c.clie_idpt
 		       where r.idauto=<<this.idauto>> and r.acti='A' and r.tdoc='08'
-		Endtext
+		ENDTEXT
 	Case This.Tdoc = '07'
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 			   select r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,r.ndo2,
 		       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,' ' as nomv,r.form,ifnull(x.dpto_nomb,'') as dpto,c.clie_dist as distrito,
 		       abs(r.valor) as valor,ABS(r.rcom_otro) as gratuita,abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(0 as decimal(12,2))) as cant,
@@ -191,7 +191,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		       inner join fe_tdoc as w on w.idtdoc=f.idtdoc
 		       left join fe_dpto as x on x.dpto_idpt=c.clie_idpt
 		       where r.idauto=<<this.idauto>> and r.acti='A' and r.tdoc='07'
-		Endtext
+		ENDTEXT
 	Endcase
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -224,12 +224,12 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Return 0
 	Endif
 	lsql = "FunIngresaDocumentoElectronico"
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
 	('<<This.Tdoc>>', '<<Left(This.formaPago, 1)>>', '<<This.Serie + This.numero>>', '<<cfechas(This.Fecha)>>', '<<This.cordendecompra>>',
     '<<This.Detalle>>', <<This.valor>>, <<This.igv>>, <<This.Monto>>, '<<this.nroguia>>', '<<Left(This.Moneda, 1)>>',
 	<<This.ndolar>>, <<This.vigv>>, 'V', <<This.Codigo>>, "<<this.observacion>>", <<goApp.nidusua>>, <<This.Vendedor>>, <<This.codt>>, <<This.cta1>>, <<This.cta2>>,<<This.cta3>>, <<This.exonerado>>,
 	<<this.gratuita>>,<<this.montopercepcion>>)
-	Endtext
+	ENDTEXT
 	NAuto = This.EJECUTARf(lsql, lp, 'ii')
 	If NAuto < 1 Then
 		This.DEshacerCambios()
@@ -287,6 +287,37 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Return 0
 	Endif
 	Return NAuto
+	Endfunc
+	Function PorCliente(Ccursor)
+	If This.idsesion>0 Then
+		Set DataSession To This.idsesion
+	ENDIF
+	fi = Cfechas(This.fechai)
+	ff = Cfechas(This.fechaf)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select a.fech,a.fecr,a.Tdoc,a.ndoc,a.ndo2,a.mone,a.valor,a.igv,a.Impo,a.dolar As dola,a.Form,a.Idauto,d.nomb,
+	\b.cant,b.Prec,Round(b.cant*b.Prec,2) As importe,b.dsnc,b.dsnd,b.gast,ifnull(c.idart,0) as idart,
+	\ifnull(c.Descri,'Sin Productos                                     ') As Descri,
+	\ifnull(c.Unid,'  ') As Unid,p.nruc,p.razo,p.ndni As dni  From fe_rcom As a
+	\inner Join fe_clie As p On p.idclie=a.idcliente
+	\Left Join fe_kar As b On(a.Idauto=b.Idauto)
+	\Left Join fe_art As c On(b.idart=c.idart)
+	\inner Join fe_sucu As d On(d.idalma=a.codt)
+	\Where a.fech Between '<<fi>>' And '<<ff>>' And a.Acti<>'I' And b.acti='A'
+	If  This.codigo>0 Then
+    \ and a.idcliente=<<this.codigo>>
+	Endif
+	If This.codt>0 Then
+	\ and a.codt=<<this.codt>>
+	Endif
+	\ORDER BY fech
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 Enddefine
 

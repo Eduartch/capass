@@ -73,7 +73,7 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 		\b.uno As alma
 	Case This.nidtda = 2
 		\b.Dos As alma
-	Case This.nidtda = 1
+	Case This.nidtda = 3
 		\''
 	Case This.nidtda = 4
 		\b.cua As alma

@@ -1,8 +1,8 @@
 Define Class appsysven As Odata Of 'd:\capass\database\data.prg'
 	Function dATOSGLOBALES(Ccursor)
-	TEXT To lC Noshow
+	Text To lC Noshow
       SELECT * FROM fe_gene WHERE idgene=1 limit 1
-	ENDTEXT
+	Endtext
 	If This.EjecutaConsulta( lC, (Ccursor) ) < 1
 		Return 0
 	Endif
@@ -27,21 +27,45 @@ Define Class appsysven As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function cambiaestadoenviocpe(ecpe)
-	TEXT TO cupdate NOSHOW TEXTMERGE
+	Text To cupdate Noshow Textmerge
          UPDATE fe_gene SET gene_cpea='<<ecpe>>',gene_nres=1,gene_nbaj=1 WHERE idgene=1
-	ENDTEXT
-	If This.Ejecutarsql(cupdate)<1
+	Endtext
+	If This.Ejecutarsql(cupdate) < 1
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
-	Function settearctabancos(nidcta,nserie)
-	TEXT TO cupdate NOSHOW TEXTMERGE
+	Endfunc
+	Function settearctabancos(nidcta, nserie)
+	Text To cupdate Noshow Textmerge
          UPDATE fe_gene SET gene_ibco=<<nidcta>>,gene_sban=<<nserie>> WHERE idgene=1
-	ENDTEXT
-	If This.Ejecutarsql(cupdate)<1
+	Endtext
+	If This.Ejecutarsql(cupdate) < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Consultarfechaservidor(Ccursor)
+	Text To lk Noshow Textmerge
+    select curdate() as fechaservidor
+	Endtext
+	If This.EjecutaConsulta(lk, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizaFechaServidor(ff,ninicioenvios)
+	nmes   = Month(ff)
+	nanio  = Year(ff)
+	fe	   = Cfechas(ff)
+	Text To cupdate Noshow Textmerge
+       UPDATE fe_gene SET fech='<<fe>>',año=<<nanio>>,gene_nbaj=1,gene_nres=<<ninicioenvios>>,mes=<<nmes>> WHERE idgene=1
+	Endtext
+	If This.Ejecutarsql(cupdate) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
+

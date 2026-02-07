@@ -694,29 +694,6 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	Endif
 	Return 1
 	Endfunc
-	Function saldoanteriorpsysrx()
-	If !Pemstatus(goApp,'soloestatienda',5) Then
-		AddProperty(goApp,'soloestatienda',0)
-	Endif
-	If goApp.Soloestatienda=1 And  This.codt<>goApp.tienda Then
-		This.Cmensaje='NO Permitido'
-		Return 0
-	Endif
-	lC = 'FunSaldoCaja'
-	Calias = 'c_' + Sys(2015)
-	dFecha = Cfechas(This.dFecha)
-	Text To lp Noshow Textmerge
-     ('<<dfecha>>',<<this.codt>>)
-	Endtext
-	If This.EJECUTARf(lC, lp, Calias) < 1 Then
-		If This.conerror = 1 Then
-			Return - 1
-		Endif
-	Endif
-	Select (Calias)
-	nsaldo = Iif(Isnull(Id), 0, Id)
-	Return nsaldo
-	Endfunc
 Enddefine
 
 

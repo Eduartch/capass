@@ -16,6 +16,8 @@ Define Class Imprimir As Custom
 	ConvistaPrevia = ""
 	Cgarantia = ""
 	reimpresion = ''
+	Impresora=''
+	abrirpdf=''
 	crucempresa = ''
 	Procedure ImprimeComprobante
 	Lparameters cmodoimpresion
@@ -130,6 +132,9 @@ Define Class Imprimir As Custom
 			Cruc = This.crucempresa
 		Endif
 	Endif
+	If !Pemstatus(goApp,'impresora',5) Then
+		AddProperty(goApp,'impresora','')
+	Endif
 	Cruta = Addbs(Addbs(Sys(5) + Sys(2003)) + Alltrim(Cruc))
 	Set Procedure To FoxbarcodeQR Additive
 	m.oFbc = Createobject("FoxBarcodeQR")
@@ -184,6 +189,10 @@ Define Class Imprimir As Custom
 				This.Archivo = Cruta  + 'preventa.frx'
 				car = 'pedidos.frx'
 				Calias = "tmpp"
+			Case This.Tdoc = 'RR'
+				This.Archivo = Cruta  + 'retencion.frx'
+				car = 'retencion.frx'
+				Calias = "tmpr"	
 			Otherwise
 				This.Archivo = Cruta  + 'boleta.frx'
 				car = 'boleta.frx'
@@ -247,6 +256,10 @@ Define Class Imprimir As Custom
 				This.Archivo = Cruta + 'preventa.frx'
 				car = 'pedidos.frx'
 				Calias = "tmpp"
+			Case This.Tdoc = 'RR'
+				This.Archivo = Cruta  + 'retencion.frx'
+				car = 'retencion.frx'
+				Calias = "tmpr"
 			Otherwise
 				This.Archivo = Cruta + 'boleta.frx'
 				car = 'boleta.frx'
@@ -267,11 +280,17 @@ Define Class Imprimir As Custom
 	If cmodo = 'S' Then
 		This.GeneraQR()
 		If File(This.Archivo) Then
-			Report Form (This.Archivo) To Printer Prompt Noconsole
+			If  Empty(goApp.Impresora) Then
+				Report Form (This.Archivo) To Printer Prompt Noconsole
+			Else
+				lcImpresoraActual = ObtenerImpresoraActual()
+				Set Printer To Name (Alltrim(lcImpresoraActual))
+				Report Form (cArchivo) To Printer Noconsole
+			Endif
 		Else
-			Report Form (car) To Printer Prompt Noconsole
+			this.Cmensaje='Formato No Encontrado'
 		Endif
-		m.oFbc = Null
+    	m.oFbc = Null
 		cpropiedad = "Otraimpresionvtas"
 		If !Pemstatus(goApp, cpropiedad, 5)
 			goApp.AddProperty("Otraimpresionvtas", "")
@@ -315,16 +334,27 @@ Define Class Imprimir As Custom
 		Endif
 	Endif
 	Endproc
-	Procedure GeneraPDF
+	Function GeneraPDF
 	Lparameters cmodo
 	Set Procedure To ple5 Additive
 	This.GeneraQR()
 *!*		wait WINDOW This.Archivo
 *!*		wait WINDOW This.Archivopdf
 	This.CrearPdf(This.Archivo, This.ArchivoPdf, cmodo)
-	Endproc
+	Endfunc
 	Function cambiarimpresoranormalpdf(creporte)
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
 	cpropiedad = "Impresoranormal"
+	If !Empty(This.ArchivoPdf) Then
+		If !Directory(Addbs(Addbs(Sys(5)+Sys(2003))+'Pdf')) Then
+			Mkdir Addbs(Addbs(Sys(5)+Sys(2003))+'Pdf'
+		Endif
+	Else
+		cpdf=This.ArchivoPdf
+	Endif
+*!*		wait WINDOW 'hola'+cpdf
 	If !Pemstatus(goApp, cpropiedad, 5)
 		goApp.AddProperty("Impresoranormal", "")
 	Else
@@ -338,13 +368,15 @@ Define Class Imprimir As Custom
 		lcImpresora		  = goApp.Impresoranormal
 		lnResultado		  = SetDefaultPrinter(lcImpresora)
 		Set Printer To Name (lcImpresora)
-		Report Form (creporte) Preview
+		Report Form (creporte)  Object Type 10 To File (cpdf)
+*!*			Report Form (creporte) Preview
 		lnResultado = SetDefaultPrinter(lcImpresoraActual)
 		Set Printer To Name (lcImpresoraActual)
 	Else
-		Report Form (creporte) Preview
+		Report Form (creporte)  Object Type 10 To File (cpdf)
 	Endif
 	Do Foxypreviewer.App With "Release"
+	abrirpdf(m.cpdf)
 	Endfunc
 	Function GeneraQR()
 	cpropiedad = 'archivoqr'
@@ -461,7 +493,16 @@ Define Class Imprimir As Custom
 		Go Top
 	Endif
 	Go Top
-	Report Form (cArchivo) To Printer Prompt Noconsole
+	If !Pemstatus(goApp,'impresora',5) Then
+		AddProperty(goApp,'impresora','')
+	Endif
+	If  Empty(goApp.Impresora) Then
+		Report Form (cArchivo) To Printer Prompt Noconsole
+	Else
+		lcImpresoraActual = ObtenerImpresoraActual()
+		Set Printer To Name (Alltrim(lcImpresoraActual))
+		Report Form (cArchivo) To Printer Noconsole
+	Endif
 	If This.Tdoc = '01' Or This.Tdoc = '03' Or This.Tdoc = '20' Then
 		cpropiedad = "Otraimpresionvtas"
 		If This.reimpresion <> 'S' Then
@@ -542,7 +583,7 @@ Define Class Imprimir As Custom
 	crutapdf2 = Left(Substr(lcStrings, Rat("PDF", lcStrings)), 3)
 	filepdf	  = Justfname(np2)
 	Cruta = Addbs(Sys(5) + Sys(2003))
-	If This.Tdoc='09' Then
+	If This.Tdoc = '09' Then
 		If !Directory( Cruta + "pdfguias") Then
 			ccarpeta = Cruta + "pdfguias"
 			Mkdir (ccarpeta)
@@ -644,9 +685,7 @@ Define Class Imprimir As Custom
 	This.ConvistaPrevia = ""
 	Endfunc
 	Function ImprimeComprobantexx(objimp)
-*!*		 cmodo, Clet, cndoc, nroitems, Nti, Cruc1, Crazon, cforma, Df, Creferencia, cguia, Cvendedor, dfv, chash, Cmoneda, Cdireccion, cdni, cTdoc, ccopia, ndias
-
-	If Type('oempresa') = 'U' Then
+	If  Type('oempresa') = 'U' Then
 		Cruc = fe_gene.nruc
 	Else
 		Cruc = Oempresa.nruc
@@ -664,7 +703,7 @@ Define Class Imprimir As Custom
 		nruc  With m.objimp.Cruc, razon With m.objimp.Crazon, Form With m.objimp.cforma, fech With Ctod(objimp.dFecha), Forma With m.objimp.cforma, ;
 		Referencia With m.objimp.cdetalle, Ndo2 With m.objimp.cguia, Vendedor With objimp.Cvendedor, fechav With Ctod(objimp.dfevto), ;
 		hash With m.objimp.chash, Mone With m.objimp.Cmoneda, Direccion With m.objimp.Cdireccion, ;
-		dni With m.objimp.Cdni,Tdoc With m.objimp.cTdoc, dias With m.objimp.ndias, ;
+		dni With m.objimp.Cdni, Tdoc With m.objimp.cTdoc, dias With m.objimp.ndias, ;
 		igv With objimp.nigv, valor With m.objimp.nvalor, Total With m.objimp.nTotal, exonerado With m.objimp.nexonerado In tmpv
 	If Len(Alltrim(This.Cgarantia)) > 0 Then
 		Replace All garantia With This.Cgarantia
@@ -726,6 +765,8 @@ Define Class Imprimir As Custom
 	m.oFbc = Null
 	Endproc
 Enddefine
+
+
 
 
 

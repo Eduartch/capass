@@ -2,73 +2,73 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	nidv = 0
 	dfi = Date()
 	dff = Date()
-	cnombre=""
-	cfono=""
-	nmeta=0
-	cmodo=""
-	Todos=""
-	ctipo=""
-	conmeta=""
-	ncomision=0
-	soloefectivo=""
+	cnombre = ""
+	cfono = ""
+	nmeta = 0
+	cmodo = ""
+	Todos = ""
+	ctipo = ""
+	conmeta = ""
+	ncomision = 0
+	soloefectivo = ""
 	Function validar()
 	Do Case
-	Case Len(Alltrim(This.cnombre))=0
-		This.cmensaje='Ingrese Nombre del Vendedor'
+	Case Len(Alltrim(This.cnombre)) = 0
+		This.cmensaje = 'Ingrese Nombre del Vendedor'
 		Return 0
-	Case This.buscanombre()=0
-		This.cmensaje='Nombre de Vendedor Ya Registrado'
+	Case This.buscanombre() = 0
+		This.cmensaje = 'Nombre de Vendedor Ya Registrado'
 		Return 0
-	Case This.cmodo='M' And This.nidv<1
-		This.cmensaje='Seleccione un Vendedor'
+	Case This.cmodo = 'M' And This.nidv < 1
+		This.cmensaje = 'Seleccione un Vendedor'
 		Return 0
 	Otherwise
 		Return 1
 	Endcase
 	Endfunc
 	Function crear()
-	If This.validar()<1 Then
+	If This.validar() < 1 Then
 		Return 0
 	Endif
-	goapp.npara1=This.cnombre
-	goapp.npara2=This.cfono
-	goapp.npara3=This.nmeta
-	pc=Id()
-	If Lower(Sys(2003))='\psysl' Then
-		TEXT TO lc NOSHOW TEXTMERGE
+	goapp.npara1 = This.cnombre
+	goapp.npara2 = This.cfono
+	goapp.npara3 = This.nmeta
+	pc = Id()
+	If Lower(Sys(2003)) = '\psysl' Then
+		Text To lc Noshow Textmerge
 	    INSERT INTO fe_vend(nomv,fechvend,idpcvend)values(?goapp.npara1,localtime,?pc)
-		ENDTEXT
+		Endtext
 	Else
-		TEXT TO lc NOSHOW TEXTMERGE
+		Text To lc Noshow Textmerge
 		INSERT INTO fe_vend(nomv,vend_cuot,vend_fono)values(?goapp.npara1,?goapp.npara2,?goapp.npara3)
-		ENDTEXT
+		Endtext
 	Endif
-	If This.ejecutarsql(lc)<1 Then
+	If This.ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
-	This.cmensaje='Ok'
+	This.cmensaje = 'Ok'
 	Return 1
 	Endfunc
 	Function editar()
-	If This.validar()<1 Then
+	If This.validar() < 1 Then
 		Return 0
 	Endif
-	goapp.npara1=This.cnombre
-	goapp.npara2=This.cfono
-	goapp.npara3=This.nmeta
-	If Lower(Sys(2003))='\psysl' Then
-		TEXT TO lc NOSHOW TEXTMERGE
+	goapp.npara1 = This.cnombre
+	goapp.npara2 = This.cfono
+	goapp.npara3 = This.nmeta
+	If Lower(Sys(2003)) = '\psysl' Then
+		Text To lc Noshow Textmerge
 		UPDATE fe_vend SET nomv=?goapp.npara1,cuota=?goapp.npara3 WHERE idven=<<this.nidv>>
-		ENDTEXT
+		Endtext
 	Else
-		TEXT TO lc NOSHOW TEXTMERGE
+		Text To lc Noshow Textmerge
 		UPDATE fe_vend SET nomv=?goapp.npara1,vend_fono=?goapp.npara2,vend_cuot=?goapp.npara3 WHERE idven=<<this.nidv>>
-		ENDTEXT
+		Endtext
 	Endif
-	If This.ejecutarsql(lc)<1 Then
+	If This.ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
-	This.cmensaje='Ok'
+	This.cmensaje = 'Ok'
 	Return 1
 	Endfunc
 	Function buscanombre()
@@ -81,7 +81,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lc  Noshow Textmerge
 	\Select nomv From fe_vend Where Trim(nomv)="<<TRIM(this.cnombre)>>" And vend_acti<>'I'
 	If This.cmodo <> "N"
-	 \ And idven<><<this.nidv>>
+	 \ And idven<><<This.nidv>>
 	Endif
 	\ limit 1
 	Set Textmerge Off
@@ -135,7 +135,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\    Select a.Razo as cliente,a.nruc,a.Dire as direccion,a.ciud as ciudad,a.fono,a.fax,a.clie_rpm,ifnull(x.zona_nomb,'') As zona,a.Refe As Referencia,ifnull(v.nomv,'') As vendedor
+	\    Select a.Razo As cliente,a.nruc,a.Dire As direccion,a.ciud As ciudad,a.fono,a.fax,a.clie_rpm,ifnull(x.zona_nomb,'') As zona,a.Refe As Referencia,ifnull(v.nomv,'') As vendedor
     \    From fe_clie As a
     \    Left Join fe_zona As x On x.zona_idzo=a.clie_idzo
     \    Left Join fe_vend As v On v.idven=a.clie_codv
@@ -152,8 +152,8 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listaventaspsysl(nmarca, Ccursor)
-	If (This.dff-This.dfi)>120 Then
-		This.cmensaje='Máximo 120 Dias'
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Máximo 365 Dias'
 		Return 0
 	Endif
 	f1 = cfechas(This.dfi)
@@ -166,9 +166,9 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
      \ fe_clie As d
      \ inner Join fe_rcom As e On e.Idcliente=d.idclie
      \ Left Join fe_kar As a On a.Idauto=e.Idauto
-     \ Left Join (select idart,idmar from fe_art
-	If nmarca>0 Then
-        \ where  idmar=<<nmarca>>
+     \ Left Join (Select idart,idmar From fe_art
+	If nmarca > 0 Then
+        \ Where  idmar=<<nmarca>>
 	Endif
      \ ) As  b On b.idart=a.idart
      \ Left Join fe_vend As c On c.idven=a.Codv
@@ -185,9 +185,9 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	 \ inner Join fe_rcom As e On e.Idauto=r.rcre_idau
 	 \ inner Join fe_clie As d On d.idclie=e.Idcliente
 	 \ Left Join fe_kar As a On a.Idauto=e.Idauto
-	 \ Left Join (select idart,idmar from fe_art
-	If nmarca>0 Then
-        \ where  idmar=<<nmarca>>
+	 \ Left Join (Select idart,idmar From fe_art
+	If nmarca > 0 Then
+        \ Where  idmar=<<nmarca>>
 	Endif
      \ ) As  b On b.idart=a.idart
 	 \ Left Join fe_vend As c On c.idven=a.Codv
@@ -213,9 +213,9 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	\  inner Join fe_rcom As e On e.Idauto=r.rcre_idau
 	\  inner Join fe_clie As d On d.idclie=e.Idcliente
 	\  inner Join fe_kar As a On a.Idauto=e.Idauto
-	\  inner Join (select idart,idmar from fe_art
-	If nmarca>0 Then
-        \ where idmar=<<nmarca>>
+	\  inner Join (Select idart,idmar From fe_art
+	If nmarca > 0 Then
+        \ Where idmar=<<nmarca>>
 	Endif
      \ ) As  b On b.idart=a.idart
 	\  inner Join fe_vend As c On c.idven=r.rcre_codv
@@ -249,7 +249,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 			Endif
 			Insert Into (Ccursor)(comi, Idauto, Tdoc, Ndoc, fech, cant, Prec, timporte, Mone, alma, nomb, Form, igv, dola, Razo, Tipo,  Impo, Codv);
 				Values((0.01 * ncomi) / com.igv, com.Idauto, com.Tdoc, com.Ndoc, com.fech, com.cant, com.Prec, com.timporte, com.Mone, com.alma, com.nomb, com.Form, ;
-				com.igv, com.dola, com.Razo, com.Tipo,  com.Impo, Iif(Vartype(com.Codv) = 'N', com.Codv, Val(com.Codv)))
+				  com.igv, com.dola, com.Razo, com.Tipo,  com.Impo, Iif(Vartype(com.Codv) = 'N', com.Codv, Val(com.Codv)))
 			Select com
 			Skip
 		Enddo
@@ -259,9 +259,9 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarcorreosvendedores(Ccursor)
-	TEXT To lC Noshow
+	Text To lc Noshow
      select vend_corr from fe_vend where vend_acti='A' and length(trim(vend_corr))>0
-	ENDTEXT
+	Endtext
 	If  This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -270,9 +270,9 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Function consultardata(np1, Ccursor)
 	m.lc		 = 'PROMUESTRAVENDEDORES'
 	goapp.npara1 = m.np1
-	TEXT To m.lp Noshow Textmerge
+	Text To m.lp Noshow Textmerge
        (?goapp.npara1)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lc, m.lp, m.Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -290,8 +290,8 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listaventas(nmarca, Ccursor)
-	If (This.dff-This.dfi)>120 Then
-		This.cmensaje='Máximo 120 Dias'
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Máximo 365 Dias'
 		Return 0
 	Endif
 	f1 = cfechas(This.dfi)
@@ -299,64 +299,65 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
 	 \ Select a.kar_comi*((a.cant*a.Prec)/e.vigv) As comi,a.Idauto,e.Tdoc,e.Ndoc,e.fech,a.cant,a.Prec,
-     \ Round(a.cant*a.Prec,2) As timporte,ifnull(b.idmar,Cast(0 As unsigned)) As idmar,e.Mone,a.alma,c.nomv As nomb,e.Form,
-     \ e.vigv As igv,Cast(a.Codv As unsigned) As Codv,e.dolar As dola,d.Razo,'v' As Tipo,e.Idcliente,e.Impo,e.impo as importe From
+     \ Round(a.cant*a.Prec,2) As timporte,ifnull(b.idmar,Cast(0 As unsigned)) As idmar,e.Mone,a.alma,c.nomv As nomb,e.Form,Descri,unid,
+     \ e.vigv As igv,Cast(a.Codv As unsigned) As Codv,e.dolar As dola,d.Razo,'v' As Tipo,e.Idcliente,e.Impo,e.Impo As importe,ifnull(nomv,'') As nomv From
      \ fe_clie As d
      \ inner Join fe_rcom As e On e.Idcliente=d.idclie
      \ inner Join fe_kar As a On a.Idauto=e.Idauto
-     \ inner Join(select idart,idmar from fe_art
-	If nmarca>0 Then
-        \ where  idmar=<<nmarca>>
+     \ inner Join(Select idart,idmar,Descri,unid From fe_art
+	If nmarca > 0 Then
+        \ Where  idmar=<<nmarca>>
 	Endif
      \ ) As  b On b.idart=a.idart
      \ inner Join fe_vend As c On c.idven=a.Codv
      \ Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<f1>>' And '<<f2>>'  And Impo<>0 And e.Tdoc Not In("07","08")
-	If This.soloefectivo='E' Then
+	If This.soloefectivo = 'E' Then
         \ And Form='E'
 	Endif
 	If This.nidv > 0 Then
      \ And a.Codv=<<This.nidv>>
 	Endif
+    \ Order By c.nomv
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
-	Select  * From (Ccursor) Into Cursor (Ccursor)  Order By Codv, fech, Ndoc
+	Select  * From (Ccursor) Into Cursor (Ccursor)  Order By nomv, fech, Ndoc
 	Return 1
 	Endfunc
 	Function listatodalassventas(nmarca, Ccursor)
-	If (This.dff-This.dfi)>120 Then
-		This.cmensaje='Máximo 120 Dias'
+	If (This.dff - This.dfi) > 240 Then
+		This.cmensaje = 'Máximo 240 Dias'
 		Return 0
-	ENDIF
-	IF !PEMSTATUS(goapp,'proyecto',5) then
-	   ADDPROPERTY(goapp,'proyecto','')
-	   ENDIF 
+	Endif
+	If !Pemstatus(goapp, 'proyecto', 5) Then
+		AddProperty(goapp, 'proyecto', '')
+	Endif
 	f1 = cfechas(This.dfi)
 	f2 = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
 	\Select  comision As comi,a.Idauto,e.Tdoc,e.Ndoc,e.fech,e.Impo As importe,e.Mone,e.codt As alma,c.nomv As nomb,e.Form,
 	\e.vigv As igv,a.Codv,e.dolar As dola,d.Razo,e.Idcliente From fe_rcom As e
-	\INNER Join fe_clie As d On d.idclie=e.Idcliente
-	\INNER Join (Select  Sum(k.kar_comi*((k.cant*k.Prec)/r.vigv)) As comision,k.Idauto,Codv From fe_kar As k
-	\INNER Join fe_rcom As r On r.Idauto=k.Idauto
-	\inner Join (select idart,idmar from fe_art
-	If nmarca>0 Then
-        \ where  idmar=<<nmarca>>
+	\inner Join fe_clie As d On d.idclie=e.Idcliente
+	\inner Join (Select  Sum(k.kar_comi*((k.cant*k.Prec)/r.vigv)) As comision,k.Idauto,Codv From fe_kar As k
+	\inner Join fe_rcom As r On r.Idauto=k.Idauto
+	\inner Join (Select idart,idmar From fe_art
+	If nmarca > 0 Then
+        \ Where  idmar=<<nmarca>>
 	Endif
      \ ) As  b On b.idart=k.idart
 	\Where r.Idcliente>0 And k.Acti='A' And r.Acti='A' And r.fech Between  '<<f1>>' And '<<f2>>'  And r.Impo<>0
 	If This.nidv > 0 Then
 	\	And k.Codv=<<This.nidv>>
-	ENDIF
-	IF goapp.proyecto='psysg' then
-	\ AND exon<>'S'
-	ENDIF 
+	Endif
+	If goapp.proyecto = 'psysg' Then
+	\ And exon<>'S'
+	Endif
 	\Group  By r.Idauto,k.Codv) As a On a.Idauto=e.Idauto
 	\Left Join fe_vend As c On c.idven=a.Codv
-	\Order By a.Codv,a.Idauto,e.Mone
+	\Order By c.nomv,a.Idauto,e.Mone
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
@@ -364,338 +365,372 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function listaventaspsysu(nidm,Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	Function listaventaspsysu(nidm, Ccursor)
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\	      SELECT a.kar_comi as comi,a.idauto,e.tdoc,e.ndoc,e.fech,b.idart,a.cant,a.prec,
-	\	      ROUND(a.cant*a.prec,2) as timporte,e.mone,a.alma,a.idart,b.idmar,c.nomv as nomb,e.form,
-	\	      e.vigv as igv,a.codv,e.dolar as dola,b.descri,b.unid,d.razo FROM fe_clie as d
-	\	      inner JOIN fe_rcom as e  ON e.idcliente=d.idclie
-	\	      inner join fe_kar as a on a.idauto=e.idauto
-	\	      inner join fe_vend as c on c.idven=a.codv
-	\	      inner JOIN fe_art as  b ON b.idart=a.idart
-	\	      WHERE e.ACTI<>'I' and a.acti<>'I'  and e.fech  BETWEEN '<<dfi>>' and '<<dff>>' and a.alma>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\	      Select a.kar_comi As comi,a.Idauto,e.Tdoc,e.Ndoc,e.fech,b.idart,a.cant,a.Prec,
+	\	      Round(a.cant*a.Prec,2) As timporte,e.Mone,a.alma,a.idart,b.idmar,c.nomv As nomb,e.Form,
+	\	      e.vigv As igv,a.Codv,e.dolar As dola,b.Descri,b.unid,d.Razo From fe_clie As d
+	\	      inner Join fe_rcom As e  On e.Idcliente=d.idclie
+	\	      inner Join fe_kar As a On a.Idauto=e.Idauto
+	\	      inner Join fe_vend As c On c.idven=a.Codv
+	\	      inner Join fe_art As  b On b.idart=a.idart
+	\	      Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	If m.nidm>0 Then
-	 \ and b.idmar=<<m.nidm>>
+	If m.nidm > 0 Then
+	 \ And b.idmar=<<m.nidm>>
 	Endif
-	\ ORDER BY a.codv,a.idauto,e.mone
+	\ Order By a.Codv,a.Idauto,e.Mone
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listaventaslineas(nidc,Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	Function listaventaslineas(nidc, Ccursor)
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT idcat,linea,v.nomv AS vendedor,tcant AS cantidad,timporte AS importe
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`*a.`kar_equi`) AS tcant,a.`codv`,b.`idcat`,cc.`dcat` AS linea FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-	\INNER JOIN fe_art AS  b ON b.idart=a.idart
-    \INNER JOIN fe_cat AS cc ON cc.`idcat`=b.`idcat`
-	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select idcat,linea,v.nomv As vendedor,tcant As cantidad,timporte As importe
+    \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,Sum(a.`cant`*a.`kar_equi`) As tcant,a.`Codv`,b.`idcat`,cc.`dcat` As linea From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+	\inner Join fe_art As  b On b.idart=a.idart
+    \inner Join fe_cat As cc On cc.`idcat`=b.`idcat`
+	\Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0 And Idcliente>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	If m.nidc>0 Then
-	 \ and cc.idcat=<<m.nidc>>
+	If m.nidc > 0 Then
+	 \ And cc.idcat=<<m.nidc>>
 	Endif
-	\GROUP BY b.idcat,cc.`dcat`,a.codv) AS yy
-	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv
-	\ORDER BY vendedor,importe DESC
+	\Group By b.idcat,cc.`dcat`,a.Codv) As yy
+	\inner Join fe_vend As v On v.`idven`=yy.Codv
+	\Order By vendedor,importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listaventasmarcas(nidm,Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	Function listaventasmarcas(nidm, Ccursor)
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT idmar,marca,v.nomv AS vendedor,tcant AS cantidad,timporte AS importe
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`*a.`kar_equi`) AS tcant,a.`codv`,b.`idmar`,mm.`dmar` AS marca FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-	\INNER JOIN fe_art AS  b ON b.idart=a.idart
-    \INNER JOIN fe_mar AS mm ON mm.`idmar`=b.`idmar`
-	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select idmar,marca,v.nomv As vendedor,tcant As cantidad,timporte As importe
+    \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,Sum(a.`cant`*a.`kar_equi`) As tcant,a.`Codv`,b.`idmar`,mm.`dmar` As marca From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+	\inner Join fe_art As  b On b.idart=a.idart
+    \inner Join fe_mar As mm On mm.`idmar`=b.`idmar`
+	\Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0 And Idcliente>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	If m.nidm>0 Then
-	 \ and b.idmar=<<m.nidm>>
+	If m.nidm > 0 Then
+	 \ And b.idmar=<<m.nidm>>
 	Endif
-	\GROUP BY b.idmar,mm.`dmar`,a.codv) AS yy
-	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv
-	\ORDER BY vendedor,importe DESC
+	\Group By b.idmar,mm.`dmar`,a.Codv) As yy
+	\inner Join fe_vend As v On v.`idven`=yy.Codv
+	\Order By vendedor,importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listaventasproducto(Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT producto,v.nomv AS vendedor,kar_unid as unidad,tcant AS cantidad,timporte AS importe
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,SUM(a.`cant`) AS tcant,a.`codv`,b.`idcat`,b.`descri` AS producto,kar_unid FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-	\INNER JOIN fe_art AS  b ON b.idart=a.idart
-    \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select producto,v.nomv As vendedor,kar_unid As unidad,tcant As cantidad,timporte As importe
+    \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,Sum(a.`cant`) As tcant,a.`Codv`,b.`idcat`,b.`Descri` As producto,kar_unid From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+	\inner Join fe_art As  b On b.idart=a.idart
+    \Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	\GROUP BY b.idart,b.`descri`,kar_unid,a.codv) AS yy
-	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv
-	\ORDER BY vendedor,importe DESC
+	\Group By b.idart,b.`Descri`,kar_unid,a.Codv) As yy
+	\inner Join fe_vend As v On v.`idven`=yy.Codv
+	\Order By vendedor,importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listaventasconmetas(nlinea,nmarca,Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	Function listaventasconmetas(nlinea, nmarca, Ccursor)
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\select vendedor,importe,cuota,if(cuota>0,Round((importe*100)/cuota,2),0) As por1 from(
-	\SELECT v.nomv AS vendedor,timporte AS importe,
-	\IF(vend_cuot>0,IF(DATEDIFF('<<dff>>','<<dfi>>')=0,1,DATEDIFF('<<dff>>','<<dfi>>'))*(vend_cuot/30),0) AS cuota
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,a.`codv` FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-	\INNER JOIN fe_art AS  b ON b.idart=a.idart
-    \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select vendedor,importe,cuota,If(cuota>0,Round((importe*100)/cuota,2),0) As por1 From(
+	\Select v.nomv As vendedor,timporte As importe,
+	\If(vend_cuot>0,If(DATEDIFF('<<dff>>','<<dfi>>')=0,1,DATEDIFF('<<dff>>','<<dfi>>'))*(vend_cuot/30),0) As cuota
+    \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,a.`Codv` From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+	\inner Join fe_art As  b On b.idart=a.idart
+    \Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	If m.nlinea>0 Then
-	   \ and b.idcat=<<m.nlinea>>
+	If m.nlinea > 0 Then
+	   \ And b.idcat=<<m.nlinea>>
 	Endif
-	If m.nmarca>0 Then
-	  \ and b.idmar=<<m.nmarca>>
+	If m.nmarca > 0 Then
+	  \ And b.idmar=<<m.nmarca>>
 	Endif
-	\GROUP BY a.codv) AS yy
-	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv) as aa
-	\ORDER BY importe DESC
+	\Group By a.Codv) As yy
+	\inner Join fe_vend As v On v.`idven`=yy.Codv) As aa
+	\Order By importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function listaventasconmetaspsysl(nlinea,nmarca,Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	Function listaventasconmetaspsysl(nlinea, nmarca, Ccursor)
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\select vendedor,importe,cuota,if(cuota>0,Round((importe*100)/cuota,2),0) As por1 from(
-	\SELECT v.nomv AS vendedor,timporte AS importe,
-	\IF(cuota>0,IF(DATEDIFF('<<dff>>','<<dfi>>')=0,1,DATEDIFF('<<dff>>','<<dfi>>'))*(cuota/30),0) AS cuota
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,a.`codv` FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-	\INNER JOIN fe_art AS  b ON b.idart=a.idart
-    \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select vendedor,importe,cuota,If(cuota>0,Round((importe*100)/cuota,2),0) As por1 From(
+	\Select v.nomv As vendedor,timporte As importe,
+	\If(cuota>0,If(DATEDIFF('<<dff>>','<<dfi>>')=0,1,DATEDIFF('<<dff>>','<<dfi>>'))*(cuota/30),0) As cuota
+    \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,a.`Codv` From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+	\inner Join fe_art As  b On b.idart=a.idart
+    \Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	If m.nlinea>0 Then
-	   \ and b.idcat=<<m.nlinea>>
+	If m.nlinea > 0 Then
+	   \ And b.idcat=<<m.nlinea>>
 	Endif
-	If m.nmarca>0 Then
-	  \ and b.idmar=<<m.nmarca>>
+	If m.nmarca > 0 Then
+	  \ And b.idmar=<<m.nmarca>>
 	Endif
-	\GROUP BY a.codv) AS yy
-	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv) as aa
-	\ORDER BY importe DESC
+	\Group By a.Codv) As yy
+	\inner Join fe_vend As v On v.`idven`=yy.Codv) As aa
+	\Order By importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function crearpsystr()
-	If This.validar()<1 Then
+	If This.validar() < 1 Then
 		Return 0
 	Endif
-	goapp.npara1=This.cnombre
-	goapp.npara2=Datetime()
-	goapp.npara3=goapp.usuario
-	goapp.npara4=This.ncomision
-	goapp.npara5=This.ctipo
-	goapp.npara6=This.nmeta
-	If This.conmeta='N' Then
-		TEXT TO lc NOSHOW TEXTMERGE
+	goapp.npara1 = This.cnombre
+	goapp.npara2 = Datetime()
+	goapp.npara3 = goapp.usuario
+	goapp.npara4 = This.ncomision
+	goapp.npara5 = This.ctipo
+	goapp.npara6 = This.nmeta
+	If This.conmeta = 'N' Then
+		Text To lc Noshow Textmerge
 		INSERT INTO fe_vend(nomv,fechvend,usuavend,idpcvend,vend_comi,vend_tipo)values(?goapp.npara1,?goapp.npara2,?goapp.npara3,"",?goapp.npara4,?goapp.npara5)
-		ENDTEXT
+		Endtext
 	Else
-		TEXT TO lc NOSHOW TEXTMERGE
+		Text To lc Noshow Textmerge
 		INSERT INTO fe_vend(nomv,fechvend,usuavend,idpcvend,vend_comi,vend_tipo,vend_cuot)values(?goapp.npara1,?goapp.npara2,?goapp.npara3,"",?goapp.npara4,?goapp.npara5,?goapp.npara6)
-		ENDTEXT
+		Endtext
 	Endif
-	If This.ejecutarsql(lc)<1 Then
+	If This.ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
-	This.cmensaje='Ok'
+	This.cmensaje = 'Ok'
 	Return 1
 	Endfunc
 	Function editarpsystr()
-	If This.validar()<1 Then
+	If This.validar() < 1 Then
 		Return 0
 	Endif
-	goapp.npara1=This.cnombre
-	goapp.npara2=This.ncomision
-	goapp.npara3=This.ctipo
-	goapp.npara4=This.nmeta
-	If This.conmeta='N' Then
-		TEXT TO lc NOSHOW TEXTMERGE
+	goapp.npara1 = This.cnombre
+	goapp.npara2 = This.ncomision
+	goapp.npara3 = This.ctipo
+	goapp.npara4 = This.nmeta
+	If This.conmeta = 'N' Then
+		Text To lc Noshow Textmerge
 		UPDATE fe_vend SET nomv=?goapp.npara1,vend_comi=?goapp.npara2,vend_tipo=?goapp.npara3 WHERE idven=<<this.nidv>>
-		ENDTEXT
+		Endtext
 	Else
-		TEXT TO lc NOSHOW TEXTMERGE
+		Text To lc Noshow Textmerge
 		UPDATE fe_vend SET nomv=?goapp.npara1,vend_comi=?goapp.npara2,vend_tipo=?goapp.npara3,vend_cuot=?goapp.npara4 WHERE idven=<<this.nidv>>
-		ENDTEXT
+		Endtext
 	Endif
-	If This.ejecutarsql(lc)<1 Then
+	If This.ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
-	This.cmensaje='Ok'
+	This.cmensaje = 'Ok'
 	Return 1
 	Endfunc
 	Function listaventasconmetaspsystr(Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\select vendedor,importe,CAST(cuota as decimal(12,2)) as cuota,if(cuota>0,Round((importe*100)/cuota,2),0) As por1,ROUND(((importe-costo)/importe *100),2)as por2 from(
-	\SELECT v.nomv AS vendedor,timporte AS importe,costo,
-	\vend_cuot AS cuota
-    \FROM(SELECT ROUND(SUM(a.cant*a.prec),2) AS timporte,a.`codv`,SUM(cant*kar_cost) as costo FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-    \WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select vendedor,importe,Cast(cuota As Decimal(12,2)) As cuota,If(cuota>0,Round((importe*100)/cuota,2),0) As por1,Round(((importe-costo)/importe *100),2)As por2 From(
+	\Select v.nomv As vendedor,timporte As importe,costo,
+	\vend_cuot As cuota
+    \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,a.`Codv`,Sum(cant*kar_cost) As costo From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+    \Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	\GROUP BY a.codv) AS yy
-	\INNER JOIN fe_vend AS v ON v.`idven`=yy.codv) as aa
-	\ORDER BY importe DESC
+	\Group By a.Codv) As yy
+	\inner Join fe_vend As v On v.`idven`=yy.Codv) As aa
+	\Order By importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function detallemarcas(nidm,Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	Function detallemarcas(nidm, Ccursor)
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT descri as producto,kar_unid as unidad,SUM(a.`cant`) AS cantidad,ROUND(SUM(a.cant*a.prec),2) AS importe FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-	\INNER JOIN fe_art AS b ON b.idart=a.idart
- 	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select Descri As producto,kar_unid As unidad,Sum(a.`cant`) As cantidad,Round(Sum(a.cant*a.Prec),2) As importe From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+	\inner Join fe_art As b On b.idart=a.idart
+ 	\Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0 And Idcliente>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	If m.nidm>0 Then
-	 \ and b.idmar=<<m.nidm>>
+	If m.nidm > 0 Then
+	 \ And b.idmar=<<m.nidm>>
 	Endif
-	\GROUP BY a.idart,kar_unid
-	\ORDER BY importe DESC
+	\Group By a.idart,kar_unid
+	\Order By importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function detallelineas(nidc,Ccursor)
-	If (This.dff-This.dfi)>60 Then
-		This.cmensaje='Hasta 60 Días'
+	Function detallelineas(nidc, Ccursor)
+	If (This.dff - This.dfi) > 365 Then
+		This.cmensaje = 'Hasta 365 Días'
 		Return 0
 	Endif
-	dfi=cfechas(This.dfi)
-	dff=cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\SELECT descri as producto,kar_unid As  unidad,SUM(a.`cant`) AS cantidad,ROUND(SUM(a.cant*a.prec),2) AS importe FROM fe_rcom AS e
-	\INNER JOIN fe_kar AS a ON a.idauto=e.idauto
-	\INNER JOIN fe_art AS  b ON b.idart=a.idart
- 	\WHERE e.ACTI<>'I' AND a.acti<>'I'  AND e.fech  BETWEEN '<<dfi>>' and '<<dff>>' AND a.alma>0 and idcliente>0
-	If This.nidv>0 Then
-		\ and a.codv=<<this.nidv>>
+	\Select Descri As producto,kar_unid As  unidad,Sum(a.`cant`) As cantidad,Round(Sum(a.cant*a.Prec),2) As importe From fe_rcom As e
+	\inner Join fe_kar As a On a.Idauto=e.Idauto
+	\inner Join fe_art As  b On b.idart=a.idart
+ 	\Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<dfi>>' And '<<dff>>' And a.alma>0 And Idcliente>0
+	If This.nidv > 0 Then
+		\ And a.Codv=<<This.nidv>>
 	Endif
-	If m.nidc>0 Then
-	 \ and b.idcat=<<m.nidc>>
+	If m.nidc > 0 Then
+	 \ And b.idcat=<<m.nidc>>
 	Endif
-	\GROUP BY a.idart,kar_unid
-	\ORDER BY importe DESC
+	\Group By a.idart,kar_unid
+	\Order By importe Desc
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lc,Ccursor)<1 Then
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function ActualizarCuotapsysl(nvalor)
-	TEXT TO lc NOSHOW TEXTMERGE
+	Text To lc Noshow Textmerge
         UPDATE fe_vend SET cuota=<<nvalor>> WHERE idven=<<this.nidv>>
-	ENDTEXT
-	If This.ejecutarsql(lc)<1
+	Endtext
+	If This.ejecutarsql(lc) < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function desactiva(np1)
+	Ccursor = 'c_' + Sys(2015)
+	Text To lc Noshow
+	SELECT codv  FROM fe_kar WHERE codv=?nid AND acti='A'  limit 1
+	Endtext
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
+		Return  0
+	Endif
+	Select (Ccursor)
+	If Codv > 0 Then
+		This.cmensaje = 'Tiene Ventas Activas'
+		Return 0
+	Endif
+	Ccursor = 'o_' + Sys(2015)
+	Text To lc Noshow
+	SELECT rcre_codv  as codv  FROM fe_rcred WHERE rcre_codv=?nid  AND rcre_Acti='A' limit 1
+	Endtext
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
+		Return  0
+	Endif
+	Select (Ccursor)
+	If Codv > 0 Then
+		This.cmensaje = 'Tiene Ventas Activas en Los Registros de Cuentas Por Cobrar'
+		Return 0
+	Endif
+	Text To lc Noshow
+	UPDATE fe_vend SET vend_acti='I' WHERE idven=?nid
+	Endtext
+	If This.ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

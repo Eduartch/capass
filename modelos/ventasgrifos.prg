@@ -125,6 +125,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		ocre.Idauto = This.Idauto
 		ocre.Codv = goApp.nidusua
 		If ocre.registrar() < 1 Then
+			this.cmensaje=ocre.Cmensaje
 			Return 0
 		Endif
 	Endif
@@ -985,47 +986,11 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function resumenventasxmescantidad(ntipo, Ccursor)
-	Set Textmerge On
-	Set Textmerge To Memvar lC Noshow Textmerge
-  	\Select Descri As Producto,unid As Unidad,
-	\Sum(Case mes When 1 Then Impo Else 0 End) As 'Enero',
-	\Sum(Case mes When 2 Then Impo Else 0 End) As 'Febrero',
-	\Sum(Case mes When 3 Then Impo Else 0 End) As 'Marzo',
-	\Sum(Case mes When 4 Then Impo Else 0 End) As 'Abril',
-	\Sum(Case mes When 5 Then Impo Else 0 End) As 'Mayo',
-	\Sum(Case mes When 6 Then Impo Else 0 End) As 'Junio',
-	\Sum(Case mes When 7 Then Impo Else 0 End) As 'Julio',
-	\Sum(Case mes When 8 Then Impo Else 0 End) As 'Agosto',
-	\Sum(Case mes When 9 Then Impo Else 0 End) As 'Septiembre',
-	\Sum(Case mes When 10 Then Impo Else 0 End) As 'Octubre',
-	\Sum(Case mes When 11 Then Impo Else 0 End) As 'Noviembre',
-	\Sum(Case mes When 12 Then Impo Else 0 End) As 'Diciembre',Sum(Impo) As Total,
-	\x.idart From(
-	\Select Month(fech) As mes,idart,Cast(Sum(cant) As Decimal(12,2)) As Impo
-	\From fe_rcom r inner Join fe_kar k On k.Idauto=r.Idauto Where k.Acti='A' And r.Acti='A'  And Year(fech)=<<This.naño>> And idcliente>0
-	Do Case
-	Case m.ntipo = 2
-	     \ And r.Tdoc In("01","03","07","08")
-	Case m.ntipo = 3
-	    \ And r.Tdoc="20"
-	Otherwise
-	    \
-	Endcase
-	\Group By idart,fech
-	\Order By fech) As x inner Join fe_art As c On c.idart=x.idart
-	\Group By idart Order By Descri
-	Set Textmerge To
-	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
-		Return 0
-	Endif
-	Return 1
-	Endfunc
 	Function resumenventasproductoxlectura(Ccursor)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\Select Descri,unid,cant,importe,q.idart From(
-	\Select Sum(cant) As cant,Sum(cant*Prec)As importe,k.idart,rcom_idis
+	\Select Descri,Unid,cant,Importe,q.idart From(
+	\Select Sum(cant) As cant,Sum(cant*Prec)As Importe,k.idart,rcom_idis
 	\From fe_rcom As r
 	\inner Join fe_kar As k On k.`Idauto`=r.`Idauto`
 	\Where 	idcliente>0 And k.Acti='A' And r.Acti='A'And k.`kar_idco`>0 And rcom_idis=<<This.Idlectura>>
@@ -1039,7 +1004,7 @@ Define Class ventasgrifos As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
 	Function flujoventasxdespacho(Ccursor)
 	If (This.fechaf - This.fechai) > 31 Then
 		This.Cmensaje = "Máximo 30 Días"

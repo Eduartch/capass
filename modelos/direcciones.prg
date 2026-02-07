@@ -22,7 +22,6 @@ Define Class direcciones As Odata Of 'd:\capass\database\data.prg'
 	If This.ejecutarsql(lc)<1 Then
 		Return 0
 	Endif
-	This.cmensaje="Agregado Ok"
 	Return  1
 	Endfunc
 	Function actualizar()
@@ -35,7 +34,6 @@ Define Class direcciones As Odata Of 'd:\capass\database\data.prg'
 	If This.ejecutarsql(lc)<1 Then
 		Return 0
 	Endif
-	This.cmensaje="Actualizado Ok"
 	Endfunc
 	Function validar()
 	Do Case
