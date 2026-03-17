@@ -71,16 +71,20 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	nequi1 = 0
 	nequi2 = 0
 	ccodigobarras = ""
+	ccodigo2 = ""
+	ccolores = ""
+	ctallas = ""
+	csexo = ""
 	nidprov = 0  && Proveedor del producto
 	Function MuestraProductosJ1(np1, np2, np3, np4, Ccursor)
-	lC = 'PROMUESTRAPRODUCTOSJx' 
+	lC = 'PROMUESTRAPRODUCTOSJx'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
 	goApp.npara4 = np4
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-	ENDTEXT
+	Endtext
 	If  This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -117,7 +121,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	  \ And a.idcat=<<nidcat>>
 	Endif
 	\Order By Descri;
-	Set Textmerge Off
+		Set Textmerge Off
 	Set Textmerge To
 	If  This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -134,15 +138,24 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
 	goApp.npara4 = m.np4
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP10(m.lC, m.lp, m.Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function CreaProducto()
+	oser = Newobject("servicio", " d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "productos"
+	rpta = oser.Inicializar(This, 'productos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
 	If !Pemstatus(goApp, 'prodconubicacion', 5) Then
 		AddProperty(goApp, 'prodconubicacion', '')
 	Endif
@@ -178,24 +191,24 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Do Case
 	Case goApp.prodconubicacion = 'S'
 		goApp.npara25 = _Screen.oProductos.cubi1
-		TEXT To lp Noshow
+		Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-		ENDTEXT
+		Endtext
 	Case goApp.prodConimagenes = 'S'
 		goApp.npara25 = This.imagen
-		TEXT To lp Noshow
+		Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-		ENDTEXT
+		Endtext
 	Otherwise
-		TEXT To lp Noshow
+		Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
-		ENDTEXT
+		Endtext
 	Endcase
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1
@@ -231,11 +244,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara23 = This.ccodigo1
 	goApp.npara24 = This.ndolar
 	goApp.npara25 = This.nutil0
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -272,11 +285,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara25 = This.ndolar
 	goApp.npara26 = This.Cestado
 	goApp.npara27 = This.nutil0
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-	ENDTEXT
+	Endtext
 	If  This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -301,17 +314,24 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara4 = This.costoneto
 	goApp.npara5 = This.Moneda
 	goApp.npara6 = This.ndolar
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, '') < 1 Then
 		Return  0
 	Endif
 	Return 1
 	Endfunc
 	Function EditarProducto()
-*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17, np18, np19, np20, np21, np22, np23, np24, np25, np26)
-*	cdesc, cunid, ncosto, np1, np2, np3, npeso, ccat, cmar, ctipro, nflete, cm, Nprecio, ccoda1, nutil1, nutil2, nutil3, ncome, ncomc, nidus, ncoda, nsmax, nsmin, Tigv, ndolar, ce) < 1 Then
+	oser = Newobject("servicio", " d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "productos"
+	rpta = oser.Inicializar(This, 'productos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
 	If !Pemstatus(goApp, 'prodconubicacion', 5) Then
 		AddProperty(goApp, 'prodconubicacion', '')
 	Endif
@@ -349,24 +369,24 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Do Case
 	Case  goApp.prodconubicacion = 'S'
 		goApp.npara27 = _Screen.oProductos.cubi1
-		TEXT To lp Noshow
+		Text To lp Noshow
     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-		ENDTEXT
+		Endtext
 	Case goApp.prodConimagenes = 'S'
 		goApp.npara27 = This.imagen
-		TEXT To lp Noshow
+		Text To lp Noshow
     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-		ENDTEXT
+		Endtext
 	Otherwise
-		TEXT To lp Noshow
+		Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-		ENDTEXT
+		Endtext
 	Endcase
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
@@ -402,9 +422,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	m.lC		 = "PROMUESTRAP1"
 	goApp.npara1 = m.np1
 	goApp.npara2 = fe_gene.dola
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
      (?goapp.npara1,?goapp.npara2)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, Calias) < 1 Then
 		Return 0
 	Endif
@@ -444,12 +464,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara27 = opr.nflete
 	goApp.npara28 = opr.nutil4
 	goApp.npara29 = opr.nutil5
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,
       ?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29)
-	ENDTEXT
+	Endtext
 	nidproducto = This.EJECUTARf(m.lC, m.lp, cur)
 	If nidproducto < 1 Then
 		Return 0
@@ -489,11 +509,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara27 = opr.ccoda
 	goApp.npara28 = opr.nutil4
 	goApp.npara29 = opr.nutil5
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Else
@@ -505,9 +525,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Local lC, lp
 	m.lC		 = 'ProMuestraCostosParaVenta'
 	goApp.npara1 = m.np1
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
      (?goapp.npara1)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, m.Ccursor) < 1 Then
 		Return 0
 	Else
@@ -517,18 +537,18 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Function MuestraStockcontable(np1, ccur)
 	lC = 'ProMuestraStockC'
 	goApp.npara1 = np1
-	TEXT To lp Noshow
+	Text To lp Noshow
    (?goapp.npara1)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, ccur) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function ActualizacodigoFabricante(nidart, cvalor)
-	TEXT To lC Noshow
+	Text To lC Noshow
         UPDATE fe_art SET prod_codf=?cvalor WHERE idart=?nidart
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -545,9 +565,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Do While !Eof()
 		nidart = xlpr.idart
 		cdeta = xlpr.prod_cod1
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    UPDATE fe_art SET prod_cod1='<<cdeta>>' WHERE idart=<<nidart>>
-		ENDTEXT
+		Endtext
 		If This.ejecutarsql(lC) < 1 Then
 			Ab = 0
 			Exit
@@ -572,37 +592,37 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Endfunc
 	Function listarofertas(Calias)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	     SELECT idart as codigo,descri as producto,unid as unidad,uno,dos,tre,cua,cin,sei,
 	     IFNULL(ROUND(IF(tmon='S',((a.prec*v.igv)+b.prec)*prod_uti0,((a.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola)))*prod_uti0)+b.prec,2),0) AS precioferta,prod_ocan as cantidad
 	     fROM fe_art  as a
 	     inner join fe_fletes as b  on b.idflete=a.idflete,
 	     fe_gene as v
 	     WHERE prod_acti='A' AND prod_uti0>0 ORDER BY descri
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarofertas1(Calias)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	     SELECT idart as codigo,descri as producto,unid as unidad,uno,dos,tre,
 	     IFNULL(ROUND(IF(tmon='S',((a.prec*v.igv)+b.prec)*prod_uti0,((a.prec*v.igv*IF(prod_dola>v.dola,prod_dola,v.dola))+b.prec)*prod_uti0),2),0) AS precioferta,prod_ocan as cantidad
 	     fROM fe_art  as a
 	     inner join fe_fletes as b  on b.idflete=a.idflete,
 	     fe_gene as v
 	     WHERE prod_acti='A' AND prod_uti0>0 ORDER BY descri
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function GrabarOfertascontidadyprecio(np1, np2, np3, np4)
-	TEXT To lC Noshow  Textmerge
+	Text To lC Noshow  Textmerge
 	UPDATE fe_art SET prod_uti0=<<np2>>,prod_ocan=<<np3>>,prod_ocom=<<np4>> where idart=<<np1>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -610,9 +630,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function ActualizaStock(ncoda, nalma, ncant, Ctipo)
 	lC = "astock"
-	TEXT To lpstock Noshow Textmerge
+	Text To lpstock Noshow Textmerge
      (<<ncoda>>,<<nalma>>,<<ncant>>,'<<ctipo>>')
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lpstock) < 1 Then
 		Return 0
 	Endif
@@ -620,9 +640,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function Actualizastock1()
 	lC = "PROACTUALIZASTOCK"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	(<<this.ncoda>>,<<this.codt>>,<<this.ncant>>,'<<this.Ctipo>>',<<this.ncaant>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp) < 1 Then
 		Return 0
 	Endif
@@ -630,16 +650,16 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function Actualizastockunidades()
 	lC = "ASTOCK"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	(<<this.ncoda>>,<<this.codt>>,<<this.ncant>>,'<<this.Ctipo>>',<<this.nequi>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function consultarkardexproducto(ccoda, dfechaI, dfechaf, Calmacen, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	   SELECT ifnull(e.ndoc,'')  as nped,d.ndo2,d.fech,d.ndoc,d.tdoc,a.tipo,d.mone as cmoneda,a.cant,d.fusua,ifnull(g.nomb,'') as usua1,
 	   a.prec,d.vigv as igv,d.dolar,f.nomb as usua,d.idcliente as codc,b.razo AS cliente,d.idprov as codp,c.razo AS proveedor,d.deta,a.alma
 	   FROM fe_kar as a
@@ -650,7 +670,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	   inner join fe_usua as f ON(f.idusua=d.idusua)
 	   left join fe_usua as g ON (g.idusua=d.idusua1)
 	   WHERE a.idart=<<ccoda>> and d.acti<>'I' and d.fech between '<<dfechai>>' and  '<<dfechaf>>' and a.acti<>'I' AND a.alma=<<calmacen>> ORDER BY d.fech,d.tipom,a.idkar
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return  0
 	Endif
@@ -663,9 +683,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -690,9 +710,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara2 = m.np2
 	goApp.npara3 = m.np3
 	goApp.npara4 = m.np4
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP10(m.lC, m.lp, m.Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -725,13 +745,13 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 			This.Cmensaje = 'Ingrese Costo del producto'
 			Return 0
 		Endif
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	    UPDATE fe_art SET prod_grat='S' WHERE idart=<<this.ncoda>>
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	     UPDATE fe_art SET prod_grat='N' WHERE idart=<<this.ncoda>>
-		ENDTEXT
+		Endtext
 	Endif
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
@@ -739,12 +759,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function ultimaventa(ncoda, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT c.razo,fech,ndoc,prec FROM fe_kar AS k
 	INNER JOIN fe_rcom AS r ON r.idauto=k.idauto
 	INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
 	WHERE idart=<<ncoda>> AND k.acti='A' AND r.acti='A' order by fech desc LIMIT 1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -799,11 +819,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	 SELECT a.tcompras- a.tventas as stock
 	 FROM (SELECT b.idart,SUM(IF(b.tipo='C',b.cant,0)) AS tcompras,SUM(IF(b.tipo='V',b.cant,0)) AS tventas,b.alma
 	 FROM fe_kar AS b WHERE b.acti<>'I' and b.alma=<<nalma>> and b.idart=<<nidart>> GROUP BY  idart) AS a;
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -813,11 +833,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	 SELECT a.tcompras- a.tventas as stock
 	 FROM (SELECT b.idart,SUM(IF(b.tipo='C',b.cant,0)) AS tcompras,SUM(IF(b.tipo='V',b.cant,0)) AS tventas,b.alma
 	 FROM fe_kar AS b WHERE b.acti<>'I' and b.alma=<<nalma>> and TRIM(b.idart)='<<nidart>>' GROUP BY  idart) AS a;
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -829,9 +849,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara2 = np2
 	goApp.npara3 = np3
 	goApp.npara4 = np4
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -840,7 +860,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Function listarmvtos(Ccursor)
 	dfi = Cfechas(fe_gene.fech - 90)
 	dff = Cfechas(fe_gene.fech)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    SELECT  b.razo,c.fech,cant,ROUND(prec*c.vigv,2) AS prec,c.mone,c.tdoc,c.ndoc,a.tipo,a.idart,a.tipo
 		FROM fe_rcom  AS c
 		INNER JOIN fe_prov AS b ON (b.idprov=c.idprov)
@@ -851,7 +871,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	    INNER JOIN fe_clie AS b ON (b.idclie=c.idcliente)
 	    INNER JOIN  fe_kar AS a   ON(a.idauto=c.idauto)
 	  	WHERE c.acti='A' AND a.acti='A' AND fech BETWEEN '<<dfi>>' AND '<<dff>>'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -861,9 +881,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	lC = 'PROMUESTRATPRODUCTOS'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -925,9 +945,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function activar(nidart)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 		UPDATE fe_art SET prod_acti='A' WHERE idart=<<nidart>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -935,9 +955,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function DesactivaProductos(np1)
 	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
      SELECT SUM(IF(tipo='C',cant,-cant)) as stock FROM fe_kar WHERE acti='A' AND idart=<<np1>> GROUP BY idart
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -946,9 +966,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		This.Cmensaje = "Tiene Stock NO es Posible Desactivar " + Alltrim(Str(stock, 12, 2))
 		Return 0
 	Endif
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
          UPDATE fe_art SET prod_acti='I' WHERE idart=<<np1>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lp) < 1 Then
 		Return 0
 	Endif
@@ -975,7 +995,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		\   And prod_cod1 Like '<<cbuscar>>'
 	Endif
 	\	Order By Descri;
-	Set Textmerge Off
+		Set Textmerge Off
 	Set Textmerge To
 	This.conconexion = 1
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
@@ -995,16 +1015,16 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		goApp.npara1 = np1
 		goApp.npara2 = np2
 		goApp.npara3  = This.constock
-		TEXT To lp Noshow
+		Text To lp Noshow
         (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-		ENDTEXT
+		Endtext
 	Else
 		lC = 'ProMuestraProductos'
 		goApp.npara1 = np1
 		goApp.npara2 = np2
-		TEXT To lp Noshow
+		Text To lp Noshow
         (?goapp.npara1,?goapp.npara2)
-		ENDTEXT
+		Endtext
 	Endif
 	This.conconexion = 1
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
@@ -1085,18 +1105,18 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	\Where  z.prod_acti='A'
 	Endfunc
 	Function ActualizaProveedorxsys3(nidproveedor)
-	TEXT To lC Noshow  Textmerge
+	Text To lC Noshow  Textmerge
 	  UPDATE fe_art SET ulpc=<<nidproveedor>> where idart=<<This.ncoda>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function ActualizaProveedor(nidproveedor)
-	TEXT To lC Noshow  Textmerge
+	Text To lC Noshow  Textmerge
 	  UPDATE fe_art SET idprov=<<nidproveedor>> where idart=<<This.ncoda>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -1146,13 +1166,13 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		AddProperty(goApp, 'proyecto', '')
 	Endif
 	If goApp.proyecto = 'xsys3' Then
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	    UPDATE fe_art SET prod_cod1='<<TRIM(ccodigob)>>' WHERE idart=<<m.nidart>>
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		 UPDATE fe_art SET coda1='<<TRIM(ccodigob)>>' WHERE idart=<<m.nidart>>
-		ENDTEXT
+		Endtext
 	Endif
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
@@ -1169,9 +1189,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Do While !Eof()
 		nidart = xlpr.idart
 		cdeta = Alltrim(xlpr.coda1)
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    UPDATE fe_art SET coda1='<<cdeta>>'  WHERE idart=<<nidart>>
-		ENDTEXT
+		Endtext
 		If This.ejecutarsql(lC) < 1 Then
 			Ab = 0
 			Exit
@@ -1198,12 +1218,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Do While !Eof()
 		nidart = xlpr.idart
 		cdeta = xlpr.prod_deta
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		    UPDATE fe_art SET prod_deta='<<cdeta>>',prod_ubi1='<<xlpr.prod_ubi1>>',prod_ubi2='<<xlpr.prod_ubi2>>',prod_ubi3='<<xlpr.prod_ubi3>>',
 		    prod_ubi4='<<xlpr.prod_ubi4>>',prod_ubi5='<<xlpr.prod_ubi5>>',prod_codb='<<xlpr.prod_codb>>',
 		    prod_umin=<<xlpr.prod_umin>>,prod_umax=<<xlpr.prod_umax>>,prod_dmin=<<xlpr.prod_dmin>>,prod_dmax=<<xlpr.prod_dmax>>,
 		    prod_tmin=<<xlpr.prod_tmin>>,prod_tmax=<<xlpr.prod_tmax>>  WHERE idart=<<nidart>>
-		ENDTEXT
+		Endtext
 		If This.ejecutarsql(lC) < 1 Then
 			Ab = 0
 			Exit
@@ -1222,12 +1242,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function Actualizadetalleyotrosxproducto(nidart)
 	cdeta = lpr.prod_deta
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
     UPDATE fe_art SET prod_deta='<<cdeta>>',prod_ubi1='<<lpr.prod_ubi1>>',prod_ubi2='<<lpr.prod_ubi2>>',prod_ubi3='<<lpr.prod_ubi3>>',
 	prod_ubi4='<<lpr.prod_ubi4>>',prod_ubi5='<<lpr.prod_ubi5>>',prod_codb='<<lpr.prod_codb>>',
 	prod_umin=<<lpr.prod_umin>>,prod_umax=<<lpr.prod_umax>>,prod_dmin=<<lpr.prod_dmin>>,prod_dmax=<<lpr.prod_dmax>>,
 	prod_tmin=<<lpr.prod_tmin>>,prod_tmax=<<lpr.prod_tmax>>  WHERE idart=<<nidart>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -1238,9 +1258,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	goApp.npara3 = np3
-	TEXT To lp Noshow
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	ENDTEXT
+	Endtext
 	If  This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1298,9 +1318,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		nu1 = (xlpr.uti1 / 100) + 1
 		nu3 = (xlpr.uti3 / 100) + 1
 		nu0 = (xlpr.uti0 / 100) + 1
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		  UPDATE fe_art SET prod_uti1=<<nu1>>,prod_uti3=<<nu3>>,prod_uti0=<<nu0>>,prod_ocan=<<xlpr.prod_ocan>>,prod_cmay=<<xlpr.prod_cmay>> WHERE idart=<<xlpr.idart>>;
-		ENDTEXT
+		Endtext
 		If This.ejecutarsql(lC) < 1 Then
 			Ab = 0
 			Exit
@@ -1316,6 +1336,13 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return  1
 	Endfunc
 	Function Creaproductolopez()
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	m.rpta = oser.Inicializar(This, 'productos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
 	lC = 'FUNCREAPRODUCTOS'
 	cur = "Xn"
 	goApp.npara1 = This.cdesc
@@ -1348,12 +1375,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara28 = This.duti3
 	goApp.npara29 = This.duti0
 	goApp.npara30 = This.ccodigo1
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,
-      ?goapp.npara26,?goapp.7,?goapp.npara28,?goapp.npara29,?goapp.npara30)
-	ENDTEXT
+      ?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29,?goapp.npara30)
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -1361,8 +1388,13 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return nid
 	Endfunc
 	Function editarproductolopez()
-*!*		cdesc, cunid, ncosto, np1, np2, np3, npeso, ccat, cmar,
-*!*		 ctipro, nflete, cm, nprec, nidgrupo, nutil1, nutil2, nutil3, ncome, ncomc, goApp.nidusua, ncoda, nsmax, nsmin, nidcosto, ndolar, ce, nutil0
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	m.rpta = oser.Inicializar(This, 'productos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
 	Local cur As String
 	lC = 'PROACTUALIZAPRODUCTOS'
 	cur = ""
@@ -1398,12 +1430,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara30 = This.duti3
 	goApp.npara31 = This.duti0
 	goApp.npara32 = This.ccodigo1
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,
       ?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29,?goapp.npara30,?goapp.npara31,?goapp.npara32)
-	ENDTEXT
+	Endtext
 	If  This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
@@ -1425,9 +1457,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		Set DataSession To This.Idsesion
 	Endif
 	lC = "PRODSTOCKS"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	(<<nidart>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1435,20 +1467,20 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function ActualizaStockfisicocontable()
 	lC = "proactualizastock10"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
      (<<this.nidart>>,<<this.nidtda>>,<<this.ncant>>,'<<this.ctipo>>',<<this.ncaant>>,'<<this.ctdoc>>')
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function Logsprecios(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT prod_fope as fecha,u.nomb as Usuario,prod_deta as Detalle FROM fe_aproductos a
 	INNER JOIN fe_usua u ON u.idusua=a.prod_idus
 	where prod_idar=<<this.nidart>> order by prod_fope desc
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return  0
 	Endif
@@ -1456,9 +1488,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function ActualizaStockfisicocontablepsysu()
 	lC = "proactualizastock10"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
      (<<this.nidart>>,<<this.nidtda>>,<<this.ncant>>,'<<this.ctipo>>',<<this.nequi>>,<<this.ncaant>>,'<<this.ctdoc>>')
-	ENDTEXT
+	Endtext
 *MESSAGEBOX(lp)
 	If This.EJECUTARP(lC, lp) < 1 Then
 		Return 0
@@ -1470,13 +1502,13 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	This.conerror = 0
 	Do Case
 	Case nidtda = 1
-		TEXT To lp Noshow Textmerge
+		Text To lp Noshow Textmerge
 	    select prod_stoc1 as stock FROM fe_art WHERE idart=<<this.nidart>>
-		ENDTEXT
+		Endtext
 	Case nidtda = 2
-		TEXT To lp Noshow Textmerge
+		Text To lp Noshow Textmerge
 	    select prod_stoc2  as stock FROM fe_art WHERE idart=<<this.nidart>>
-		ENDTEXT
+		Endtext
 	Endcase
 	If This.EJECutaconsulta(lp, Ccursor) < 1 Then
 		This.conerror = 1
@@ -1489,11 +1521,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT IF(tipro='S',3500,uno) AS uno,IF(tipro='S',3500,dos) AS dos,
 	IF(tipro='S',3500,tre) AS tre,IF(tipro='S',3500,cua) AS cua,IF(tipro='S',3500,cin) AS cin,
 	IF(tipro='S',3500,sei) AS sei  FROM fe_art WHERE idart=<<this.nidart>>
-	ENDTEXT
+	Endtext
 	Ccursor = 'c_' + Sys(2015)
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		This.conerror = 1
@@ -1522,34 +1554,34 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Endfunc
 	Function Creaproductopsystr()
-	If !Pemstatus(goApp,'region',5) Then
-		AddProperty(goApp,'region','')
+	If !Pemstatus(goApp, 'region', 5) Then
+		AddProperty(goApp, 'region', '')
 	Endif
 	lC = 'FUNCREAPRODUCTOS'
 	cur = "Xn"
 	If goApp.Lectorcodigobarras = 'S' Then
-		If goApp.Region='selva' Then
+		If goApp.Region = 'selva' Then
 
 		Else
-			TEXT To lp Noshow Textmerge
+			Text To lp Noshow Textmerge
 			  ('<<This.cdesc>>','<<This.cUnid>>',<<This.nprec>>,<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,
 		      <<This.cmar>>,'<<This.ctipro>>',<<This.nflete>>,'<<This.Moneda>>','<<id()>>',<<This.ncome>>,<<This.ncomc>>,<<This.nutil1>>,
 		      <<This.nutil2>>,<<This.nutil3>>,<<This.nidusua>>,<<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>,'<<this.ccodigobarras>>')
-			ENDTEXT
+			Endtext
 		Endif
 	Else
-		If goApp.Region='selva' Then
-			TEXT To lp Noshow Textmerge
+		If goApp.Region = 'selva' Then
+			Text To lp Noshow Textmerge
 			  ('<<This.cdesc>>','<<This.cUnid>>',<<This.nprec>>,<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,
 		      <<This.cmar>>,'<<This.ctipro>>',<<This.nflete>>,'<<This.Moneda>>','<<id()>>',<<This.ncome>>,<<This.ncomc>>,<<This.nutil1>>,
 		      <<This.nutil2>>,<<This.nutil3>>,<<This.nidusua>>,<<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>,<<this.ntigv>>)
-			ENDTEXT
+			Endtext
 		Else
-			TEXT To lp Noshow Textmerge
+			Text To lp Noshow Textmerge
 			  ('<<This.cdesc>>','<<This.cUnid>>',<<This.nprec>>,<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,
 		      <<This.cmar>>,'<<This.ctipro>>',<<This.nflete>>,'<<This.Moneda>>','<<id()>>',<<This.ncome>>,<<This.ncomc>>,<<This.nutil1>>,
 		      <<This.nutil2>>,<<This.nutil3>>,<<This.nidusua>>,<<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>)
-			ENDTEXT
+			Endtext
 		Endif
 	Endif
 	nid = This.EJECUTARf(lC, lp, cur)
@@ -1560,8 +1592,8 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function editarproducto44()
 	Local cur As String
-	If !Pemstatus(goApp,'region',5) Then
-		AddProperty(goApp,'region','')
+	If !Pemstatus(goApp, 'region', 5) Then
+		AddProperty(goApp, 'region', '')
 	Endif
 	lC = 'PROACTUALIZAPRODUCTOS'
 	goApp.npara1 = This.cdesc
@@ -1593,24 +1625,24 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara27 = This.ccodigobarras
 	ntigv = This.ntigv
 	If goApp.Lectorcodigobarras = 'S' Then
-		TEXT To lp Noshow
+		Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-		ENDTEXT
+		Endtext
 	Else
-		If goApp.Region='selva' Then
-			TEXT To lp Noshow
+		If goApp.Region = 'selva' Then
+			Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?ntigv)
-			ENDTEXT
+			Endtext
 		Else
-			TEXT To lp Noshow
+			Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-			ENDTEXT
+			Endtext
 		Endif
 	Endif
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
@@ -1648,11 +1680,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara25 = This.nutil0
 	goApp.npara26 = This.ntigv
 	goApp.npara27 = This.nirta
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -1691,29 +1723,29 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	goApp.npara27 = This.nutil0
 	goApp.npara28 = This.ntigv
 	goApp.npara29 = This.nirta
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function PermitirVentasProductosconpreciobajo(np1, np2)
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	  update fe_art SET prod_perx=<<np2>> WHERE idart=<<np1>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lp) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function perimitirventasconporcentajeminimo(nid, opt)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	   UPDATE fe_art SET prod_perm=<<opt>> WHERE idart=<<nid>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -1747,7 +1779,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	\INNER Join fe_art As a On a.idart=x.coda
 	\INNER Join fe_mar As m On m.idmar=a.idmar
 	\Where tegresos=0 And sfinal>0 And tingresos=0 Order By Descri;
-	Set Textmerge Off
+		Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -1796,12 +1828,12 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Function Creaproductopsystrlyg()
 	lC = 'FUNCREAPRODUCTOS'
 	cur = "Xn"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	  ('<<This.cdesc>>','<<This.cUnid>>',<<This.nprec>>,<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,
       <<This.cmar>>,'<<This.ctipro>>',<<This.nflete>>,'<<This.Moneda>>','<<id()>>',<<This.ncome>>,<<This.ncomc>>,<<This.nutil1>>,
       <<This.nutil2>>,<<This.nutil3>>,<<goapp.nidusua>>,<<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>,<<this.nutil0>>,<<this.ncantoferta>>,
       <<this.nsmin1>>,<<this.nsmax1>>,<<this.nsmin2>>,<<this.nsmax2>>,<<this.nsmin3>>,<<this.nsmax3>>)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -1809,14 +1841,14 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return nid
 	Endfunc
 	Function editarproductolyg()
-	cur=""
+	cur = ""
 	lC = 'PROACTUALIZAPRODUCTOS'
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	  ('<<This.cdesc>>','<<This.cUnid>>',<<This.ncosto>>,<<This.np1>>,<<This.np2>>,<<This.np3>>,<<This.npeso>>,<<This.ccat>>,<<This.cmar>>,'<<This.ctipro>>',
 	  <<This.nflete>>,'<<This.Moneda>>',<<This.nprec>>,0,<<This.nutil1>>,<<This.nutil2>>,<<This.nutil3>>,<<This.ncome>>,<<This.ncomc>>,<<goapp.nidusua>>,<<This.nidart>>,
 	  <<This.nsmax>>,<<This.nsmin>>,'<<This.ccodigo1>>',<<This.ndolar>>,'<<This.Cestado>>',<<this.nutil0>>,<<this.ncantoferta>>,
       <<this.nsmin1>>,<<this.nsmax1>>,<<this.nsmin2>>,<<this.nsmax2>>,<<this.nsmin3>>,<<this.nsmax3>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -1828,9 +1860,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Local cur As String
 	lC = 'PRODSTOCKS'
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	(<<this.nidart>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1840,11 +1872,11 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT a.idart,a.tcompras-a.tventas AS saldo FROM
 	(SELECT b.idart,SUM(IF(b.tipo='C',b.cant,0)) AS tcompras,SUM(IF(b.tipo='V',b.cant,0)) AS tventas,b.alma FROM fe_kar AS b
 	WHERE b.acti<>'I'  AND idart=<<this.nidart>> AND alma=<<this.nidtda>> GROUP BY  idart,alma) AS a
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1857,9 +1889,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Local cur As String
 	cur = 'st'
 	lC = 'PRODSTOCKS'
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	(<<this.nidart>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, ccur) < 1 Then
 		Return 0
 	Endif
@@ -1883,20 +1915,22 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function registradetraccion()
-	Do Case
-	Case This.nidart < 1
-		This.Cmensaje = "Seleccione Un Producto"
-		Return 0
-	Case Len(Alltrim(This.Coddetra)) = 0
-		This.Cmensaje = "Ingrese Código de Detracción"
-		Return 0
-	Case This.ndetraccion = 0
-		This.Cmensaje = "Ingrese Porcentaje  Detracción"
-		Return 0
-	Endcase
-	TEXT To lC Noshow Textmerge
+	If This.ndetraccion > 0 Then
+		Do Case
+		Case This.nidart < 1
+			This.Cmensaje = "Seleccione Un Producto"
+			Return 0
+		Case Len(Alltrim(This.Coddetra)) = 0
+			This.Cmensaje = "Ingrese Código de Detracción"
+			Return 0
+		Case This.ndetraccion = 0
+			This.Cmensaje = "Ingrese Porcentaje  Detracción"
+			Return 0
+		Endcase
+	Endif
+	Text To lC Noshow Textmerge
         UPDATE fe_art SET prod_detr=<<this.ndetraccion>>,prod_cdtr='<<this.coddetra>>' WHERE idart=<<this.nidart>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -1928,7 +1962,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.codt > 0 Then
 		   \ And b.codt=<<This.codt>>
 	Endif
-	   \Group By a.idart) As z On a.idart=z.coda Where prod_acti='A'
+	   \Group By a.idart,alma,mes) As z On a.idart=z.coda Where prod_acti='A'
 	Set Textmerge Off
 	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -1961,7 +1995,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.codt > 0 Then
 	   \ And b.codt=<<This.codt>>
 	Endif
-	   \Group By a.idart,a.alma) As z On a.idart=z.coda Where prod_acti='A'
+	   \Group By a.idart,a.alma,mes) As z On a.idart=z.coda Where prod_acti='A'
 	If This.ccat > 0 Then
 	   \ And a.idcat=<<This.ccat>>
 	Endif
@@ -1976,23 +2010,66 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
-	Function buscarpornombre(cnombre, nid)
-	cb = Chrtran(Chrtran(cnombre, '"', ''), "'", '')
+	Function buscarporcodigo(ccodigo, nid)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\Select idart As Vdvto From fe_art Where Trim(Descri) = '<<cb>>' And prod_acti <> 'I'
+    \Select idart  From fe_art Where Trim(prod_cod1)='<<ccodigo>>' And prod_acti<>'I'
 	If nid > 0 Then
-		   \And idart <> <<nid>>
+    	  \ And idart<><<nid>>
 	Endif
-	\ LIMIT 1
-	Set Textmerge To
+   	\ LIMIT 1
 	Set Textmerge Off
+	Set Textmerge To
 	Ccursor = 'c_' + Sys(2015)
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
-	If REgdvto(Ccursor) > 0 Then
+	If idart > 0 Then
+		This.Cmensaje = "Codigo de Producto Ya Registrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarporcodigoxsysz(ccodigo, nid)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+    \Select idart  From fe_art Where Trim(prod_coda)='<<ccodigo>>' And prod_acti<>'I'
+	If nid > 0 Then
+    	  \ And idart<><<nid>>
+	Endif
+   	\ LIMIT 1
+	Set Textmerge Off
+	Set Textmerge To
+	Ccursor = 'c_' + Sys(2015)
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If idart > 0 Then
+		This.Cmensaje = "Codigo de Producto Ya Registrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarpornombre(cnombre, nid)
+	cb = Alltrim(Chrtran(Chrtran(cnombre, '"', ''), "'", ''))
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select idart As Vdvto From fe_art Where Trim(Descri) = '<<cb>>' And prod_acti <> 'I'
+	If m.nid > 0 Then
+       \  And idart <> <<nid>>
+	Endif
+	\ LIMIT 1
+	Set Textmerge To
+	Set Textmerge Off
+*!*		MESSAGEBOX(lC)
+	Ccursor = 'c_' + Sys(2015)
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If Vdvto > 0 Then
 		This.Cmensaje = "Nombre de Producto Ya Registrado"
 		Return 0
 	Endif
@@ -2030,18 +2107,18 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Else
 		cgrati = ''
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	UPDATE fe_art SET prod_grat='<<m.cgrati>>' WHERE idart=<<this.ncoda>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listargratuitos(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	select idart,descri,unid,prod_grat FROM fe_art WHERE prod_grat='S' AND prod_acti='A' ORDER BY descri
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -2051,47 +2128,47 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT prod_fope as fecha,u.nomb as Usuario,prod_deta as Detalle FROM fe_aproductos a
 	INNER JOIN fe_usua u ON u.idusua=a.prod_idus
 	where prod_idar=<<this.nidart>> order by prod_fope desc
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function colocarStockok(nidart, nvalor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
       UPDATE fe_art SET prod_ent1=<<nvalor>> WHERE idart=<<nidart>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function colocarcostook(nidart, nvalor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        UPDATE fe_art SET prod_ent2=<<nvalor>>  WHERE idart=<<nidart>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function AfectaICBPER(nvalor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        UPDATE fe_art SET prod_icbper=<<nvalor>> WHERE idart=<<this.nidart>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function quitarICBPER()
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        UPDATE fe_art SET prod_icbper=0 WHERE idart=<<this.nidart>>
-	ENDTEXT
+	Endtext
 	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -2103,7 +2180,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    SELECT descri,c.`colr_desc` AS color,stocki,fechacompra,CAST(IFNULL(fechavta,'0001-01-01') AS DATE) AS fechavta,w.idart FROM(
 		SELECT i.idart,descri,codcolor,prod_des1,i.stocki,IFNULL(v.ventas,0) AS ventas,c.fechacompra,b.fechavta FROM
 		(SELECT c.idart,p.descri,SUBSTR(p.prod_coda,6,3) AS codcolor,prod_des1,SUM(IF(tipo='C',cant,-cant)) AS stocki FROM fe_rcom AS d
@@ -2121,7 +2198,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 		WHERE idcliente>0 GROUP BY c.idart) AS v ON v.idart=i.idart) AS w
 		INNER JOIN fe_colores AS c ON c.`colr_coda` = w.codcolor
 		WHERE ventas=0  ORDER BY prod_des1,color,stocki DESC,fechavta
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -2217,38 +2294,189 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function ActualizaMargenesVtas(Ccursor)
-	If This.Idsesion>0 Then
+	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	sw=1
-	If This.IniciaTransaccion()<1 Then
+	sw = 1
+	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
 	Scan All
-		nu1=(xlpr.uti1/100)+1
-		nu2=(xlpr.uti2/100)+1
-		nu3=(xlpr.uti3/100)+1
-		premay=xlpr.pre1
-		premen=xlpr.pre3
-		TEXT TO lc NOSHOW TEXTMERGE
+		nu1 =(xlpr.uti1 / 100) + 1
+		nu2 =(xlpr.uti2 / 100) + 1
+		nu3 =(xlpr.uti3 / 100) + 1
+		premay = xlpr.pre1
+		premen = xlpr.pre3
+		Text To lC Noshow Textmerge
 	    UPDATE fe_art SET prod_uti1=<<nu1>>,prod_uti2=<<nu2>>,prod_uti3=<<nu3>>,premay=<<premay>>,premen=<<premen>> WHERE idart=<<xlpr.idart>>
-		ENDTEXT
-		If This.ejecutarsql(lC)<1 Then
-			sw=0
+		Endtext
+		If This.ejecutarsql(lC) < 1 Then
+			sw = 0
 			Exit
 		Endif
 	Endscan
-	If m.sw<1 Then
+	If m.sw < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	If This.GRabarCambios()<1 Then
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function CreaProductosxsysz()
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	m.rpta = oser.Inicializar(This, 'productosxsysz')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
+	lC = 'FuncreaProductos'
+	cur = "Cp"
+*	cdesc,ctipo,ccoda,cnume,np1,np3,ccodp,cm,nutil1,nutil2,ncome,.txtdescripcion.Value,nsmin,nsmax,nidus,Id(),npeso
+	goApp.npara1 = This.cdesc
+	goApp.npara2 = This.Ctipo
+	goApp.npara3 = This.ccodigo1
+	goApp.npara4 = This.ctallas
+	goApp.npara5 = This.np1
+	goApp.npara6 = This.np3
+	goApp.npara7 = This.nidprov
+	goApp.npara8 = This.cm
+	goApp.npara9 = This.nutil1
+	goApp.npara10 = This.nutil2
+	goApp.npara11 = This.ncome
+	goApp.npara12 = This.cmodelo
+	goApp.npara13 = This.nsmin
+	goApp.npara14 = This.nsmax
+	goApp.npara15 = goApp.nidusua
+	goApp.npara16 = Id()
+	goApp.npara17 = This.npeso
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
+	Endtext
+	nid = This.EJECUTARf(lC, lp, cur)
+	If m.nid < 1 Then
+		Return 0
+	Endif
+	This.Cmensaje = ' Creado ok'
+	Return m.nid
+	Endfunc
+	Function Editarproductosxsysz()
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	m.rpta = oser.Inicializar(This, 'productosxsysz')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
+	lC = 'ProActualizaProductos'
+	cur = ""
+	goApp.npara1 = This.cdesc
+	goApp.npara2 = This.Ctipo
+	goApp.npara3 = This.ccodigo1
+	goApp.npara4 = This.ctallas
+	goApp.npara5 = This.np1
+	goApp.npara6 = This.np3
+	goApp.npara7 = This.nidprov
+	goApp.npara8 = This.cm
+	goApp.npara9 = This.nutil1
+	goApp.npara10 = This.nutil2
+	goApp.npara11 = This.ncome
+	goApp.npara12 = This.cmodelo
+	goApp.npara13 = This.nsmin
+	goApp.npara14 = This.nsmax
+	goApp.npara15 = goApp.nidusua
+	goApp.npara16 = Id()
+	goApp.npara17 = This.nidart
+	goApp.npara18 = This.npeso
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	Endif
+	This.Cmensaje = 'Editado ok'
+	Return 1
+	Endfunc
+	Function  rotacioncomprasunidades(fi, ff, Ccursor)
+	dfi = Cfechas(fi)
+	dff = Cfechas(ff)
+	Set Textmerge On
+	Set  Textmerge To Memvar lC Noshow Textmerge
+	   \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,IFNULL(mes,0) As mes,
+	   \m.dmar As marca,c.dcat As linea,g.desgrupo As grupo From fe_art As a
+	   \INNER Join fe_mar As m On m.idmar=a.idmar
+	   \INNER Join fe_cat As c On c.idcat=a.idcat
+	   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+       \Left Join  (
+	   \ Select a.idart As coda,Sum(a.cant*a.kar_equi) As cant,Sum(If(b.mone="S",cant*a.Prec*b.vigv,cant*a.Prec*b.dolar*b.vigv)) As importe,
+	   \ a.alma,Month(b.fech) As mes From fe_rcom As b
+	   \INNER Join fe_kar As a On a.idauto=b.idauto
+	   \INNER Join fe_art As z On z.idart=a.idart
+	   \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'  And tdoc Not In("AJ","II") And b.idprov>0
+	If This.ccat > 0 Then
+	       \ And z.idcat=<<This.ccat>>
+	Endif
+	If This.cmar > 0 Then
+		       \ And z.idmar=<<This.cmar>>
+	Endif
+	If This.codt > 0 Then
+		   \ And b.codt=<<This.codt>>
+	Endif
+	   \Group By a.idart,alma,mes) As z On a.idart=z.coda Where prod_acti='A'
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function rotacionventasunidades(fi, ff, Ccursor)
+	dfi = Cfechas(fi)
+	dff = Cfechas(ff)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+   \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,
+   \IFNULL(mes,0) As mes,m.dmar As marca,c.dcat As linea,g.desgrupo As grupo,z.alma  From fe_art As a
+   \INNER Join fe_mar As m On m.idmar=a.idmar
+   \INNER Join fe_cat As c On c.idcat=a.idcat
+   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+   \Left Join  (
+   \ Select a.idart As coda,Sum(a.cant*a.kar_equi) As cant,Sum(If(b.mone="S",cant*a.Prec,cant*a.Prec*b.dolar)) As importe,
+   \ a.alma,Month(b.fech) As mes From fe_kar As a
+   \INNER Join fe_art As z On z.idart=a.idart
+   \INNER Join fe_rcom As b On b.idauto=a.idauto
+   \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>' And idcliente>0  And tdoc Not In("AJ","II")
+	If This.ccat > 0 Then
+	   \ And z.idcat=<<This.ccat>>
+	Endif
+	If This.cmar > 0 Then
+	   \ And z.idmar=<<This.cmar>>
+	Endif
+	If This.codt > 0 Then
+	   \ And b.codt=<<This.codt>>
+	Endif
+	   \Group By a.idart,a.alma,mes) As z On a.idart=z.coda Where prod_acti='A'
+	If This.ccat > 0 Then
+	   \ And a.idcat=<<This.ccat>>
+	Endif
+	If This.cmar > 0 Then
+	   \ And a.idmar=<<This.cmar>>
+	Endif
+	\ Order By alma,idart
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

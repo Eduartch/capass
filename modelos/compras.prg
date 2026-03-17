@@ -607,7 +607,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Endfunc
 	Function porproveedorpsystr(Ccursor)
-	If (This.fechaf - This.fechai) > 360 Then
+	If (This.fechaf - This.fechai) > 366 Then
 		This.Cmensaje = 'Hasta 360 Días'
 		Return 0
 	Endif
@@ -667,7 +667,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	\			If(Tdoc='07',a.Ndoc,If(Tdoc='08',a.Ndoc,' ')) As Refe,
 	\			ndni,Cast('0' As unsigned) As T,
 	\			ifnull(rcom_detr,'')  As detra,rcom_fecd As fechad,
-	\			vigv,tipom As Tipo,fech As Fevto,a.rcom_icbper As icbper,'M002' As cuo,ifnull(p.ncta,'') As ncta,ifnull(r.ncta,'') As ncta1,
+	\			vigv,tipom As Tipo,fech As Fevto,a.rcom_icbper As icbper,'M002' As cuo,ifnull(p.ncta,'') As ncta,ifnull(r.ncta,'') As ncta1,rcom_mens,
 	If goApp.Ccostos = 'S' Then
 	   \ rcom_ccos,ifnull(w.cent_desc,'') As centcostos
 	Else
@@ -765,7 +765,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Create Cursor registro(Auto N(15), Form c(1) Null, fecr d Null, fech d Null, Tdoc c(2) Null, Serie c(4), Ndoc c(10), nruc c(11)Null, Razo c(120)Null, valorg N(14, 2), Exon N(12, 2), ;
-		  igvg N(10, 2), otros N(12, 2), Importe N(14, 2), pimpo N(8, 2), Deta c(80), dola N(5, 3), detra c(24), fechad d, fechn d, tref c(2), Refe c(12), ncta c(10), ncta1 c(10), Ccostos c(150), Mone c(1), Codigo N(5), Fevto d, ;
+		  igvg N(10, 2), otros N(12, 2), Importe N(14, 2), pimpo N(8, 2), Deta c(80), dola N(5, 3), detra c(24), fechad d, fechn d, tref c(2), Refe c(12), ncta c(10), ncta1 c(10), Ccostos c(150), mensaje c(120), Mone c(1), Codigo N(5), Fevto d, ;
 		  ndni c(8), T N(1), Tipo c(1), icbper N(8, 2), vigv N(5, 3), ccost N(5))
 	x = 1
 	notas = 0
@@ -786,12 +786,12 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		Endif
 		nccostos = Iif(Vartype(registro1.rcom_ccos) = 'C', Val(registro1.rcom_ccos), registro1.rcom_ccos)
 		Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, valorg, Exon, igvg, otros, Importe, pimpo, Deta,  dola, Mone, detra, Codigo, ;
-			  Auto,  tref, Refe,  Tipo, icbper, fechn, fechad, T, vigv, ncta, Ccostos, ccost, ncta1);
+			  Auto,  tref, Refe,  Tipo, icbper, fechn, fechad, T, vigv, ncta, Ccostos, ccost, ncta1, mensaje);
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
 			  registro1.nruc, registro1.Razo, registro1.valorg, registro1.Exon, registro1.igvg, registro1.otros, registro1.Importe, registro1.pimpo, registro1.Deta, ;
 			  registro1.dola,  registro1.Mone, registro1.detra,  ;
 			  registro1.Codigo, registro1.Auto, Iif(m.notas = 1, m.ntdoc, ''), Iif(m.notas = 1, m.nndoc, ''), registro1.Tipo, Iif(Isnull(registro1.icbper), 0, registro1.icbper), Iif(m.notas = 1, m.nfech, Ctod("  /  /   ")), ;
-			  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv, registro1.ncta, registro1.centcostos, m.nccostos, registro1.ncta1)
+			  Iif(Isnull(registro1.fechad), Ctod("  /  /    "), registro1.fechad), Iif(Tdoc = '03', 1, 6), registro1.vigv, registro1.ncta, registro1.centcostos, m.nccostos, registro1.ncta1, registro1.rcom_mens)
 
 	Endscan
 	Go Top In registro
@@ -1052,10 +1052,12 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function GrabarcomprasMercaderias()
+
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	NAuto = IngresaResumenDcto(This.cTdoc, Left(This.cforma, 1), This.cndoc, This.dFecha, This.dfechar, This.Cdetalle, Nv, nigv, Nt, This.cguia, This.Cmoneda, ndolar, Tigv, '1', This.nidprov, '1', goApp.nidusua, 0, This.codt, nidcta1, nidcta2, nidcta3, 0, This.npercepcion)
+	NAuto = IngresaResumenDcto()
+*This.cTdoc, Left(This.cforma, 1), This.cndoc, This.dFecha, This.dfechar, This.Cdetalle, Nv, nigv, Nt, This.cguia, This.Cmoneda, ndolar, Tigv, '1', This.nidprov, '1', goApp.nidusua, 0, This.codt, nidcta1, nidcta2, nidcta3, 0, This.npercepcion)
 	If NAuto = 0
 		This.DEshacerCambios()
 		Return 0
@@ -1066,7 +1068,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 			Return 0
 		Endif
 	Endif
-	If Swcreditos = 1 And .cmbFORMA.ListIndex = 2 And  .txttOTAL.Value > 0
+	If  Left(This.cforma, 1) = 'C' Then
 		If This.ingresadeudas() = 0
 			This.DEshacerCambios()
 			Return
@@ -1195,7 +1197,7 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 		Endif
 	Endif
 	If  This.cforma = 'C' Then
-		oxpagar = Newobject("ctasporpagar")
+		oxpagar = Newobject("ctasporpagar", "d:\capass\modelos\ctasxpagar.prg")
 		oxpagar.codt = This.codt
 		oxpagar.cdcto = This.cndoc
 		oxpagar.Ctipo = This.Ctipo
@@ -2098,6 +2100,30 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function listarnotascomprasparaseleccionar(Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar  lC Noshow Textmerge
+    \Select  Tdoc,Ndoc,fech,b.Razo,Mone,valor,igv,Impo,idauto,a.idprov As cod,fecr From
+    \fe_rcom As a
+    \INNER Join fe_prov As b On b.idprov=a.idprov Where a.Acti<>'I' And Tdoc In("07","08")
+	If This.nidprov > 0 Then
+       \ And a.idprov=<<This.nidprov>>
+	Else
+		If This.nmes > 0 Then
+           \And Month(fech)=<<This.nmes>> And Year(fech)=<<This.Naño>>
+		Endif
+	Endif
+    \Order By fech Desc,Ndoc
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 	Function buscarotracompra(Ccursor)
 	If !Pemstatus(goApp, 'ccostos', 5) Then
 		AddProperty(goApp, 'ccostos', '')
@@ -2295,6 +2321,10 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	AddProperty(objcompra, 'cdcto', This.cndoc)
 	AddProperty(objcompra, 'ctdoc', This.cTdoc)
 	AddProperty(objcompra, 'idp', This.nidprov)
+	If verificaAlias(This.ctemporal) = 0 Then
+		This.Cmensaje = 'No Hay detalle del Documento'
+		Return .F.
+	Endif
 	Select (This.ctemporal)
 	enc = 1
 	Go Top
@@ -2505,8 +2535,8 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	from fe_rcom r inner join fe_kar k on k.idauto=r.idauto
     inner join fe_art as c on c.idart=k.idart
     where k.acti='A' and r.acti='A'  and year(fech)=<<this.Naño>> and r.idprov>0 group by c.idmar,r.fech) as x
-    inner join fe_mar m on m.idmar=x.idmar 
-    group by x.idmar order by dmar 
+    inner join fe_mar m on m.idmar=x.idmar
+    group by x.idmar order by dmar
 	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -2532,11 +2562,11 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	sum(case mes when 11 then impo else 0 end) as 'Noviembre',
 	sum(case mes when 12 then impo else 0 end) as 'Diciembre',sum(impo) as Total
     from (select MONTH(fech) as mes,c.idcat,cast(sum(if(mone='S',cant*k.prec,cant*k.prec*dolar)) as decimal(12,2)) as Impo
-	from fe_rcom r 
+	from fe_rcom r
 	inner join fe_kar k on k.idauto=r.idauto
     inner join fe_art as c on c.idart=k.idart
     where k.acti='A' and r.acti='A'  and year(fech)=<<this.Naño>> and r.idprov>0 group by c.idcat,r.fech) as x
-    inner join fe_cat m on m.idcat=x.idcat 
+    inner join fe_cat m on m.idcat=x.idcat
     group by x.idcat order by dcat
 	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
@@ -2564,7 +2594,186 @@ Define Class Compras As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function Validardctos(Ccursor)
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	If Type('oempresa') = 'U' Then
+		Cruc = fe_gene.nruc
+	Else
+		Cruc = oempresa.nruc
+	Endif
+	Set Procedure To d:\capass\modelos\importadatos Additive
+	oapi = Createobject("importadatos")
+	oobj = Createobject("empty")
+	AddProperty(oobj, 'cruc', '')
+	AddProperty(oobj, 'ctdoc', '')
+	AddProperty(oobj, 'cserie', '')
+	AddProperty(oobj, 'cnumero', '')
+	AddProperty(oobj, 'dfecha', Date())
+	AddProperty(oobj, 'nimpo', 0)
+	AddProperty(oobj, 'otroruc', '')
+	xr = 0
+	Sw = 1
+	Select (Ccursor)
+	Scan All
+		If Left(mensaje, 1) <> '0' Then
+			oobj.Cruc = m.Cruc
+			oobj.cTdoc = registro.Tdoc
+			oobj.cserie = registro.Serie
+			oobj.cnumero = Alltrim(registro.Ndoc)
+			oobj.dFecha = registro.fech
+			oobj.nimpo = registro.Importe
+			oobj.otroruc = registro.nruc
+			objdvto = oapi.ConsultaApisunat(oobj)
+*!*				Wait Window objdvto.Vdvto
+*!*				Wait Window objdvto.mensaje
+			If objdvto.Vdvto = '1' Then
+				Cmensaje = '0 Verificado'
+				If This.actualizarestado(registro.Auto, Cmensaje) < 1 Then
+					Sw = 0
+					Exit
+				Endif
+				xr = xr + 1
+			Endif
+		Endif
+	Endscan
+	If Sw = 0 Then
+		Return 0
+	Endif
+	This.Cmensaje = 'Se verificaron ' + Alltrim(Str(xr)) + " Documentos"
+	Return 1
+	Endfunc
+	Function actualizarestado(nid, Cmensaje)
+	Text To lC Noshow Textmerge
+	 UPDATE fe_rcom  SET rcom_mens='<<cmensaje>>' WHERE idauto=<<nid>>
+	Endtext
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return  1
+	Endfunc
+	Function RegistraCabeceraCompras()
+*, , , , , , Nv, nigv, Nt, , , ndolar, Tigv, '1', This.nidprov, '1', goApp.nidusua, 0, This.codt, nidcta1, nidcta2, nidcta3, 0, This.npercepcion)
+
+	lC = 'FunIngresaCabeceraCV'
+	cur = "Xn"
+	goApp.npara1 = This.cTdoc
+	goApp.npara2 = Left(This.cforma, 1)
+	goApp.npara3 = This.cndoc
+	goApp.npara4 = This.dFecha
+	goApp.npara5 = This.dfechar
+	goApp.npara6 = This.Cdetalle
+	goApp.npara7 = This.nimpo1
+	goApp.npara8 = This.nimpo6
+	goApp.npara9 = This.nimpo8
+	goApp.npara10 = This.cguia
+	goApp.npara11 = This.Cmoneda
+	goApp.npara12 = This.ndolar
+	goApp.npara13 = This.vigv
+	goApp.npara14 = This.Ctipo
+	goApp.npara15 = This.nidprov
+	goApp.npara16 = This.ctipo1
+	goApp.npara17 = This.nidusua
+	goApp.npara18 = 0
+	goApp.npara19 = This.nidt
+	goApp.npara20 = This.nidcta1
+	goApp.npara21 = This.nidctai
+	goApp.npara22 = This.nidctat
+	goApp.npara23 = 0
+	goApp.npara24 = This.npercepcion
+*FOR x=1 TO 24
+*   WAIT WINDOW 'hola'
+*   cpara='np'+ALLTRIM(STR(x))
+*    WAIT WINDOW EVALUATE(cpara)
+*NEXT
+	Text To lparametros Noshow
+    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
+	Endtext
+	nid = This.EJECUTARf(lC, lparametros, cur)
+	If m.nid < 1 Then
+		Return 0
+	Endif
+	Return m.nid
+	Endfunc
+	Function AplicaTcxsys(nm, Na)
+	Text To lC Noshow
+	    SELECT b.idrcon AS clave,b.idauto,x.venta AS tc FROM fe_rcon AS b
+	    INNER JOIN fe_mon AS x ON x.fech=b.fech
+	    WHERE b.rcon_acti<>'I'  and  month(b.fech)=?nm and year(b.fech)=?na
+	Endtext
+	Ccursor = 'c_' + Sys(2015)
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	Sw = 1
+	Select (Ccursor)
+	Scan All
+		ntc = tc
+		nidrc = clave
+		Text To lC Noshow Text
+	    UPDATE fe_rcon SET dolar=?ntc WHERE idrcon=?nidrc
+		Endtext
+		If This.Ejecutarsql(lC) < 1 Then
+			Sw = 0
+			Exit
+		Endif
+	Endscan
+	If Sw = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function AplicaTC(nmes, Na)
+	Ccursor = 'c_' + Sys(2015)
+	Text To lC Noshow
+		select a.idauto as clave,a.idauto,ROUND(x.venta,3) as tc FROM  fe_rcom as a 
+		inner join fe_mon as x on x.fech=a.fech
+	    where a.acti='A' and  month(a.fech)=?nmes and year(a.fech)=?na and a.idprov>0
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Local Sw As Integer
+	Sw = 1
+	Select clave, idauto, Cast(tc As N(5, 3)) As tc From (Ccursor) Into Cursor (Ccursor)
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	Scan All
+		ntc = tc
+		niDAUTO = idauto
+		Text To lC NOSHOW TEXTMERGE
+		 UPDATE fe_rcom SET dolar=<<ntc>> WHERE idauto=<<nidauto>>
+		Endtext
+		If This.Ejecutarsql(lC) < 1 Then
+			Sw = 0
+			Exit
+		Endif
+	Endscan
+	If Sw = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If 	This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	This.Cmensaje = "Se Aplico Tipo de Cambio Correctamente a las Compras"
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
 
 
 

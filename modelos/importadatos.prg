@@ -1,12 +1,59 @@
 Define Class importadatos As OData Of 'd:\capass\database\data'
 	Ruc = ""
 	dni = ""
-	Url = 'http://companiasysven.com'
+	Url = 'http://companysysven.com'
 	Urlimgcompras = 'https://companiasysven.com/app88/parsearxml.php'
+	Function ConsultaApisunat(objenvio)
+	Local Obj As "empty"
+	Local oHTTP As "MSXML2.XMLHTTP"
+	Local lcHTML
+	Obj		  = Createobject("empty")
+	pURL_WSDL = "http://companiasysven.com/ccpe.php"
+*MESSAGEBOX(cruc,16,'Hola')
+	TEXT To cdata Noshow Textmerge
+	{
+	"ruc":"<<cruc>>",
+	"tdoc":"<<objenvio.ctdoc>>",
+	"serie":"<<objenvio.cserie>>",
+	"cndoc":"<<objenvio.cnumero>>",
+	"cfecha":"<<objenvio.dfecha>>",
+	"cimporte":"<<objenvio.nimpo>>",
+	"otroruc":"<<objenvio.otroruc>>"
+	}
+	ENDTEXT
+*!*	wait WINDOW cserie
+*!*	wait WINDOW cnumero
+*!*		MESSAGEBOX(cdata)
+	oHTTP = Createobject("MSXML2.XMLHTTP")
+	oHTTP.Open("post", pURL_WSDL, .F.)
+	oHTTP.setRequestHeader("Content-Type", "application/json")
+	oHTTP.Send(cdata)
+	If oHTTP.Status <> 200 Then
+		AddProperty(Obj, "vdvto", '-1')
+		AddProperty(Obj, "mensaje", "Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status)))
+		Return Obj
+	Endif
+	lcHTML = oHTTP.responseText
+*!*		MESSAGEBOX(lcHTML)
+	If Left(Alltrim(lcHTML), 1) <> '{' Then
+		AddProperty(Obj, "vdvto", -1)
+		AddProperty(Obj, "estadoruc", "")
+		AddProperty(Obj, "estadodom", "")
+		AddProperty(Obj, "mensaje", "No hay Respuesta de SUNAT")
+	Else
+		Set Procedure To d:\Librerias\nfJsonRead.prg Additive
+		ocomp = nfJsonRead(lcHTML)
+		AddProperty(Obj, "vdvto", ocomp.estadocomprobante)
+		AddProperty(Obj, "estadoruc", ocomp.estadoruc)
+		AddProperty(Obj, "estadodom", ocomp.condomicilio)
+		AddProperty(Obj, "mensaje", ocomp.Mensaje)
+	Endif
+	Return Obj
+	Endfunc
 	Function consultardata(Ccursor)
-	Text To LC Noshow Textmerge
+	TEXT To LC Noshow Textmerge
      select fech,CAST(valor as decimal(5,3)) as valor,CAST(venta as decimal(5,3)) as venta,idmon FROM fe_mon ORDER BY fech
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(LC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -125,6 +172,10 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	Function ImportaTCSunat(nmes, nanio)
 	Local loXmlHttp As "Microsoft.XMLHTTP"
 	Local lcHTML, lcURL, ls_compra, ls_venta
+	If hayInternet()<1 Then
+		This.Cmensaje = "No Hay conexión a Internet "
+		Return 0
+	Endif
 	Mensaje("Consultando Tipo de Cambio desde sunat.gob.pe")
 	Set Procedure To d:\Librerias\json Additive
 	nm	  = Iif(nmes <= 9, '0' + Alltrim(Str(nmes)), Alltrim(Str(nmes)))
@@ -133,14 +184,13 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	fi	  = Na + '-' + nm + '-01'
 	dfecha2	= Dtos(Ctod('01/' + Trim(Str(Iif(nmes < 12, nmes + 1, 1))) + '/' + Trim(Str(Iif(nmes < 12, nanio, nanio + 1)))))
 	ff		= Left(dfecha2, 4) + '-' + Substr(dfecha2, 5, 2) + '-' + Right(dfecha2, 2)
-
 	loXmlHttp = Createobject("Microsoft.XMLHTTP")
-	Text To cdata Noshow Textmerge
+	TEXT To cdata Noshow Textmerge
 	{
 	"dfi":"<<fi>>",
 	"dff":"<<ff>>"
 	}
-	Endtext
+	ENDTEXT
 	loXmlHttp.Open('POST', lcURL, .F.)
 	loXmlHttp.setRequestHeader("Content-Type", "application/json")
 	loXmlHttp.Send(cdata)
@@ -179,9 +229,9 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	LC = 'Fundtipocambio'
 	goApp.npara1 = Df
 	goApp.npara2 = ct
-	Text To lp Noshow
+	TEXT To lp Noshow
 	    (?goapp.npara1,?goapp.npara2)
-	Endtext
+	ENDTEXT
 	m.ntc = This.EJECUTARf(LC, lp, 'lmone')
 	If m.ntc < 1 Then
 		If This.conerror = 1 Then
@@ -205,17 +255,17 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	Sw	= 1
 	Df	= Ctod("01/" + Alltrim(Str(nm)) + "/" + Alltrim(Str(Na))) - 1
 	F	= Cfechas(Df)
-	Text To LC Noshow Textmerge
+	TEXT To LC Noshow Textmerge
     select valor,venta FROM fe_mon WHERE fech='<<f>>'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(LC, 'tca') < 1 Then
 		Return  0
 	Endif
 	attca = tca.valor
 	attcv = tca.Venta
-	Text To LC Noshow Textmerge
+	TEXT To LC Noshow Textmerge
         select  fech,valor,venta,idmon FROM fe_mon WHERE MONTH(fech)=<<nm>> AND YEAR(fech)=<<na>> ORDER BY fech
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(LC, 'atca') < 1 Then
 		Return 0
 	Endif
@@ -242,9 +292,9 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 				tcc	= attca
 				tcv	= attcv
 			Endif
-			Text To LC Noshow
+			TEXT To LC Noshow
                 UPDATE fe_mon SET valor=?tcc,venta=?tcv WHERE idmon=?nidmon
-			Endtext
+			ENDTEXT
 			If This.Ejecutarsql(LC) < 1 Then
 				Sw = 0
 				Exit
@@ -260,9 +310,9 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 			Return 0
 		Endif
 		If   nm = Month(fe_gene.fech) And Na = Year(fe_gene.fech) Then
-			Text To LC Noshow
+			TEXT To LC Noshow
             UPDATE fe_gene SET dola=?tcv WHERE idgene=1
-			Endtext
+			ENDTEXT
 			If This.Ejecutarsql( LC) < 1 Then
 				Return  0
 			Endif
@@ -280,12 +330,6 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	ls_base64	   = Strconv(ls_contentFile, 13)
 	cdata = Filetostr(cFile)
 	cad = "data:image/jpg;base64,"
-*!*		STRTOFILE(ls_base64,ADDBS(SYS(5)+SYS(2003))+'b64.txt')
-*!*		TEXT To cdata Noshow Textmerge
-*!*		{
-*!*		"imagen":"<<cad+ls_base64>>"
-*!*		}
-*!*		ENDTEXT
 	loXmlHttp = Createobject("Microsoft.XMLHTTP")
 	loXmlHttp.Open('POST', lcURL, .F.)
 	loXmlHttp.setRequestHeader("Content-Type",  "text/xml; charset=utf-8")
@@ -300,8 +344,6 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 		Return orpta
 	Endif
 	lcHTML = loXmlHttp.responseText
-*!*		STRTOFILE(lcHTML,ADDBS(SYS(5)+SYS(2003))+'rpta.txt')
-*!*		Messagebox(lcHTML)
 	AddProperty(orpta, 'proveedor', '')
 	AddProperty(orpta, 'ruc', '')
 	AddProperty(orpta, 'fecha', '')
@@ -329,16 +371,16 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	Return orpta
 	Endfunc
 	Function consultartcdata(nmes, nanio, Ccursor)
-	Text To LC Noshow Textmerge
+	TEXT To LC Noshow Textmerge
       select  fech FROM fe_mon WHERE MONTH(feCh)=<<nmes>> anD YEAR(fech)=<<nanio>>
-	Endtext
+	ENDTEXT
 	If EJECutaconsulta(LC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function codigodetraccion(coddetra)
-	Text To cdata Noshow
+	TEXT To cdata Noshow
 		 [
 	  { "codigo": "001", "descripcion": "Azúcar y melaza de caña" },
 	  { "codigo": "002", "descripcion": "Arroz" },
@@ -380,7 +422,7 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 	  { "codigo": "045", "descripcion": "Minerales de oro y sus concentrados gravados con el IGV" },
 	  { "codigo": "099", "descripcion": "Ley 30737" }
 	]
-	Endtext
+	ENDTEXT
 	Set Procedure To d:\Librerias\nfJsonRead.prg Additive
 	cdesc = ""
 	objjson = nfJsonRead(cdata)
@@ -443,18 +485,6 @@ Define Class importadatos As OData Of 'd:\capass\database\data'
 		lcLinea = Strtran(lcLinea, Chr(13) + Chr(10), "")
 *!*			WAIT WINDOW lcLinea
 		Alines(laDatos, lcLinea, ",")
-*!*			WAIT WINDOW laDatos[4] + ' '+VARTYPE(laDatos[4])
-*!*			WAIT WINDOW laDatos[5]+ ' '+VARTYPE(laDatos[5])
-*!*			WAIT WINDOW laDatos[7]+ ' '+VARTYPE(laDatos[7])
-*!*			WAIT WINDOW laDatos[8]+ ' '+VARTYPE(laDatos[8])
-*!*			WAIT WINDOW laDatos[10]+ ' '+VARTYPE(laDatos[10])
-*!*			WAIT WINDOW laDatos[13]+ ' '+VARTYPE(laDatos[13])
-*!*			WAIT WINDOW laDatos[14]+ ' '+VARTYPE(laDatos[14])
-*!*			WAIT WINDOW laDatos[15]+ ' '+VARTYPE(laDatos[15])
-*!*			WAIT WINDOW laDatos[16]+ ' '+VARTYPE(laDatos[16])
-*!*			WAIT WINDOW laDatos[21]+ ' '+VARTYPE(laDatos[21])
-*!*			WAIT WINDOW laDatos[25]+ ' '+VARTYPE(laDatos[25])
-*!*			Exit
 		If Vartype(laDatos[4]) <> 'U'  Then
 *!*				Insert Into regsire(carsunat, Fecha, tdoc, serie, numero, nruc, nombre, importe) ;
 Values (laDatos[4], Ctod(laDatos[5]), laDatos[7], laDatos[8], Right('00000000' + laDatos[10], 10), laDatos[13], laDatos[14], Val(laDatos[25]))
@@ -497,56 +527,56 @@ Values (laDatos[4], Ctod(laDatos[5]), laDatos[7], laDatos[8], Right('00000000' +
 	Try
 		Create Cursor  propuesta ;
 			( ;
-			  Ruc c(11), ;
-			  razon_social c(120), ;
-			  periodo c(6), ;
-			  car_sunat c(20), ;
-			  fecha_emision T, ;
-			  fecha_vcto d, ;
-			  tipo_cp c(5), ;
-			  serie_cdp c(10), ;
-			  anio c(4), ;
-			  nro_cp_ini c(20), ;
-			  nro_cp_fin c(20), ;
-			  tipo_doc c(2), ;
-			  nro_doc c(15), ;
-			  proveedor c(120), ;
-			  bi_grav_dg N(14, 2), ;
-			  igv_dg N(14, 2), ;
-			  bi_grav_dgng N(14, 2), ;
-			  igv_dgng N(14, 2), ;
-			  bi_grav_dng N(14, 2), ;
-			  igv_dng N(14, 2), ;
-			  valor_ng N(14, 2), ;
-			  isc N(14, 2), ;
-			  icbper N(14, 2), ;
-			  otros_trib N(14, 2), ;
-			  total_cp N(14, 2), ;
-			  moneda c(3), ;
-			  tipo_cambio N(10, 4), ;
-			  fec_doc_mod d, ;
-			  tipo_cp_mod c(5), ;
-			  serie_cp_mod c(10), ;
-			  cod_dam c(20), ;
-			  nro_cp_mod c(20), ;
-			  clasif_bs c(5), ;
-			  id_proy c(20), ;
-			  porc_part N(6, 2), ;
-			  imb N(14, 2), ;
-			  car_orig c(5), ;
-			  detraccion c(2), ;
-			  tipo_nota c(2), ;
-			  est_comp c(2), ;
-			  incal c(1), ;
-			  clu01 c(20), clu02 c(20), clu03 c(20), clu04 c(20), clu05 c(20), ;
-			  clu06 c(20), clu07 c(20), clu08 c(20), clu09 c(20), clu10 c(20), ;
-			  clu11 c(20), clu12 c(20), clu13 c(20), clu14 c(20), clu15 c(20), ;
-			  clu16 c(20), clu17 c(20), clu18 c(20), clu19 c(20), clu20 c(20), ;
-			  clu21 c(20), clu22 c(20), clu23 c(20), clu24 c(20), clu25 c(20), ;
-			  clu26 c(20), clu27 c(20), clu28 c(20), clu29 c(20), clu30 c(20), ;
-			  clu31 c(20), clu32 c(20), clu33 c(20), clu34 c(20), clu35 c(20), ;
-			  clu36 c(20), clu37 c(20), clu38 c(20), clu39 c(20) ;
-			  )
+			Ruc c(11), ;
+			razon_social c(120), ;
+			periodo c(6), ;
+			car_sunat c(20), ;
+			fecha_emision T, ;
+			fecha_vcto d, ;
+			tipo_cp c(5), ;
+			serie_cdp c(10), ;
+			anio c(4), ;
+			nro_cp_ini c(20), ;
+			nro_cp_fin c(20), ;
+			tipo_doc c(2), ;
+			nro_doc c(15), ;
+			proveedor c(120), ;
+			bi_grav_dg N(14, 2), ;
+			igv_dg N(14, 2), ;
+			bi_grav_dgng N(14, 2), ;
+			igv_dgng N(14, 2), ;
+			bi_grav_dng N(14, 2), ;
+			igv_dng N(14, 2), ;
+			valor_ng N(14, 2), ;
+			isc N(14, 2), ;
+			icbper N(14, 2), ;
+			otros_trib N(14, 2), ;
+			total_cp N(14, 2), ;
+			moneda c(3), ;
+			tipo_cambio N(10, 4), ;
+			fec_doc_mod d, ;
+			tipo_cp_mod c(5), ;
+			serie_cp_mod c(10), ;
+			cod_dam c(20), ;
+			nro_cp_mod c(20), ;
+			clasif_bs c(5), ;
+			id_proy c(20), ;
+			porc_part N(6, 2), ;
+			imb N(14, 2), ;
+			car_orig c(5), ;
+			detraccion c(2), ;
+			tipo_nota c(2), ;
+			est_comp c(2), ;
+			incal c(1), ;
+			clu01 c(20), clu02 c(20), clu03 c(20), clu04 c(20), clu05 c(20), ;
+			clu06 c(20), clu07 c(20), clu08 c(20), clu09 c(20), clu10 c(20), ;
+			clu11 c(20), clu12 c(20), clu13 c(20), clu14 c(20), clu15 c(20), ;
+			clu16 c(20), clu17 c(20), clu18 c(20), clu19 c(20), clu20 c(20), ;
+			clu21 c(20), clu22 c(20), clu23 c(20), clu24 c(20), clu25 c(20), ;
+			clu26 c(20), clu27 c(20), clu28 c(20), clu29 c(20), clu30 c(20), ;
+			clu31 c(20), clu32 c(20), clu33 c(20), clu34 c(20), clu35 c(20), ;
+			clu36 c(20), clu37 c(20), clu38 c(20), clu39 c(20) ;
+			)
 		Append From (m.cFile) Type Csv
 		Select car_sunat As carsunat, Ttod(fecha_emision) As Fecha, tipo_cp As tdoc,;
 			serie_cdp As serie, nro_cp_ini As numero, nro_doc As nruc,;
@@ -579,47 +609,47 @@ Values (laDatos[4], Ctod(laDatos[5]), laDatos[7], laDatos[8], Right('00000000' +
 	Try
 		Create Cursor propuesta ;
 			( ;
-			  Ruc c(11), ;
-			  razon_social c(100), ;
-			  periodo c(6), ;
-			  car_sunat c(30), ;
-			  fecha_emision t, ;
-			  Fecha_Vcto_Pago d, ;
-			  Tipo_CP_Doc c(2), ;
-			  serie_cdp c(4), ;
-			  Nro_CP_Inicial c(20), ;
-			  Nro_CP_Final c(20), ;
-			  Tipo_Doc_Identidad c(2), ;
-			  Nro_Doc_Identidad c(15), ;
-			  Apellidos_Nombres c(120), ;
-			  Valor_Fact_Export N(14, 2), ;
-			  BI_Gravada N(14, 2), ;
-			  Dscto_BI N(14, 2), ;
-			  IGV_IPM N(14, 2), ;
-			  Dscto_IGV N(14, 2), ;
-			  Mto_Exonerado N(14, 2), ;
-			  Mto_Inafecto N(14, 2), ;
-			  isc N(14, 2), ;
-			  BI_Grav_IVAP N(14, 2), ;
-			  IVAP N(14, 2), ;
-			  icbper N(14, 2), ;
-			  Otros_Tributos N(14, 2), ;
-			  total_cp N(14, 2), ;
-			  moneda c(3), ;
-			  tipo_cambio N(10, 4), ;
-			  Fecha_Emi_Mod d, ;
-			  tipo_cp_mod c(2), ;
-			  serie_cp_mod c(4), ;
-			  nro_cp_mod c(20), ;
-			  ID_Proyecto c(20), ;
-			  tipo_nota c(2), ;
-			  est_comp c(2), ;
-			  Valor_FOB N(14, 2), ;
-			  Valor_OP_Gratuitas N(14, 2), ;
-			  Tipo_Operacion c(2), ;
-			  DAM_CP c(20), ;
-			  CLU c(20) ;
-			  )
+			Ruc c(11), ;
+			razon_social c(100), ;
+			periodo c(6), ;
+			car_sunat c(30), ;
+			fecha_emision T, ;
+			Fecha_Vcto_Pago d, ;
+			Tipo_CP_Doc c(2), ;
+			serie_cdp c(4), ;
+			Nro_CP_Inicial c(20), ;
+			Nro_CP_Final c(20), ;
+			Tipo_Doc_Identidad c(2), ;
+			Nro_Doc_Identidad c(15), ;
+			Apellidos_Nombres c(120), ;
+			Valor_Fact_Export N(14, 2), ;
+			BI_Gravada N(14, 2), ;
+			Dscto_BI N(14, 2), ;
+			IGV_IPM N(14, 2), ;
+			Dscto_IGV N(14, 2), ;
+			Mto_Exonerado N(14, 2), ;
+			Mto_Inafecto N(14, 2), ;
+			isc N(14, 2), ;
+			BI_Grav_IVAP N(14, 2), ;
+			IVAP N(14, 2), ;
+			icbper N(14, 2), ;
+			Otros_Tributos N(14, 2), ;
+			total_cp N(14, 2), ;
+			moneda c(3), ;
+			tipo_cambio N(10, 4), ;
+			Fecha_Emi_Mod d, ;
+			tipo_cp_mod c(2), ;
+			serie_cp_mod c(4), ;
+			nro_cp_mod c(20), ;
+			ID_Proyecto c(20), ;
+			tipo_nota c(2), ;
+			est_comp c(2), ;
+			Valor_FOB N(14, 2), ;
+			Valor_OP_Gratuitas N(14, 2), ;
+			Tipo_Operacion c(2), ;
+			DAM_CP c(20), ;
+			CLU c(20) ;
+			)
 		Append From (m.cFile) Type Csv
 		Select car_sunat As carsunat, Ttod(fecha_emision) As Fecha,  Tipo_CP_Doc As tdoc,;
 			serie_cdp As serie, Nro_CP_Inicial  As numero,  Nro_Doc_Identidad As nruc,;

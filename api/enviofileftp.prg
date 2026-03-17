@@ -35,7 +35,7 @@ Define Class envioftpcorreo As Custom
 			sincdr = 0
 		Endif
 	Endif
-	cFile = Sys(5) + Sys(2003) + "\ftp.exe"
+	cFile = ADDBS(Sys(5) + Sys(2003)) + "ftp.exe"
 	If !File(cFile) Then
 		This.Cmensaje = "NO existe el Arhivo de envio"
 		Return 0

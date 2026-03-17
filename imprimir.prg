@@ -343,10 +343,9 @@ Define Class Imprimir As Custom
 	This.CrearPdf(This.Archivo, This.ArchivoPdf, cmodo)
 	Endfunc
 	Function cambiarimpresoranormalpdf(creporte)
-	If This.Idsesion>0 Then
+    If This.Idsesion>0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	cpropiedad = "Impresoranormal"
 	If !Empty(This.ArchivoPdf) Then
 		If !Directory(Addbs(Addbs(Sys(5)+Sys(2003))+'Pdf')) Then
 			Mkdir Addbs(Addbs(Sys(5)+Sys(2003))+'Pdf'
@@ -355,12 +354,13 @@ Define Class Imprimir As Custom
 		cpdf=This.ArchivoPdf
 	Endif
 *!*		wait WINDOW 'hola'+cpdf
-	If !Pemstatus(goApp, cpropiedad, 5)
+	If !Pemstatus(goApp, "Impresoranormal", 5)
 		goApp.AddProperty("Impresoranormal", "")
 	Else
 		lcImpresora = goApp.Impresoranormal
-	Endif
+	ENDIF
 	Do "FoxyPreviewer.App"
+*!*		wait WINDOW m.cpdf
 	If !Empty(goApp.Impresoranormal) Then
 		Declare Integer SetDefaultPrinter In WINSPOOL.DRV ;
 			String pszPrinter
@@ -368,12 +368,11 @@ Define Class Imprimir As Custom
 		lcImpresora		  = goApp.Impresoranormal
 		lnResultado		  = SetDefaultPrinter(lcImpresora)
 		Set Printer To Name (lcImpresora)
-		Report Form (creporte)  Object Type 10 To File (cpdf)
-*!*			Report Form (creporte) Preview
+		Report Form (creporte)  Object Type 10 To File (m.cpdf)
 		lnResultado = SetDefaultPrinter(lcImpresoraActual)
 		Set Printer To Name (lcImpresoraActual)
 	Else
-		Report Form (creporte)  Object Type 10 To File (cpdf)
+		Report Form (creporte)  Object Type 10 To File (m.cpdf)
 	Endif
 	Do Foxypreviewer.App With "Release"
 	abrirpdf(m.cpdf)

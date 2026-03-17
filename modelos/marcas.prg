@@ -3,19 +3,36 @@ Define Class marcas As OData Of "d:\capass\database\data.prg"
 	descmar = ""
 	cidpc = ""
 	nidusua = 0
-	Function VAlidar()
-	Do Case
-	Case Empty(This.descmar)
-		This.Cmensaje = "Ingrese la Descripción de Marca"
-		Return .F.
-	Otherwise
-		Return .T.
-	Endcase
-	Endfunc
-	Function Crear()
-	If !This.VAlidar()
+	cmodo=""
+	Function buscarsiexiste()
+	ccursor='c_'+Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\SELECT idmar FROM fe_mar WHERE tRIM(dmar)='<<TRIM(this.descmar)>>' AND marc_acti<>'I'
+	If This.nidmar>0 Then
+	    \ AND idmar<><<this.nidmar>>
+	Endif
+	\ limit 1
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lc,ccursor)<1 Then
 		Return 0
 	Endif
+	Select (ccursor)
+	If idmar>0 Then
+		This.Cmensaje="Nombre de Marca Ya Regisatrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Crear()
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+    m.rpta=oser.Inicializar(this,'marcas')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	ENDIF
+	oser=null
 	lsql = "FUNCREAMARCAS"
 	goApp.npara1 = This.descmar
 	goApp.npara2 = This.nidusua
@@ -31,11 +48,10 @@ Define Class marcas As OData Of "d:\capass\database\data.prg"
 	Return m.nidmar
 	Endfunc
 	Function Editar()
-	If !This.VAlidar()
-		Return 0
-	Endif
-	If This.nidmar < 1 Then
-		This.Cmensaje = 'Seleccione Una Marca para Editar'
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+    m.rpta=oser.Inicializar(this,'marcas')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
 		Return 0
 	Endif
 	goApp.npara1 = This.descmar

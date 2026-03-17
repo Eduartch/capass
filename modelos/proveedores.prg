@@ -24,6 +24,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Yaregistrado = ""
 	contacto1 = ""
 	contacto2 = ""
+	cmodo=""
 	Procedure AsignaValores
 	Lparameters Codigo, Cnruc, crazo, cdire, cciud, Cfono, cfax, cdni, Ctipo, cemail, nidven, cusua, cidpc, ccelu, crefe, linea, crpm, nidz
 	This.Codigo	   = m.Codigo
@@ -46,6 +47,13 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	This.zona	   = m.nidz
 	Endproc
 	Function Creaproveedor
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+	m.rpta=oser.Inicializar(This,'proveedores')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
 	Local lC, lp
 	m.lC		  = 'funcreaproveedor'
 	cur			  = "xt"
@@ -74,6 +82,13 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Return m.nid
 	Endfunc
 	Procedure Actualizaproveedor
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+	m.rpta=oser.Inicializar(This,'proveedores')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
 	Local lC, lp
 	m.lC		  = 'proactualizaproveedor'
 	cur			  = ""
@@ -163,7 +178,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Function buscanombre(cmodo, Cruc, nidclie)
 	Ccursor = 'c_' + Sys(2015)
 	If Len(Alltrim(Cruc)) <= 3 Then
-		This.Cmensaje = 'Nombre de Cliente NO Válido'
+		This.Cmensaje = 'Nombre de Proveedor NO Válido'
 		Return 0
 	Endif
 	Set Textmerge On

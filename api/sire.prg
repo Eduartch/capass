@@ -33,7 +33,7 @@ Define Class sire As Custom
 		ccampo1 = ''
 	Endif
 	If _Screen.conanuladas = 'S' Then
-		condicion = ''
+		condicion = [ ]
 	Else
 		If m.existegratuito = 'S' Then
 			condicion = ' And (tgrati>0 or Importe<>0)'
@@ -56,9 +56,9 @@ Define Class sire As Custom
 		Round(Val(Ndoc), 0) As nrocomp, ;
 		'' As pagofinal, ;
 		Icase(Tdoc = '01', Iif(Left(nruc, 1) = '*', '0', '6'), ;
-		  Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
-		  Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
-		  Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
+		Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
+		Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
+		Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
 		Icase(Tdoc = '03', Iif(Empty(ndni), '' + Space(11), ndni + Space(3)), Tdoc = '01', Iif(Left(nruc, 1) = '*', '' + Space(11), nruc), Iif(Empty(nruc), ndni + Space(3), Iif(Left(nruc, 1) = '*', '' + Space(11), nruc))) As nruc, ;
 		Iif(Tdoc = '03', Iif(Empty(ndni), '' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '' + Space(40), Razo)) As Cliente, ;
 		0 As exporta, ;
@@ -254,15 +254,13 @@ Define Class sire As Custom
 			Return 0
 		Endif
 		Select fech, Tdoc, Serie, Ndoc, nruc, Razo As Cliente, Importe, 0000000000.00 As total_sunat, Trim(Tdoc) + Trim(Serie) + Alltrim(Str(Round(Val(Ndoc), 0) ))As clave;
-			From registro Into Cursor propsistema
-		Select * From propsistema Where Tdoc = '--' Into Cursor result Readwrite
+			From registro  Into Cursor result Readwrite
 		Select propsunat
 		Scan All
-			Select propsistema
+			Select result
 			Locate For Trim(clave) = Trim(propsunat.clave)
 			If Found()
-				Insert Into result(fech, Tdoc, Serie, Ndoc, nruc, Cliente, Importe, total_sunat)Values;
-					(propsistema.fech, propsistema.Tdoc, propsistema.Serie, propsistema.Ndoc, propsistema.nruc, propsistema.Cliente, propsistema.Importe, propsunat.Total)
+				Replace total_sunat With propsunat.Total  In result
 			Else
 				Insert Into result(fech, Tdoc, Serie, Ndoc, nruc, Cliente, Importe, total_sunat)Values;
 					(propsunat.fecha, propsunat.Tdoc, propsunat.Serie, propsunat.numero, propsunat.nruc, propsunat.Cliente, 0, propsunat.Total)
@@ -310,7 +308,7 @@ Define Class sire As Custom
 			GeneraPlE5Compras1(cf, cr, This.nmes, Val(This.Na))
 			aviso("Se Genero el Archivo 2 de 2:" + Cruta + " Correctamente")
 		Catch To oerror
-			this.Cmensaje=oerror.Message
+			This.Cmensaje=oerror.Message
 		Endtry
 	Case opt = 3
 		Try
@@ -351,14 +349,15 @@ Define Class sire As Custom
 		If o.importacsv() < 1 Then
 			This.Cmensaje = o.Cmensaje
 			Return
-		ENDIF
+		Endif
 		Select propsunat
 		If Fsize("proveedor") < 1 Or Fsize("clave") < 1 Or Fsize("total") < 1 Or Fsize("serie") < 1  Then
 			This.Cmensaje = 'Archivo no Cuenta con las Columnas Necesarias'
-			Return 
+			Return
 		Endif
 		Select fech, Tdoc, Serie, Ndoc, nruc, Razo As proveedor, Importe, 0000000000.00 As total_sunat, nruc + Trim(Tdoc) + Trim(Serie) + Alltrim(Str(Round(Val(Ndoc), 0) ))As clave;
-			From registro WHERE MONTH(fech)=this.nmes AND YEAR(fech)=VAL(this.na) Into Cursor result Readwrite
+			From registro Into Cursor result Readwrite
+			*Where Month(fech)=This.nmes And Year(fech)=Val(This.Na) 
 		Select propsunat
 		Scan All
 			Select result
@@ -375,7 +374,7 @@ Define Class sire As Custom
 			From result Into Cursor result Order By fech
 		Select result
 		Go Top
-		goapp.Form("ka_sirecompras", This.Idsesion, 'result')
+		goapp.Form("ka_sirecompras", This.Idsesion, 'result',this.nmes,VAL(this.na))
 	Endcase
 	Endfunc
 	Function correlativocompras()
@@ -455,19 +454,19 @@ Define Class sire As Custom
 		'' As errpro3, ;
 		Iif(Importe > 3500, '1', ' ') As Mpago, ;
 		Icase(Tdoc = '01', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
-		  Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
-		  Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '10', '0', ;
-		  Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Tdoc = '16', '0', ;
-		  Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
-		  Iif(Month(fech) = nmes, '1', '9')) As estado;
+		Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
+		Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
+		Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
+		Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
+		Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
+		Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
+		Tdoc = '10', '0', ;
+		Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
+		Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
+		Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
+		Tdoc = '16', '0', ;
+		Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
+		Iif(Month(fech) = nmes, '1', '9')) As estado;
 		From registro Where Left(Razo, 5) <> '-----'  Into Cursor lreg
 	Select lreg
 	Set Textmerge On Noshow
@@ -511,9 +510,9 @@ Define Class sire As Custom
 		Round(Val(Ndoc), 0) As nrocomp, ;
 		' ' As consolidado, ;
 		Icase(Tdoc = '01', Iif(Left(nruc, 1) = '*', '0', '6'), ;
-		  Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
-		  Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
-		  Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
+		Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
+		Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
+		Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
 		Icase(Tdoc = '03', Iif(Empty(ndni), '0' + Space(11), ndni + Space(3)), Tdoc = '01', Iif(Left(nruc, 1) = '*', '0' + Space(11), nruc), Iif(Empty(nruc), ndni + Space(3), Iif(Left(nruc, 1) = '*', '-' + Space(11), nruc))) As nruc, ;
 		Iif(Tdoc = '03', Iif(Empty(ndni), '-' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '-' + Space(40), Razo)) As Cliente, ;
 		0.00 As exporta, ;

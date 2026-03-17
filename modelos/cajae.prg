@@ -287,13 +287,13 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	ff = Cfechas(dff)
 	Set DataSession To This.Idsesion
 	Text To lc Noshow Textmerge
-	       select a.lcaj_ndoc,a.lcaj_fech,a.lcaj_deta,
-		   c.ncta,c.nomb,if(lcaj_mone='S',a.lcaj_deud,ROUND(a.lcaj_deud*a.lcaj_dola,2)) as debe,
-		   if(a.lcaj_mone='S',a.lcaj_acre,ROUND(a.lcaj_acre*a.lcaj_dola,2)) as haber,
-		   a.lcaj_idct as idcta,lcaj_tran,if(lcaj_deud>0,'I','S') as tipomvto,'' as lcaj_dcto
-		   from fe_lcaja as a
-		   inner join fe_plan as c on c.idcta=a.lcaj_idct
-		   where a.lcaj_acti='A' AND a.lcaj_fech between '<<fi>>' and '<<ff>>' order by a.lcaj_fech
+       select a.lcaj_ndoc,a.lcaj_fech,a.lcaj_deta,
+	   c.ncta,c.nomb,if(lcaj_mone='S',a.lcaj_deud,ROUND(a.lcaj_deud*a.lcaj_dola,2)) as debe,
+	   if(a.lcaj_mone='S',a.lcaj_acre,ROUND(a.lcaj_acre*a.lcaj_dola,2)) as haber,
+	   a.lcaj_idct as idcta,lcaj_tran,if(lcaj_deud>0,'I','S') as tipomvto,'' as lcaj_dcto
+	   from fe_lcaja as a
+	   inner join fe_plan as c on c.idcta=a.lcaj_idct
+	   where a.lcaj_acti='A' AND a.lcaj_fech between '<<fi>>' and '<<ff>>' order by a.lcaj_fech
 	Endtext
 	If This.EJECutaconsulta(lc, Calias) < 1 Then
 		Return 0
@@ -311,7 +311,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
     \ Select Cast((Sum(If(lcaj_mone='S',a.lcaj_deud,Round(a.lcaj_deud*a.lcaj_dola,2)))-Sum(If(a.lcaj_mone='S',a.lcaj_acre,Round(a.lcaj_acre*a.lcaj_dola,2)))) As Decimal(12,2)) As si
 	\ From fe_lcaja As a
 	\ Where a.lcaj_acti='A' And a.lcaj_fech<'<<f>>' And lcaj_idct>0
-	If Alltrim(goapp.proyecto) = 'psys' Then
+	If Alltrim(goapp.proyecto) == 'psys' Then
 	 \ And (lcaj_deud>0 Or lcaj_acre>0)
 	Endif
 	Set Textmerge Off
@@ -321,6 +321,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Endif
 	Select (Calias)
 	nsaldo = Iif(Isnull(si), 0, si)
+*!*		MESSAGEBOX(lc)
 	Return nsaldo
 	Endfunc
 	Function IngresaDatosLCajaECreditos(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13)

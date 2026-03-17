@@ -7,6 +7,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	dfevto = Date()
 	Nreg = 0
 	Idcaja = 0
+	IdBancos=0
 	nimpo = 0
 	nacta = 0
 	cnrou = ""
@@ -83,11 +84,12 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	AddProperty(objdetalle,'nrou',"")
 	AddProperty(objdetalle,'cdetalle',"")
 	AddProperty(objdetalle,'csitua',"")
+*!*		wait WINDOW 'hola'+this.Calias
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	If !Used((This.Calias))
-		This.cmensaje = 'Temporal de Registro NO usado'
+	If  verificaAlias(This.Calias)=0 Then
+		This.cmensaje = ' No hay opción para Registrar la Deuda'
 		Return 0
 	Endif
 	r = IngresaCabeceraDeudasCctas(This.NAuto, This.nidprov, This.Cmoneda, This.dFech, This.nimpo, goApp.nidusua, This.codt, Id(), This.ccta)
@@ -110,14 +112,16 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 		objdetalle.cdetalle=tmpd.Detalle
 		objdetalle.csitua='CA'
 		vdvto= This.IngresaDetalleDeudas(objdetalle)
-		IF m.vdvto<1 Then
+		If m.vdvto<1 Then
 			Sw = 0
 			Exit
 		Endif
 	Endscan
 	If Sw = 0 Then
 		Return 0
-	Endif
+	ENDIF
+	this.nidrd=r
+	this.Ncontrol=m.vdvto
 	Return m.vdvto
 	Endfunc
 	Function Registra1
@@ -153,8 +157,7 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	If r = 0 Then
 		Return 0
 	Endif
-	If IngresaDetalleDeudas(r, cndoc, 'C', dFecha, dFecha, 'F', ndolar, nTotal, ;
-			goApp.nidusua, Id(), goApp.Tienda, cndoc, cdetalle, 'CA') = 0 Then
+	If IngresaDetalleDeudas(r, cndoc, 'C', dFecha, dFecha, 'F', ndolar, nTotal, goApp.nidusua, Id(), goApp.Tienda, cndoc, cdetalle, 'CA') = 0 Then
 		Return 0
 	Endif
 	Return 1
@@ -521,9 +524,16 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Endif
 	If This.nidprov > 0 Then
 		If m.cwhere = 'S' Then
-	      \ a.Idpr=<<This.nidprov>>
+	      \ and  a.Idpr=<<This.nidprov>>
 		Else
 	      \Where  a.Idpr=<<This.nidprov>>
+		Endif
+	Endif
+	If This.codt>0 Then
+		If m.cwhere = 'S' Then
+	      \ and  a.codt=<<This.codt>>
+		Else
+	      \Where  a.codt=<<This.codt>>
 		Endif
 	Endif
 	\Order By Fevto
@@ -546,6 +556,34 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return nid
+	Endfunc
+	Function CancelaDesdeBancos()
+	lc='FUNINGRESAPAGOSdeudasCb'
+	cur="dd"
+	goApp.npara1=this.dFech
+	goApp.npara2=this.dfevto
+	goApp.npara3=this.nacta
+	goApp.npara4=this.cdcto
+	goApp.npara5=this.Cestado
+	goApp.npara6=this.Cmoneda
+	goApp.npara7=this.cdeta
+	goApp.npara8=this.Ctipo
+	goApp.npara9=this.nidrd
+	goApp.npara10=goapp.nidusua
+	goApp.npara11=this.Ncontrol
+	goApp.npara12=this.cnrou
+	goApp.npara13=ID()
+	goApp.npara14=this.ndolar
+	goApp.npara15=this.IdBancos
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
+	ENDTEXT
+	nidd=This.EJECUTARf(lc,lp,cur)
+	If m.nidd<1 Then
+		Return 0
+	Endif
+	Return m.nidd
 	Endfunc
 	Function listaCanjesLetras(ccursor)
 	If This.Idsesion > 0 Then
@@ -831,9 +869,9 @@ Define Class ctasporpagar As OData Of 'd:\capass\database\data.prg'
 	Function listarcancelacionesctasxpagar(ccursor)
 	fi=Cfechas(This.dfi)
 	ff=Cfechas(This.dff)
-	IF this.idsesion>0 then
-	   SET DATASESSION TO this.idsesion
-	ENDIF    
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
 	TEXT to lc NOSHOW TEXTMERGE
 	    SELECT x.rdeu_idpr as idprov,c.razo,x.rdeu_idau as idauto,x.rdeu_mone as mone,
 	    if(x.rdeu_mone='S',x.rdeu_impc,x.rdeu_impc*if(a.dola=0,z.dola,a.dola)) as impoo,if(a.dola=0,z.dola,a.dola) as dola,

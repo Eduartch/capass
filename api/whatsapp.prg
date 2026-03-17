@@ -1,8 +1,55 @@
-Define Class whatsapp As  Custom 
+Define Class whatsapp As  Custom
 	cfono=""
 	ctexto=""
 	cdcto=""
 	cmensaje=""
+	carchivo=""
+	mediatype=""
+	cfilename=""
+	urlenvio="https://companiasysven.com/app88/sendwhatsapp.php"
+	Function enviar()
+	ls_contentFile = Filetostr(This.carchivo)
+	contpdf		   = Strconv(ls_contentFile, 13)
+	TEXT TO ljson NOSHOW TEXTMERGE
+    {
+    "number": "<<this.cfono>>",
+    "media": "<<contpdf>>",
+    "mediatype": "<<this.mediatype>>",
+    "fileName":"<<this.cfilename>>"
+    }
+	ENDTEXT
+	Strtofile(ljson,Addbs(Addbs(Sys(5)+Sys(2003)))+'envios.json')
+	oHTTP = Createobject("Microsoft.XMLHTTP")
+	oHTTP.Open("POST", This.urlenvio, .F.)
+	oHTTP.setRequestHeader("Content-Type ", "application/json")
+	oHTTP.Send(m.ljson)
+	If oHTTP.Status <> 200 Then
+		This.cmensaje = "Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status))
+		Return 0
+	Endif
+	lcHTML = oHTTP.responseText
+*!*		MESSAGEBOX(lcHTML)
+	Set Procedure To d:\Librerias\nfJsonRead.prg Additive
+	conerror=0
+	Try
+		orpta = nfJsonRead(lcHTML)
+	Catch To loException
+		This.cmensaje = lcHTML
+		conerror = 1
+	Endtry
+	If conerror = 0 Then
+		If  Vartype(orpta) <> 'U' Then
+			This.cmensaje = orpta.mensaje
+			Return 1
+		Else
+			This.cmensaje = Left(Alltrim(lcHTML), 200)
+			Return 0
+		Endif
+	Else
+		This.cmensaje = Left(Alltrim(lcHTML), 200)
+		Return 0
+	Endif
+	Endfunc
 	Function _clipboard(taFileList)
 	Local lnDataLen, lcDropFiles, llOk, i, lhMem, lnPtr, lCurData
 	#Define CF_HDROP 15
@@ -18,7 +65,7 @@ Define Class whatsapp As  Custom
 	#Define GMEM_SHARE		0x2000
 
 * Load required Windows API functions
-	this.LoadApiDlls()
+	This.LoadApiDlls()
 
 	llOk = .T.
 * Build DROPFILES structure
@@ -50,7 +97,7 @@ Define Class whatsapp As  Custom
 * Close clipboard
 		=CloseClipboard()
 	Endif
-	this.UnloadApiDlls()
+	This.UnloadApiDlls()
 	Return llOk
 	Endfunc
 

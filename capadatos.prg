@@ -159,14 +159,6 @@ Return ;
 	BETWEEN(tnDia, 1, 31) And ;
 	NOT Empty(Date(tnAnio, tnMes, tnDia))
 Endfunc
-**************************
-Function verificaAlias(CALIAS)
-If Used((CALIAS)) Then
-	Return 1
-Else
-	Return 0
-Endif
-Endfunc
 ********************************
 Function PermiteIngresoCompras(cndoc,ctdoc,nidpr,nidauto,dFecha)
 Local vd1,vd2,vd3 As Integer
@@ -417,13 +409,13 @@ Endfunc
 Function PermiteAnularVenta(nauto,dFecha)
 Local vd,vd1
 If ValidaCredito(nauto)=0 Then
-	Messagebox("No es Posible Actualizar Este Documento Tiene Pagos a Cuenta",16,'SISVEN')
+	aviso("No es Posible Actualizar Este Documento Tiene Pagos a Cuenta")
 	vd=0
 Else
 	vd=1
 Endif
 If PermiteIngresoACaja(dFecha)=0 Then
-	Messagebox('La Caja de Esta Fecha Esta Liquidada',16,'SISVEN')
+	aviso('La Caja de Esta Fecha Esta Liquidada')
 	vd1=0
 Else
 	vd1=1
@@ -519,18 +511,6 @@ Otherwise
 	ccadena=Substr(cnuc,npos+1,2)+'/100 '+cm
 Endcase
 Return (ci+'  Con  '+ccadena)
-Endfunc
-*****************************
-Function Validadeuda(na)
-If SQLExec(goapp.bdconn,"SELECT ifnull(FunVerificaEstadoDeuda(?na),0) as nid ","IDEU")<0 Then
-	Return 0
-Else
-	If Val(ideu.nid)=0 Then
-		Return 1
-	Else
-		Return 0
-	Endif
-Endif
 Endfunc
 *****************************
 Procedure CierraCursor(CALIAS)
@@ -2616,7 +2596,7 @@ TEXT to lp noshow
 	     (?goapp.npara1)
 ENDTEXT
 If EJECUTARF(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+ 'Verificando Si Tiene Pagos ACuenta')
+	errorbd(ERRORPROC+ 'Verificando Si Tiene Pagos A Cuenta')
 	Return 0
 Else
 	Return idpago.Id

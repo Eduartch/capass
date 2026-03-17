@@ -172,7 +172,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
            \a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,a.idclie,a.razo,a.nruc,a.Dire,a.ciud,a.rped_mone,a.Nreg,ifnull(a.fono,'') As fono,ifnull(a.fax,'') As fax,
            \b.prod_come As come,b.prod_comc As Comc,
            IF goapp.Productoscp='S' then
-            \ prod_ocan,prod_cmay, \IF(b.prod_uti0>1,ROUND(IF(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti0,((a.prec*v.igv*v.dola)+p.prec)*prod_uti0),0.5),0) AS pre0,
+            \ prod_ocan,prod_cmay,IF(b.prod_uti0>1,ROUND(IF(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti0,((a.prec*v.igv*v.dola)+p.prec)*prod_uti0),0.5),0) AS pre0,
            ENDIF 
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti1,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti1),2),0) As pre1,
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti2,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti2),2),0) As Pre2,
@@ -810,7 +810,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 			m.Sw			 = 0
 			Exit
 		Case pre0 > 0 And cant < cantoferta  And aprecios <> 'A' And Prec <= pre0 And grati <> 'S'
-			This.Cmensaje = "El Item: " + Alltrim(&campo) + " Tiene Una Cantidad No Válida"
+			This.Cmensaje = "El Item: " + Alltrim(&campo) + " Tiene Una Cantidad No Válida para esta Venta"
 			m.Sw			 = 0
 			Exit
 		Endcase

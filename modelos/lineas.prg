@@ -1,6 +1,12 @@
 Define Class lineas As Odata Of "d:\capass\database\data.prg"
 	nidcat=0
 	desclinea=""
+	nidgrupo=0
+	nidus=0
+	cidpc=""
+	nutil1=0
+	nutil2=0
+	cmodo=""
 	Function consultardata(np1,np2,ccursor)
 	Local lc, lp
 	If This.idsesion>0 Then
@@ -43,9 +49,9 @@ Define Class lineas As Odata Of "d:\capass\database\data.prg"
 *!*			wait WINDOW 'hola01'
 *!*			wait WINDOW VARTYPE(cfieldsfelinea)
 		Create Cursor a_lineas From Array cfieldsfelinea
-	*	wait WINDOW 'hola02'
+*	wait WINDOW 'hola02'
 		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'lna' + Alltrim(Str(goapp.xopcion)) + '.json'
-	*	wait WINDOW 'hola03'
+*	wait WINDOW 'hola03'
 		conerror = 0
 		If File(m.cfilejson) Then
 			oResponse = nfJsonRead(m.cfilejson)
@@ -73,23 +79,23 @@ Define Class lineas As Odata Of "d:\capass\database\data.prg"
 	Function Desactiva(np1)
 	ccursor = 'c_' + Sys(2015)
 	TEXT To lC Noshow Textmerge
-     SELECT COUNT(*) as Tlineas FROM fe_art WHERE idcat=<<np1>> and prod_acti='A' GROUP BY idcat;
+     SELECT COUNT(*) as Tlineas FROM fe_art WHERE idcat=<<np1>> and prod_acti='A' GROUP BY idcat
 	ENDTEXT
 	If This.EJECutaconsulta(lc, ccursor) < 1 Then
 		Return 0
-	Endif
+	ENDIF
 	Select (ccursor)
-	tot=Iif(Vartype(tmarcas)='C',Val(tlineas),tlineas)
-	If tot > 0 Then
-		This.Cmensaje = "Se Han registrado " + Alltrim(Str(tot, 12, 2))+ " Productos con esta Linea"
+	tot=Iif(Vartype(tlineas)='C',Val(tlineas),tlineas)
+	If m.tot > 0 Then
+		This.Cmensaje = "Se Han registrado " + Alltrim(Str(tot, 12, 2))+ " Productos con esta Línea"
 		Return 0
-	Endif
-	TEXT To lp Noshow Textmerge
-           UPDATE fe cat SET  line_acti='I' WHERE idcat=<<np1>>
+	ENDIF
+	TEXT To lc Noshow Textmerge
+    UPDATE fe_cat SET  line_acti='I' WHERE idcat=<<np1>>
 	ENDTEXT
-	If This.Ejecutarsql(lp) < 1 Then
+	If This.Ejecutarsql(lc) < 1 Then
 		Return 0
-	Endif
+	ENDIF
 	This.Cmensaje = 'Desactivado Ok'
 	Return 1
 	Endfunc
@@ -112,4 +118,72 @@ Define Class lineas As Odata Of "d:\capass\database\data.prg"
 		Return 0
 	Endif
 	Return 1
+	Endfunc
+	Function crear()
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+    m.rpta=oser.Inicializar(this,'lineas')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
+	lc='FUNCREALINEA'
+	cur="idcat"
+	goapp.npara1=This.desclinea
+	goapp.npara2=goapp.nidusua
+	goapp.npara3=Id()
+	goapp.npara4=This.nutil1
+	goapp.npara5=This.nutil2
+	goapp.npara6=This.nidgrupo
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
+	ENDTEXT
+	nid=This.EJECUTARF(lc,lp,cur)
+	If m.nid<1 Then
+		Return 0
+	Endif
+	Return m.nid
+	Endfunc
+	Function editar()
+	oser=Newobject("servicio"," d:\capass\services\service.prg")
+	oser.oobjeto=This
+	oser.centidad="lineas"
+	rpta=oser.Inicializar(this,'lineas')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
+	cdescri=This.desclinea
+	nidgrupo=This.nidgrupo
+	nidcat=This.nidcat
+	TEXT TO lc NOSHOW
+    UPDATE fe_cat SET dcat=?cdescri,idgrupo=?nidgrupo WHERE idcat=?nidcat
+	ENDTEXT
+	If This.Ejecutarsql(lc)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarsiexiste()
+	ccursor='c_'+Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\SELECT idcat FROM fe_cat WHERE tRIM(dcat)='<<TRIM(this.desclinea)>>' AND line_acti<>'I'
+	If This.nidcat>0 Then
+	    \ AND idcat<><<this.nidcat>>
+	Endif
+	\ limit 1
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lc,ccursor)<1 Then
+		Return 0
+	Endif
+	Select (ccursor)
+	If idcat>0 Then
+		This.Cmensaje="Nombre Ya Regisatrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine

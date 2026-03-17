@@ -1506,7 +1506,130 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	Endfunc
+	ENDFUNC
+	FUNCTION GetAllboletaspsys(dfecha, Ccursor, Ccursor1)
+	IF this.idsesion>0 then
+	   SET DATASESSION TO this.idsesion
+	ENDIF    
+	Df = Cfechas(dfecha)
+	If This.todos = 0 Then
+		TEXT TO lc NOSHOW TEXTMERGE 
+		select fech,tdoc,
+		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
+        c.razo,if(f.mone='S',valor,valor*dolar) as valor,rcom_exon,if(f.mone='S',igv,igv*dolar) as igv,
+		if(f.mone='S',impo,impo*dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,"" as trefe,"" as serieref,"" as numerorefe,f.idauto
+		fROM fe_rcom f 
+		inner join fe_clie c on c.idclie=f.idcliente where tdoc="03" and fech='<<DF>>' and acti='A' and idcliente>0 and LEFT(ndoc,1)='B'
+		union all
+		SELECT f.fech,f.tdoc,concat("BC",SUBSTR(f.ndoc,3,2)) as serie,substr(f.ndoc,5) as numero,'1' as tipodoc,If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,c.razo,
+		abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,
+		abs(rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
+		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,w.tdoc as trefe,
+		LEFT(ff.ndoc,4) as serieref,SUBSTR(ff.ndoc,5) as numerorefe,f.idauto
+		FROM fe_rcom f
+		inner join fe_rven as rv on rv.idauto=f.idauto 
+		inner join fe_refe ff on ff.idrven=rv.idrven
+		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
+		inner join fe_clie as c on c.idclie=f.idcliente where f.tdoc="07"  and f.fech='<<DF>>' and f.acti='A' and w.tdoc='03'
+		union all
+		SELECT f.fech,f.tdoc,concat("BC",SUBSTR(f.ndoc,3,2)) as serie,substr(f.ndoc,5) as numero,'1' as tipodoc,If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,c.razo,
+		abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,
+		abs(rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
+		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,w.tdoc as trefe,
+		LEFT(ff.ndoc,4) as serieref,SUBSTR(ff.ndoc,5) as numerorefe,f.idauto
+		FROM fe_rcom f
+		inner join fe_rven as rv on rv.idauto=f.idauto 
+		inner join fe_refe ff on ff.idrven=rv.idrven 
+		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
+		inner join fe_clie as c on c.idclie=f.idcliente where f.tdoc="08"  and f.fech='<<DF>>' and f.acti='A' and w.tdoc='03'
+		ENDTEXT
+		********
+		TEXT TO lcx NOSHOW TEXTMERGE 
+		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
+		sum(igv) as igv,sum(impo) as impo,SUM(grati) as grati
+		from(select
+		left(ndoc,4) as serie,substr(ndoc,5) as numero,if(f.mone='S',valor,valor*dolar) as valor,rcom_exon,if(f.mone='S',igv,igv*dolar) as igv,
+		if(f.mone='S',impo,impo*dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,tdoc
+		fROM fe_rcom f where tdoc="03" and fech='<<DF>>' and acti='A' and idcliente>0 order by ndoc) as x  group by serie
+		union all
+		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
+		sum(igv) as igv,sum(impo) as impo,SUM(grati) as grati from(select
+		concat("BC",SUBSTR(f.ndoc,3,2)) as serie,substr(f.ndoc,5) as numero,abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,
+		abs(f.rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
+		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,f.tdoc
+		FROM fe_rcom f
+		inner join fe_rven as rv on rv.idauto=f.idauto 
+		inner join fe_refe ff on ff.idrven=rv.idrven 
+		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
+		where f.tdoc="07"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<DF>>' order by f.ndoc) as x group by serie
+		union all
+		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
+		sum(igv) as igv,sum(impo) as impo,SUM(grati) as grati from(select
+		concat("BD",SUBSTR(f.ndoc,3,2)) as serie,substr(f.ndoc,5) as numero,abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,
+		abs(f.rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
+		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,f.tdoc
+		FROM fe_rcom f
+		inner join fe_rven as rv on rv.idauto=f.idauto 
+		inner join fe_refe ff on ff.idrven=rv.idrven 
+		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
+		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<DF>>' order by f.ndoc) as x group by serie
+		ENDTEXT
+	Else
+		If this.cTdoc='03' Then
+			TEXT TO lc NOSHOW TEXTMERGE 
+			SELECT fech,tdoc,serie,numero,If(Length(trim(ndni))<8,'0','1') as tipodoc,If(Length(trim(ndni))<8,'00000000',ndni) as ndni,
+	        razo,valor,rcom_exon,igv,impo,grati,trefe,serieref,numerorefe,idauto
+		    from(select f.fech,f.tdoc,
+		    left(f.ndoc,4) as serie,substr(f.ndoc,5) as numero,if(f.mone='S',f.valor,f.valor*f.dolar) as valor,
+		    f.rcom_exon,if(f.mone='S',f.igv,f.igv*f.dolar) as igv,
+		    if(f.mone='S',f.impo,f.impo*f.dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,
+		    cast(mid(f.ndoc,5) as unsigned) as numero1,c.ndni,c.razo,
+	        "" as trefe,"" as serieref,"" as numerorefe,f.idauto
+	     	fROM fe_rcom f 
+	     	inner join fe_clie as c on c.idclie=f.idcliente
+		    inner join fe_rven as rv on rv.idauto=f.idauto 
+		    where f.tdoc='03' and f.fech='<<DF>>'  and f.acti='A' order by f.ndoc) as x
+		    where numero1 between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
+			ENDTEXT
+		Else
+		  TEXT TO lc NOSHOW TEXTMERGE 
+			SELECT fech,tdoc,serie,numero,If(Length(trim(ndni))<8,'0','1') as tipodoc,If(Length(trim(ndni))<8,'00000000',ndni) as ndni,
+	        razo,valor,rcom_exon,igv,impo,grati,trefe,serieref,numerorefe,idauto
+		    from(select f.fech,f.tdoc,
+		    left(f.ndoc,4) as serie,substr(f.ndoc,5) as numero,if(f.mone='S',f.valor,f.valor*f.dolar) as valor,
+		    f.rcom_exon,if(f.mone='S',f.igv,f.igv*f.dolar) as igv,
+		    if(f.mone='S',f.impo,f.impo*f.dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,
+		    cast(mid(f.ndoc,5) as unsigned) as numero1,c.ndni,c.razo,
+	        ifnull(w.tdoc,"") as trefe,ifnull(left(ff.ndoc,4),"") as serieref,ifnull(substr(ff.ndoc,5),"") as numerorefe,f.idauto
+	     	fROM fe_rcom f 
+	     	inner join fe_clie as c on c.idclie=f.idcliente
+		    inner join fe_rven as rv on rv.idauto=f.idauto 
+		    inner join fe_refe ff on ff.idrven=rv.idrven 
+		    inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
+		    where f.tdoc='<<this.ctdoc>>' and f.fech='<<DF>>'  and f.acti='A' order by f.ndoc) as x
+		    where numero1 between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
+			ENDTEXT
+		Endif
+		********
+		TEXT TO lcx NOSHOW TEXTMERGE 
+		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
+		sum(igv) as igv,sum(impo) as impo,SUM(grati) as grati
+		from(select
+		left(ndoc,4) as serie,substr(ndoc,5) as numero,if(f.mone='S',valor,valor*dolar) as valor,rcom_exon,if(f.mone='S',igv,igv*dolar) as igv,
+		if(f.mone='S',impo,impo*dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,tdoc,cast(mid(ndoc,5) as unsigned) as numero1
+		fROM fe_rcom f where tdoc='<<this.ctdoc>>' and fech='<<DF>>' and acti='A' and idcliente>0 order by ndoc) as x
+		where numero1 between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
+		group by serie
+		ENDTEXT
+	ENDIF
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	If This.EJECutaconsulta(lcx, Ccursor1) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC 
 Enddefine
 
 

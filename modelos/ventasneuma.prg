@@ -199,9 +199,9 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Return 1
 	Endfunc
 	Function registrarvtasmercancias()
-	Set Procedure To d:\capass\modelos\correlativos, CapaDatos, RnNeumaticos Additive
+	Set Procedure To CapaDatos, RnNeumaticos Additive
 	This.tipoCredito = ""
-	ocorr = Createobject("correlativo")
+	ocorr = newobject("correlativo","d:\capass\modelos\correlativos.prg")
 	If This.Concaja = 1
 		If Left(This.formaPago, 1) = "E"
 			If This.Tdoc <> '01' Or This.Tdoc = '03' Or This.Tdoc <> '20' Then
@@ -243,8 +243,7 @@ Define Class ventasneuma As Ventas  Of 'd:\capass\modelos\ventas.prg'
 		Endif
 		This.tipoCredito = xcr.tipox
 	Endif
-*            .NAuto, dFecha, ntcaja, 'I', cformapago, cm1, cndoc, 0, goApp.nidusua, cdetalle1, 'CK', nimp1, cm2, tcvta, goApp.Tienda, '', 0, 0, .cmbcaja.ListIndex
-	If IngresaCaja(NAuto, This.Fecha, This.tcaja, 'I', Left(This.formaPago, 1), This.cm1, This.Serie + This.numero, nidcon, goApp.nidusua, This.DetalleCaja, 'CK', This.nimp1, Left(This.Moneda, 1), This.tcvta, goApp.Tienda, '', 0, 0) < 1
+   If IngresaCaja(NAuto, This.Fecha, This.tcaja, 'I', Left(This.formaPago, 1), This.cm1, This.Serie + This.numero, nidcon, goApp.nidusua, This.DetalleCaja, 'CK', This.nimp1, Left(This.Moneda, 1), This.tcvta, goApp.Tienda, '', 0, 0) < 1
 		This.DEshacerCambios()
 		Return 0
 	Endif

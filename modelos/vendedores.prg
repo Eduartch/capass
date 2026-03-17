@@ -436,7 +436,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\Select idmar,marca,v.nomv As vendedor,tcant As cantidad,timporte As importe
+	\Select idmar,marca,v.nomv As vendedor,tcant As cantidad,timporte As importe,codv
     \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,Sum(a.`cant`*a.`kar_equi`) As tcant,a.`Codv`,b.`idmar`,mm.`dmar` As marca From fe_rcom As e
 	\inner Join fe_kar As a On a.Idauto=e.Idauto
 	\inner Join fe_art As  b On b.idart=a.idart

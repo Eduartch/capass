@@ -1,7 +1,7 @@
 Define Class dctos As OData Of "d:\capass\database\data.prg"
-	idcodigo=0
-	descdcto=""
-	codigosunat=""
+	idcodigo = 0
+	descdcto = ""
+	codigosunat = ""
 	Function mostrarvtasf(Ccursor)
 	Dimension dct[3, 3]
 	dct[1, 1] = 'FACTURA     '
@@ -144,9 +144,9 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 	Endfunc
 	Function consultardata(cb, Ccursor)
 	lC = "PROMUESTRADCTOS"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
        ('<<cb>>')
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -163,77 +163,88 @@ Define Class dctos As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function InsertaDctos()
-	If This.validar()<1 Then
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	m.rpta = oser.Inicializar(This, 'dctos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
 		Return 0
 	Endif
-	lC="FUNCREADCTOS"
-	goApp.npara1=This.descdcto
-	goApp.npara2=This.codigosunat
-	TEXT TO lp NOSHOW
+	oser = Null
+	lC = "FUNCREADCTOS"
+	goApp.npara1 = This.descdcto
+	goApp.npara2 = This.codigosunat
+	Text To lp Noshow
 	(?goapp.npara1,goapp.npara2)
-	ENDTEXT
-	nid=This.ejecutarf(lC,lp,'x')
-	If nid<1 Then
+	Endtext
+	nid = This.ejecutarf(lC, lp, 'x')
+	If nid < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function VerificaCodDcto(nid1,nid2)
-	If nid2=0 Then
-		TEXT TO lc NOSHOW
-        SELECT COUNT(*) as x FROM fe_tdoc WHERE tdoc=?nid1 AND dcto_acti<>'I' GROUP BY idtdoc limit 1
-		ENDTEXT
-		If This.ejecutaconsulta(lC,'wd')<1 Then
-			Return 0
-		Endif
-		If !Empty(wd.x) Then
-			This.cmensaje="Ya Existe El Còdigo Registrado"
-			Return 0
-		Endif
-	Else
-		TEXT TO lc NOSHOW
-      	  SELECT COUNT(*) as x FROM fe_tdoc WHERE idtdoc<>?nid2 AND dcto_acti<>'I' AND tdoc=?nid1 GROUP BY idtdoc limit 1
-		ENDTEXT
-		If This.ejecutaconsulta(lC,'wd')<1 Then
-			Return 0
-		Endif
-		If !Empty(wd.x) Then
-			This.cmensaje="Ya Existe El Còdigo Registrado"
-			Return 0
-		Endif
+	Function VerificaCodDcto(nid1, nid2)
+	Ccursor = 'c_' + Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select Count(*) As x From fe_tdoc Where Tdoc=?nid1 And dcto_acti<>'I'
+	If nid2 > 0 Then
+	   \  and idtdoc<>?nid2
+	Endif
+	\Group By idtdoc limit 1
+	Set Textmerge To
+	Set Textmerge Off
+	If This.ejecutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If !Empty(x) Then
+		This.Cmensaje = "Ya Existe El Còdigo Registrado"
+		Return 0
 	Endif
 	Return 1
-	Endfunc
-	Function validar()
-	Do Case
-	Case Empty(This.codigosunat)
-		This.cmensaje="Ingrese Código de Documento"
+	ENDFUNC
+	Function Verificanombre(nid1, nid2)
+	Ccursor = 'c_' + Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select Count(*) As x From fe_tdoc Where TRIM(nomb)=?nid1 And dcto_acti<>'I'
+	If nid2 > 0 Then
+	   \ and idtdoc<>?nid2
+	Endif
+	\Group By idtdoc limit 1
+	Set Textmerge To
+	Set Textmerge Off
+	If This.ejecutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
-	Case Len(Alltrim(This.descdcto))=0
-		This.cmensaje="Ingrese Descripción de Documento"
+	Endif
+	Select (Ccursor)
+	If !Empty(x) Then
+		This.Cmensaje = "Nombre de Documento Ya Registrado"
 		Return 0
-	Case This.VerificaCodDcto(This.codigosunat,This.idcodigo)<1
-		Return 0
-	Otherwise
-		Return 1
-	Endcase
+	Endif
+	Return 1
 	Endfunc
 	Function EditarDctos()
-	If This.validar()<1 Then
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	m.rpta = oser.Inicializar(This, 'dctos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
 		Return 0
 	Endif
-	goApp.npara1=This.descdcto
-	goApp.npara2=This.codigosunat
-	goApp.npara3=This.idcodigo
-	TEXT TO lp NOSHOW
+	oser = Null
+	goApp.npara1 = This.descdcto
+	goApp.npara2 = This.codigosunat
+	goApp.npara3 = This.idcodigo
+	Text To lp Noshow
 	  UPDATE fe_tdoc SET tdoc=?gpapp.npara2,nomb=?goapp.npara1 WHERE idtdoc=?goapp.npara3
-	ENDTEXT
-	If This.ejecutarsql(lC)<1 Then
+	Endtext
+	If This.ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

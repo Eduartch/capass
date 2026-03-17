@@ -80,7 +80,7 @@ Define Class Retencion As OData Of "d:\capass\database\data.prg"
 	Set Procedure To d:\capass\modelos\ctasxpagar, d:\capass\modelos\Ldiario,d:\capass\modelos\correlativos Additive
 	If This.ctiporetencion='SEEC' Then
 		ocorr=Createobject("correlativo")
-		If ocorr.BuscarSeriesRetencion(goapp.serief, 'series')<1 Then
+		If ocorr.BuscarSeriesRetencion(1, 'series')<1 Then
 			This.Cmensaje=ocorr.Cmensaje
 			Return 0
 		Endif
@@ -167,6 +167,7 @@ Define Class Retencion As OData Of "d:\capass\database\data.prg"
 	If This.GRabarCambios() < 1 Then
 		Return 0
 	Endif
+	This.imprimir()
 	Return 1
 	Endfunc
 	Function VAlidar()
@@ -272,16 +273,15 @@ Define Class Retencion As OData Of "d:\capass\database\data.prg"
 	If This.GRabarCambios() < 1 Then
 		Return 0
 	Endif
-	This.Cmensaje = 'ok'
 	Return 1
 	Endfunc
 	Function imprimir()
 	Create Cursor tmpr(Tdoc c(2), Serie c(4), numero c(8), Fecha d, monto N(12, 2), rete N(12, 2), Ndoc c(12), nruc c(11), Razon c(100), fech d, copia c(1),cletras c(120))
-    If This.nidr>0 Then
+	If This.nidr>0 Then
 		If This.consultarporid('listar')<1 Then
 			Return 0
-		ENDIF
-	    ccletras=diletras(listar.rete_impo,'S')
+		Endif
+		ccletras=diletras(Listar.rete_impo,'S')
 		Select Listar
 		Scan All
 			Insert Into tmpr(Tdoc,Serie,numero,Fecha,monto,rete,Ndoc,nruc,Razon,fech,cletras);
@@ -289,7 +289,7 @@ Define Class Retencion As OData Of "d:\capass\database\data.prg"
 				Listar.Impo,Listar.dret_impo,Listar.rete_ndoc,Listar.nruc,Listar.Razo,Listar.rete_fech,m.ccletras)
 		Endscan
 	Else
-		ccletras=diletras(this.nimpo,'S')
+		ccletras=diletras(This.nimpo,'S')
 		Select lt
 		Scan All
 			Insert Into tmpr(Tdoc,Serie,numero,Fecha,monto,rete,Ndoc,nruc,Razon,fech,cletras);
@@ -306,11 +306,22 @@ Define Class Retencion As OData Of "d:\capass\database\data.prg"
 	Function consultarporid(Ccursor)
 	TEXT To lC Noshow Textmerge
 	select a.rete_fech,a.rete_impo,a.rete_dola,a.rete_ndoc,a.rete_mone,f.nomb,a.rete_fope,a.rete_mone as mone,a.rete_dola as dolar,a.rete_idpr,
-	b.dret_impo,x.razo,x.nruc,b.dret_imp1 as impo,b.dret_ndoc as ndoc,b.dret_tdoc as tdoc,b.dret_fech as fecha,a.rete_idre from fe_rret as a
+	b.dret_impo,x.razo,x.nruc,b.dret_imp1 as impo,b.dret_ndoc as ndoc,b.dret_tdoc as tdoc,b.dret_fech as fecha,a.rete_idre,rete_porc from fe_rret as a
 	inner join fe_dret as b on b.dret_idre=a.rete_idre
 	inner join fe_prov as x on x.idprov=a.rete_idpr
 	inner join fe_usua as f on f.idusua=a.rete_idus
 	where a.rete_acti='A' and b.dret_acti='A' and rete_idre=<<this.nidr>>
+	ENDTEXT
+	If This.EJECutaconsulta(lC, Ccursor) < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function consultarxinformar(Ccursor)
+	TEXT To lC Noshow Textmerge
+	select a.rete_fech,a.rete_ndoc,x.razo,a.rete_impo,rete_fope,a.rete_idre,x.nruc from fe_rret as a
+	inner join fe_prov as x on x.idprov=a.rete_idpr
+	where a.rete_acti='A' and LEFT(rete_ndoc,1)='R' and LEFT(rete_mens,1)<>'0' order by rete_ndoc,rete_fech
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0

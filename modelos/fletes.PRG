@@ -3,6 +3,7 @@ Define Class fletes As OData Of "d:\capass\database\data.prg"
 	cdesc = ""
 	ncosto = 0
 	nidusuario = 0
+	cmodo=""
 	Function consultardata(np1,ccursor)
 	Local lc, lp
 	If This.idsesion>0 Then
@@ -65,6 +66,13 @@ Define Class fletes As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function CreaCostoFletes()
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+	m.rpta=oser.Inicializar(This,'fletes')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
 	lsql = "FUNCREAFLETES"
 	TEXT To lp Noshow Textmerge
 	('<<this.cdesc>>',<<this.ncosto>>,<<goapp.nidusua>>,'<<ID()>>')
@@ -74,5 +82,45 @@ Define Class fletes As OData Of "d:\capass\database\data.prg"
 		Return 0
 	Endif
 	Return nidf
+	Endfunc
+	Function buscarsiexiste()
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\Select idflete From fe_fletes Where Trim(desflete)='<<this.cdesc>>' And flet_acti<>'I'
+	If This.idflete>0 Then
+	    \ AND idflete<><<this.idflete>>
+	Endif
+	  \ limit 1
+	Set Textmerge Off
+	Set Textmerge To
+	ccursor='c_'+Sys(2015)
+	If This.EJECutaconsulta(lc,ccursor)<1 Then
+		Return 0
+	Endif
+	Select (ccursor)
+	If idflete>0 Then
+		This.Cmensaje="Nombre Ya Regisatrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function editar()
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+	m.rpta=oser.Inicializar(This,'fletes')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
+	goapp.npara1=This.cdesc
+	goapp.npara2=This.ncosto
+	goapp.npara3=This.idflete
+	TEXT TO lc NOSHOW
+	  UPDATE fe_fletes SET desflete=?goapp.npara1,prec=?goapp.npara2 WHERE idflete=?goapp.npara3
+	ENDTEXT
+	If This.ejecutarsql(lc)<1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 Enddefine

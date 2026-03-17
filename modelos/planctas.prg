@@ -1,5 +1,15 @@
 Define Class planctas As OData Of 'd:\capass\database\data.prg'
 	Ctodas = ""
+	nidcta=0
+	cncta=""
+	cnombre=""
+	cctad=""
+	cctah=""
+	ccuenta=""
+	cope=""
+	nidctad=0
+	nidctah=0
+	cmodo=""
 	Function MuestraPlanCuentasx(np1, Ccursor)
 	If Alltrim(goApp.datosplanctas) <> 'S' Then
 		If This.consultardata(np1, Ccursor) < 1 Then
@@ -10,7 +20,7 @@ Define Class planctas As OData Of 'd:\capass\database\data.prg'
 		cfilejson = Addbs(Sys(5) + Sys(2003)) + 'l' + Alltrim(Str(goApp.xopcion)) + '.json'
 		conerror = 0
 		If File(m.cfilejson) Then
-			oResponse = nfJsonRead( m.cfilejson )
+			oResponse = nfJsonRead(m.cfilejson)
 			If Vartype(m.oResponse) = 'O' Then
 				For Each oRow In  oResponse.Array
 					Insert Into l_planctas From Name oRow
@@ -208,10 +218,12 @@ Define Class planctas As OData Of 'd:\capass\database\data.prg'
 	Else
 		Do Case
 		Case m.Nivel = 1
+		    =ALINES(clista,ccta,'-')
 			If This.Ctodas = 'S' Then
 				TEXT To lC Noshow Textmerge
-				 SELECT ncta,idcta FROM fe_plan AS p WHERE LEFT(ncta,2)='<<ccta>>' ORDER BY ncta
+				 SELECT ncta,idcta FROM fe_plan AS p WHERE LEFT(ncta,2) in('<<clista[1]>>','<<clista[2]>>') ORDER BY ncta
 				ENDTEXT
+*!*					    MESSAGEBOX(lc)	
 			Else
 				TEXT To lC Noshow Textmerge
 				 SELECT ncta,idctacv AS idcta FROM fe_gene  AS g
@@ -233,6 +245,7 @@ Define Class planctas As OData Of 'd:\capass\database\data.prg'
 			ENDTEXT
 		Endcase
 	Endif
+
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return  0
 	Endif
@@ -292,6 +305,78 @@ Define Class planctas As OData Of 'd:\capass\database\data.prg'
 		ENDTEXT
 	Endif
 	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function crearCuentaPlanctas()
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+    m.rpta=oser.Inicializar(this,'planctas')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
+	goApp.npara1=This.cncta
+	goApp.npara2=This.cnombre
+	goApp.npara3=This.cctad
+	goApp.npara4=This.cctah
+	goApp.npara5=This.ccuenta
+	goApp.npara6=This.cope
+	goApp.npara7=This.nidctad
+	goApp.npara8=This.nidctah
+	TEXT to lc NOSHOW 
+	   INSERT INTO fe_plan(ncta,nomb,cdestinod,cdestinoh,tipocta,plan_oper,idctadd,idctadh)VALUES
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
+	ENDTEXT
+	If this.ejecutarsql(lc)<1 Then
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function ActualizarCuentaPlanctas()
+	oser=Newobject("servicio","d:\capass\services\service.prg")
+    m.rpta=oser.Inicializar(this,'planctas')
+	If m.rpta<1 Then
+		This.Cmensaje=oser.Cmensaje
+		Return 0
+	Endif
+	oser=Null
+	goApp.npara1=This.cncta
+	goApp.npara2=This.cnombre
+	goApp.npara3=This.cctad
+	goApp.npara4=This.cctah
+	goApp.npara5=This.ccuenta
+	goApp.npara6=This.cope
+	goApp.npara7=This.nidctad
+	goApp.npara8=This.nidctah
+	goApp.npara9=this.nidcta
+	TEXT to lc NOSHOW 
+	   UPDATE fe_plan SET ncta=?goapp.npara1,nomb=?goapp.npara2,cdestinod=?goapp.npara3,cdestinoh=?goapp.npara4,tipocta=?goapp.npara5,plan_oper=?goapp.npara6,
+	   idctadd=?goapp.npara7,idctadh=?goapp.npara8 WHERE idcta=?goapp.npara9
+	ENDTEXT
+	If this.ejecutarsql(lc)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarcta()
+	Ccursor='c_'+Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+    \select ncta,idcta FROM fe_plan WHERE TRIM(ncta)='<<TRIM(this.cncta)>>' AND plan_acti='A'
+	If This.cmodo='M' Then
+       \ AND idcta<><<this.nidcta>>
+	Endif
+	\ limit 1
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC,Ccursor) <1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If idcta>0 Then
+		This.cmensaje="Número de Cuenta Ya Registrada"
 		Return 0
 	Endif
 	Return 1
