@@ -112,8 +112,8 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	\    peso,a.Prec,tipro,idmar,a.idcat,cost,tmon,a.idflete,prod_uti1,prod_uti2,prod_uti3,prod_idus,prod_equi1,prod_equi2,
 	\     prod_come,prod_comc,ulpc,prod_idus,prod_uact,prod_fact,fechc,prod_smax,prod_smin,IFNULL(o.razo,'') As proveedor,
 	\     IFNULL(yy.ndoc,'') As ndoc,IFNULL(yy.fech,'') As fech, prod_idpc,prod_idpm,prod_cod1,prod_acti,prod_alma  From fe_art  As a
-	\     INNER Join fe_fletes As b On(b.idflete=a.idflete)
-	\     INNER Join fe_cat As c On(c.idcat=a.idcat)
+	\     inner Join fe_fletes As b On(b.idflete=a.idflete)
+	\     inner Join fe_cat As c On(c.idcat=a.idcat)
 	\     Left Join fe_rcom As yy On (yy.idauto=a.prod_idau)
 	\     Left Join fe_prov As o On (o.idprov=yy.idprov) ,fe_gene As v
 	\     Where prod_acti<>'I'
@@ -402,9 +402,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	\Select  idart, prod_cod1 As codigo, Descri, unid, m.dmar As marca, c.dcat As categoria,
 	\g.desgrupo As grupo, uno, Dos, tre, cua, uno + Dos + tre + cua As Tstock,a.coda1
 	\ From fe_art As a
-	\INNER Join fe_mar As m On m.idmar = a.idmar
-	\INNER Join fe_cat As c On c.idcat = a.idcat
-	\INNER Join fe_grupo As g On g.idgrupo = c.idgrupo
+	\inner Join fe_mar As m On m.idmar = a.idmar
+	\inner Join fe_cat As c On c.idcat = a.idcat
+	\inner Join fe_grupo As g On g.idgrupo = c.idgrupo
 	\Where prod_acti <> 'I'
 	\ Order By Descri
 	Set Textmerge Off
@@ -777,8 +777,8 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select c.razo,r.fech,ndoc,IFNULL(k.Prec*z.igv,0) As Prec,r.mone From fe_kar As k
-	\INNER Join fe_rcom As r On r.idauto=k.idauto
-	\INNER Join fe_prov As c On c.idprov=r.idprov,fe_gene As z
+	\inner Join fe_rcom As r On r.idauto=k.idauto
+	\inner Join fe_prov As c On c.idprov=r.idprov,fe_gene As z
 	\ Where
 	If Vartype(cnoda) = 'N' Then
 	\ idart=<<ncoda>>
@@ -898,9 +898,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	    \From(Select a.idart As coda,z.Descri,a.kar_unid As unid,a.cant,If(b.mone="S",a.Prec,a.Prec*b.dolar) As Prec,
 	    \If(b.mone="S",cant*a.Prec,cant*a.Prec*b.dolar) As importe,b.ndoc,b.fech,If(tdoc='03',e.ndni,e.nruc) As iden,b.Impo,b.idauto,
 	    \e.razo As referencia,a.alma,z.prod_detr From fe_kar As a
-		\INNER Join fe_art As z On z.idart=a.idart
-		\INNER Join fe_rcom As b On b.idauto=a.idauto
-		\INNER Join fe_clie As e On e.idclie=b.idcliente
+		\inner Join fe_art As z On z.idart=a.idart
+		\inner Join fe_rcom As b On b.idauto=a.idauto
+		\inner Join fe_clie As e On e.idclie=b.idcliente
 		\Where a.Acti='A' And b.Acti='A' And b.fech Between '<<fi>>' And '<<ff>>' And z.prod_detr>0 And b.tdoc='01') As x
 	If ntienda > 0 Then
 		  \ And b.codt=<<ntienda>>)
@@ -925,9 +925,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	    \From(Select a.idart As coda,z.Descri,z.unid,a.cant,If(b.mone="S",a.Prec,a.Prec*b.dolar) As Prec,
 	    \If(b.mone="S",cant*a.Prec,cant*a.Prec*b.dolar) As importe,b.ndoc,b.fech,If(tdoc='03',e.ndni,e.nruc) As iden,b.Impo,b.idauto,
 	    \e.razo As referencia,a.alma,z.prod_detr From fe_kar As a
-		\INNER Join fe_art As z On z.idart=a.idart
-		\INNER Join fe_rcom As b On b.idauto=a.idauto
-		\INNER Join fe_clie As e On e.idclie=b.idcliente
+		\inner Join fe_art As z On z.idart=a.idart
+		\inner Join fe_rcom As b On b.idauto=a.idauto
+		\inner Join fe_clie As e On e.idclie=b.idcliente
 		\Where a.Acti='A' And b.Acti='A' And b.fech Between '<<fi>>' And '<<ff>>' And z.prod_detr>0 And b.tdoc='01'
 	If ntienda > 0 Then
 		  \ And b.codt=<<ntienda>>
@@ -984,10 +984,10 @@ Define Class Producto As OData Of 'd:\capass\database\data'
     \	prod_come,prod_comc,ulpc,prod_idus,prod_uact,prod_fact,fechc,prod_smax,prod_smin,
 	\	ulfc,prod_ent1,prod_ent2,prod_icbper,g.idgrupo,g.desgrupo As grupo,prod_acti
 	\	From fe_art  As a
-	\	INNER Join fe_fletes As b On(b.idflete=a.idflete)
-	\	INNER Join fe_mar As m On m.idmar=a.idmar
-	\	INNER Join fe_cat As c On(c.idcat=a.idcat)
-	\	INNER Join fe_grupo As g On g.idgrupo=c.idgrupo,fe_gene As v
+	\	inner Join fe_fletes As b On(b.idflete=a.idflete)
+	\	inner Join fe_mar As m On m.idmar=a.idmar
+	\	inner Join fe_cat As c On(c.idcat=a.idcat)
+	\	inner Join fe_grupo As g On g.idgrupo=c.idgrupo,fe_gene As v
 	\   Where prod_acti='I'
 	If opt = 1 Then
 		\	And Descri Like '<<cbuscar>>'
@@ -1036,12 +1036,15 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
+	If !Pemstatus(goApp, 'productoscp', 5) Then
+		AddProperty(goApp, 'productoscp', '')
+	Endif
 	cwhere = ""
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow
     \Select prod_cod1,g.desgrupo As grupo,l.dcat As linea,Descri,m.dmar As marca,unid,
 	If goApp.Productoscp = 'S' Then
-      \uno+Dos+tre+cua+cin As Tstock,a.tmon,
+      \uno+Dos+tre+cua+nue+die+onc As Tstock,a.tmon,
 	Else
        \uno+Dos+tre+cua As Tstock,a.tmon,
 	Endif
@@ -1056,10 +1059,10 @@ Define Class Producto As OData Of 'd:\capass\database\data'
     \IFNULL(Round(If(tmon='S',Round(a.Prec*b.igv+c.Prec,2)*prod_uti3,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti3),2),0) As pre3,
     \ulfc,a.idmar,a.idcat,'N' As Modi,idart
     \From fe_art  As a
-    \INNER Join fe_fletes As c On c.idflete=a.idflete
-    \INNER Join fe_cat As l On l.idcat=a.idcat
-    \INNER Join fe_grupo As g On g.idgrupo=l.idgrupo
-    \INNER Join fe_mar As m On m.idmar=a.idmar,  fe_gene As b
+    \inner Join fe_fletes As c On c.idflete=a.idflete
+    \inner Join fe_cat As l On l.idcat=a.idcat
+    \inner Join fe_grupo As g On g.idgrupo=l.idgrupo
+    \inner Join fe_mar As m On m.idmar=a.idmar,  fe_gene As b
     \ Where a.tipro='K'
 	If This.Cestado = 'A' Then
 		\  And  prod_acti <> 'I'
@@ -1086,7 +1089,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	\From fe_art As z
 	\Left Join (Select  idart,Sum(a.cant) As cant,If(b.mone="S",Sum(cant*a.Prec),Sum(cant*a.Prec*b.dolar)) As importe,
 	\Cast(Month(b.fech) As Decimal(2))  As mes From fe_kar As a
-	\INNER Join fe_rcom As b On b.idauto=a.idauto
+	\inner Join fe_rcom As b On b.idauto=a.idauto
 	\Where  a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'   And tdoc Not In("AJ","II")
 	If This.cmarca > 0 Then
 	  \ And
@@ -1099,9 +1102,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	\ Group By idart) As a
 	\On a.idart=z.idart
-	\INNER Join fe_mar As m On m.`idmar`=z.`idmar`
-	\INNER Join fe_cat As c On c.idcat=z.idcat
-	\ INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+	\inner Join fe_mar As m On m.`idmar`=z.`idmar`
+	\inner Join fe_cat As c On c.idcat=z.idcat
+	\ inner Join fe_grupo As g On g.idgrupo=c.idgrupo
 	\Where  z.prod_acti='A'
 	Endfunc
 	Function ActualizaProveedorxsys3(nidproveedor)
@@ -1137,9 +1140,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	  \ ,prod_deta,prod_ubi1,prod_ubi2,prod_ubi3,prod_ubi4,prod_ubi5,prod_codb
 	Endif
 	\ From fe_art As a
-	\INNER Join fe_mar As m On m.idmar = a.idmar
-	\INNER Join fe_cat As c On c.idcat = a.idcat
-	\INNER Join fe_grupo As g On g.idgrupo = c.idgrupo
+	\inner Join fe_mar As m On m.idmar = a.idmar
+	\inner Join fe_cat As c On c.idcat = a.idcat
+	\inner Join fe_grupo As g On g.idgrupo = c.idgrupo
 	\Where prod_acti <> 'I'
 	If This.cmar > 0 Then
 	    \ And a.idmar=<<This.cmar>>
@@ -1270,10 +1273,18 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
+	If !Pemstatus(goApp, 'productoscp', 5) Then
+		AddProperty(goApp, 'productoscp', '')
+	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow
-    \Select prod_cod1,g.desgrupo As grupo,l.dcat As linea,Descri,m.dmar As marca,unid,uno+Dos+tre+cua+cin As Tstock,a.tmon,
-    \If(tmon='S',a.Prec*b.igv,Cast(0 As Decimal(12,2))) As costosoles,If(tmon='D',a.Prec*b.igv,Cast(0 As Decimal(12,2))) As costodolares,
+    \Select prod_cod1,g.desgrupo As grupo,l.dcat As linea,Descri,m.dmar As marca,unid,
+	If goApp.Productoscp = 'S' Then
+      \uno+Dos+tre+cua+nue+die+onc As Tstock,
+	Else
+    \uno+Dos+tre+cua+cin As Tstock,
+	Endif
+    \a.tmon,If(tmon='S',a.Prec*b.igv,Cast(0 As Decimal(12,2))) As costosoles,If(tmon='D',a.Prec*b.igv,Cast(0 As Decimal(12,2))) As costodolares,
     \Round(If(tmon='S',(a.Prec*b.igv),(a.Prec*b.igv*b.dola)),2) As costosf,
     \Round(If(tmon='S',(a.Prec*b.igv)+c.Prec,(a.Prec*b.igv*If(prod_dola>b.dola,prod_dola,b.dola))+c.Prec),2) As costo,
     \If(a.prod_uti1>0,(a.prod_uti1*100)-100,Cast(0 As Decimal(10,6))) As uti1,
@@ -1286,10 +1297,10 @@ Define Class Producto As OData Of 'd:\capass\database\data'
     \If(a.prod_uti0>1,Round(If(tmon='S',((a.Prec*b.igv)+c.Prec)*prod_uti0,((a.Prec*b.igv*b.dola)+c.Prec)*prod_uti0),0.5),0) As pre0,
     \ulfc,a.idmar,a.idcat,'N' As Modi,idart,prod_ocan,prod_cmay
     \From fe_art  As a
-    \INNER Join fe_fletes As c On c.idflete=a.idflete
-    \INNER Join fe_cat As l On l.idcat=a.idcat
-    \INNER Join fe_grupo As g On g.idgrupo=l.idgrupo
-    \INNER Join fe_mar As m On m.idmar=a.idmar,  fe_gene As b
+    \inner Join fe_fletes As c On c.idflete=a.idflete
+    \inner Join fe_cat As l On l.idcat=a.idcat
+    \inner Join fe_grupo As g On g.idgrupo=l.idgrupo
+    \inner Join fe_mar As m On m.idmar=a.idmar,  fe_gene As b
     \Where a.tipro='K'
 	If This.Cestado = 'A' Then
 		\ And  prod_acti <> 'I'
@@ -1767,7 +1778,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
     \Sum(If(d.fech Between '<<f1>>' And '<<ff>>',If(tipo='C',cant,0),0)) As tingresos,
     \Sum(If(d.fech Between '<<f1>>' And '<<ff>>',If(tipo='V',cant,0),0)) As tegresos,c.idart,Max(fech)As ulfecha From
     \fe_rcom As d
-    \INNER Join fe_kar As c On(c.idauto=d.idauto)
+    \inner Join fe_kar As c On(c.idauto=d.idauto)
     \Where c.Acti='A' And d.Acti='A' And c.alma=<<This.nidtda>>
 	If This.cmar > 0 Then
 	 \And a.idmar=<<This.cmar>>
@@ -1776,8 +1787,8 @@ Define Class Producto As OData Of 'd:\capass\database\data'
      \And a.idcat=<<This.ccat>>
 	Endif
 	\Group By c.idart) As b ) As x
-	\INNER Join fe_art As a On a.idart=x.coda
-	\INNER Join fe_mar As m On m.idmar=a.idmar
+	\inner Join fe_art As a On a.idart=x.coda
+	\inner Join fe_mar As m On m.idmar=a.idmar
 	\Where tegresos=0 And sfinal>0 And tingresos=0 Order By Descri;
 		Set Textmerge Off
 	Set Textmerge To
@@ -1801,9 +1812,9 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	  \ ,prod_deta,prod_ubi1,prod_ubi2,prod_ubi3,prod_ubi4,prod_ubi5,prod_codb
 	Endif
 	\ From fe_art As a
-	\INNER Join fe_mar As m On m.idmar = a.idmar
-	\INNER Join fe_cat As c On c.idcat = a.idcat
-	\INNER Join fe_grupo As g On g.idgrupo = c.idgrupo
+	\inner Join fe_mar As m On m.idmar = a.idmar
+	\inner Join fe_cat As c On c.idcat = a.idcat
+	\inner Join fe_grupo As g On g.idgrupo = c.idgrupo
 	\Where prod_acti <> 'I' And a.tipro='K'
 	If This.cmar > 0 Then
 	    \ And a.idmar=<<This.cmar>>
@@ -1942,16 +1953,22 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	dff = Cfechas(ff)
 	Set Textmerge On
 	Set  Textmerge To Memvar lC Noshow Textmerge
-	   \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,IFNULL(mes,0) As mes,
+	   \Select
+	If goApp.proyecto = 'psysm' Then
+	   \ a.idart As prod_cod1,
+	Else
+	   \ a.prod_cod1,
+	Endif
+	   \a.idart As coda, a.Descri, a.unid, IFNULL(z.cant, 0) As cant, IFNULL(importe, 0) As importe, IFNULL(mes, 0) As mes,
 	   \m.dmar As marca,c.dcat As linea,g.desgrupo As grupo From fe_art As a
-	   \INNER Join fe_mar As m On m.idmar=a.idmar
-	   \INNER Join fe_cat As c On c.idcat=a.idcat
-	   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+	   \inner Join fe_mar As m On m.idmar=a.idmar
+	   \inner Join fe_cat As c On c.idcat=a.idcat
+	   \inner Join fe_grupo As g On g.idgrupo=c.idgrupo
        \Left Join  (
 	   \ Select a.idart As coda,Sum(a.cant) As cant,Sum(If(b.mone="S",cant*a.Prec*b.vigv,cant*a.Prec*b.dolar*b.vigv)) As importe,
 	   \ a.alma,Month(b.fech) As mes From fe_rcom As b
-	   \INNER Join fe_kar As a On a.idauto=b.idauto
-	   \INNER Join fe_art As z On z.idart=a.idart
+	   \inner Join fe_kar As a On a.idauto=b.idauto
+	   \inner Join fe_art As z On z.idart=a.idart
 	   \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'  And tdoc Not In("AJ","II") And b.idprov>0
 	If This.ccat > 0 Then
 	       \ And z.idcat=<<This.ccat>>
@@ -1975,16 +1992,22 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	dff = Cfechas(ff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-   \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,
+   \Select
+	If goApp.proyecto = 'psysm' Then
+	   \ a.idart As prod_cod1,
+	Else
+	   \ a.prod_cod1,
+	Endif
+   \a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,
    \IFNULL(mes,0) As mes,m.dmar As marca,c.dcat As linea,g.desgrupo As grupo,z.alma  From fe_art As a
-   \INNER Join fe_mar As m On m.idmar=a.idmar
-   \INNER Join fe_cat As c On c.idcat=a.idcat
-   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+   \inner Join fe_mar As m On m.idmar=a.idmar
+   \inner Join fe_cat As c On c.idcat=a.idcat
+   \inner Join fe_grupo As g On g.idgrupo=c.idgrupo
    \Left Join  (
    \ Select a.idart As coda,Sum(a.cant) As cant,Sum(If(b.mone="S",cant*a.Prec,cant*a.Prec*b.dolar)) As importe,
    \ a.alma,Month(b.fech) As mes From fe_kar As a
-   \INNER Join fe_art As z On z.idart=a.idart
-   \INNER Join fe_rcom As b On b.idauto=a.idauto
+   \inner Join fe_art As z On z.idart=a.idart
+   \inner Join fe_rcom As b On b.idauto=a.idauto
    \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>' And idcliente>0  And tdoc Not In("AJ","II")
 	If This.ccat > 0 Then
 	   \ And z.idcat=<<This.ccat>>
@@ -2222,7 +2245,7 @@ Define Class Producto As OData Of 'd:\capass\database\data'
     \ If(a.prod_uti3>0,(a.prod_uti3*100)-100,Cast(0 As Decimal(13,8))) As uti3,idart,
     \ prod_come,prod_comc,ulpc,prod_idus,prod_uact,prod_fact,fechc,prod_smax,prod_smin,'N' As Modi,prod_codf,prod_tigv
     \ From fe_art  As a
-    \ INNER Join fe_fletes As b On(b.idflete=a.idflete),fe_gene As v
+    \ inner Join fe_fletes As b On(b.idflete=a.idflete),fe_gene As v
     \ Where prod_acti<>'I'
 	If This.cmar > 0 Then
 	\ And a.idmar=<<This.cmar>>
@@ -2409,14 +2432,14 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Set  Textmerge To Memvar lC Noshow Textmerge
 	   \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,IFNULL(mes,0) As mes,
 	   \m.dmar As marca,c.dcat As linea,g.desgrupo As grupo From fe_art As a
-	   \INNER Join fe_mar As m On m.idmar=a.idmar
-	   \INNER Join fe_cat As c On c.idcat=a.idcat
-	   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+	   \inner Join fe_mar As m On m.idmar=a.idmar
+	   \inner Join fe_cat As c On c.idcat=a.idcat
+	   \inner Join fe_grupo As g On g.idgrupo=c.idgrupo
        \Left Join  (
 	   \ Select a.idart As coda,Sum(a.cant*a.kar_equi) As cant,Sum(If(b.mone="S",cant*a.Prec*b.vigv,cant*a.Prec*b.dolar*b.vigv)) As importe,
 	   \ a.alma,Month(b.fech) As mes From fe_rcom As b
-	   \INNER Join fe_kar As a On a.idauto=b.idauto
-	   \INNER Join fe_art As z On z.idart=a.idart
+	   \inner Join fe_kar As a On a.idauto=b.idauto
+	   \inner Join fe_art As z On z.idart=a.idart
 	   \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>'  And tdoc Not In("AJ","II") And b.idprov>0
 	If This.ccat > 0 Then
 	       \ And z.idcat=<<This.ccat>>
@@ -2442,14 +2465,14 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Set Textmerge To Memvar lC Noshow Textmerge
    \Select a.prod_cod1,a.idart As coda,a.Descri,a.unid,IFNULL(z.cant,0) As cant,IFNULL(importe,0) As importe,
    \IFNULL(mes,0) As mes,m.dmar As marca,c.dcat As linea,g.desgrupo As grupo,z.alma  From fe_art As a
-   \INNER Join fe_mar As m On m.idmar=a.idmar
-   \INNER Join fe_cat As c On c.idcat=a.idcat
-   \INNER Join fe_grupo As g On g.idgrupo=c.idgrupo
+   \inner Join fe_mar As m On m.idmar=a.idmar
+   \inner Join fe_cat As c On c.idcat=a.idcat
+   \inner Join fe_grupo As g On g.idgrupo=c.idgrupo
    \Left Join  (
    \ Select a.idart As coda,Sum(a.cant*a.kar_equi) As cant,Sum(If(b.mone="S",cant*a.Prec,cant*a.Prec*b.dolar)) As importe,
    \ a.alma,Month(b.fech) As mes From fe_kar As a
-   \INNER Join fe_art As z On z.idart=a.idart
-   \INNER Join fe_rcom As b On b.idauto=a.idauto
+   \inner Join fe_art As z On z.idart=a.idart
+   \inner Join fe_rcom As b On b.idauto=a.idauto
    \Where a.Acti='A' And b.Acti='A' And b.fech Between '<<dfi>>' And '<<dff>>' And idcliente>0  And tdoc Not In("AJ","II")
 	If This.ccat > 0 Then
 	   \ And z.idcat=<<This.ccat>>
@@ -2475,7 +2498,48 @@ Define Class Producto As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
+	Function listarcostospsystr(Ccursor)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	If !Pemstatus(goApp, 'productoscp', 5) Then
+		AddProperty(goApp, 'productoscp', '')
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select prod_cod1, Descri, unid,
+	If goApp.Productoscp = 'S' Then
+	\uno + Dos + tre + cua As Tstock,
+	Else
+	\uno + Dos + tre + cua+nue+die+onc As Tstock,
+	Endif
+	\a.tmon,Round(If(tmon = 'S',(a.Prec * b.igv),(a.Prec * b.igv * b.dola)), 2) As costosf,
+	\Round(If(tmon = 'S',(a.Prec * b.igv) + c.Prec,(a.Prec * b.igv * b.dola) + c.Prec), 2) As costo,
+	\Cast(0 As signed) As sw, "" As Moneda, a.idmar, a.idcat, c.Prec As npref, idart
+	\From fe_art  As a
+	\inner Join fe_fletes As c On c.idflete = a.idflete, fe_gene As b
+	\Where prod_acti <> 'I' And  a.tipro = 'K'
+	If This.cmar > 0 Then
+	  \ And a.idmar=<<This.cmar>>
+	Endif
+	If This.ccat > 0 Then
+	  \  \ And a.idcat<<This.ccat>>
+	Endif
+	\Order By a.Descri
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lC, Ccursor) < 1  Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
 
 
 

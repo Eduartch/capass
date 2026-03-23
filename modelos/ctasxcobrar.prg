@@ -43,16 +43,16 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	Text To lc Noshow Textmerge Pretext 1 + 2 + 4
+	TEXT To lc Noshow Textmerge Pretext 1 + 2 + 4
     UPDATE fe_cred SET ndoc='<<this.cndoc>>',tipo='<<this.ctipo>>',banc='<<this.cdetalle>>',fech='<<df>>',fevto='<<dfv>>'  WHERE idcred=<<this.nreg>>
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lc) < 1
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
      UPDATE fe_lcaja SET lcaj_fech='<<df>>' WHERE lcaj_idcr=<<this.nreg>>
-	Endtext
+	ENDTEXT
 	If Ejecutarsql(lc) < 1
 		This.deshacerCambos()
 		Return 0
@@ -63,9 +63,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function Actualizardatos(idcreditos, objeto)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
          UPDATE fe_cred SET ndoc='<<objeto.cdcto>>',tipo='<<objeto.ctipo>>',banc='<<objeto.cdeta>>',fevto='<<objeto.dfevto>>',fech='<<objeto.dfecha>>'  WHERE idcred=<<idcreditos>>
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lc) < 1
 		Return 0
 	Endif
@@ -73,7 +73,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function mostrarpendientesxcobrar(nidclie, Ccursor)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 		SELECT `x`.`idclie`,		`x`.`razo`      AS `razo`,
 		v.importe,		v.fevto,		`v`.`rcre_idrc` AS `rcre_idrc`,		`rr`.`rcre_fech` AS `fech`,		`rr`.`rcre_idau` AS `idauto`,
 		rcre_codv AS idven,		ifnull(`vv`.`nomv`,'')  AS `nomv`,		 IFNULL(`cc`.`ndoc`,"") AS `docd`,		 IFNULL(`cc`.`tdoc`,'') AS `tdoc`,
@@ -89,7 +89,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		left JOIN fe_vend AS vv ON vv.`idven`=rr.`rcre_codv`
 		LEFT JOIN  (SELECT tdoc,ndoc,idauto FROM fe_rcom WHERE idcliente=<<nidclie>> AND acti='A') AS cc
 		ON cc.idauto=rr.`rcre_idau` INNER JOIN fe_cred AS a ON a.idcred=v.ncontrol
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -103,12 +103,12 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.calcularsaldosanticipos() < 1 Then
 		Return 0
 	Endif
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
        SELECT fech,'S' AS mone,CAST(acta as decimal(10,2)) As acta,CAST(0 AS SIGNED) AS SW,idcred,banc AS deta,ndoc,tipo,rcre_idrc,cred_anti,cred_idant
        FROM fe_rcred AS g
        INNER JOIN  fe_cred f ON f.cred_idrc=g.rcre_idrc
        WHERE ncontrol=-1 AND acti='A' AND rcre_Acti='A'  AND rcre_idcl=<<nid>> and acta>0.1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -134,10 +134,10 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara15 = np15
 	goApp.npara16 = np16
 	goApp.npara17 = np17
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lc, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -145,7 +145,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return nid
 	Endfunc
 	Function estadodecuentaporcliente(nidclie, Cmoneda, Ccursor)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 	    SELECT b.rcre_idcl,a.fech as fepd,a.fevto as fevd,a.ndoc,b.rcre_impc as impc,b.rcre_inic as inic,a.impo as impd,a.acta as actd,a.dola,
 	    a.tipo,a.banc,ifnull(c.ndoc,'0000000000') as docd,a.mone as mond,a.estd,a.idcred as nr,b.rcre_idrc,
 	    b.rcre_codv as codv,b.rcre_idau as idauto,ifnull(c.tdoc,'00') as refe,d.nomv,cred_idcb FROM fe_cred as a
@@ -154,14 +154,14 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	    left join fe_vend as d ON(d.idven=b.rcre_codv)
 	    WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'    and a.acti<>'I' and rcre_acti<>'I'  and (a.impo<>0 or a.acta<>0)
 	    ORDER BY a.ncontrol,a.idcred,a.fech
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function estadodecuentaporclientexsysg(nidclie, Cmoneda, Ccursor)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 	    SELECT b.rcre_idcl,a.fech AS fepd,a.fevto AS fevd,a.ndoc,b.rcre_impc AS impc,b.rcre_inic AS inic,a.impo AS impd,a.acta AS actd,a.dola,
 	    a.tipo,a.banc,IFNULL(c.ndoc,'0000000000') AS docd,a.mone AS mond,a.estd,a.idcred AS nr,b.rcre_idrc,
 	    b.rcre_codv AS codv,b.rcre_idau AS idauto,IFNULL(c.tdoc,'00') AS refe,d.nomv,cred_idcb,IFNULL(m.rcre_impc,CAST(0 AS DECIMAL(10,2))) AS anticipo FROM fe_cred AS a
@@ -171,7 +171,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	    LEFT JOIN (SELECT rcre_idrc,rcre_impc FROM fe_rcred  WHERE rcre_acti='A') AS m ON m.rcre_idrc=a.cred_anti
 	    WHERE b.rcre_idcl=<<nidclie>> AND a.mone='<<cmoneda>>'   AND a.acti<>'I' AND b.rcre_acti<>'I'  AND (a.impo<>0 OR a.acta<>0)
 	    ORDER BY a.ncontrol,a.idcred,a.fech,cred_idant
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -216,9 +216,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara1 = ccodc
 	goApp.npara2 = nmonto
 	goApp.npara3 = nlinea
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-	Endtext
+	ENDTEXT
 	Sw = This.EJECUTARf(lc, lp, Ccursor)
 	If Sw < 0 Then
 		Return 0
@@ -235,9 +235,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	lc = 'PROCALCULARSALDOSCLIENTE'
 	Ccursor = '_vsaldos'
 	goApp.npara1 = codc
-	Text To lp Noshow
+	TEXT To lp Noshow
 	(?goapp.npara1)
-	Endtext
+	ENDTEXT
 	If This.ejecutarp(lc, lp, (Ccursor)) < 1 Then
 		Return 0
 	Endif
@@ -403,9 +403,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara7 = nidtda
 	goApp.npara8 = ninic
 	goApp.npara9 = cpc
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
-	Endtext
+	ENDTEXT
 	Sw = This.EJECUTARf(lc, lp, Ccursor)
 	If Sw < 0 Then
 		Return 0
@@ -448,9 +448,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 				Exit
 			Endif
 			nid = lanti.idcred
-			Text To lc Noshow Textmerge
+			TEXT To lc Noshow Textmerge
 				  UPDATE fe_cred as f SET acta=f.acta-<<m.nacta>> WHERE idcred=<<lanti.cred_idant>> and acti='A'
-			Endtext
+			ENDTEXT
 			If This.Ejecutarsql(lc) < 1 Then
 				x = 0
 				Exit
@@ -481,9 +481,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara13 = goApp.nidusua
 	goApp.npara14 = This.NidAnticipo
 	goApp.npara15 = This.nidanticipocr
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lc, lp, Ccursor)
 	If nid < 1 Then
 		Return 0
@@ -520,9 +520,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		This.DEshacerCambios()
 		Return 0
 	Endif
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
         UPDATE fe_cred as f SET acta=f.acta-<<m.nacta>> WHERE idcred=<<this.nidanticipocr>> and acti='A'
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lc) < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -558,15 +558,15 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara17 = Id()
 	If goApp.clienteconproyectos = 'S' Then
 		goApp.npara18 = This.nidproyecto
-		Text To lp Noshow
+		TEXT To lp Noshow
 		(?goApp.npara1,?goApp.npara2,?goApp.npara3,?goApp.npara4,?goApp.npara5,?goApp.npara6,?goApp.npara7,?goApp.npara8,?goApp.npara9,
 		?goApp.npara10,?goApp.npara11,?goApp.npara12,?goApp.npara13,?goApp.npara14,?goApp.npara15,?goApp.npara16,?goApp.npara17,?goApp.npara18)
-		Endtext
+		ENDTEXT
 	Else
-		Text To lp Noshow
+		TEXT To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-		Endtext
+		ENDTEXT
 	Endif
 	nidcr = This.EJECUTARf(lc, lp, cur)
 	If nidcr < 1 Then
@@ -595,10 +595,10 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara16 = np16
 	goApp.npara17 = np17
 	goApp.npara18 = np18
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-	Endtext
+	ENDTEXT
 	nidc = This.EJECUTARf(lc, lp, cur)
 	If nidc < 1 Then
 		Return 0
@@ -792,11 +792,11 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara13 = np13
 	goApp.npara14 = np14
 	goApp.npara15 = np15
-	Text To lc Noshow
+	TEXT To lc Noshow
 	INSERT INTO fe_cred(fech,fevto,acta,ndoc,estd,mone,banc,tipo,cred_idrc,cred_idus,cred_fope,ncontrol,nrou,cred_idpc,cred_idcb)
 	VALUES(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,
     ?goapp.npara8,?goapp.npara9,?goapp.npara10,localtime,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15);
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
@@ -874,11 +874,11 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Function IngresaCreditosNormalFormaPago1()
 	lc = 'FUNREGISTRACREDITOSFormaPago'
 	cur = "Xn"
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
      (<<this.Idauto>> ,<<this.nidclie>>,'<<this.cndoc>>','C','S','<<this.cdetalle>>',
      '<<cfechas(this.dfech)>>','<<cfechas(this.Fechavto)>>','<<this.ctipo>>',
       '<<this.cndoc>>',<<this.nimpo>>,0,<<this.Codv>>,<<This.nimpo>>,<<goapp.nidusua>>,<<goapp.tienda>>,'<<ID()>>','<<LEFT(this.cformapago,1)>>')
-	Endtext
+	ENDTEXT
 	nidc = This.EJECUTARf(lc, lp, cur)
 	If nidc < 1 Then
 		Return 0
@@ -928,9 +928,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara12 = objant.cpc
 	goApp.npara13 = objant.nidus
 	goApp.npara14 = objant.NidAnticipo
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lc, lp, 'nidp')
 	If nid < 1 Then
 		Return 0
@@ -944,23 +944,23 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 *!*		INNER JOIN fe_cred AS d ON d.`cred_idrc`=r.rcre_idrc
 *!*	    WHERE acti='A' AND cred_idant>0 AND ncontrol<>-1 AND rcre_idcl=<<this.nidclie>> AND rcre_acti='A' GROUP BY cred_idant ORDER BY cred_idant
 *!*		ENDTEXT
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 	SELECT acta,xx.cred_idant,cred_mant FROM(
     SELECT SUM(acta) AS acta,cred_idant FROM fe_rcred AS r
 	INNER JOIN fe_cred AS d ON d.`cred_idrc`=r.rcre_idrc
     WHERE acti='A' AND cred_idant>0 AND ncontrol<>-1  AND rcre_idcl=<<this.nidclie>> AND rcre_acti='A' GROUP BY cred_idant) AS xx
     INNER JOIN (SELECT cred_mant,cred_idant FROM fe_cred AS c WHERE ncontrol=-1 AND acti='A') AS a ON a.cred_idant=xx.cred_idant
     WHERE acta<cred_mant
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Sw = 1
 	Select (Ccursor)
 	Scan All
-		Text To lc Noshow Textmerge
+		TEXT To lc Noshow Textmerge
 	        UPDATE fe_cred as d SET acta=d.cred_mant-<<acta>> where idcred=<<cred_idant>> and ncontrol=-1
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(lc) < 1 Then
 			Sw = 0
 			Exit
@@ -974,9 +974,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Function DesactivaCreditos(np1)
 	lc = 'PRODESACTIVARCREDITOS'
 	goApp.npara1 = np1
-	Text To lp Noshow
+	TEXT To lp Noshow
 	     (?goapp.npara1)
-	Endtext
+	ENDTEXT
 	If This.ejecutarp(lc, lp, "") < 1 Then
 		Return 0
 	Endif
@@ -990,9 +990,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	Text To lp Noshow
+	TEXT To lp Noshow
 	     (?goapp.npara1)
-	Endtext
+	ENDTEXT
 	If This.ejecutarp(lc, lp, "") < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -1003,9 +1003,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	If This.nidanticipocr > 0   Then
-		Text To lc Noshow Textmerge
+		TEXT To lc Noshow Textmerge
 	       UPDATE fe_cred AS f SET f.acta=f.acta+<<this.npago>> WHERE f.idcred=<<this.NidAnticipocr>> AND ncontrol=-1 AND acti='A'
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(lc) < 1 Then
 			This.DEshacerCambios()
 			Return 0
@@ -1020,13 +1020,13 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 1 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 	    SELECT ifnull(x.ndoc,a.ndoc) as ndoc,acta,banc,ifnull(x.fech,a.fech) as fech
 		from fe_cred as a
 		inner join fe_rcred as b on b.rcre_idrc=a.cred_idrc
 		left join fe_rcom as x on x.idauto=b.rcre_idau
 		where cred_idcb=<<nidb>> and a.acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1037,8 +1037,8 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.idsesion
 	Endif
 	Df = Cfechas(This.dFech)
-	SET TEXTMERGE on
-	SET TEXTMERGE TO memvar lc NOSHOW TEXTMERGE 
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
 	    \select idclie,nruc,razo,ndoc,fech,mone,tsoles,tdolar,ndni,vendedor from (
 		\SELECT p.rcre_idcl as idclie,b.razo,'S'  as mone,ifnull(t.ndoc,'') as ndoc,ifnull(t.fech,p.rcre_fech) as fech,
 		\ROUND(SUM(a.impo-a.acta),2) AS tsoles,b.nruc,b.ndni,0 AS tdolar,v.nomv as vendedor
@@ -1047,14 +1047,14 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		\inner join fe_vend as v on(v.idven=p.rcre_codv)
 		\inner join  fe_clie as b on b.idclie=p.rcre_idcl
 		\left join fe_rcom as t on t.idauto=p.rcre_idau
-		\WHERE a.acti<>'I' and p.rcre_acti='A'  and a.fech<='<<df>>' 
-		IF this.codv>0 then
+		\WHERE a.acti<>'I' and p.rcre_acti='A'  and a.fech<='<<df>>'
+	If This.Codv>0 Then
 		\ and rcre_codv=<<this.codv>>
-		ENDIF 
+	Endif
 		\GROUP BY p.rcre_idrc)
 		\as t where t.tsoles<>0 or t.tdolar<>0 order by razo
-	SET TEXTMERGE to
-	SET TEXTMERGE OFF 
+	Set Textmerge To
+	Set Textmerge Off
 	If This.EJECutaconsulta(lc, 'tmp') < 1 Then
 		Return 0
 	Endif
@@ -1065,7 +1065,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.idsesion
 	Endif
 	ff = Cfechas(This.dFech)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 	     select c.nruc,c.ndni,c.razo,c.idclie,r.rcre_idau,a.mone,a.tipo,a.banc,b.importe,a.ncontrol,a.ndoc,a.fech,a.fevto,a.dola,a.fech AS fechp,
 	 	 IFNULL(y.ndoc,'') AS docp FROM
 	     (SELECT ROUND(SUM(a.impo-a.acta),2) AS importe,a.ncontrol
@@ -1075,20 +1075,20 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	     INNER JOIN fe_rcred AS r ON r.rcre_idrc=a.cred_idrc
 	     INNER JOIN fe_clie AS c ON (c.idclie=r.rcre_idcl)
 	     LEFT JOIN fe_rcom AS y ON y.idauto=r.rcre_idau
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarpagodesdebanco(nidv, Ccursor)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
     SELECT ifnull(x.ndoc,a.ndoc) as ndoc,acta,banc,ifnull(x.fech,a.fech) as fech
 	from fe_cred as a
 	inner join fe_rcred as b on b.rcre_idrc=a.cred_idrc
 	left join fe_rcom as x on x.idauto=b.rcre_idau
 	where cred_idcb=<<nidb>>
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1137,9 +1137,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.idsesion
 	Endif
 	lc = 'PROCALCULARSALDOSCLIENTE'
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
 	     (<<this.nidclie>>)
-	Endtext
+	ENDTEXT
 	If This.ejecutarp(lc, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1156,9 +1156,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara7 = This.Tienda
 	goApp.npara8 = This.ninic
 	goApp.npara9 = Id()
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lc, lp, 'nidp')
 	If nid < 1 Then
 		Return 0
@@ -1177,9 +1177,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara8 = obj.Ctipo
 	goApp.npara9 = obj.nidrc
 	goApp.npara10 = goApp.nidusua
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lc, lp, 'dcreditos')
 	If nid < 1 Then
 		Return 0
@@ -1248,7 +1248,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 	SELECT xx.idclie,v.importe,v.fevto,DATEDIFF(CURDATE(),v.fevto) AS dias,v.rcre_idrc,rr.rcre_fech AS fech,razo,
     rr.rcre_idau AS idauto,rcre_codv AS idven,vv.nomv,
     IFNULL(cc.ndoc,'') AS docd,IFNULL(cc.tdoc,'') AS tdoc,a.ndoc,
@@ -1266,7 +1266,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
     LEFT JOIN
     (SELECT tdoc,ndoc,idauto,impo FROM fe_rcom WHERE acti='A' AND idcliente=<<this.nidclie>>) AS cc ON cc.idauto=rr.rcre_idau
     INNER JOIN fe_cred AS a ON a.idcred=v.ncontrol WHERE kk.acti='A' AND fech BETWEEN '<<f1>>' AND '<<f2>>' ORDER BY fech,docd
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1274,9 +1274,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function DevuelveIdCtrlCredito(np1)
 	ccur = 'c_' + Sys(2015)
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
     SELECT cred_idrc as idrc FROM fe_cred WHERE ncontrol=<<np1>> limit 1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, ccur) < 1 Then
 		Return 0
 	Endif
@@ -1303,13 +1303,13 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	goApp.npara13 = goApp.nidusua
 	If goApp.proyecto = 'psysn' Then
 		goApp.npara14 = objdetalle.tpago
-		Text To lp Noshow
+		TEXT To lp Noshow
         (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-		Endtext
+		ENDTEXT
 	Else
-		Text To lp Noshow
+		TEXT To lp Noshow
         (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-		Endtext
+		ENDTEXT
 	Endif
 	nid = This.EJECUTARf(lc, lp, 'nidcreditos')
 	If nid < 1 Then
@@ -1319,9 +1319,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function buscardcto(cndoc)
 	Ccursor = 'c_' + Sys(2015)
-	Text To lc Noshow
+	TEXT To lc Noshow
     SELECT ndoc FROM fe_cred WHERE TRIM(ndoc)=?cndoc  AND acti='A' limit 1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1
 		Return 0
 	Endif
@@ -1335,9 +1335,9 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Function buscardctopago(cndoc)
 	Ccursor = 'c_' + Sys(2015)
 	cdcto = Trim(m.cndoc)
-	Text To lc Noshow
+	TEXT To lc Noshow
 	SELECT idcred as vdvto FROM fe_cred WHERE TRIM(ndoc)=?cdcto AND estd='P' AND acti='A'  limit 1;
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1
 		Return 0
 	Endif
@@ -1353,14 +1353,14 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lc Noshow Textmerge Pretext 7
+	TEXT To lc Noshow Textmerge Pretext 7
         select c.nruc,c.razo as proveedor,c.fono,saldo  as tsoles, CAST(0 as decimal(12,2)) as tdolar,'S' as mone,c.clie_idzo,c.idclie as codp
         FROM (SELECT SUM(impo-acta) AS saldo,rcre_idcl,s.`ncontrol` FROM fe_rcred AS r
 		INNER JOIN fe_cred AS s ON s.cred_idrc=r.rcre_idrc
 		WHERE r.rcre_fech='<<f>>' AND r.`rcre_Acti`='A' AND s.`acti`='A'
 		GROUP BY r.`rcre_idcl`,s.`ncontrol` HAVING saldo<>0) AS s
 		INNER JOIN fe_clie AS c ON c.idclie=s.rcre_idcl order by razo
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1473,19 +1473,39 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lc Noshow Textmerge
+	TEXT To lc Noshow Textmerge
 		select x.rcre_codv as idven,x.rcre_idcl as idclie,c.razo,c.fono,d.nomv,x.rcre_idau as idauto,a.mone,ifnull(y.impo,rcre_impc) as impoo,
 		x.rcre_fech as fech,a.tipo,a.banc,a.acta as importe,x.rcre_codt as codt,a.ncontrol,a.acti,ifnull(y.ndoc,'') as ndoc,
 		a.fech as fechapago,a.ndoc as docp,ifnull(y.tdoc,'') as tdoc,cred_idcb
-		fROM fe_rcred as x 
-		inner join fe_cred as a  on x.rcre_idrc=a.cred_idrc 
+		fROM fe_rcred as x
+		inner join fe_cred as a  on x.rcre_idrc=a.cred_idrc
 		inner join fe_clie as c on (c.idclie=x.rcre_idcl)
-		inner join fe_vend as d on(d.idven=x.rcre_codv) 
+		inner join fe_vend as d on(d.idven=x.rcre_codv)
 		left join fe_rcom as y on(y.idauto=x.rcre_idau)
 		where a.acti<>'I' and x.rcre_acti<>'I' and a.acta<>0 and a.fech between '<<dfi>>' and '<<dff>>' and left(a.ndoc,6)<>'Canjes'
 		and cred_idcb=0
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function VerificaSitienePagos(np1)
+	If np1=0 Then
+		Return 1
+	Endif
+	lc='FunVerificaPagos'
+	cur='c_'+Sys(2015)
+	goApp.npara1=np1
+	TEXT to lp noshow
+     (?goapp.npara1)
+	ENDTEXT
+	m.nid=This.EJECUTARf(lc,lp,cur)
+	If m.nid<0 Then
+		Return 0
+	Endif
+	If m.nid>0 Then
+		This.cmensaje="No es Posible Actualizar Este Documento Tiene Pagos a Cuenta"
 		Return 0
 	Endif
 	Return 1

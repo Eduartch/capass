@@ -110,7 +110,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	solocontables = ''
 	nidautoref = 0
 	Function mostraroventasservicios(np1, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	        SELECT b.nruc,b.razo,b.dire,b.ciud,a.dolar,a.fech,a.fecr,a.mone,a.idauto,a.vigv,a.valor,a.igv,
 	        a.impo,ndoc,a.deta,a.tcom,a.idcliente,a.ndo2,rcom_detr,
 	        w.impo as impo1,c.nomb,w.nitem,c.ncta,w.tipo,a.form,
@@ -122,14 +122,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	        left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
             where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=a.idauto
 	        where a.idauto=<<np1>> and a.acti='A' and w.acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function mostraroventasserviciosconretdet(np1, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	        SELECT b.nruc,b.razo,b.dire,b.ciud,a.dolar,a.fech,a.fecr,a.mone,a.idauto,a.vigv,a.valor,a.igv,
 	        a.impo,ndoc,a.deta,a.tcom,a.idcliente,a.ndo2,
 	        w.impo as impo1,c.nomb,w.nitem,c.ncta,w.tipo,a.form,
@@ -141,14 +141,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	        left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
             where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=a.idauto
 	        where a.idauto=<<np1>> and a.acti='A' and w.acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function  mostrarotrasventas(np1, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	        SELECT b.nruc,b.razo,b.dire,b.ciud,a.dolar,a.fech,a.fecr,a.mone,a.idauto,a.vigv,a.valor,a.igv,
 	        a.impo,ndoc,a.deta,a.tcom,a.idcliente,codt,tdoc,
 	        w.impo as impo1,c.nomb,w.nitem,c.ncta,w.tipo,a.form,rcom_mdet,rcom_mret,
@@ -158,41 +158,41 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	        inner join fe_plan as c on c.idcta=w.idcta
 	        inner join fe_clie as b on b.idclie=a.idcliente
 	        where a.idauto=<<np1>> and w.acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function obteneridventa(np1, np2, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 		    SELECT a.idauto,b.nruc FROM fe_rcom as a
 		    inner JOIN fe_clie as b  on(b.idcliE=a.idcliente)
 		    where a.ndoc='<<np1>>' and a.tdoc='<<np2>>' and acti<>'I'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function obteneranticipo2(Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 		    SELECT ifnull(z.Ndoc,'') As dctoanticipo,ifnull(z.Impo,Cast(0 As Decimal(10,2))) As totalanticipo,
 		    ifnull(If(z.rcom_exon>0,z.rcom_exon,z.valor),Cast(0 As Decimal(10,2))) As valorganticipo
 		    from fe_rcom as r
 		    inner join fe_rcom as z on z.idauto=r.rcom_idan2
 		    where r.idauto=<<this.Idauto>>
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function mostrardetalleotrasventas(np1, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 				  SELECT q.detv_desc,q.detv_item,q.detv_ite1,q.detv_ite2,detv_prec,detv_cant FROM fe_detallevta as q
 				  where detv_acti='A' and detv_idau=<<np1>> order by detv_idvt
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -239,16 +239,16 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function actualizaarsolofecha(np1, np2)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	      UPDATE fe_rcom SET fech='<<np2>>' WHERE idauto=<<np1>>
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function RentabilidadAgrupadaporproducto(fi, ff, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    SELECT k.idart,p.descri,p.unid,cant,costototal,ventatotal,renta,c.dcat AS linea  FROM
        (SELECT k.idart,SUM(cant) AS cant,
 	    CAST(SUM(cant*kar_cost) AS DECIMAL(12,2)) AS costoTotal,
@@ -259,14 +259,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	    WHERE r.fech BETWEEN '<<fi>>' AND '<<ff>>' AND idcliente>0 AND r.acti='A' AND k.acti='A' GROUP BY k.idart) AS k
 	    INNER JOIN fe_art AS p ON p.idart=k.idart
 	    INNER JOIN fe_cat AS c ON c.idcat=p.idcat  ORDER BY descri
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function RentabilidadAgrupadaporlinea(fi, ff, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	   SELECT c.dcat AS linea,SUM(cant) AS cant,SUM(costototal) AS costototal,SUM(ventatotal) AS ventatotal,SUM(renta) AS renta  FROM
        (SELECT k.idart,SUM(cant) AS cant,
 	   CAST(SUM(cant*kar_cost) AS DECIMAL(12,2)) AS costoTotal,
@@ -277,19 +277,19 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	   WHERE r.fech BETWEEN '<<fi>>' AND '<<ff>>' AND idcliente>0 AND r.acti='A' AND k.acti='A' GROUP BY k.idart) AS k
 	   INNER JOIN fe_art AS p ON p.idart=k.idart
 	   INNER JOIN fe_cat AS c ON c.idcat=p.idcat  GROUP BY c.dcat  ORDER BY dcat
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function obtenervendedorlopez(np1, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT nomv AS vendedor,idven,CAST(IFNULL(dctos_idau,0) as decimal) AS dctos_idau FROM fe_rvendedor AS r
 	INNER JOIN fe_vend AS v ON v.idven=r.vend_codv
 	LEFT JOIN (SELECT dctos_idau FROM fe_ldctos WHERE dctos_idau=<<np1>> and dctos_acti='A') AS l ON l.dctos_idau=r.vend_idau
 	WHERE vend_idau=<<np1>>
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -575,14 +575,38 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endcase
 	Endfunc
 	Function buscardctoparaplicarncndconseries(np1, Ccursor)
-	Text To lC Noshow Textmerge
-	   SELECT a.coda as idart,a.descri,a.unid,a.cant,a.prec,
-	   ROUND(a.cant*a.prec,2) as importe,a.idauto,a.mone,a.valor,a.igv,a.impo,kar_comi as comi,alma,
-	   a.fech,a.ndoc,a.tdoc,a.dolar as dola,vigv,rcom_exon,ifnull(s.seriep,"") as serieproducto,ifnull(idseriep,0) as idseriep FROM vmuestraventas as a
-	   left join (SELECT rser_seri as seriep,rser_idse as idseriep,dser_idka FROM fe_rseries f
-       inner join fe_dseries g on g.dser_idre=f.rser_idse
-       where g.dser_acti='A' and rser_acti='A') as s ON s.dser_idka=a.idkar WHERE a.idauto=<<np1>>
-	Endtext
+	TEXT To lC Noshow Textmerge
+	  SELECT  `c`.`rcom_exon` AS `rcom_exon`,  `c`.`idusua`    AS `idusua`,  `a`.`kar_comi`  AS `comi`,
+	  `a`.`codv`      AS `codv`,  `a`.`idauto`    AS `idauto`,  `c`.`codt`      AS `alma`,
+	  `a`.`kar_idco`  AS `idcosto`,  `a`.`idkar`     AS `idkar`,  `a`.`idart`     AS `idart`,
+	  `a`.`cant`      AS `cant`,  `a`.`prec`      AS `prec`,  `c`.`valor`     AS `valor`,
+	  `c`.`igv`       AS `igv`,  `c`.`impo`      AS `impo`,  `c`.`fech`      AS `fech`,
+	  `c`.`fecr`      AS `fecr`,  `c`.`form`      AS `form`,  `c`.`deta`      AS `deta`,
+	  `c`.`exon`      AS `exon`,  `c`.`ndo2`      AS `ndo2`,  `c`.`rcom_entr` AS `rcom_entr`,
+	  `c`.`idcliente` AS `idclie`,  `d`.`razo`      AS `razo`,  `d`.`nruc`      AS `nruc`,
+	  `d`.`dire`      AS `dire`,  `d`.`ciud`      AS `ciud`,  `d`.`ndni`      AS `ndni`,
+	  `a`.`tipo`      AS `tipo`,  `c`.`tdoc`      AS `tdoc`,  `c`.`ndoc`      AS `ndoc`,
+	  `c`.`dolar`     AS `dola`,  `c`.`mone`      AS `mone`,  `b`.`descri`    AS `descri`,
+	  `b`.`unid`      AS `unid`,  `b`.`premay`    AS `pre1`,  `b`.`peso`      AS `peso`,  `b`.`premen`    AS `pre2`,
+	  `c`.`vigv`      AS `vigv`,  `c`.`idcliente` AS `idcliente`,  `c`.`codt`      AS `codt`,    `b`.`uno`       AS `uno`,  `b`.`dos`       AS `dos`,  `c`.`fusua`     AS `fusua`,  `p`.`nomv`      AS `Vendedor`,  `q`.`nomb`      AS `Usuario`,
+	  ROUND(a.cant*a.prec,2) AS importe,IFNULL(s.seriep,"") AS serieproducto,IFNULL(idseriep,0) AS idseriep
+	  FROM `fe_rcom` `c`
+      JOIN `fe_kar` `a`  ON `a`.`idart` = `c`.`idauto`
+      JOIN `fe_art` `b`   ON `b`.`idart` = `a`.`idart`
+      JOIN `fe_clie` `d`  ON `c`.`idcliente` = `d`.`idclie`
+      JOIN `fe_vend` `p`  ON `p`.`idven` = `a`.`codv`
+      JOIN `fe_usua` `q`  ON `q`.`idusua` = `c`.`idusua`
+	  LEFT JOIN (SELECT rser_seri AS seriep,rser_idse AS idseriep,dser_idka FROM fe_rseries f
+      INNER JOIN fe_dseries g ON g.dser_idre=f.rser_idse
+      WHERE g.dser_acti='A' AND rser_acti='A') AS s ON s.dser_idka=a.idkar
+      WHERE  c.idauto==<<np1>>
+	ENDTEXT
+*!*		   SELECT a.coda as idart,a.descri,a.unid,a.cant,a.prec,
+*!*		   ROUND(a.cant*a.prec,2) as importe,a.idauto,a.mone,a.valor,a.igv,a.impo,kar_comi as comi,alma,
+*!*		   a.fech,a.ndoc,a.tdoc,a.dolar as dola,vigv,rcom_exon,ifnull(s.seriep,"") as serieproducto,ifnull(idseriep,0) as idseriep FROM vmuestraventas as a
+*!*		   left join (SELECT rser_seri as seriep,rser_idse as idseriep,dser_idka FROM fe_rseries f
+*!*	       inner join fe_dseries g on g.dser_idre=f.rser_idse
+*!*	       where g.dser_acti='A' and rser_acti='A') as s ON s.dser_idka=a.idkar WHERE a.idauto=<<np1>>
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -598,9 +622,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Select (Ccursor)
 	Scan All
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 		    UPDATE fe_kar SET alma=0 where idkar=<<dvtas.idkar>>
-		Endtext
+		ENDTEXT
 		If  This.Ejecutarsql(lC) < 1 Then
 			xy = 0
 			Exit
@@ -621,14 +645,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function mostrarresumenventasxproducto(dfi, dff, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	   SELECT  a.descri,a.unid,k.cant,CAST(k.importe AS DECIMAL(12,2))AS importe,k.idart FROM
 	   (SELECT idart,SUM(cant) as cant,SUM(cant*prec) as importe from fe_rcom AS r
 	   INNER JOIN fe_kar AS k ON k.idauto=r.idauto
 	   WHERE r.fech between '<<dfi>>' and '<<dff>>' AND k.acti='A' and r.acti='A' and idcliente>0 group by idart) as k
 	   INNER JOIN fe_art AS a ON a.idart=k.idart
 	   order by descri
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -638,7 +662,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	   SELECT  c.razo,a.descri,a.unid,k.cant,k.prec,k.idart,k.alma,r.idcliente AS idclie,r.idauto,rcom_idtr,
 	   r.fech,r.valor,r.igv,r.impo,r.mone,u.nomb AS usuario,r.fusua,ndoc,idkar FROM fe_rcom AS r
 	   INNER JOIN fe_clie AS c ON c.idclie=r.idcliente
@@ -646,7 +670,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	   INNER JOIN fe_art AS a ON a.idart=k.idart
 	   INNER JOIN fe_usua AS u  ON u.idusua=r.idusua
 	   WHERE r.idauto=<<np1>> AND k.acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -740,9 +764,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endcase
 	Endfunc
 	Function Buscarsiestaregistrado(cdcto, cTdoc)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
        SELECT  idauto FROM fe_rcom WHERE ndoc='<<cdcto>>' AND tdoc='<<ctdoc>>' and acti<>'I' AND idcliente>0
-	Endtext
+	ENDTEXT
 	Ccursor = Alltrim(Sys(2015))
 	If This.EJECutaconsulta (lC, (Ccursor)) < 1 Then
 		Return 0
@@ -756,7 +780,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function mostrarventaspornumerosh(Df, cTdoc, Cserie, ndesde, nhasta, Ccursor)
 	If cTdoc = '20' Then
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 	        SELECT serie,numero,ndni,razo,if(mone='S','Soles','Dólares') as mone,valor,igv,impo,idauto,fech,tdoc
 		    from(select f.fech,f.tdoc,mone,
 		    left(f.ndoc,3) as serie,substr(f.ndoc,4) as numero,
@@ -767,9 +791,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	     	inner join fe_clie as c on c.idclie=f.idcliente
 		    where f.tdoc='<<ctdoc>>' and f.fech='<<df>>'  and f.acti='A'   order by f.ndoc) as x
 		    where numero1 between <<ndesde>> and <<nhasta>> and serie='<<cserie>>'
-		Endtext
+		ENDTEXT
 	Else
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 	        SELECT serie,numero,ndni,razo,if(mone='S','Soles','Dólares') as mone,valor,igv,impo,idauto,fech,tdoc
 		    from(select f.fech,f.tdoc,mone,
 		    left(f.ndoc,4) as serie,substr(f.ndoc,5) as numero,if(f.mone='S',f.valor,f.valor*f.dolar) as valor,
@@ -779,7 +803,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	     	inner join fe_clie as c on c.idclie=f.idcliente
 		    where f.tdoc='<<ctdoc>>' and f.fech='<<df>>'  and f.acti='A'   order by f.ndoc) as x
 		    where numero1 between <<ndesde>> and <<nhasta>> and serie='<<cserie>>'
-		Endtext
+		ENDTEXT
 	Endif
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -788,7 +812,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function imprimirenbloque(Calias)
 	Create Cursor tmpv(Desc c(100), Unid c(20), Prec N(13, 8), cant N(10, 3), ;
-		  Ndoc c(10), coda N(8), Nitem N(3), cletras c(120), duni c(20), Tdoc c(2), razon c(100), Direccion c(100), ndni c(8), fech d, Impo N(8, 2), copia c(1), Importe N(12, 2))
+		Ndoc c(10), coda N(8), Nitem N(3), cletras c(120), duni c(20), Tdoc c(2), razon c(100), Direccion c(100), ndni c(8), fech d, Impo N(8, 2), copia c(1), Importe N(12, 2))
 	Select rid
 	Go Top
 	Sw = 1
@@ -797,7 +821,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Cimporte = Diletras(rid.Impo, 'S')
 		xid = rid.Idauto
 		nimporte = rid.Impo
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 		    SELECT a.ndoc,a.fech,a.tdoc,a.impo,b.idart,
 		    left(concat(trim(f.dcat),' ',substr(c.descri,instr(c.descri,',')+1),' ',substr(c.descri,1,instr(c.descri,',')-1)),150) as descri,
 		    b.kar_unid as unid,b.cant,b.prec,e.razo,e.dire,e.ciud,e.ndni FROM fe_rcom as a
@@ -806,7 +830,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 			inner join fe_art as c on c.idart=b.idart
 			inner join fe_cat as f on f.idcat=c.idcat
 			where a.acti='A' and b.acti='A' and  a.idauto=<<rid.idauto>> order by b.idkar
-		Endtext
+		ENDTEXT
 		If This.EJECutaconsulta(lC, 'xtmpv') < 1 Then
 			Sw = 0
 			Exit
@@ -819,7 +843,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 			ni = ni + 1
 			Insert Into tmpv(Ndoc, Nitem, cletras, Tdoc, fech, Desc, duni, cant, Prec, razon, Direccion, ndni, Unid, Importe);
 				Values(cndoc, ni, Cimporte, xtmpv.Tdoc, xtmpv.fech, xtmpv.Desc, xtmpv.duni, xtmpv.cant, xtmpv.Prec, xtmpv.Razo, Alltrim(xtmpv.Dire) + ' ' + Alltrim(xtmpv.ciud), ;
-				  xtmpv.ndni, xtmpv.Unid, nimporte)
+				xtmpv.ndni, xtmpv.Unid, nimporte)
 		Endscan
 		Select tmpv
 		For x = 1 To 17 - ni
@@ -882,11 +906,11 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara23 = np23
 	goapp.npara24 = np24
 	goapp.npara25 = np25
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	Endtext
+	ENDTEXT
 	nidf = This.EJECUTARf(lC, lp, cur)
 	If nidf < 1 Then
 		Return 0
@@ -924,9 +948,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara24 = np24
 	goapp.npara25 = np25
 	goapp.npara26 = np26
-	Text To lp Noshow
+	TEXT To lp Noshow
     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-	Endtext
+	ENDTEXT
 	nidf = This.EJECUTARf(lC, lp, cur)
 	If nidf < 1 Then
 		Return 0
@@ -961,25 +985,25 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara23 = np23
 	goapp.npara24 = np24
 	goapp.npara25 = np25
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function mostrardctoparanotascreditogral(np1, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	   SELECT a.idart,a.descri,unid,k.cant,k.prec,k.codv,
 	   ROUND(k.cant*k.prec,2) as importe,r.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi as comi,k.alma,
 	   r.fech,r.ndoc,r.tdoc,r.dolar as dola,kar_cost FROM fe_rcom as r
 	   inner join fe_kar as k on k.idauto=r.idauto
 	   inner join fe_art as a on a.idart=k.idart
 	   WHERE r.idauto=<<np1>> and k.acti='A' order By  idkar
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -988,7 +1012,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Function mostrarvtasresumidaspormes(ccoda, Ccursor)
 	dff = Cfechas(fe_gene.fech)
 	dfi = Cfechas(fe_gene.fech - 90)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
     SELECT
 	CASE nromes
 	 WHEN 1 THEN 'Enero'
@@ -1008,7 +1032,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	SELECT cant,MONTH(fech) AS nromes FROM fe_kar AS a
 	INNER JOIN fe_rcom  AS c ON(c.idauto=a.idauto)
 	WHERE idart=<<ccoda>>  AND c.acti='A' AND a.acti='A' AND idcliente>0 AND c.fech between '<<dfi>>' and '<<dff>>') AS xx GROUP BY mes,nromes order by nromes
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
@@ -1016,9 +1040,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function ultimamontoventas()
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT MAX(lcaj_fope) AS fope,lcaj_deud as monto FROM fe_lcaja WHERE lcaj_deud>0 AND lcaj_acti='A' AND lcaj_idau>0 GROUP BY lcaj_fope,lcaj_deud  ORDER BY lcaj_fope DESC LIMIT 1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1029,7 +1053,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	fi = Cfechas(This.fechai)
 	ff = Cfechas(This.fechaf)
 	Set DataSession To This.idsesion
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	  SELECT idart,SUM(enero) AS enero,SUM(febrero) AS febrero,SUM(marzo) AS marzo,
       SUM(abril) AS abril,SUM(mayo) AS mayo,SUM(junio) AS junio,SUM(julio) AS julio,SUM(agosto) AS agosto,
       SUM(septiembre) AS septiembre,SUM(octubre) AS octubre,SUM(noviembre) AS noviembre,SUM(diciembre) AS diciembre
@@ -1052,7 +1076,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	  INNER JOIN fe_rcom AS r ON r.`idauto`= k.`idauto`
 	  WHERE r.fech BETWEEN '<<fi>>' AND '<<ff>>' AND r.acti='A' AND k.`acti`='A' and r.idcliente>0
 	  GROUP BY idart,mes) AS xx) AS yy GROUP BY idart ORDER BY idart
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
@@ -1094,6 +1118,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function ventasporclientepsystr(Ccursor)
+	If !goapp.Pemstatus(goapp, 'productoscp', 5) Then
+		AddProperty(goapp, 'productoscp', '')
+	Endif
 	f1 = Cfechas(This.fechai)
 	f2 = Cfechas(This.fechaf)
 	If This.idsesion > 0 Then
@@ -1103,7 +1130,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lC Noshow Textmerge
     \Select fech,fecr,Tdoc,Ndoc,Ndo2,Mone,valor,igv,Impo,dolar As dola,Form,
 	\  cant,Round(k.Prec,2) As Prec,Round(k.cant*k.Prec,2) As Importe,dsnc,dsnd,gast,Descri,Unid,u.nomb As Usuario,FUsua,r.Idauto,r.Deta,r.alma As codproy,tt.nomb As tienda From
-	\  fe_rcom As r inner Join (Select idart,cant,Prec,dsnc,dsnd,gast,Idauto From fe_kar Where Acti='A') As k  On k.Idauto=r.Idauto
+	\  fe_rcom As r
+	\  inner Join (Select idart,cant,Prec,dsnc,dsnd,gast,Idauto From fe_kar Where Acti='A') As k  On k.Idauto=r.Idauto
 	\  inner Join fe_art As b On b.idart=k.idart
 	\  inner Join fe_usua As u On u.idusua=r.idusua
 	\  inner Join fe_clie As cc On cc.idclie=r.idcliente
@@ -1115,10 +1143,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If This.codt > 0 Then
 	    \ And r.codt=<<This.codt>>
 	Endif
+	If Left(goapp.tipousuario, 1) = 'V'  And goapp.productoscp = 'S' Then
+	   \And r.idusua=<<goapp.nidusua>>
+	Endif
 	\  Union All
 	\  Select fech,fecr,Tdoc,Ndoc,Ndo2,Mone,valor,igv,Impo,dolar As dola,Form,
 	\  cant,Round(k.Prec,2) As Prec,Round(k.cant*k.Prec,2) As Importe,dsnc,dsnd,gast,k.Descri,Unid,u.nomb As Usuario,FUsua,r.Idauto,r.Deta,r.alma As codproy,tt.nomb As tienda From
-	\  fe_rcom As r inner Join (Select detv_item As idart,detv_desc As Descri,'' As Unid,detv_cant As cant,detv_prec As Prec,1 As dsnc,
+	\  fe_rcom As r
+	\  inner Join (Select detv_item As idart,detv_desc As Descri,'' As Unid,detv_cant As cant,detv_prec As Prec,1 As dsnc,
 	\  1 As dsnd,1 As gast,detv_idau
 	\  From fe_detallevta Where detv_acti='A') As k   On k.detv_idau=r.Idauto
 	\  inner Join fe_usua As u On u.idusua=r.idusua
@@ -1130,6 +1162,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	If This.codt > 0 Then
        \ And r.codt=<<This.codt>>
+	Endif
+	If Left(goapp.tipousuario, 1) = 'V'  And goapp.productoscp = 'S' Then
+	   \And r.idusua=<<goapp.nidusua>>
 	Endif
 	\ Order By fech
 	Set Textmerge Off
@@ -1197,8 +1232,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Create Cursor registro(Form c(1) Null, fecr d Null, fech d Null, Tdoc c(2) Null, Serie c(4), Ndoc c(8), nruc c(11)Null, ndni c(8), Razo c(100)Null, valorg N(14, 2), Exon N(12, 2), inafecta N(12, 2), ;
-		  igvg N(10, 2), Importe N(14, 2), icbper N(12, 2), pimpo N(8, 2), Detalle c(50), Mensaje c(100), tref c(2), Refe c(12), dola N(5, 3),  Mone c(1), Codigo N(5), fechn d, Fevto d, ;
-		  Auto N(15),  T N(1), codt N(3))
+		igvg N(10, 2), Importe N(14, 2), icbper N(12, 2), pimpo N(8, 2), Detalle c(50), Mensaje c(100), tref c(2), Refe c(12), dola N(5, 3),  Mone c(1), Codigo N(5), fechn d, Fevto d, ;
+		Auto N(15),  T N(1), codt N(3))
 	notas = 0
 	x = 0
 	Select registro1
@@ -1219,9 +1254,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Endif
 		Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, valorg, igvg, Exon, inafecta, Importe, pimpo, Detalle, Mone, dola, Codigo, Auto, ndni, T, tref, Refe, fechn,  icbper, Mensaje, codt);
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-			  registro1.nruc, registro1.Razo, registro1.valorg, registro1.igvg, registro1.Exon, registro1.inafecta, registro1.Importe, registro1.pimpo, registro1.Detalle, ;
-			  registro1.Mone, registro1.dola, registro1.Codigo, registro1.Idauto, registro1.ndni, Iif(Tdoc = '03', 1, 6), ntdoc, nndoc, nfech, ;
-			  registro1.icbper, registro1.Mensaje, registro1.codt)
+			registro1.nruc, registro1.Razo, registro1.valorg, registro1.igvg, registro1.Exon, registro1.inafecta, registro1.Importe, registro1.pimpo, registro1.Detalle, ;
+			registro1.Mone, registro1.dola, registro1.Codigo, registro1.Idauto, registro1.ndni, Iif(Tdoc = '03', 1, 6), ntdoc, nndoc, nfech, ;
+			registro1.icbper, registro1.Mensaje, registro1.codt)
 		If notas = 1 Then
 			Y = 1
 			Select Xn
@@ -1229,7 +1264,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 				If Y > 1 Then
 					Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, Auto, ndni, tref, Refe, fechn, dola, Mone);
 						Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-						  registro1.nruc, registro1.Razo, Xn.idn, registro1.ndni, Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.dola, registro1.Mone)
+						registro1.nruc, registro1.Razo, Xn.idn, registro1.ndni, Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.dola, registro1.Mone)
 					x = x + 1
 				Endif
 				Y = Y + 1
@@ -1403,8 +1438,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	nfilas = fe_gene.lrven
 	Create Cursor registro(Form c(1) Null, fech d, fvto d, Tdoc c(2), Serie c(4), Ndoc c(8), nruc c(11)Null, ;
-		  Razo c(40)Null, valor N(12, 2), Exon N(12, 2), igv N(10, 2), Importe N(12, 2), pimpo N(8, 2), ttip c(1), Mone c(1)Null, ;
-		  dola N(6, 4), icbper N(6, 2), vigv N(5, 3), Codigo N(5), Detalle c(50), ndni c(8), Idauto N(8), fecr d, grati N(12, 2), Mensaje c(100))
+		Razo c(40)Null, valor N(12, 2), Exon N(12, 2), igv N(10, 2), Importe N(12, 2), pimpo N(8, 2), ttip c(1), Mone c(1)Null, ;
+		dola N(6, 4), icbper N(6, 2), vigv N(5, 3), Codigo N(5), Detalle c(50), ndni c(8), Idauto N(8), fecr d, grati N(12, 2), Mensaje c(100))
 	Select registro
 	Append From Dbf("facturas")
 	Select Form, fecr, fech, fvto, Tdoc, Serie, Ndoc, nruc, Razo, Iif(Mone = "D", Round((Importe * dola) / vigv, 2), valor) As valorg, ;
@@ -1413,8 +1448,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Iif(Mone = "D", Round(Importe * dola, 2), Importe) As Importe, ;
 		Iif(Mone = 'D', Round(grati * dola, 2), grati) As tgrati, pimpo, Detalle, Mone, dola, Codigo, ndni, Idauto, vigv, icbper, Mensaje From registro Into Cursor registro1 Order By Serie, fech, Ndoc
 	Create Cursor registro(Form c(1) Null, fech d Null, fvto d, Tdoc c(2) Null, Serie c(4), Ndoc c(8),  nruc c(11)Null, ndni c(8), Razo c(100)Null, valorg N(14, 2), Exon N(12, 2), ;
-		  igvg N(10, 2), Importe N(14, 2), tgrati N(12, 2), igvgr N(12, 2), Detalle c(50), icbper N(12, 2), tref c(2), Refe c(12), dola N(5, 3), Mensaje c(100), Mone c(1), Codigo N(5), fechn d, Fevto d, ;
-		  Auto N(15), T N(1), fecr d Null, pimpo N(8, 2), inafecta N(12, 2))
+		igvg N(10, 2), Importe N(14, 2), tgrati N(12, 2), igvgr N(12, 2), Detalle c(50), icbper N(12, 2), tref c(2), Refe c(12), dola N(5, 3), Mensaje c(100), Mone c(1), Codigo N(5), fechn d, Fevto d, ;
+		Auto N(15), T N(1), fecr d Null, pimpo N(8, 2), inafecta N(12, 2))
 	x = 1
 	If This.Listarnotascreditoydebito("xnotas") < 1 Then
 		Return 0
@@ -1438,9 +1473,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Endif
 		Insert Into registro(Form, fecr, fech, fvto, Tdoc, Serie, Ndoc, nruc, Razo, valorg, igvg, Exon, Importe, pimpo, Detalle, Mone, dola, Codigo, Auto, ndni, T, tref, Refe, fechn, tgrati, igvgr, icbper, Mensaje);
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.fvto, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-			  registro1.nruc, registro1.Razo, registro1.valorg, registro1.igvg, registro1.Exon, registro1.Importe, registro1.pimpo, registro1.Detalle, ;
-			  registro1.Mone, registro1.dola, registro1.Codigo, registro1.Idauto, registro1.ndni, Iif(Tdoc = '03', 1, 6), ntdoc, nndoc, nfech, ;
-			  registro1.tgrati, Round(registro1.tgrati * (registro1.vigv - 1), 2), registro1.icbper, registro1.Mensaje)
+			registro1.nruc, registro1.Razo, registro1.valorg, registro1.igvg, registro1.Exon, registro1.Importe, registro1.pimpo, registro1.Detalle, ;
+			registro1.Mone, registro1.dola, registro1.Codigo, registro1.Idauto, registro1.ndni, Iif(Tdoc = '03', 1, 6), ntdoc, nndoc, nfech, ;
+			registro1.tgrati, Round(registro1.tgrati * (registro1.vigv - 1), 2), registro1.icbper, registro1.Mensaje)
 		If notas = 1 Then
 			Y = 1
 			Select Xn
@@ -1448,7 +1483,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 				If Y > 1 Then
 					Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, Auto, ndni, tref, Refe, fechn, dola, Mone);
 						Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-						  registro1.nruc, registro1.Razo, Xn.idn, registro1.ndni, Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.dola, registro1.Mone)
+						registro1.nruc, registro1.Razo, Xn.idn, registro1.ndni, Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.dola, registro1.Mone)
 					x = x + 1
 					totreg = totreg + 1
 				Endif
@@ -1502,8 +1537,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Create Cursor registro(Form c(1) Null, fecr d, fech d, Tdoc c(2), Serie c(4), Ndoc c(8), nruc c(11)Null,;
-		  Razo c(40)Null, valor N(14, 2), Exon N(12, 2), igv N(14, 2), Importe N(14, 2), pimpo N(8, 2), grati N(10, 2), ttip c(1), Mone c(1)Null, ;
-		  dola N(6, 4), vigv N(5, 3), Codigo N(5), Detalle c(50), Usuario c(30), FUsua T, Mensaje c(120), ndni c(8),  Idauto N(8), rcom_icbper N(8, 2), rcom_mens c(120), codt N(2), dscto N(10, 2))
+		Razo c(40)Null, valor N(14, 2), Exon N(12, 2), igv N(14, 2), Importe N(14, 2), pimpo N(8, 2), grati N(10, 2), ttip c(1), Mone c(1)Null, ;
+		dola N(6, 4), vigv N(5, 3), Codigo N(5), Detalle c(50), Usuario c(30), FUsua T, Mensaje c(120), ndni c(8),  Idauto N(8), rcom_icbper N(8, 2), rcom_mens c(120), codt N(2), dscto N(10, 2))
 	Select registro
 	Append From Dbf("facturas")
 	Select Icase(Form = 'E', 'Ef',   Form = 'C', 'Cr',   Form = 'D', 'Dp',  Form = 'H', 'Ch', 'OT') As Form, ;
@@ -1515,8 +1550,8 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Iif(Mone = 'D', Round(dscto * dola, 2), dscto) As dscto, ;
 		Detalle, Mone, dola, Codigo, ndni, Idauto, Usuario, FUsua, rcom_icbper As icbper, rcom_mens As Mensaje, codt From registro Into Cursor registro1 Order By Serie, fecr, Ndoc
 	Create Cursor registro(Form c(2) Null, fecr d Null, fech d Null, Tdoc c(2) Null, Serie c(4), Ndoc c(8), nruc c(11)Null, Razo c(120)Null, valorg N(14, 2), Exon N(12, 2), ;
-		  igvg N(10, 2), Importe N(14, 2), pimpo N(8, 2), grati N(10, 2), Detalle c(50), Usuario c(30), FUsua T, Mensaje c(120), dscto N(10, 2), ndni c(8),  dola N(5, 3), Mone c(1), Codigo N(5), fechn d, tref c(2), Refe c(12), Fevto d, Auto N(15),  ;
-		  T N(1), inafecta N(12, 2), icbper N(8, 2), codt N(2))
+		igvg N(10, 2), Importe N(14, 2), pimpo N(8, 2), grati N(10, 2), Detalle c(50), Usuario c(30), FUsua T, Mensaje c(120), dscto N(10, 2), ndni c(8),  dola N(5, 3), Mone c(1), Codigo N(5), fechn d, tref c(2), Refe c(12), Fevto d, Auto N(15),  ;
+		T N(1), inafecta N(12, 2), icbper N(8, 2), codt N(2))
 	x = 1
 	notas = 0
 	Select registro1
@@ -1537,9 +1572,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Endif
 		Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, valorg, igvg, Exon, Importe, pimpo, Detalle, Mone, dola, Codigo, Auto, ndni, T, tref, Refe, fechn, Usuario, FUsua, icbper, Mensaje, codt, grati, dscto);
 			Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-			  registro1.nruc, registro1.Razo, registro1.valorg, registro1.igvg, registro1.Exon, registro1.Importe, registro1.pimpo, registro1.Detalle, ;
-			  registro1.Mone, registro1.dola, registro1.Codigo, registro1.Idauto, registro1.ndni, Iif(Tdoc = '03', 1, 6), ntdoc, nndoc, nfech, registro1.Usuario, registro1.FUsua, ;
-			  registro1.icbper, registro1.Mensaje, registro1.codt, registro1.grati, registro1.dscto)
+			registro1.nruc, registro1.Razo, registro1.valorg, registro1.igvg, registro1.Exon, registro1.Importe, registro1.pimpo, registro1.Detalle, ;
+			registro1.Mone, registro1.dola, registro1.Codigo, registro1.Idauto, registro1.ndni, Iif(Tdoc = '03', 1, 6), ntdoc, nndoc, nfech, registro1.Usuario, registro1.FUsua, ;
+			registro1.icbper, registro1.Mensaje, registro1.codt, registro1.grati, registro1.dscto)
 		If notas = 1 Then
 			Y = 1
 			Select Xn
@@ -1547,7 +1582,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 				If Y > 1 Then
 					Insert Into registro(Form, fecr, fech, Tdoc, Serie, Ndoc, nruc, Razo, Auto, ndni, tref, Refe, fechn, dola, Mone);
 						Values(registro1.Form, registro1.fecr, registro1.fech, registro1.Tdoc, registro1.Serie, registro1.Ndoc, ;
-						  registro1.nruc, registro1.Razo, Xn.idn, registro1.ndni, Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.dola, registro1.Mone)
+						registro1.nruc, registro1.Razo, Xn.idn, registro1.ndni, Xn.Tdoc, Xn.Ndoc, Xn.fech, registro1.dola, registro1.Mone)
 					x = x + 1
 					totreg = totreg + 1
 				Endif
@@ -1572,19 +1607,19 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 1 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
        select a.ndoc,a.tdoc,a.fech,b.ncre_idnc as idn,ncre_idan FROM (select ncre_idnc,ncre_idau,ncre_idan,r.codt from fe_ncven as n
        INNER JOIN fe_rcom AS r ON r.idauto=n.`ncre_idan`
        where  r.fech BETWEEN '<<f1>>'  AND '<<f2>>'  AND r.acti='A' and ncre_acti='A' ) as b
        INNER JOIN fe_rcom as a on a.idauto=b.ncre_idau
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listardctosnotasdecreditoproductosyservicios(nid, Ccursor)
-	Text To lC Noshow Textmerge Pretext 7
+	TEXT To lC Noshow Textmerge Pretext 7
 	    select a.idart,a.descri,a.unid,k.cant,k.prec,
 		ROUND(k.cant*k.prec,2) as importe,k.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi as comi,k.alma,
 		r.fech,r.ndoc,r.tdoc,r.dolar as dola,r.vigv,r.rcom_exon,'K' as tcom,k.idkar,if(k.prec=0,kar_cost,0) as costoref,kar_cost as costo,k.codv
@@ -1600,23 +1635,23 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		k.detv_prec as costo,CAST(0 as decimal(2)) as codv from fe_rcom r
 		inner join fe_detallevta k on k.detv_idau=r.idauto
 		where k.detv_acti='A' and r.acti='A' and r.idauto=<<nid>>  order by idkar
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function AnularXsys()
-	Text To lC Noshow  Textmerge
+	TEXT To lC Noshow  Textmerge
 	 DELETE from fe_rven WHERE idalma=<<this.codt>> and MONTH(fech)=<<this.nmes>> and YEAR(fech)=<<this.naño>>
-	Endtext
+	ENDTEXT
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function buscarxidpsysr(niDAUTO, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	  SELECT   `a`.`kar_comi`  ,  `a`.`codv`   ,  `a`.`idauto`  ,  `c`.`codt`      AS `alma`,
 	  `a`.`kar_idco` as idcosto  ,  `a`.`idkar`,  `a`.`idart` ,  `a`.`cant`      AS `cant`,
 	  `a`.`prec`     ,  `c`.`valor`     AS `valor`,  `c`.`igv`       AS `igv`,  `c`.`impo`      AS `impo`,
@@ -1647,7 +1682,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	    LEFT JOIN (SELECT rcre_idau,MIN(c.fevto) AS fevto FROM fe_rcred AS r INNER JOIN fe_cred AS c ON c.cred_idrc=r.rcre_idrc
 	   WHERE rcre_acti='A' AND acti='A' AND rcre_idau=<<nidauto>> GROUP BY rcre_idau) AS p ON p.rcre_idau=c.idauto
 	WHERE `c`.`tipom` = 'V'       AND `c`.`acti` <> 'I' AND c.idauto=<<nidauto>>    AND `a`.`acti` <> 'I'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1684,9 +1719,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara25 = np25
 	goapp.npara26 = np26
 	goapp.npara27 = np27
-	Text To lp Noshow
+	TEXT To lp Noshow
     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1  Then
 		Return 0
@@ -1721,9 +1756,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara24 = np24
 	goapp.npara25 = np25
 	goapp.npara26 = np26
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, "") < 1  Then
 		Return 0
 	Else
@@ -1841,7 +1876,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function buscarvcentaxidpsysm(niDAUTO, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	  SELECT  c.idusua      AS idusua,  a.kar_comi    AS kar_comi,
 	  a.codv        AS codv,  a.idauto      AS idauto,  c.codt        AS alma,  a.kar_perc    AS kar_perc,
 	  a.kar_idco    AS idcosto,  a.idkar       AS idkar,  a.idart,  a.cant,
@@ -1866,7 +1901,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
       inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
       where rcre_acti='A' and acti='A' and rcre_idau=<<nidauto>> group by rcre_idau) as p on p.rcre_idau=a.idauto,fe_gene AS g
 	  WHERE c.acti <> 'I'    and c.idauto=<<nidauto>>  AND a.acti <> 'I'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1876,7 +1911,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT  `a`.`kar_cost`  AS `kar_cost`,  `c`.`idusua`    AS `idusua`,  `a`.`kar_comi`  AS `kar_comi`,  `a`.`codv`      AS `codv`,  `a`.`idauto`    AS `idauto`,
 	  `a`.`alma`      AS `alma`,  `a`.`kar_idco`  AS `idcosto`,  `a`.`idkar`     AS `idkar`,  `a`.`idart` ,  `a`.`cant`      AS `cant`,
 	  `a`.`prec`      AS `prec`,  `c`.`valor`     AS `valor`,  `c`.`igv`       AS `igv`,  `c`.`impo`      AS `impo`,  `c`.`fech`      AS `fech`,
@@ -1897,14 +1932,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	    JOIN `fe_usua` `q`    ON   `q`.`idusua` = `c`.`idusua`
 	    JOIN `fe_rvendedor` `z`   ON   `z`.`vend_idau` = `c`.`idauto`
 	WHERE   c.idauto=<<niDAUTO>> AND  `a`.`acti` <> 'I'  order by idkar
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function buscarventaxidxsysz(niDAUTO, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	  SELECT c.rcom_mens   AS rcom_mens,  c.idusua      AS idusua,  a.kar_comi    AS kar_comi,
 	  a.codv        AS codv,  a.idauto      AS idauto,  a.alma        AS alma,  a.kar_idco    AS idcosto,
 	  a.idkar       AS idkar,  a.idart, a.cant        AS cant,  a.prec        AS prec,
@@ -1928,7 +1963,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	  JOIN fe_usua q    ON q.idusua = c.idusua
 	  LEFT JOIN (SELECT fe_rvendedor.vend_idau AS vend_idau, fe_rvendedor.vend_idrv AS vend_idrv FROM fe_rvendedor WHERE fe_rvendedor.vend_acti = 'A') z   ON z.vend_idau = c.idauto
 	  WHERE c.acti <> 'I'  AND a.acti <> 'I' and c.idauto=<<nidauto>> order by idkar
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1942,10 +1977,10 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	If goapp.vtascondetraccion = 'S' Then
 		NAuto = IngresaResumenDctovtascondetraccion(This.Tdoc, Left(This.formaPago, 1), This.Serie + This.numero, This.Fecha, This.Fecha, ;
-			  This.Detalle, This.valor, This.igv, This.Monto, '', Left(This.Moneda, 1), This.ndolar, This.vigv, 'S', This.Codigo, "V", goapp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, This.detraccion, This.coddetraccion)
+			This.Detalle, This.valor, This.igv, This.Monto, '', Left(This.Moneda, 1), This.ndolar, This.vigv, 'S', This.Codigo, "V", goapp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, This.detraccion, This.coddetraccion)
 	Else
 		NAuto = IngresaDocumentoElectronico(This.Tdoc, Left(This.formaPago, 1), This.Serie + This.numero, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, "", ;
-			  Left(This.Moneda, 1), This.ndolar, This.vigv, 'S', This.Codigo, "V", goapp.nidusua, This.codt, This.cta1, This.cta2, This.cta3, This.Vendedor, 0, This.exonerado, 0)
+			Left(This.Moneda, 1), This.ndolar, This.vigv, 'S', This.Codigo, "V", goapp.nidusua, This.codt, This.cta1, This.cta2, This.cta3, This.Vendedor, 0, This.exonerado, 0)
 	Endif
 	If NAuto < 1 Then
 		This.DEshacerCambios()
@@ -2006,7 +2041,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 			Endif
 		Else
 			If ActualizaResumenDctoVtas(This.Tdoc, Left(This.formaPago, 1), cndoc, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, "", Left(This.Moneda, 1), ;
-					  This.ndolar, This.vigv, 'S', This.Codigo, 'V', goapp.nidusua, 0, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, 0, This.Idauto, This.Vendedor) = 0 Then
+					This.ndolar, This.vigv, 'S', This.Codigo, 'V', goapp.nidusua, 0, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, 0, This.Idauto, This.Vendedor) = 0 Then
 				This.DEshacerCambios()
 				Return 0
 			Endif
@@ -2049,7 +2084,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listardctonotascredtitoproductosserviciosUnidades(nid, Ccursor)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    SELECT a.idart,a.descri,a.unid,k.cant,k.prec,ROUND(k.cant*k.prec,2) AS importe,
 	    k.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi AS comi,k.alma,
 		r.fech,r.ndoc,r.tdoc,r.dolar AS dola,r.vigv,r.rcom_exon,'K' as tcom,k.idkar,IF(k.prec=0,kar_cost,0) AS costoref,
@@ -2065,7 +2100,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		FROM fe_rcom r
 		INNER JOIN fe_detallevta k ON k.detv_idau=r.idauto
 		WHERE k.detv_acti='A' AND r.acti='A' AND r.idauto=<<nid>> ORDER BY idkar
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -2073,9 +2108,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function consultardetalleoventasxml(pk, ncoda)
 	Obj = Createobject("custom")
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT detv_desc FROM fe_detallevta WHERE detv_idau=<<pk>> AND detv_ite2=<<ncoda>> and detv_acti='A' order BY detv_idvt
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, 'ddd') < 1 Then
 		Obj.AddProperty("mensaje", "")
 		Obj.AddProperty("valor", 0)
@@ -2099,7 +2134,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Function listarxlineavendedorxsys3(Ccursor)
 	dfi = Cfechas(This.fechai)
 	dff = Cfechas(This.fechaf)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT v.nomv AS vendedor,c.dcat AS linea,d.razo AS cliente,importe
 	FROM(
 	SELECT SUM(cant*k.prec) AS importe,a.idcat,rcom_vend,idcliente FROM
@@ -2110,7 +2145,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	INNER JOIN fe_vend AS v ON  v.idven=xx.rcom_vend
 	INNER JOIN fe_cat AS c ON c.idcat=xx.idcat
 	INNER JOIN fe_clie AS d ON d.idclie=xx.idcliente order by v.nomv
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -2119,9 +2154,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Function verificarsiesta()
 	cndoc = This.Serie + This.numero
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
      SELECT idauto  FROM fe_rcom WHERE ndoc='<<cndoc>>' AND tdoc='<<this.tdoc>>' AND acti<>'I' AND idauto<><<this.idauto>> AND idcliente>0 LIMIT 1;
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -2185,14 +2220,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	If goapp.vtascondetraccion = 'S' Then
 		NAuto = IngresaResumenDctovtascondetraccion(This.Tdoc, Left(This.formaPago, 1), This.Serie + This.numero, This.Fecha, This.Fecha, ;
-			  This.Detalle, This.valor, This.igv, This.Monto, cguia, Left(This.Moneda, 1), ;
-			  This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, This.detraccion, This.coddetraccion)
+			This.Detalle, This.valor, This.igv, This.Monto, cguia, Left(This.Moneda, 1), ;
+			This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.Vendedor, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, This.detraccion, This.coddetraccion)
 	Else
 		If This.Idanticipo > 0 Then
 			NAuto = This.registrarxserviciosconanticipo1()
 		Else
 			NAuto = IngresaDocumentoElectronico(This.Tdoc, Left(This.formaPago, 1), This.Serie + This.numero, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, "", ;
-				  Left(This.Moneda, 1), This.ndolar, This.vigv, 'S', This.Codigo, "V", goapp.nidusua, This.codt, This.cta1, This.cta2, This.cta3, This.Vendedor, 0, This.exonerado, 0)
+				Left(This.Moneda, 1), This.ndolar, This.vigv, 'S', This.Codigo, "V", goapp.nidusua, This.codt, This.cta1, This.cta2, This.cta3, This.Vendedor, 0, This.exonerado, 0)
 		Endif
 	Endif
 	If NAuto < 1 Then
@@ -2260,7 +2295,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 			Endif
 		Else
 			If ActualizaResumenDctoVtas(This.Tdoc, Left(This.formaPago, 1), cndoc, This.Fecha, This.Detalle, This.valor, This.igv, This.Monto, "", Left(This.Moneda, 1), ;
-					  This.ndolar, This.vigv, 'S', This.Codigo, 'V', goapp.nidusua, 0, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, 0, This.Idauto, This.Vendedor) = 0 Then
+					This.ndolar, This.vigv, 'S', This.Codigo, 'V', goapp.nidusua, 0, This.codt, This.cta1, This.cta2, This.cta3, This.exonerado, 0, This.Idauto, This.Vendedor) = 0 Then
 				This.DEshacerCambios()
 				Return 0
 			Endif
@@ -2558,7 +2593,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function resumenvtas(Ccursor)
 	If This.fechaf - This.fechai > 360 Then
-		This.Cmensaje = 'Hasta 360 Días'
+		This.Cmensaje = 'Hasta 366 Días'
 		Return 0
 	Endif
 	If !Pemstatus(goapp, 'proyecto', 5) Then
@@ -2680,14 +2715,14 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	If This.idsesion > 1 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	  select k.idart,a.descri,a.unid,k.cant,k.prec,
 	  r.impo as importe,r.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi as comi,k.alma,
 	  r.fech,r.ndoc,r.tdoc,r.dolar as dola,r.vigv,ROUND(k.cant*k.prec,2) as stotal,rcom_exon FROM fe_rcom as r
 	  inner join fe_kar as k on k.idauto=r.idauto
 	  inner join fe_art as a on a.idart=k.idart
 	  WHERE r.idauto=<<this.Idauto>> and k.acti='A'
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -2715,9 +2750,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Sw = 1
 	Select  tmpp
 	Scan All
-		Text To lC Noshow  Textmerge
+		TEXT To lC Noshow  Textmerge
 	     UPDATE fe_kar SET prec=<<tmpp.prec>>,codv=<<this.vendedor>> where idkar=<<tmpp.nreg>>
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(lC) < 1 Then
 			Sw = 0
 			Exit
@@ -2817,7 +2852,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	cform = Left(This.formaPago, 1)
 	ndolar = fe_gene.dola
 	If This.ActualizaresumentDctoCanjeado(This.Tdoc, cform, This.Serie + This.numero, This.Fecha, This.Fecha, This.Detalle, ;
-			  This.valor, This.igv, This.Monto, This.NroGuia, This.Moneda, ndolar, fe_gene.igv, 'k', This.Codigo, 'V', goapp.nidusua, 1, goapp.tienda, nidcta1, nidcta2, nidcta3, 0, This.idautoguia, This.Idauto) < 1 Then
+			This.valor, This.igv, This.Monto, This.NroGuia, This.Moneda, ndolar, fe_gene.igv, 'k', This.Codigo, 'V', goapp.nidusua, 1, goapp.tienda, nidcta1, nidcta2, nidcta3, 0, This.idautoguia, This.Idauto) < 1 Then
 		Return 0
 	Endif
 	If ocaja.IngresaDatosLCajaEFectivo11() < 1 Then
@@ -2880,9 +2915,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara23 = np23
 	goapp.npara24 = np24
 	goapp.npara25 = np25
-	Text To lparms Noshow
+	TEXT To lparms Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lsql, lparms, "") < 1 Then
 		Return 0
 	Endif
@@ -2963,10 +2998,10 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function verificarFechaemision(Cserie, dFecha)
 	Ccursor = 'c' + Sys(2015)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT ndoc,fech AS ultimafecha FROM fe_rcom
     WHERE LEFT(ndoc,4)='<<cserie>>' AND acti='A' AND idcliente>0 ORDER BY fech DESC LIMIT 1
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -3020,10 +3055,10 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function ActualizarOventas()
 	lC = "ProActualizaCabeceracVTas1"
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
 	('<<This.Tdoc>>', '<<Left(This.formaPago, 1)>>', '<<This.Serie + This.numero>>','<<cfechas(This.Fecha)>>', '<<This.Detalle>>', <<This.valor>>, <<This.igv>>, <<This.Monto>>, "", '<<Left(This.Moneda, 1)>>',
      <<This.ndolar>>, <<This.vigv>>, 'S', <<This.Codigo>>, 'V', <<goApp.nidusua>>, 0, <<This.codt>>, <<This.cta1>>, <<This.cta2>>, <<This.cta3>>, <<This.exonerado>>, 0, <<This.Idauto>>, <<This.Vendedor>>)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp) < 1 Then
 		Return 0
 	Endif
@@ -3040,7 +3075,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	dfi = Cfechas(f1)
 	dff = Cfechas(f2)
 	nmargen = (100 - nm) / 100
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 		SELECT a.idart,descri,unid,cant as cantidad,importe,
 		ROUND((importe/cant)*<<nmargen>>,2) as precio,
 	    ROUND((importe/cant)*cant*<<nmargen>>,2) AS importe1,
@@ -3052,12 +3087,12 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form='E' AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>' and rcom_idtr=0 GROUP BY idart) AS s
 		INNER JOIN fe_art AS a ON a.idart=s.idart
 		INNER JOIN fe_fletes AS  f ON f.idflete=a.idflete,fe_gene AS g where importe>0
-	Endtext
-	Text To lcx Noshow Textmerge
+	ENDTEXT
+	TEXT To lcx Noshow Textmerge
 		SELECT r.idauto FROM fe_rcom AS r
 		INNER JOIN fe_kar AS k ON k.idauto=r.idauto
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND form='E' AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>'  and rcom_idtr=0  GROUP BY idauto
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -3071,7 +3106,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.idsesion
 	Endif
 	Create Cursor vtas2(Descri c(80), Unid c(4), cant N(10, 2), Prec N(13, 5), coda N(8), idco N(13, 5), Auto N(5), ;
-		  Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), valor N(12, 2), igv N(12, 2), Total N(12, 2))
+		Ndoc c(12), Nitem N(3), comi N(7, 4), cletras c(150), Cantidad N(10, 2), IDautoP N(10), costo N(12, 6), valor N(12, 2), igv N(12, 2), Total N(12, 2))
 	Select (Ccursor)
 	Go Top
 	x = 1
@@ -3213,9 +3248,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function registracanjes()
 	lC = 'funingrecanjesvtas'
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
      ('<<cfechas(this.Fecha)>>',<<this.importe>>,<<this.nvtas>>,'<<cfechas(this.fechai)>>','<<cfechas(this.fechaf)>>',<<goapp.nidusua>>)
-	Endtext
+	ENDTEXT
 	nidr = This.EJECUTARf(lC, lp, 'cvtx')
 	If nidr < 0 Then
 		Return 0
@@ -3234,10 +3269,10 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	cdeta = 'Canje  ' + Dtoc(This.fechai) + '-' + ' Hasta ' + Dtoc(This.fechaf)
 	Cdetalle = ''
 	lsql = 'FunIngresaCabeceravtascanjeado'
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
 	('<<This.Tdoc>>', 'E', '<<xvtas.Ndoc>>', '<<cfechas(this.Fecha)>>', '<<cfechas(This.Fecha)>>', '<<cdeta>>', <<Nv>>, <<nigv>>, <<Nt>>, '', 'S', <<fe_gene.dola>>,
 	 <<fe_gene.igv>>, 'k', <<This.Codigo>>, 'V', <<goApp.nidusua>>, 1, <<goApp.Tienda>>, <<fe_gene.idctav>>, <<fe_gene.idctai>>, <<fe_gene.idctat>>, '', <<nidrv>>)
-	Endtext
+	ENDTEXT
 	NAuto = This.EJECUTARf(lsql, lp, 'cc')
 	If NAuto < 1 Then
 		Return 0
@@ -3332,9 +3367,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	vd = 1
 	Select ldx
 	Scan All
-		Text To ulcx Noshow  Textmerge
+		TEXT To ulcx Noshow  Textmerge
            UPDATE fe_rcom SET rcom_idtr=<<nidrv>> where idauto=<<ldx.idauto>>
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(ulcx) < 1 Then
 			vd = 0
 			Exit
@@ -3351,13 +3386,13 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	dfi = Cfechas(This.fechai)
 	dff = Cfechas(This.fechaf)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT canj_fech,canj_vtas,canj_impo,canj_feci,canj_fecf,u.nomb as usuario,canj_fope,r.ndoc,r.impo,r.idauto,canj_idcan,tdoc
 	FROM fe_canjesvtas AS c
 	inner join fe_usua as u  on u.idusua=c.canj_idus
 	INNER JOIN fe_rcom AS r ON r.rcom_idtr=c.canj_idcan
 	WHERE canj_fech BETWEEN '<<dfi>>' AND '<<dff>>' AND canj_acti='A'  AND r.acti='A'  ORDER BY canj_fech
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -3575,9 +3610,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	lC			 = "FUnVerificaBloqueo"
 	goapp.npara1 = This.Fecha
 	Ccursor		 = 'c_' + Sys(2015)
-	Text To lp Noshow
+	TEXT To lp Noshow
 	     (?goapp.npara1)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lC, lp, Ccursor)
 	If m.nid < 1 Then
 		Return 0
@@ -3708,9 +3743,9 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara22 = 0
 	goapp.npara23 = 0
 	goapp.npara24 = This.Idauto
-	Text To lparms Noshow
+	TEXT To lparms Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lsql, lparms, "") < 1 Then
 		Return 0
 	Endif
@@ -3780,7 +3815,7 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	dfi = Cfechas(f1)
 	dff = Cfechas(f2)
 	nmargen = (100 - nm) / 100
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 		SELECT a.idart,descri,unid,cant as cantidad,importe,
 		ROUND((importe/cant)*<<nmargen>>,2) as precio,
 	    ROUND((importe/cant)*cant*<<nmargen>>,2) AS importe1,
@@ -3792,12 +3827,12 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A' AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>' and rcom_idtr=0 GROUP BY idart) AS s
 		INNER JOIN fe_art AS a ON a.idart=s.idart
 		INNER JOIN fe_fletes AS  f ON f.idflete=a.idflete,fe_gene AS g where importe>0
-	Endtext
-	Text To lcx Noshow Textmerge
+	ENDTEXT
+	TEXT To lcx Noshow Textmerge
 		SELECT r.idauto FROM fe_rcom AS r
 		INNER JOIN fe_kar AS k ON k.idauto=r.idauto
 		WHERE tdoc='20' AND k.acti='A' AND r.acti='A'  AND r.fech BETWEEN '<<dfi>>' AND '<<dff>>'  and rcom_idtr=0  GROUP BY idauto
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -3835,11 +3870,11 @@ Define Class Ventas As OData Of 'd:\capass\database\data.prg'
 	goapp.npara23 = This.exonerado
 	goapp.npara24 = This.detraccion
 	goapp.npara25 = This.coddetraccion
-	Text To lp Noshow
+	TEXT To lp Noshow
 	(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	Endtext
+	ENDTEXT
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
 		Return 0
@@ -3877,11 +3912,11 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	goapp.npara24 = This.detraccion
 	goapp.npara25 =  This.Idauto
 	goapp.npara26 = This.coddetraccion
-	Text To lp Noshow
+	TEXT To lp Noshow
 	(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -4006,7 +4041,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    SELECT a.idart,a.descri,kar_unid as unid,k.cant,k.prec,rOUND(k.cant*k.prec,2) as importe,
 	    k.idauto,r.mone,r.valor,r.igv,r.impo,kar_comi as comi,k.alma,
 		r.fech,r.ndoc,r.tdoc,r.dolar as dola,r.vigv,r.rcom_exon,tcom,k.idkar,if(k.prec=0,kar_cost,0) as costoref,
@@ -4014,7 +4049,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 		inner join fe_kar k on k.idauto=r.idauto
 		inner join fe_art a on a.idart=k.idart
 		where k.acti='A' and r.acti='A' and r.idauto=<<nid>>  order by idkar
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -4130,11 +4165,11 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	goapp.npara25 = This.detraccion
 	goapp.npara26 = This.Idauto
 	goapp.npara27 = This.coddetraccion
-	Text To lp Noshow
+	TEXT To lp Noshow
 	(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 	?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.Npara27)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
@@ -4144,7 +4179,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	select nruc as RUC,razo as Cliente,TRIM(dire) as Direccion,fono,celu as Celular,
 	sum(case mes when 1 then impo else 0 end) as 'Enero',
 	sum(case mes when 1 then rta else 0 end) as 'Enero_g',
@@ -4179,7 +4214,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	INNER JOIN fe_kar AS k ON k.idauto=r.`idauto`
 	WHERE r.acti='A' AND impo<>0 AND YEAR(fech)=<<this.Naño>> AND k.acti='A' AND idcliente>0 GROUP BY idcliente,fech) as x
 	inner join fe_clie as c on c.idclie=x.idcliente group by idcliente order by razo
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -4189,7 +4224,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT m.dmar as Marca,
 	sum(case mes when 1 then impo else 0 end) as 'Enero',
 	sum(case mes when 1 then rta else 0 end) as 'Enero_g',
@@ -4228,7 +4263,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
     where k.acti='A' and r.acti='A'  and year(fech)=<<this.naño>> and idcliente>0 group by c.idmar,r.fech
     ) as x
 	inner join fe_mar m on m.idmar=x.idmar GROUP  BY x.idmar order by dmar
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -4238,7 +4273,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	If This.idsesion > 0 Then
 		Set DataSession To This.idsesion
 	Endif
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	SELECT m.dcat as linea,
 	sum(case mes when 1 then impo else 0 end) as 'Enero',
 	sum(case mes when 1 then rta else 0 end) as 'Enero_g',
@@ -4277,7 +4312,7 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
     where k.acti='A' and r.acti='A'  and year(fech)=<<this.naño>> and idcliente>0 group by c.idcat,r.fech
     ) as x
 	inner join fe_cat m on m.idcat=x.idcat GROUP  BY x.idcat order by dcat
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -4325,11 +4360,11 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	Return 1
 	Endfunc
 	Function AplicaTcxsys(nm, Na)
-	Text To lC Noshow
+	TEXT To lC Noshow
 		select b.idrven as clave,b.idrven as idauto,x.venta as tc from fe_rven as b
 	    inner join fe_mon as x on x.fech=b.fech
 	    where b.acti<>'I' and month(b.fech)=?nm and year(b.fech)=?na
-	Endtext
+	ENDTEXT
 	Ccursor = 'c_' + Sys(2015)
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -4342,9 +4377,9 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	Scan All
 		ntc = tc
 		nidrv = clave
-		Text To lC Noshow Text
+		TEXT To lC Noshow Text
 	    UPDATE fe_rven SET dolar=?tc WHERE idrven=?nidrv
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(lC) < 1 Then
 			Sw = 0
 			Exit
@@ -4401,11 +4436,11 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	Endfunc
 	Function AplicaTC(nmes, Na)
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow
+	TEXT To lC Noshow
 		select a.idauto as clave,a.idauto,ROUND(x.venta,3) as tc FROM  fe_rcom as a
 		inner join fe_mon as x on x.fech=a.fech
 	    where a.acti='A' and month(a.fech)=?nmes and year(a.fech)=?na and a.idcliente>0
-	Endtext
+	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -4415,13 +4450,13 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	If  This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	SELECT (Ccursor)
+	Select (Ccursor)
 	Scan All
 		niDAUTO = Idauto
 		ntc = tc
-		Text To lC Noshow Textmerge
+		TEXT To lC Noshow Textmerge
 		   UPDATE fe_rcom SET dolar=<<tc>> WHERE idauto=<<nidauto>>
-		Endtext
+		ENDTEXT
 		If This.Ejecutarsql(lC) < 1 Then
 			Sw = 0
 			Exit
@@ -4437,7 +4472,83 @@ This.ndolar, This.vigv, 'S', This.Codigo, This.Idanticipo, goapp.nidusua, This.V
 	This.Cmensaje = "Se Aplico Tipo de Cambio Correctamente a las Ventas"
 	Return 1
 	Endfunc
+	Function IngresaResumenDcto()
+	lC = 'FunIngresaCabeceraCV'
+	cur = "Xn"
+	goapp.npara1 = This.Tdoc
+	goapp.npara2 = This.formaPago
+	goapp.npara3 = This.Serie+This.numero
+	goapp.npara4 = This.Fecha
+	goapp.npara5 = This.Fecha
+	goapp.npara6 = This.Detalle
+	goapp.npara7 = This.valor
+	goapp.npara8 = This.igv
+	goapp.npara9 = This.Importe
+	goapp.npara10 = This.NroGuia
+	goapp.npara11 = This.Moneda
+	goapp.npara12 = This.ndolar
+	goapp.npara13 = This.vigv
+	goapp.npara14 = This.Ctipovta
+	goapp.npara15 = This.Codigo
+	goapp.npara16 = 'V'
+	goapp.npara17 = This.Usuario
+	goapp.npara18 = 1
+	goapp.npara19 = This.codt
+	goapp.npara20 = This.cta1
+	goapp.npara21 = This.cta2
+	goapp.npara22 = This.cta3
+	goapp.npara23 = 0
+	goapp.npara24 = 0
+	TEXT To lparametros Noshow
+   (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
+	ENDTEXT
+	nid = This.EJECUTARf(lC, lparametros, cur)
+	If m.nid < 1 Then
+		Return 0
+	Endif
+	Return m.nid
+	Endfunc
+	Function PermiteAnularVentaspsysn(NAuto, dFecha, cTdoc)
+	ocaja=Newobject("cajae","d:\capass\modelos\cajae.prg")
+	oguia=Newobject("guiaremision","d:\capass\modelos\guiasremision.prg")
+	If _Screen.octasxcobrar.VerificaSitienePagos(NAuto)<1 Then
+		This.Cmensaje=_Screen.octasxcobrar.Cmensaje
+		Return 0
+	Endif
+	If ocaja.PermiteIngresoACaja(dFecha) <1 Then
+		This.Cmensaje=ocaja.Cmensaje
+		Return 0
+	Endif
+	If cTdoc = '07' Then
+		Return 1
+	Endif
+	If oguia.TieneDespachos(NAuto) <1 Then
+		This.Cmensaje=oguia.Cmensaje
+		Return 0
+	Endif
+	If This.verificasitienenotadecredto(NAuto)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function verificasitienenotadecredto(niDAUTO)
+	Ccursor = 'c_' + Sys(2015)
+	TEXT To lC Noshow Textmerge Pretext 7
+    select  ncre_idau as idauto FROM fe_ncven WHERE ncre_idau=<<nidauto>> AND ncre_acti='A' limit 1
+	ENDTEXT
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If Idauto > 0 Then
+		This.Cmensaje = 'Documento Ya Tiene Nota de Crédito No se Puede Anular '
+		Return  0
+	Endif
+	Return  1
+	Endfunc
 Enddefine
+
+
 
 
 

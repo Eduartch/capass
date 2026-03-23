@@ -445,10 +445,10 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	\Select '00' As Tdoc,b.lcaj_ndoc As Ndoc,b.lcaj_fech,b.lcaj_fech As fecr,a.ncta As ncta,
+	\Select '00' As Tdoc,b.lcaj_ndoc As Ndoc,b.lcaj_fech as fech,b.lcaj_fech As fecr,a.ncta As ncta,
 	\If(lcaj_mone='S',lcaj_deud,Round(lcaj_deud*lcaj_dola,2)) As debe,
 	\If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)) As haber,
-	\a.idcta As idcta,a.nomb As nomb,b.lcaj_idau As idauto,Cast(Day(lcaj_fech) As unsigned) As dia,
+	\a.idcta As idcta,a.nomb As nombre,b.lcaj_idau As idauto,Cast(Day(lcaj_fech) As unsigned) As dia,
 	\b.lcaj_idct As idcta,lcaj_tran,If(lcaj_deud<>0,'I','S') As tipomvto,lcaj_deta As Razo,If(lcaj_deud<>0,'H','D')  As Tipo,
 	\If(lcaj_tran='T',If(lcaj_deud<>0,If(lcaj_mone='S',lcaj_deud,Round(lcaj_deud*lcaj_dola,2)),Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As itd,
 	\If(lcaj_tran='T',If(lcaj_acre<>0,If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)),Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As ith,'' As tienda
@@ -479,13 +479,13 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-	  \Select Tdoc,dcto ,cban_fech as fech,ncta,debe,haber,idcta,nombre,dia,
+	  \Select Tdoc,ndoc ,cban_fech as fech,ncta,debe,haber,idcta,nombre,dia,
 	  \If(debe>0,If(Left(ncta,4)='10.4','T','N'),If(Left(ncta,4)='10.1','T','N')) As cban_tran,
 	  \cban_ttra,
 	  \If(debe>0,If(Left(ncta,4)='10.4',debe,Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As itd,
-	  \If(haber>0,If(Left(ncta,4)='10.1',haber,Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As ith,cban_idco,Razo,If(debe>0,'H','D') As Tipo,'' As tienda
+	  \If(haber>0,If(Left(ncta,4)='10.1',haber,Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As ith,cban_idco,Razo,If(debe>0,'H','D') As Tipo,'' As tienda,fecr
 	  \From(
-	  \Select '00' As Tdoc,b.cban_ndoc As dcto,b.cban_fech,b.cban_fech As fecr,a.ncta As ncta,
+	  \Select '00' As Tdoc,b.cban_ndoc As ndoc,b.cban_fech,b.cban_fech As fecr,a.ncta As ncta,
 	  \If(ctas_mone='S',cban_debe,Round(cban_debe*cban_dola,2)) As debe,
 	  \If(ctas_mone='S',cban_haber,Round(cban_haber*cban_dola,2)) As haber,
 	  \a.idcta,a.nomb As nombre,Day(cban_fech) As dia,
@@ -698,7 +698,8 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	INNER Join fe_plan a On a.idcta = b.cban_idct
 	\	INNER Join fe_ctasb As x On x.ctas_idct=b.cban_idba
 	\	INNER Join fe_plan As T On T.idcta=x.ctas_ncta
-	\	Left Join (Select deud_idcb,deud_idrd,acta,iddeu,rdeu_mone As Mone From fe_deu q INNER Join fe_rdeu As F On F.rdeu_idrd=q.deud_idrd Where Acti='A') As d On deud_idcb=b.cban_idco
+	\	Left Join (Select deud_idcb,deud_idrd,acta,iddeu,rdeu_mone As Mone From fe_deu q 
+	\   INNER Join fe_rdeu As F On F.rdeu_idrd=q.deud_idrd Where Acti='A') As d On deud_idcb=b.cban_idco
 	\	Left Join fe_rdeu As q On q.rdeu_idrd=d.deud_idrd
 	\	Left Join (Select cred_idcb,cred_idrc,idcred,acta,Mone From fe_cred Where Acti='A') As e On e.cred_idcb=b.cban_idco Left Join fe_rcred As w On w.rcre_idrc=e.cred_idrc
 	\	Where  b.cban_acti = 'A' And Month(b.cban_fech)=<<This.nmes>> And Year(b.cban_fech)=<<This.Na>>
@@ -1027,8 +1028,8 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 *!*		    wait WINDOW m.np1
 *!*		      wait WINDOW ldia_idld
 		This.Cmensaje='Ya Hay al menos Un Registro de  En este Período'
-		*'+Icase(m.np1='COM','Compras','VEN','Ventas','CAJ','Caja','BAN','Bancos')+
-*!*			wait WINDOW this.cmensaje 
+*'+Icase(m.np1='COM','Compras','VEN','Ventas','CAJ','Caja','BAN','Bancos')+
+*!*			wait WINDOW this.cmensaje
 		Return 0
 	Endif
 	Return 1

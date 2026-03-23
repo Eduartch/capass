@@ -7335,7 +7335,7 @@ Endif
 idconecta = Sqlstringconnect(lcC1) && ESTABLECER LA CONEXION
 If idconecta < 1 Then
 	= Aerror(laError)
-	Messagebox(laError[2], 16, MSGTITULO)
+	aviso(laError[2])
 	Return - 1
 Else
 	= SQLSetprop(idconecta, 'PacketSize', 5000)
@@ -10229,6 +10229,7 @@ Endfunc
 *****************************************
 Function VERIFICACONEXION()
 ncon = 0
+
 If SQLExec(goApp.bdConn, "SET @ZXC:=00") < 1 Then
 	ncon = AbreConexion()
 	If ncon > 0 Then

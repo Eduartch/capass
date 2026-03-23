@@ -14,6 +14,7 @@ Define Class whatsapp As  Custom
     {
     "number": "<<this.cfono>>",
     "media": "<<contpdf>>",
+    "caption":"<<this.cmensaje>>",
     "mediatype": "<<this.mediatype>>",
     "fileName":"<<this.cfilename>>"
     }

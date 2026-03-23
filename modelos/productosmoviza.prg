@@ -1,12 +1,12 @@
-Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
-	Function MuestraTodos(np1,np2,Ccursor)
+Define Class productosmoviza As producto  Of 'd:\capass\modelos\productos.prg'
+	Function MuestraTodos(np1, np2, Ccursor)
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
 	Endif
 	lC = 'ProMuestraProductos'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
-    Text To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2)
 	Endtext
 	If This.EJECUTARP(lC, lp, Ccursor) = 0 Then
@@ -199,7 +199,118 @@ Define Class productosmoviza As Producto  Of 'd:\capass\modelos\productos.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function Crearpsysm()
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "productos"
+	rpta = oser.Inicializar(This, 'productos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
+*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17, np18, np19, np20, np21, np22, np23, np24, np25, np26, np27
+	lC = 'FUNCREAPRODUCTOS11'
+	cur = "Xn"
+	goApp.npara1 = This.cdesc
+	goApp.npara2 = This.cUnid
+	goApp.npara3 = This.nprec
+	goApp.npara4 = This.ncosto
+	goApp.npara5 = This.np1
+	goApp.npara6 = This.np2
+	goApp.npara7 = This.np3
+	goApp.npara8 = This.npeso
+	goApp.npara9 = This.ccat
+	goApp.npara10 = This.cmar
+	goApp.npara11 = This.ctipro
+	goApp.npara12 = This.nflete
+	goApp.npara13 = This.cm
+	goApp.npara14 = This.cidpc
+	goApp.npara15 = This.ncome
+	goApp.npara16 = This.ntigv
+	goApp.npara17 = This.nutil1
+	goApp.npara18 = This.nutil2
+	goApp.npara19 = This.nutil3
+	goApp.npara20 = This.nidusua
+	goApp.npara21 = This.nsmax
+	goApp.npara22 = This.nsmin
+	goApp.npara23 = This.ccodigo1
+	goApp.npara24 = This.ndolar
+	goApp.npara25 = This.ntigv
+	goApp.npara26 = This.nper
+	goApp.npara27 = This.ndetraccion
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
+      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
+	Endtext
+	nid = This.EJECUTARf(lC, lp, cur)
+	If m.nid < 1 Then
+		Return 0
+	Endif
+	Return m.nid
+	Endfunc
+	Function Editarpsysm()
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "productos"
+	rpta = oser.Inicializar(This, 'productos')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	ENDIF
+	oser = Null
+*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17, np18, np19, np20, np21, np22, np23, np24, np25, np26, np27
+	Local cur As String
+	lC = 'ProActualizaProductos11'
+	cur = ""
+	goApp.npara1 = This.cdesc
+	goApp.npara2 = This.cUnid
+	goApp.npara3 = This.ncosto
+	goApp.npara4 = This.np1
+	goApp.npara5 = This.np2
+	goApp.npara6 = This.np3
+	goApp.npara7 = This.npeso
+	goApp.npara8 = This.ccat
+	goApp.npara9 = This.cmar
+	goApp.npara10 = This.ctipro
+	goApp.npara11 = This.nflete
+	goApp.npara12 = This.cm
+	goApp.npara13 = This.nprec
+	goApp.npara14 = This.nidgrupo
+	goApp.npara15 = This.nutil1
+	goApp.npara16 = This.nutil2
+	goApp.npara17 = This.nutil3
+	goApp.npara18 = This.ncome
+	goApp.npara19 = This.ncomc
+	goApp.npara20 = This.nidusua
+	goApp.npara21 = This.nidart
+	goApp.npara22 = This.nsmin
+	goApp.npara23 = This.nsmax
+	goApp.npara24 = This.nidcosto
+	goApp.npara25 = This.ndolar
+	goApp.npara26 = This.cestado
+	goApp.npara27 = This.ntigv
+	goApp.npara28 = This.nper
+	goApp.npara29 = This.ndetraccion
+	Text To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
+      ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29)
+	Endtext
+	If This.EJECUTARP(lC, lp, cur) < 1  Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
 
 
 

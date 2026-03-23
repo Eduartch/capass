@@ -171,21 +171,6 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
 		ENDTEXT
 	Endif
-*!*		cnombre=Chrtran(Chrtran(This.nombre,"'",""),'"',"")
-*!*		cdireccion=Chrtran(Chrtran(This.Direccion,"'",""),'"',"")
-*!*		Set Textmerge On
-*!*		Set Textmerge To Memvar lp Noshow Textmerge
-*!*			\(<<This.Codigo>>,'<<This.nruc>>','<<cnombre>>','<<cDireccion>>',
-*!*			\'<<This.ciudad>>','<<This.fono>>','<<This.fax>>','<<This.ndni>>','<<This.Tipo>>',
-*!*			\'<<This.correo>>',<<This.Vendedor>>,<<This.Usuario>>,'<<This.Celular>>',
-*!*			\'<<This.Refe>>','<<This.linea>>','<<This.Rpm>>','<<This.zona>>'
-*!*		If goApp.clientesconsegmento = 'S' Then
-*!*				\,<<This.idsegmento>>)
-*!*		Else
-*!*				\)
-*!*		Endif
-*!*		Set Textmerge Off
-*!*		Set Textmerge To
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -244,21 +229,23 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	If Len(Alltrim(Cruc)) <> 11 Or  !ValidaRuc(Cruc) Then
 		This.Cmensaje = 'RUC NO Válido'
 		Return 0
-	Endif
+	ENDIF
+	ccursor='c_'+SYS(2015)
 	Set Textmerge On
 	Set Textmerge To Memvar lC  Noshow
 	\Select nruc From fe_clie Where nruc='<<cruc>>' And clie_acti<>'I'
 	If  m.nidclie>0 then
-	 \ And idcliE<><<nidclie>>
+	 \ And idcliE<><<m.nidclie>>
 	ENDIF
 	\ limit 1
 	Set Textmerge Off
 	Set Textmerge To
-	If This.EJECutaconsulta(lC, "ya") < 1
+	If This.EJECutaconsulta(lC, ccursor) < 1
 		Return 0
-	Endif
-	If Ya.nruc = Cruc
-		This.Cmensaje = "Nº de Ruc Ya Registrado"
+	ENDIF
+	SELECT (ccursor)
+	If nruc = Cruc
+		This.Cmensaje = "Ruc  Ya Registrado"
 		This.Encontrado = 'S'
 		Return 0
 	Endif
@@ -284,7 +271,7 @@ Define Class Cliente As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Select (Ccursor)
 	If Len(Alltrim(Razo)) > 0
-		This.Cmensaje = "Nombre Ya Registrado"
+		This.Cmensaje = "Nombre de Cliente Ya Registrado"
 		This.Encontrado = 'S'
 		Return 0
 	Endif

@@ -15,8 +15,9 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	ntfactura		 = 0
 	nformaplicar	 = 0
 	Cruc			 = ""
+	Nagrupada = 0
 	ntotalnc		 = 0
-	nidpagos=0
+	nidpagos = 0
 	cTdoc = ""
 	cformapago = ""
 	cmotivo = ""
@@ -25,10 +26,15 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	nTotal = 0
 	ndolar = fe_gene.dola
 	ncodigocliente = 0
-	nidauto=0
+	nidauto = 0
 	nidven = 0
 	Cmoneda = ""
 	nidautoref = 0
+	nidserie = 0
+	montonotacredito13 = 0
+	otraserie = ""
+	nsgte=0
+	nidserie=0
 	Function VAlidar
 	If This.nformaplicar = 0 Then
 		Select Sum(devo) As tdevo From tmpn Into Cursor tdevol
@@ -49,7 +55,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Endif
 	If This.nidautoref > 0
 		If This.verificancventas(This.nidautoref) < 1 Then
-			This.Cmensaje = 'Documento Ya Referenciado con Nota de Credito'
+			This.Cmensaje = 'Documento Ya Tiene Nota de Credito'
 			Return 0
 		Endif
 	Endif
@@ -76,7 +82,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Case !ValidaRuc(This.Cruc)  And This.ctdocref = '01'
 		This.Cmensaje = "RUC no Válido"
 		Return 0
-	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.Cdni)) <> 8 Or Val(This.Cdni)=0) And This.ctdocref = '03'
+	Case (Len(Alltrim(This.cnombrecliente)) < 5 Or Len(Alltrim(This.Cdni)) <> 8 Or Val(This.Cdni) = 0) And This.ctdocref = '03'
 		This.Cmensaje = "Es Necesario Ingresar el Nombre Completo de Cliente, DNI Válidos"
 		Return 0
 	Case  PermiteIngresox(This.dFecha) = 0
@@ -110,24 +116,24 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Local Obj As SerieProducto
 	Obj = Createobject("serieproducto")
 	Create Cursor tmpv(Coda N(10), Desc c(100), Unid c(4), cant N(12, 2), Prec N(12, 7), Ndoc c(12), cletras c(180), ;
-		Nitem N(5), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), Tdoc c(2), ;
-		Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', fech1 d, Tdoc1 c(2), dcto c(12), Referencia c(60), Archivo c(120))
+		  Nitem N(5), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), Tdoc c(2), ;
+		  Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', fech1 d, Tdoc1 c(2), dcto c(12), Referencia c(60), Archivo c(120))
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
 	If fe_gene.gene_exon = 'N' Then
 		NAuto = IngresaDocumentoElectronico(This.cTdoc, This.cformapago, This.Cserie + This.cnumero, This.dFecha, This.cmotivo, This.nvalor, This.nigv, This.nTotal, "", This.Cmoneda, ;
-			This.ndolar, fe_gene.igv, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, 0, 0)
+			  This.ndolar, fe_gene.igv, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, 0, 0)
 	Else
 		NAuto = IngresaDocumentoElectronico(This.cTdoc, This.cformapago, This.Cserie + This.cnumero, This.Cserie + This.cnumero, This.cmotivo, 0, 0, This.nTotal, "", This.Cmoneda, ;
-			This.ndolar, 1, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, This.nvalor, 0)
+			  This.ndolar, 1, 'k', This.ncodigocliente, 'V', goApp.nidusua, goApp.Tienda, fe_gene.idctav, fe_gene.idctai, fe_gene.idctat, This.nidven, 0, This.nvalor, 0)
 	Endif
 	If NAuto < 1
 		This.DEshacerCambios()
 		Return 0
 	Endif
 	If IngresaDatosLCajaEFectivo12(This.dFecha, "", This.cnombrecliente, fe_gene.idctat, Nt, 0, 'S', fe_gene.dola, goApp.nidusua, This.ncodigocliente, NAuto, This.cformapago, This.Cserie + This.cnumero, ;
-			This.ctdo, goApp.Tienda) = 0 Then
+			  This.ctdo, goApp.Tienda) = 0 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -258,17 +264,17 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Endif
 	Return 1
 	Endfunc
-	Function verificancventas(niDAUTO)
+	Function verificancventas(nidauto)
 	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge Pretext 7
+	Text To lC Noshow Textmerge Pretext 7
     select  ncre_idau as idauto FROM fe_ncven WHERE ncre_idau=<<nidauto>> AND ncre_acti='A' limit 1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Select (Ccursor)
 	If Idauto > 0 Then
-		This.Cmensaje='Documento Ya Tiene Nota de Crédito '
+		This.Cmensaje = 'Documento Ya Tiene Nota de Crédito '
 		Return  0
 	Endif
 	Return  1
@@ -277,20 +283,288 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Local lC, lp
 	lC			 = 'FUNINGRESANOTASCREDITOventas1'
 	cur			 = "xi"
-	goApp.npara1 = this.nidauto
-	goApp.npara2 = this.nidautoref
-	goApp.npara3 = this.nidpagos
-	goApp.npara4 = this.ntotalnc
-	TEXT To lp Noshow
+	goApp.npara1 = This.nidauto
+	goApp.npara2 = This.nidautoref
+	goApp.npara3 = This.nidpagos
+	goApp.npara4 = This.ntotalnc
+	Text To lp Noshow
     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-	ENDTEXT
-	nid= this.EJECUTARf(lC, lp, '') 
-	IF m.nid< 1 Then
+	Endtext
+	nid = This.EJECUTARf(lC, lp, '')
+	If m.nid < 1 Then
 		Return 0
 	Endif
 	Return m.nid
-    Endfunc
+	Endfunc
+	Function psysngrabar()
+	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	m.rpta = oser.Inicializar(This, 'NotasCreditoVentas')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
+	_Screen.oventas.Tdoc = This.cTdoc
+	_Screen.oventas.formaPago=this.cformapago
+	_Screen.oventas.Serie = This.Cserie
+	_Screen.oventas.numero = This.cnumero
+	_Screen.oventas.Fecha = This.dFecha
+	_Screen.oventas.Detalle = This.cmotivo
+	_Screen.oventas.valor = This.nvalor
+	_Screen.oventas.igv = This.nigv
+	_Screen.oventas.Importe = This.nTotal
+	_Screen.oventas.Moneda = This.Cmoneda
+	_Screen.oventas.ndolar = This.ndolar
+	_Screen.oventas.vigv = fe_gene.igv
+	_Screen.oventas.Ctipovta = 'K'
+	_Screen.oventas.Codigo = This.ncodigocliente
+	_Screen.oventas.Usuario = goApp.nidusua
+	_Screen.oventas.codt = goApp.Tienda
+	_Screen.oventas.cta1 = fe_gene.idctav
+	_Screen.oventas.cta2 = fe_gene.idctai
+	_Screen.oventas.cta3 = fe_gene.idctat
+	ocaja = Newobject("cajae", "d:\capass\modelos\cajae.prg")
+	ocaja.dFecha = This.dFecha
+	ocaja.cdetalle = This.cnombrecliente
+	ocaja.nidcta = fe_gene.idctat
+	ocaja.ndebe = This.nTotal
+	ocaja.nhaber = 0
+	ocaja.Cmoneda = This.Cmoneda
+	ocaja.ndolar = This.ndolar
+	ocaja.nidclpr = This.ncodigocliente
+	ocaja.cforma = This.cformapago
+	ocaja.Ndoc = This.Cserie + This.cnumero
+	ocaja.cTdoc = This.cTdoc
+	okardex = Newobject("regkardex", "d:\capass\modelos\regkardex.prg")
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	This.nidauto = _Screen.oventas.IngresaResumenDcto()
+	If This.nidauto < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	ocaja.NAuto = This.nidauto
+	If ocaja.IngresaDatosLCajaEFectivo10() < 1Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If Left(This.cformapago, 1) = 'E' Then
+		If IngresaRvendedores(This.nidauto,  This.ncodigocliente, This.nidven, "E") = 0 Then
+			This.DEshacerCambios()
+			Return 0
+		Endif
+	Else
+		If This.cTdoc = '07' Then
+			If IngresaRvendedores(This.nidauto, This.ncodigocliente, This.nidven, "E") = 0 Then
+				This.DEshacerCambios()
+				Return 0
+			Endif
+		Endif
+	Endif
+	If Left(This.cformapago, 1) = 'C' Then
+		If This.cTdoc = '08' Then
+			_Screen.octasxcobrar.cndoc = This.Cserie + This.cnumero
+			_Screen.octasxcobrar.crefe = 'Nota de Cargo Pendiente de Pago'
+			_Screen.octasxcobrar.contransaccion = 'S'
+			_Screen.octasxcobrar.Idauto = This.nidauto
+			_Screen.octasxcobrar.nidclie = This.ncodigocliente
+			_Screen.octasxcobrar.Cmoneda = 'S'
+			_Screen.octasxcobrar.dFech = This.dFecha
+			_Screen.octasxcobrar.nimpo = This.nTotal
+			_Screen.octasxcobrar.Tienda = goApp.Tienda
+			_Screen.octasxcobrar.codv = This.nidven
+			If _Screen.octasxcobrar.registrar() < 1 Then
+				This.DEshacerCambios()
+				This.Cmensaje = _Screen.octasxcobrar.Cmensaje
+				Return 0
+			Endif
+		Else
+			objdetalle = Createobject("empty")
+			AddProperty(objdetalle, 'cndoc', This.Cserie + This.cnumero)
+			AddProperty(objdetalle, 'nacta', 0)
+			AddProperty(objdetalle, 'cesta', 'P')
+			AddProperty(objdetalle, 'cmone', This.Cmoneda)
+			AddProperty(objdetalle, 'cb1', 'NOTA DE CREDITO')
+			AddProperty(objdetalle, 'dFech', This.dFecha)
+			AddProperty(objdetalle, 'dfevto', Date())
+			AddProperty(objdetalle, 'Ctipo', "")
+			AddProperty(objdetalle, 'nctrol', 0)
+			AddProperty(objdetalle, 'cnrou', "")
+			AddProperty(objdetalle, 'nidrc', 0)
+			AddProperty(objdetalle, 'tpago', This.nTotal)
+			Sw = 1
+			nidp = 0
+			Select  tmp
+			Scan For tmp.pagos > 0
+				objdetalle.nacta = tmp.pagos
+				objdetalle.dfevto = tmp.fevto
+				objdetalle.ctipo = tmp.tipo
+				objdetalle.nctrol = tmp.ncontrol
+				objdetalle.nidrc = tmp.rcre_idrc
+				nidp = _Screen.octasxcobrar.CancelaCreditos(objdetalle)
+				If nidp < 1 Then
+					m.Sw = 0
+					This.Cmensaje = _Screen.octasxcobrar.Cmensaje
+					Exit
+				Endif
+			Endscan
+			If m.Sw = 0
+				This.DEshacerCambios()
+				Return 0
+			Endif
+		Endif
+	Endif
+	If Left(This.cformapago, 1) = 'P'  And This.cTdoc = "07" Then
+		_Screen.octasxcobrar.cndoc = This.Cserie + This.cnumero
+		_Screen.octasxcobrar.crefe = 'Nota de Crédito Pendiente de Pago'
+		_Screen.octasxcobrar.contransaccion = 'S'
+		_Screen.octasxcobrar.Idauto = This.nidauto
+		_Screen.octasxcobrar.nidclie = This.ncodigocliente
+		_Screen.octasxcobrar.Cmoneda = 'S'
+		_Screen.octasxcobrar.dFech = This.dFecha
+		_Screen.octasxcobrar.nimpo = This.nTotal
+		_Screen.octasxcobrar.Tienda = goApp.Tienda
+		_Screen.octasxcobrar.codv = This.nidven
+		If _Screen.octasxcobrar.registrar() < 1 Then
+			This.DEshacerCambios()
+			Aviso(_Screen.octasxcobrar.Cmensaje)
+			Return 0
+		Endif
+	Endif
+	If This.Nagrupada = 1 Then
+		Go Top In tmpn
+		If This.cTdoc = "07"
+			Insert Into tmpv(Desc, cant, Prec, Ndoc)Values(Alltrim(This.cmotivo), 1, 1 * This.nTotal, This.Cserie + This.cnumero)
+		Else
+			Insert Into tmpv(Desc, cant, Prec, Ndoc)Values(Alltrim(This.cmotivo), 1, 1 * This.nTotal, This.Cserie + This.cnumero)
+		Endif
+	Else
+		okardex.nidauto = This.nidauto
+		okardex.ctipo = 'V'
+		okardex.cincl = "I"
+		okardex.ctmvto = 'K'
+		okardex.nidv = This.nidven
+		Select tmpn
+		Go Top
+		Do While !Eof()
+			If tmpn.dsct = 0 And tmpn.devo = 0 Then
+				Select tmpn
+				Skip
+				Loop
+			Endif
+			okardex.ncoda = tmpn.Coda
+			okardex.nidtda = tmpn.alma
+			okardex.ncosto = tmpn.costo
+			okardex.ncomi = tmpn.comi
+			Do Case
+			Case  This.cTdoc = '08'  And tmpn.dsct > 0
+				okardex.nprec = tmpn.dsct
+				okardex.ncant = 0
+				If okardex.INGRESAKARDEX1() < 1 Then
+					This.Cmensaje = okardex.Cmensaje()
+					Sw = 0
+					Exit
+				Endif
+				Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.Coda, tmpn.Desc, tmpn.Unid, 1, tmpn.dsct, cndcto)
+			Case tmpn.devo > 0 And  This.cTdoc = '07'
+				Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.Coda, tmpn.Desc, tmpn.Unid, - tmpn.devo, tmpn.dsct, cndcto)
+				okardex.nprec = tmpn.Prec
+				okardex.ncant = - tmpn.devo
+				If okardex.INGRESAKARDEX1() < 1 Then
+					Sw = 0
+					This.Cmensaje = okardex.Cmensaje()
+					Exit
+				Endif
+				_Screen.oProductos.nidart = tmpn.Coda
+				_Screen.oProductos.nidtda = tmpn.alma
+				_Screen.oProductos.ncant = tmpn.devo
+				_Screen.oProductos.ctipo = 'C'
+				_Screen.oProductos.cTdoc = This.cTdoc
+				If _Screen.oProductos.ActualizaStockfisicocontable() < 1  Then
+					Sw = 0
+					This.Cmensaje = _Screen.oProductos.Cmensaje
+					Exit
+				Endif
+			Case  tmpn.dsct > 0 And This.cTdoc = '07'
+				okardex.nprec = tmpn.dsct
+				okardex.ncant = 0
+				If okardex.INGRESAKARDEX1() < 1 Then
+					Sw = 0
+					This.Cmensaje = okardex.Cmensaje()
+					Exit
+				Endif
+				Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc)Values(tmpn.Coda, tmpn.Desc, tmpn.Unid, 1, tmpn.dsct, cndcto)
+			Endcase
+			Select tmpn
+			Skip
+		Enddo
+	Endif
+	If Sw = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Select Idauto From tmpn Where Idauto > 0 Into Cursor Xt Group By Idauto
+	Select Xt
+	Scan All
+		This.nidautoref = Xt.Idauto
+		This.nidpagos = m.nidpagos
+		This.ntotalnc = This.ntotalnc
+		If This.IngresarNotasCreditoVentas10() < 1 Then
+			Sw = 0
+			Exit
+		Endif
+	Endscan
+	If Sw = 0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	_Screen.ocorrelativo.idserie = This.nidserie
+	_Screen.ocorrelativo.nsgte = This.nsgte
+	If This.otraserie = 'S' Then
+		If Val(This.cnumero) >= This.nsgte
+			If _Screen.ocorrelativo.GeneraCorrelativootraserie(Val(This.cnumero) + 1, This.nidserie) < 1 Then
+				This.Cmensaje = _Screen.ocorrelativo.Cmensaje
+				This.DEshacerCambios()
+				Return 0
+			Endif
+		Endif
+	Else
+		If Val(This.cnumero) >= This.nsgte
+			If _Screen.ocorrelativo.GeneraCorrelativo1() < 1 Then
+				This.Cmensaje = _Screen.ocorrelativo.Cmensaje
+				This.DEshacerCambios()
+				Return 0
+			Endif
+		Endif
+	Endif
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
