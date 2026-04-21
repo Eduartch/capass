@@ -19,6 +19,7 @@ Define Class Imprimir As Custom
 	Impresora=''
 	abrirpdf=''
 	crucempresa = ''
+	cvtasconservicio=''
 	Procedure ImprimeComprobante
 	Lparameters cmodoimpresion
 	This.ImprimeComprobanteM(cmodoimpresion)
@@ -192,7 +193,7 @@ Define Class Imprimir As Custom
 			Case This.Tdoc = 'RR'
 				This.Archivo = Cruta  + 'retencion.frx'
 				car = 'retencion.frx'
-				Calias = "tmpr"	
+				Calias = "tmpr"
 			Otherwise
 				This.Archivo = Cruta  + 'boleta.frx'
 				car = 'boleta.frx'
@@ -288,9 +289,9 @@ Define Class Imprimir As Custom
 				Report Form (cArchivo) To Printer Noconsole
 			Endif
 		Else
-			this.Cmensaje='Formato No Encontrado'
+			This.Cmensaje='Formato No Encontrado'
 		Endif
-    	m.oFbc = Null
+		m.oFbc = Null
 		cpropiedad = "Otraimpresionvtas"
 		If !Pemstatus(goApp, cpropiedad, 5)
 			goApp.AddProperty("Otraimpresionvtas", "")
@@ -343,7 +344,7 @@ Define Class Imprimir As Custom
 	This.CrearPdf(This.Archivo, This.ArchivoPdf, cmodo)
 	Endfunc
 	Function cambiarimpresoranormalpdf(creporte)
-    If This.Idsesion>0 Then
+	If This.Idsesion>0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	If !Empty(This.ArchivoPdf) Then
@@ -358,7 +359,7 @@ Define Class Imprimir As Custom
 		goApp.AddProperty("Impresoranormal", "")
 	Else
 		lcImpresora = goApp.Impresoranormal
-	ENDIF
+	Endif
 	Do "FoxyPreviewer.App"
 *!*		wait WINDOW m.cpdf
 	If !Empty(goApp.Impresoranormal) Then
@@ -441,6 +442,9 @@ Define Class Imprimir As Custom
 	Endproc
 	Procedure ImprimeComprobanteComoticketM
 	Lparameters cmodo, cctdoc
+	If This.Idsesion>0 Then
+		Set DataSession To This.Idsesion
+	Endif
 	Set Procedure To FoxbarcodeQR Additive
 	Private m.oFbc
 	m.oFbc = Createobject("FoxBarcodeQR")
@@ -477,6 +481,8 @@ Define Class Imprimir As Custom
 			Else
 				This.Calias = "tmpvg"
 			Endif
+		Case cctdoc='OS'
+			cArchivo = Addbs(Addbs(Sys(5) + Sys(2003)) + Alltrim(Cruc)) + 'ticketos.frx'
 		Otherwise
 			cArchivo = Addbs(Addbs(Sys(5) + Sys(2003)) + Alltrim(Cruc)) + 'ticket.frx'
 		Endcase
@@ -485,9 +491,11 @@ Define Class Imprimir As Custom
 	Endif
 	This.GeneraQR()
 	If !Empty(This.Calias) Then
+	    calias=this.calias 
 		Select (This.Calias)
 		Go Top
 	Else
+	    calias='tmpv'
 		Select tmpv
 		Go Top
 	Endif

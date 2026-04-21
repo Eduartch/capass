@@ -2133,22 +2133,22 @@ Else
 	Return 1
 Endif
 Endfunc
-*************************
-Function  AnulaRetencion(np1)
-Local cur As String
-lc='ProAnulaIngresoCtaCteV'
-cur=""
-goapp.npara1=np1
-TEXT to lp noshow
-     (?goapp.npara1)
-ENDTEXT
-If EJECUTARP(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+ 'Anulando Ingresos  a Ctas Ctes de Clientes')
-	Return 0
-Else
-	Return 1
-Endif
-Endfunc
+*!*	*************************
+*!*	Function  AnulaRetencion(np1)
+*!*	Local cur As String
+*!*	lc='ProAnulaIngresoCtaCteV'
+*!*	cur=""
+*!*	goapp.npara1=np1
+*!*	TEXT to lp noshow
+*!*	     (?goapp.npara1)
+*!*	ENDTEXT
+*!*	If EJECUTARP(lc,lp,cur)=0 Then
+*!*		errorbd(ERRORPROC+ 'Anulando Ingresos  a Ctas Ctes de Clientes')
+*!*		Return 0
+*!*	Else
+*!*		Return 1
+*!*	Endif
+*!*	Endfunc
 *************************
 Function  AnulaPercepcion(np1)
 Local cur As String
@@ -5020,7 +5020,7 @@ TEXT to lp noshow
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
 ENDTEXT
 If EJECUTARF(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+' Ingresando Cabecera de Documento')
+	errorbd(ERRORPROC+' Ingresando Cabecera de Documento a Otras Compras')
 	Return 0
 Else
 	Return Xn.Id
@@ -7620,7 +7620,7 @@ TEXT to lp noshow
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
 ENDTEXT
 If EJECUTARF(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+' Ingresando Cabecera de Documento')
+	errorbd(ERRORPROC+' Ingresando Cabecera de Documento Canjeado')
 	Return 0
 Else
 	Return Xn.Id
@@ -9956,7 +9956,7 @@ TEXT to lp noshow
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
 ENDTEXT
 If EJECUTARF(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+' Ingresando Cabecera de Documento')
+	errorbd(ERRORPROC+' Ingresando Cabecera de Documento con  Turnos')
 	Return 0
 Else
 	Return Xn.Id
@@ -10026,7 +10026,7 @@ TEXT to lp noshow
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
 ENDTEXT
 If EJECUTARF(lc,lp,cur)=0 Then
-	errorbd(ERRORPROC+' Ingresando Cabecera de Documento')
+	errorbd(ERRORPROC+' Ingresando Cabecera de Documento Canjeado 1')
 	Return 0
 Else
 	Return Xn.Id

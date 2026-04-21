@@ -249,6 +249,11 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
           INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
           WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A'
           UNION ALL
+          SELECT guia_fech AS fech,guia_ndoc AS ndoc,"" AS cliente,t.razon AS Transportista,guia_idgui AS idguia,'I' AS motivo,guia_tick FROM  fe_guias
+          AS g
+          INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+          WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='I' AND guia_acti='A'
+          UNION ALL
           SELECT guia_fech AS fech,guia_ndoc AS ndoc,g.empresa AS cliente,t.razon AS Transportista,
           guia_idgui AS idguia,'T' AS Motivo,guia_tick  AS ticket FROM fe_guias AS a
           INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
@@ -1939,6 +1944,46 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Else
 		Return  0
 	Endif
+	ENDFUNC
+	Function consultarguiasxenviarpsysu(Ccursor)
+	TEXT To lC Noshow Textmerge
+	      SELECT fech,ndoc,cliente,Transportista,idguia,motivo,ticket FROM
+          (SELECT fech,ndoc,cliente,Transportista,idguia,'V' AS motivo,guia_tick AS ticket FROM  vguiasventas
+          WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T' and guia_codt=<<this.codt>> 
+          UNION ALL
+          SELECT guia_fech AS guia_fech,guia_ndoc AS ndoc,c.razo AS cliente,t.razon AS transportista,guia_idgui AS idguia,guia_moti AS motivo,
+          guia_tick AS ticket FROM fe_guias AS g
+          INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+          INNER JOIN fe_clie AS c ON c.idclie=g.`guia_idcl`
+          WHERE  guia_acti='A' AND LEFT(guia_mens,1)<>'0' AND guia_moti='v' and guia_codt=<<this.codt>>
+          UNION ALL
+          SELECT fech,ndoc,cliente,Transportista,idguia,'D' AS motivo,guia_tick AS ticket FROM  vguiasdevolucion
+          WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'  and guia_codt=<<this.codt>>
+          UNION ALL
+          SELECT fech,ndoc,cliente,Transportista,idguia,'C' AS motivo,guia_tick AS ticket FROM  vguiasrcompras
+          WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T' and guia_codt=<<this.codt>>
+          UNION ALL
+          SELECT guia_fech AS fech,guia_ndoc AS ndoc,c.razo AS cliente,t.razon AS Transportista,guia_idgui AS idguia,'N' AS motivo,guia_tick FROM  fe_guias
+          AS g
+          INNER JOIN fe_clie AS c ON c.idclie=g.guia_idcl
+          INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+          WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='N' AND guia_acti='A' and guia_codt=<<this.codt>>
+          UNION ALL
+          SELECT guia_fech AS fech,guia_ndoc AS ndoc,"" AS cliente,t.razon AS Transportista,guia_idgui AS idguia,'I' AS motivo,guia_tick FROM  fe_guias
+          AS g
+          INNER JOIN fe_tra AS t ON t.idtra=g.guia_idtr
+          WHERE  LEFT(guia_mens,1)<>'0' AND LEFT(guia_ndoc,1)='T' AND guia_moti='I' AND guia_acti='A' and guia_codt=<<this.codt>>
+          UNION ALL
+          SELECT guia_fech AS fech,guia_ndoc AS ndoc,g.empresa AS cliente,t.razon AS Transportista,
+          guia_idgui AS idguia,'T' AS Motivo,guia_tick  AS ticket FROM fe_guias AS a
+          INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
+          WHERE LEFT(guia_ndoc,1)='T'  AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A' and guia_codt=<<this.codt>>)AS w
+          GROUP BY fech,ndoc,cliente,Transportista,idguia,motivo,ticket  ORDER BY fech,ndoc
+	ENDTEXT
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
 Enddefine
 

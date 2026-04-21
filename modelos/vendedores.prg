@@ -27,9 +27,15 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Endcase
 	Endfunc
 	Function crear()
-	If This.validar() < 1 Then
+	oser = Newobject("servicio", " d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "vendedores"
+	rpta = oser.Inicializar(This, 'vendedores')
+	If m.rpta < 1 Then
+		This.cmensaje = oser.cmensaje
 		Return 0
 	Endif
+	oser = Null
 	goapp.npara1 = This.cnombre
 	goapp.npara2 = This.cfono
 	goapp.npara3 = This.nmeta
@@ -50,7 +56,12 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function editar()
-	If This.validar() < 1 Then
+	oser = Newobject("servicio", " d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "vendedores"
+	rpta = oser.Inicializar(This, 'vendedores')
+	If m.rpta < 1 Then
+		This.cmensaje = oser.cmensaje
 		Return 0
 	Endif
 	goapp.npara1 = This.cnombre
@@ -166,15 +177,14 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
      \ fe_clie As d
      \ inner Join fe_rcom As e On e.Idcliente=d.idclie
      \ Left Join fe_kar As a On a.Idauto=e.Idauto
-     \ Left Join (Select idart,idmar From fe_art
-	If nmarca > 0 Then
-        \ Where  idmar=<<nmarca>>
-	Endif
-     \ ) As  b On b.idart=a.idart
+     \ Left Join (Select idart,idmar From fe_art) As  b On b.idart=a.idart
      \ Left Join fe_vend As c On c.idven=a.Codv
      \ Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<f1>>' And '<<f2>>' And Form='E' And Impo<>0 And e.Tdoc Not In("07","08")
 	If This.nidv > 0 Then
      \ And a.Codv=<<This.nidv>>
+	ENDIF
+	If nmarca > 0 Then
+        \  and  b.idmar=<<nmarca>>
 	Endif
      \ Union All
      \ Select a.kar_comi*((a.cant*a.Prec)/e.vigv) As comi,a.Idauto,e.Tdoc,e.Ndoc,w.fech,a.cant,a.Prec,
@@ -185,15 +195,14 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	 \ inner Join fe_rcom As e On e.Idauto=r.rcre_idau
 	 \ inner Join fe_clie As d On d.idclie=e.Idcliente
 	 \ Left Join fe_kar As a On a.Idauto=e.Idauto
-	 \ Left Join (Select idart,idmar From fe_art
-	If nmarca > 0 Then
-        \ Where  idmar=<<nmarca>>
-	Endif
-     \ ) As  b On b.idart=a.idart
+	 \ Left Join (Select idart,idmar From fe_art) As  b On b.idart=a.idart
 	 \ Left Join fe_vend As c On c.idven=a.Codv
 	 \ Where w.fech  Between '<<f1>>' And '<<f2>>' And w.Acti='A' And w.acta>0 And e.Acti='A' And a.Acti='A' And Left(w.Ndoc,2)<>'FN' And Round(e.Impo, 2) = Round(w.acta, 2)
 	If This.nidv > 0 Then
      \ And a.Codv=<<This.nidv>>
+	ENDIF
+	If nmarca > 0 Then
+        \ and   b.idmar=<<nmarca>>
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
@@ -213,15 +222,14 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	\  inner Join fe_rcom As e On e.Idauto=r.rcre_idau
 	\  inner Join fe_clie As d On d.idclie=e.Idcliente
 	\  inner Join fe_kar As a On a.Idauto=e.Idauto
-	\  inner Join (Select idart,idmar From fe_art
-	If nmarca > 0 Then
-        \ Where idmar=<<nmarca>>
-	Endif
-     \ ) As  b On b.idart=a.idart
+	\  inner Join (Select idart,idmar From fe_art) As  b On b.idart=a.idart
 	\  inner Join fe_vend As c On c.idven=r.rcre_codv
 	\  Where w.fech  Between '<<f1>>' And '<<f2>>'  And w.Acti='A' And w.acta>0 And e.Acti='A' And Left(w.Ndoc,2)<>'FN' And Round(e.Impo,2)>Round(w.acta,2)
 	If This.nidv > 0 Then
      \ And a.Codv=<<This.nidv>>
+	ENDIF
+		If nmarca > 0 Then
+        \  and  b.idmar=<<nmarca>>
 	Endif
 	Set Textmerge Off
 	Set Textmerge To
@@ -304,11 +312,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
      \ fe_clie As d
      \ inner Join fe_rcom As e On e.Idcliente=d.idclie
      \ inner Join fe_kar As a On a.Idauto=e.Idauto
-     \ inner Join(Select idart,idmar,Descri,unid From fe_art
-	If nmarca > 0 Then
-        \ Where  idmar=<<nmarca>>
-	Endif
-     \ ) As  b On b.idart=a.idart
+     \ inner Join(Select idart,idmar,descri,unid From fe_art) As  b On b.idart=a.idart
      \ inner Join fe_vend As c On c.idven=a.Codv
      \ Where e.Acti<>'I' And a.Acti<>'I'  And e.fech  Between '<<f1>>' And '<<f2>>'  And Impo<>0 And e.Tdoc Not In("07","08")
 	If This.soloefectivo = 'E' Then
@@ -316,6 +320,9 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	If This.nidv > 0 Then
      \ And a.Codv=<<This.nidv>>
+	ENDIF
+	If nmarca > 0 Then
+        \ and b.idmar=<<nmarca>>
 	Endif
     \ Order By c.nomv
 	Set Textmerge Off
@@ -343,17 +350,16 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	\inner Join fe_clie As d On d.idclie=e.Idcliente
 	\inner Join (Select  Sum(k.kar_comi*((k.cant*k.Prec)/r.vigv)) As comision,k.Idauto,Codv From fe_kar As k
 	\inner Join fe_rcom As r On r.Idauto=k.Idauto
-	\inner Join (Select idart,idmar From fe_art
-	If nmarca > 0 Then
-        \ Where  idmar=<<nmarca>>
-	Endif
-     \ ) As  b On b.idart=k.idart
+	\inner Join (Select idart,idmar From fe_art) As  b On b.idart=k.idart
 	\Where r.Idcliente>0 And k.Acti='A' And r.Acti='A' And r.fech Between  '<<f1>>' And '<<f2>>'  And r.Impo<>0
 	If This.nidv > 0 Then
 	\	And k.Codv=<<This.nidv>>
+	ENDIF
+	If nmarca > 0 Then
+        \  and   b.idmar=<<nmarca>>
 	Endif
 	If goapp.proyecto = 'psysg' Then
-	\ And exon<>'S'
+	  \ And exon<>'S'
 	Endif
 	\Group  By r.Idauto,k.Codv) As a On a.Idauto=e.Idauto
 	\Left Join fe_vend As c On c.idven=a.Codv
@@ -436,7 +442,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	dff = cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\Select idmar,marca,v.nomv As vendedor,tcant As cantidad,timporte As importe,codv
+	\Select idmar,marca,v.nomv As vendedor,tcant As cantidad,timporte As importe,Codv
     \From(Select Round(Sum(a.cant*a.Prec),2) As timporte,Sum(a.`cant`*a.`kar_equi`) As tcant,a.`Codv`,b.`idmar`,mm.`dmar` As marca From fe_rcom As e
 	\inner Join fe_kar As a On a.Idauto=e.Idauto
 	\inner Join fe_art As  b On b.idart=a.idart
@@ -730,6 +736,7 @@ Define Class vendedores As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

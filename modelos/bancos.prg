@@ -24,6 +24,8 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Nsgte = 0
 	niDAUTO = 0
 	devolucion = ''
+	nmes=0
+	na=0
 	dfi = Date()
 	dff = Date()
 	Function ReporteBancos(dfi, dff, ccta, Calias)
@@ -657,7 +659,7 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Endif
 	nid = This.EJECUTARf(lC, lp, cur)
 	If nid < 1 Then
-		If This.Contransaccion<>'S' Then
+		If This.contransaccion<>'S' Then
 			This.DEshacerCambios()
 		Endif
 		Return 0
@@ -667,12 +669,12 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	ocorr.Idserie = This.Idserie
 	If ocorr.GeneraCorrelativo() < 1 Then
 		This.Cmensaje = ocorr.Cmensaje
-		If This.Contransaccion<>'S' Then
+		If This.contransaccion<>'S' Then
 			This.DEshacerCambios()
 		Endif
 		Return 0
 	Endif
-	If This.Contransaccion<>'S' Then
+	If This.contransaccion<>'S' Then
 		If This.GRabarCambios() < 1 Then
 			Return 0
 		Endif
@@ -682,13 +684,15 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Endfunc
 	Function listardepositosporcliente(nidcl, Ccursor)
 	TEXT To lC Noshow Textmerge
-	SELECT a.banc_nomb as banco,b.ctas_ctas as numerocta,cban_fech,cban_nume,c.razo,cban_debe as impo,
-	ifnull(acta,cast(0 as unsigned)) as acta,cban_idcl,cban_idco,cban_ndoc FROM fe_cbancos as d
-	inner join fe_ctasb as b on b.ctas_idct=d.cban_idba
-	inner join fe_bancos as a on a.banc_idba=b.ctas_idba
-	inner join fe_clie as c on c.idclie=d.cban_idcl
-	left join (select sum(acta) as acta,cred_idcb from fe_cred where acti='A' and acta>0 and cred_idcb>0 group by cred_idcb )as x on x.cred_idcb=d.cban_idco
-	where cban_acti='A'  and cban_tipo='P' and cban_idcl=<<m.nidcl>> order by cban_debe
+    SELECT a.banc_nomb AS banco,b.ctas_ctas AS numerocta,cban_fech,cban_nume,c.razo,cban_debe AS impo,
+	IFNULL(acta,CAST(0 AS DECIMAL(12,2))) AS acta,cban_idcl,cban_idco,cban_ndoc FROM fe_cbancos AS d
+	INNER JOIN fe_ctasb AS b ON b.ctas_idct=d.cban_idba
+	INNER JOIN fe_bancos AS a ON a.banc_idba=b.ctas_idba
+	INNER JOIN fe_clie AS c ON c.idclie=d.cban_idcl
+	LEFT JOIN (SELECT SUM(acta) AS acta,cred_idcb FROM fe_cred as c
+	inner join fe_rcred as r on r.rcre_idrc=c.cred_idrc
+	WHERE acti='A' AND acta>0 AND cred_idcb>0  and rcre_idcl=<<m.nidcl>> and rcre_acti='A' GROUP BY cred_idcb )AS x ON x.cred_idcb=d.cban_idco
+	WHERE cban_acti='A'  AND cban_tipo='P' AND cban_idcl=<<m.nidcl>> AND (cban_debe-IFNULL(acta,CAST(0 AS DECIMAL(12,2))))>0 ORDER BY cban_debe
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -791,6 +795,79 @@ Define Class bancos As OData Of  'd:\capass\database\data.prg'
 	Select (Ccursor)
 	If regdvto(Ccursor) > 0 Then
 		This.Cmensaje = "Operación Ya Registrada"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function listarTbancos(ccurbcos)
+	nm=This.nmes
+	na=This.na
+	dfecha1=Ctod('01/'+Trim(Str(nm))+'/'+Trim(Str(na)))
+	dfecha1=dfecha1-1
+	dfecha2=Ctod('01/'+Trim(Str(Iif(nm<12,nm+1,1)))+'/'+Trim(Str(Iif(nm<12,na,na+1))))
+	dfecha2=dfecha2-1
+	cmone=This.Cmoneda
+	dFecha=Ctod('01/'+Trim(Str(nm))+'/'+Trim(Str(na)))
+	Create Cursor rcb(Auto c(15),fech d,Mpago c(10),Detalle c(100),razon c(120),dcto c(20),ncta c(10),nomb c(60),debe N(12,2),haber N(12,2),sdo N(12,2),;
+		idcta N(10),dolar N(6,4),tipodcto c(1),nruc c(15),ncta1 c(30),idco c(2))
+	f1=Cfechas(dFecha)
+	f2=Cfechas(dfecha2)
+	Sw=1
+	saldo=0
+	Select * From  (ccurbcos) Into Cursor ctct1
+	Select ctct1
+	Go Top
+	Do While !Eof()
+		cta=ctct1.ctas_idCT
+		nctax=ctct1.ctas_ctas
+		nidco=ctct1.banc_idco
+		cmone=ctct1.ctas_mone
+		saldo	= This.Saldoinicialbancos(dfecha1, ctct1.ctas_idCT)
+		TEXT to lc NOSHOW TEXTMERGE
+		   select a.cban_nume,a.cban_fech,b.pago_codi,b.pago_deta,a.cban_deta,if(a.cban_debe>0,ifnull(m.razo,''),ifnull(n.razo,'')) as razon,
+		   a.cban_ndoc,c.ncta,c.nomb,a.cban_debe,a.cban_haber,a.cban_idct,a.cban_idmp,a.cban_idco,a.cban_idcl,a.cban_idpr,a.cban_dola as dolar,
+		   if(a.cban_debe>0,ifnull(m.nruc,''),ifnull(n.nruc,'')) as nruc,if(a.cban_debe>0,ifnull(m.ndni,''),ifnull(n.ndni,'')) as ndni
+		   from fe_cbancos as a
+		   inner join fe_mpago as b on  b.pago_idpa=a.cban_idmp
+		   left join fe_clie as m on m.idclie=a.cban_idcl
+		   left join fe_prov as n on n.idprov=a.cban_idpr
+		   inner join fe_plan as c on c.idcta=a.cban_idct
+		   where a.cban_acti='A' AND a.cban_fech between  '<<f1>>' and '<<f2>>' and a.cban_idba=<<cta>> order by a.cban_fech;
+		ENDTEXT
+		If This.EJECutaconsulta(lC,'rc1')<1 Then
+			Sw=0
+			Exit
+		Endif
+		Select rc1
+		Go Top
+		x=0
+		Do While !Eof()
+			If x=0 And saldo>0 Then
+				dF=Ctod('01/'+Trim(Str(nm))+'/'+Trim(Str(na)))
+				If saldo>0 Then
+					Insert Into rcb(Detalle,debe,sdo,tipodcto)Values('Saldo Inicial al: '+Dtoc(dF),saldo,saldo,'x')
+				Else
+					Insert Into rcb(Detalle,haber,sdo,tipodcto)Values('Saldo Inicial al: '+Dtoc(dF),saldo,saldo,'x')
+				Endif
+			Endif
+			If rc1.cban_debe>0 Then
+				saldo=saldo+Iif(cmone='S',rc1.cban_debe,rc1.cban_debe*rc1.dolar)
+			Else
+				saldo=saldo-Iif(cmone='S',rc1.cban_haber,rc1.cban_haber*rc1.dolar)
+			Endif
+			Insert Into rcb(idco,ncta1,Auto,fech,Mpago,Detalle,razon,dcto,ncta,nomb,debe,haber,sdo,idcta,dolar,tipodcto,nruc)Values;
+				(nidco,nctax,rc1.cban_ndoc,rc1.cban_fech,rc1.pago_codi,rc1.cban_deta,rc1.razon,rc1.cban_nume,rc1.ncta,rc1.nomb,;
+				IIF(cmone='S',rc1.cban_debe,Round(rc1.cban_debe*rc1.dolar,2)),Iif(cmone='S',rc1.cban_haber,Round(rc1.cban_haber*rc1.dolar,2)),;
+				saldo,rc1.cban_idct,rc1.dolar,Iif(Len(Alltrim(rc1.nruc))=11,'6',Iif(Len(Alltrim(rc1.ndni))=8,'1','-')),;
+				Iif(Len(Alltrim(rc1.nruc))=11,rc1.nruc,Iif(Len(Alltrim(rc1.ndni))=8,rc1.ndni,'-')))
+			x=x+1
+			Select rc1
+			Skip
+		Enddo
+		Select ctct1
+		Skip
+	Enddo
+	If m.Sw=0 Then
 		Return 0
 	Endif
 	Return 1

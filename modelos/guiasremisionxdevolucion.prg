@@ -29,7 +29,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Select tmpvg
 	Go Top
 	Do While !Eof()
-		If This.condsctostock = 'S' Then
+		If Alltrim(This.condsctostock) = 'S' Then
 			ncodalmacen = goApp.Tienda
 			If fe_gene.alma_nega = 0 Then
 				If oprod.consultarStocks(tmpvg.Coda, "Stock") < 1 Then
@@ -64,16 +64,19 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 					Cmensaje = 'En Stock ' + Alltrim(Str(Ts, 10)) + '  no Disponible para esta Transacción '
 					Exit
 				Endif
-				m.nidkar = INGRESAKARDEX1(Na, tmpvg.Coda, "V", 0, tmpvg.cant, "I", "K", 0, ncodalmacen, 0, 0)
-				If nidkar < 1 Then
-					s = 0
-					Cmensaje = 'Al Registrar Kardex'
-					Exit
-				Endif
+			Endif
+			m.nidkar = INGRESAKARDEX1(m.Na, tmpvg.Coda, "V", 0, tmpvg.cant, "I", "K", 0, ncodalmacen, 0, 0)
+			If nidkar < 1 Then
+				s = 0
+				Cmensaje = 'Al Registrar Kardex'
+				Exit
 			Endif
 		Else
-			m.nidkar=0
+			m.nidkar = 0
 			ncodalmacen = 0
+		Endif
+		If s = 0 Then
+			Exit
 		Endif
 		m.oitems.nidkar = m.nidkar
 		m.oitems.ncant = tmpvg.cant
@@ -84,7 +87,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 			Cmensaje = This.Cmensaje
 			Exit
 		Endif
-		If This.condsctostock= 'S' Then
+		If This.condsctostock = 'S' Then
 			If oprod.ActualizaStock(tmpvg.Coda, goApp.Tienda, tmpvg.cant, 'V') < 1 Then
 				s = 0
 				Cmensaje = oprod.Cmensaje
@@ -94,22 +97,25 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		Select tmpvg
 		Skip
 	Enddo
-	If This.GeneraCorrelativo() = 1  And s = 1 Then
-		If This.GRabarCambios() = 0 Then
-			Return 0
-		ENDIF
-		this.idautog=m.nidg
-		If This.Proyecto = 'xsysz' Then
-			This.Imprimirguiaxsysz("tmpvg", 'S')
-		Else
-			This.Imprimir('S')
-		Endif
-		Return  1
-	Else
+	If s = 0  Then
 		This.DEshacerCambios()
 		This.Cmensaje = Cmensaje
 		Return 0
 	Endif
+	If This.GeneraCorrelativo() < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios() = 0 Then
+		Return 0
+	Endif
+	This.idautog = m.nidg
+	If This.Proyecto = 'xsysz' Then
+		This.Imprimirguiaxsysz("tmpvg", 'S')
+	Else
+		This.Imprimir('S')
+	Endif
+	Return  1
 	Endfunc
 	Function IngresaGuiasxDcompras(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10)
 	Local lC, lp
@@ -127,9 +133,9 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	goApp.npara10 = np10
 	goApp.npara11 = This.idprov
 	goApp.npara12 = This.ubigeocliente
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
-	ENDTEXT
+	Endtext
 	nidy = This.EJECUTARf(lC, lp, cur)
 	If nidy < 1 Then
 		Return 0
@@ -166,7 +172,7 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		Return 0
 	Endif
 	Na = IngresaResumenDcto('09', 'E', ;
-		This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, '', 'S', fe_gene.dola, fe_gene.igv, 'k', This.idprov, 'C', goApp.nidusua, 0, goApp.Tienda, 0, 0, 0, 0, 0)
+		  This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, '', 'S', fe_gene.dola, fe_gene.igv, 'k', This.idprov, 'C', goApp.nidusua, 0, goApp.Tienda, 0, 0, 0, 0, 0)
 	If Na < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -240,11 +246,11 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Endif
 	Endfunc
 	Function grabarx()
-	objdetalle=Createobject("empty")
-	AddProperty(objdetalle,"nidart",'')
-	AddProperty(objdetalle,"ncant",0)
-	AddProperty(objdetalle,"nidg",0)
-	AddProperty(objdetalle,"nidkar",0)
+	objdetalle = Createobject("empty")
+	AddProperty(objdetalle, "nidart", '')
+	AddProperty(objdetalle, "ncant", 0)
+	AddProperty(objdetalle, "nidg", 0)
+	AddProperty(objdetalle, "nidkar", 0)
 	If This.Idsesion > 0 Then
 		Set DataSession To  This.Idsesion
 	Endif
@@ -269,8 +275,8 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	Select tmpvg
 	Go Top
 	Do While !Eof()
-		nidkar=0
-		If This.condsctostock='S' Then
+		nidkar = 0
+		If This.condsctostock = 'S' Then
 			If fe_gene.alma_nega = 0 Then
 				If DevuelveStocks(tmpvg.Coda, "Stock") < 1 Then
 					s = 0
@@ -317,18 +323,18 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 				Exit
 			Endif
 		Endif
-		objdetalle.nidart=Alltrim(tmpvg.Coda)
-		objdetalle.ncant=tmpvg.cant
-		objdetalle.nidg=m.nidg
-		objdetalle.nidkar=m.nidkar
-		If  This.registradetalleguia(objdetalle)<1 Then
+		objdetalle.nidart = Alltrim(tmpvg.Coda)
+		objdetalle.ncant = tmpvg.cant
+		objdetalle.nidg = m.nidg
+		objdetalle.nidkar = m.nidkar
+		If  This.registradetalleguia(objdetalle) < 1 Then
 			s = 0
 			Exit
 		Endif
 		Select tmpvg
 		Skip
 	Enddo
-	If s <1 Then
+	If s < 1 Then
 		This.DEshacerCambios()
 		Return 0
 	Endif
@@ -351,14 +357,14 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	s = 1
 	nidkar = 0
 	Cmensaje = ""
-	objdetalle=Createobject("empty")
-	AddProperty(objdetalle,"nidart",0)
-	AddProperty(objdetalle,"ncant",0)
-	AddProperty(objdetalle,"nidg",0)
-	AddProperty(objdetalle,"nidkar",0)
-	AddProperty(objdetalle,"fevto",Date())
-	AddProperty(objdetalle,"clote",'')
-	AddProperty(objdetalle,"unid",'')
+	objdetalle = Createobject("empty")
+	AddProperty(objdetalle, "nidart", 0)
+	AddProperty(objdetalle, "ncant", 0)
+	AddProperty(objdetalle, "nidg", 0)
+	AddProperty(objdetalle, "nidkar", 0)
+	AddProperty(objdetalle, "fevto", Date())
+	AddProperty(objdetalle, "clote", '')
+	AddProperty(objdetalle, "unid", '')
 	If This.VAlidar() < 1 Then
 		Return 0
 	Endif
@@ -376,38 +382,38 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 		Return 0
 	Endif
 	Select tmpvg
-	nidkar=0
+	nidkar = 0
 	sws = 1
 	Go Top
 	Do While !Eof()
 		dFv = Ctod("01/01/0001")
-		If This.condsctostock='S' Then
+		If This.condsctostock = 'S' Then
 			nidkar = IngresaKardexFl(Na, tmpvg.Coda, 'V', tmpvg.Prec, tmpvg.cant, 'I', 'K', 0, goApp.Tienda, 0, 0, tmpvg.equi, ;
-				tmpvg.Unid, tmpvg.idepta, tmpvg.pos, tmpvg.costo, fe_gene.igv, Iif(Empty(tmpvg.Fechavto), dFv, tmpvg.Fechavto), tmpvg.nlote)
+				  tmpvg.Unid, tmpvg.idepta, tmpvg.pos, tmpvg.costo, fe_gene.igv, Iif(Empty(tmpvg.Fechavto), dFv, tmpvg.Fechavto), tmpvg.nlote)
 			If nidkar < 1
 				sws = 0
 				Cmensaje = "Al Registrar el detalle de la guia"
 				Exit
 			Endif
-			_Screen.oproductos.ncoda=tmpvg.Coda
-			_Screen.oproductos.codt=goApp.Tienda
-			_Screen.oproductos.ncant=tmpvg.cant
-			_Screen.oproductos.ctipo='V'
-			_Screen.oproductos.nequi=tmpvg.equi
-			If _Screen.oproductos.Actualizastockunidades()<1
+			_Screen.oproductos.ncoda = tmpvg.Coda
+			_Screen.oproductos.codt = goApp.Tienda
+			_Screen.oproductos.ncant = tmpvg.cant
+			_Screen.oproductos.ctipo = 'V'
+			_Screen.oproductos.nequi = tmpvg.equi
+			If _Screen.oproductos.Actualizastockunidades() < 1
 				Cmensaje = _Screen.oproductos.Cmensaje
 				sws = 0
 				Exit
 			Endif
 		Endif
-		objdetalle.nidart=tmpvg.Coda
-		objdetalle.ncant=tmpvg.cant
-		objdetalle.nidg=m.nidg
-		objdetalle.nidkar=m.nidkar
-		objdetalle.fevto=m.dFv
-		objdetalle.clote=tmpvg.nlote
-		objdetalle.unid=tmpvg.Unid
-		If  This.registradetalleguiaUnidades(objdetalle)<1 Then
+		objdetalle.nidart = tmpvg.Coda
+		objdetalle.ncant = tmpvg.cant
+		objdetalle.nidg = m.nidg
+		objdetalle.nidkar = m.nidkar
+		objdetalle.fevto = m.dFv
+		objdetalle.clote = tmpvg.nlote
+		objdetalle.Unid = tmpvg.Unid
+		If  This.registradetalleguiaUnidades(objdetalle) < 1 Then
 			sws = 0
 			Cmensaje = This.Cmensaje
 			Exit
@@ -463,8 +469,8 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
 	Endif
-	If This.Idautog > 0 Then
-		If AnulaGuiasVentas(This.Idautog, goApp.nidusua) = 0 Then
+	If This.idautog > 0 Then
+		If AnulaGuiasVentas(This.idautog, goApp.nidusua) = 0 Then
 			This.DEshacerCambios()
 			Return 0
 		Endif
@@ -565,19 +571,22 @@ Define Class guiaremisionxdevolucion As GuiaRemision Of 'd:\capass\modelos\guias
 	goApp.npara7  = m.np7
 	goApp.npara8  = m.np8
 	goApp.npara9  = m.np9
-	goApp.npara10 = This.Idautog
+	goApp.npara10 = This.idautog
 	goApp.npara11 = m.np11
 	goApp.npara12 = m.np12
 	goApp.npara13 = This.ubigeocliente
-	TEXT To m.lp Noshow
+	Text To m.lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?this.idautog,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
+
 
 
 

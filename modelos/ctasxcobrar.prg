@@ -676,7 +676,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lc Noshow
 	\Select razo,nomv,fech As fepd,fevto As fevd,importe,
 	\Tipo,docd,If(tdoc='01','F',If(tdoc='03','B',If(tdoc='20','P',''))) As tipodoc,ndoc,idcred As nreg,rcre_codv As idven,idclie,banc,mone As mond,
-	\estd,dola,nrou,' ' As usua,Idauto,rcre_idrc,Ncontrol,tdoc From vpdtespagoc Where importe>0
+	\estd,dola,nrou,' ' As usua,Idauto,rcre_idrc,Ncontrol,tdoc,rcre_form From vpdtespagoc Where importe>0
 	If This.Codv > 0 Then
 	\ And  rcre_codv=<<This.Codv>>
 	Endif
@@ -971,6 +971,15 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
+	Function Desactivarcreditos(np1,np2)
+	TEXT TO lc NOSHOW TEXTMERGE
+	UPDATE fe_rcred SET rcre_acti='I',rcre_idus1=<<np2>> WHERE rcre_idau=<<np1>>
+	ENDTEXT
+	If This.Ejecutarsql(lc)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 	Function DesactivaCreditos(np1)
 	lc = 'PRODESACTIVARCREDITOS'
 	goApp.npara1 = np1
@@ -1039,20 +1048,21 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Df = Cfechas(This.dFech)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	    \select idclie,nruc,razo,ndoc,fech,mone,tsoles,tdolar,ndni,vendedor from (
-		\SELECT p.rcre_idcl as idclie,b.razo,'S'  as mone,ifnull(t.ndoc,'') as ndoc,ifnull(t.fech,p.rcre_fech) as fech,
-		\ROUND(SUM(a.impo-a.acta),2) AS tsoles,b.nruc,b.ndni,0 AS tdolar,v.nomv as vendedor
-		\FROM fe_cred as a
-		\inner join fe_rcred as p on p.rcre_idrc=a.cred_idrc
-		\inner join fe_vend as v on(v.idven=p.rcre_codv)
-		\inner join  fe_clie as b on b.idclie=p.rcre_idcl
-		\left join fe_rcom as t on t.idauto=p.rcre_idau
-		\WHERE a.acti<>'I' and p.rcre_acti='A'  and a.fech<='<<df>>'
+	    \SELECT idclie,nruc,razo,IFNULL(t.ndoc,c.ndoc) AS ndoc,c.fech,mone,tsoles,tdolar,ndni,v.nomv AS vendedor FROM (
+		\SELECT ncontrol,rcre_idrc,
+		\ROUND(SUM(a.impo-a.acta),2) AS tsoles,0 AS tdolar
+		\FROM fe_cred AS a
+		\INNER JOIN fe_rcred AS p ON p.rcre_idrc=a.cred_idrc
+		\WHERE a.acti<>'I' AND p.rcre_acti='A'  AND a.fech<='<<df>>'
 	If This.Codv>0 Then
 		\ and rcre_codv=<<this.codv>>
 	Endif
-		\GROUP BY p.rcre_idrc)
-		\as t where t.tsoles<>0 or t.tdolar<>0 order by razo
+		\GROUP BY ncontrol,p.rcre_idrc HAVING tsoles<>0 OR tdolar<>0) AS t
+		\INNER JOIN (SELECT idcred,ndoc,fech,impo,cred_idrc FROM fe_cred WHERE acti='A' AND impo>0) AS c ON c.idcred=t.ncontrol
+		\INNER JOIN fe_rcred AS p ON p.rcre_idrc=c.cred_idrc
+		\INNER JOIN fe_vend AS v ON(v.idven=p.rcre_codv)
+		\INNER JOIN fe_clie AS b ON b.idclie=p.rcre_idcl
+		\LEFT JOIN fe_rcom AS t ON t.idauto=p.rcre_idau ORDER BY razo
 	Set Textmerge To
 	Set Textmerge Off
 	If This.EJECutaconsulta(lc, 'tmp') < 1 Then
@@ -1282,6 +1292,34 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Select (ccur)
 	Return idrc
+	ENDFUNC
+	Function CancelaCreditosDesdebancosxsys(objdetalle)
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
+	Endif
+	lc = 'FUNINGRESAPAGOSCREDITOSCB'
+	goApp.npara1 = objdetalle.cndoc
+	goApp.npara2 = objdetalle.nacta
+	goApp.npara3 = objdetalle.cesta
+	goApp.npara4 = objdetalle.cmone
+	goApp.npara5 = objdetalle.cb1
+	goApp.npara6 = objdetalle.dFech
+	goApp.npara7 = objdetalle.dfevto
+	goApp.npara8 = objdetalle.Ctipo
+	goApp.npara9 = objdetalle.nctrol
+	goApp.npara10 = objdetalle.cnrou
+	goApp.npara11 = objdetalle.nidrc
+	goApp.npara12 = Id()
+	goApp.npara13 = goApp.nidusua
+	goApp.npara14 = objdetalle.nidb
+	TEXT To lp Noshow
+    (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
+	ENDTEXT
+     nid = This.EJECUTARf(lc, lp, 'nidcreditos')
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
 	Endfunc
 	Function CancelaCreditos(objdetalle)
 	If !Pemstatus(goApp, 'proyecto', 5) Then
@@ -1491,7 +1529,7 @@ Define Class ctasporcobrar As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function VerificaSitienePagos(np1)
-	If np1=0 Then
+	If np1<1 Then
 		Return 1
 	Endif
 	lc='FunVerificaPagos'

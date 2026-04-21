@@ -12,6 +12,8 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	ndolar = 0
 	nidusua = 0
 	nidclpr = 0
+	nidclie=0
+	nidprov=0
 	NAuto = 0
 	Cmoneda = ""
 	cTdoc = ""
@@ -726,7 +728,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	\		Left Join fe_usua As u  On u.idusua=r.idusua
 	\       Left Join (Select idauto,codv From fe_kar Where Acti='A'  Group By idauto,codv)  As p On p.idauto=a.lcaj_idau
 	\       Left Join fe_vend As z On z.idven=p.codv
-	\		Where  lcaj_fech Between '<<f11>>' And '<<f12>>' And lcaj_acti<>'I' And lcaj_idau>0 and lcaj_deud<>0
+	\		Where  lcaj_fech Between '<<f11>>' And '<<f12>>' And lcaj_acti<>'I' And lcaj_idau>0 And lcaj_deud<>0
 	If This.codt > 0 Then
 	 \ And a.lcaj_codt=<<This.codt>>
 	Endif
@@ -762,24 +764,70 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Return nsaldo
 	Endfunc
 	Function PermiteIngresoACaja(df)
-	Ccursor='c_'+Sys(2015)
+	Ccursor = 'c_' + Sys(2015)
 	lc = 'FunVerificaCaja'
-	goapp.npara1=df
+	goapp.npara1 = df
 	TEXT To lp Noshow Textmerge
      (?goapp.npara1)
 	ENDTEXT
-	nid=This.EJECUTARf(lc,lp,Ccursor)
-	If m.nid<0 Then
+	nid = This.EJECUTARf(lc, lp, Ccursor)
+	If m.nid < 0 Then
 		Return 0
 	Endif
 	Select (Ccursor)
-	If nid>0 Then
-		this.cmensaje=' En este fecha no se permite Registros '
+	If nid > 0 Then
+		This.cmensaje = ' En este fecha no se permite Registros '
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function informextipomvto(ctipo, Ccursor)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\Select  lcaj_fech As fecha,lcaj_dcto As dcto,lcaj_deta As detalle,lcaj_acre As egreso,u.nomb As cajero,lcaj_fope As fechaoperacion
+	\From fe_lcaja  As l
+	\inner Join fe_usua As u On u.idusua=l.lcaj_idus
+	\Where lcaj_acti='A' And lcaj_fech Between '<<dfi>>' And '<<dff>>'
+	If ctipo = 'E' Then
+	\ And lcaj_acre>0
+	Else
+	\ And lcaj_deud>0
+	Endif
+	If This.codt > 0 Then
+	  \ And lcaj_codt=<<This.codt>>
+	Endif
+	\ Order By lcaj_fech
+	Set Textmerge To
+	Set Textmerge Off
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresaDatosLCajaEFectivoxsys()
+	lc = "ProIngresaDatosLcajaE1"
+	goapp.npara1=this.dFecha
+	goapp.npara2=this.ndoc
+	goapp.npara3=this.cdetalle
+	goapp.npara4=this.nidcta
+	goapp.npara5=this.ndebe
+	goapp.npara6=this.nhaber
+	goapp.npara7=this.Cmoneda
+	goapp.npara8=this.ndolar
+	goapp.npara9=goapp.nidusua
+	goapp.npara10=this.nidclpr
+	goapp.npara11=this.NAuto
+	goapp.npara12=goapp.tienda
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
+	ENDTEXT
+	If this.EJECUTARP(lc,lp,'')<1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
 
 
 

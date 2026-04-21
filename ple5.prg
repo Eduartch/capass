@@ -878,9 +878,13 @@ Case  goApp.ose = 'bizlinks'
 	ENDTEXT
 Case goApp.ose = "efact"
 	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
-     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" xmlns:wsse="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
+     xmlns:ser="http://service.sunat.gob.pe" 
+     xmlns:wsse="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 	   <soapenv:Header>
-	   <wsse:Security soapenv:mustUnderstand="0" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+	   <wsse:Security soapenv:mustUnderstand="0" 
+	   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" 
+	   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
 	      <wsse:UsernameToken>
 	        <wsse:Username><<ls_user>></wsse:Username>
 	         <wsse:Password><<ls_pwd_sol>></wsse:Password>
@@ -897,8 +901,9 @@ Case goApp.ose = "efact"
 	ENDTEXT
 Otherwise
 	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
-			<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+			<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" 
+			xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+			xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 				<soapenv:Header>
 					<wsse:Security>
 						<wsse:UsernameToken>
@@ -1795,6 +1800,7 @@ Else
 	carchivopdf  = Addbs(Addbs(Addbs(Sys(5) + Sys(2003)) + 'PDF') + Alltrim(oempresa.nruc)) + filepdf
 Endif
 cpropiedad = "Impresoranormal"
+
 If !Pemstatus(goApp, cpropiedad, 5)
 	goApp.AddProperty("Impresoranormal", "")
 Else
@@ -7718,23 +7724,6 @@ Else
 Endif
 Endfunc
 ***************************
-
-*	        resu_fech,sum(enviados) as enviados,sum(resumen) as resumen from(
-*			select resu_fech,case tipo when 1 then resu_impo else 0 end as enviados,
-*			case tipo when 2 then resu_impo else 0 end as Resumen,resu_mens,tipo from (
-*			SELECT resu_fech,resu_impo as resu_impo,resu_mens,1 as Tipo FROM fe_resboletas f
-*			where resu_fech between '<<f1>>' and '<<f2>>' and f.resu_acti='A' and left(resu_mens,1)='0'
-*			union all
-*			SELECT fech as resu_fech,if(mone='S',impo,impo*dolar) as resu_impo,' ' as resu_mens,2 as Tipo FROM fe_rcom f
-*			where fech between '<<f1>>' and '<<f2>>' and f.acti='A' and tdoc='03' and left(ndoc,1)='B' and f.idcliente>0
-*			union all
-*			SELECT f.fech as resu_fech,if(f.mone='S',abs(f.impo),abs(f.impo*f.dolar)) as resu_impo,' ' as resu_mens,2 as Tipo FROM fe_rcom f
-*			inner join fe_ncven g on g.ncre_idan=f.idauto
-**			inner join fe_rcom as w on w.idauto=g.ncre_idau
-*			where f.fech between '<<f1>>' and '<<f2>>' and f.acti='A' and f.tdoc in ('07','08') and left(f.ndoc,1)='F' and w.tdoc='03' ) as x)
-*			as y group by resu_fech order by resu_fech
-
-
 Define Class Resumenboletas As Custom
 	Function ConsultaBoletasyNotasporenviar(f1, f2)
 	Local lC
@@ -8880,6 +8869,7 @@ Endfunc
 *************************************
 Function CreatemporalCotizaciones(Calias)
 Create Cursor Precios(Precio N(14, 8), Coda N(8), iden N(1), Nitem N(3))
+Create Cursor Autorizado(Coda N(8), cant N(12, 2), Prec N(12, 2), Prea N(12, 2), Unid c(15), Nitem N(5), Idusua N(5), idusuaa N(5),Descri c(100),usuario1 c(20),usuario2 c(20),cliente c(120))
 Create  Cursor (Calias) (Coda N(8), idco N(8), Descri c(120), Unid c(4), Precio1 N(13, 8), cant N(10, 3), Prec N(14, 8), Nreg N(8), ;
 	Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Valida c(1), pos N(5), costo N(13, 8), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
 	uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), sie N(10, 2), och N(10, 2), nue N(10, 2), die N(10, 2), onc N(10, 2),;

@@ -222,7 +222,6 @@ Define Class guiaremisionxvtas As GuiaRemision Of 'd:\capass\modelos\guiasremisi
 					Exit
 				Endif
 			Endif
-
 		Endif
 		Select tmpvg
 		Skip
@@ -281,7 +280,6 @@ Define Class guiaremisionxvtas As GuiaRemision Of 'd:\capass\modelos\guiasremisi
 		Return 0
 	Endif
 	Endfunc
-*******************
 	Function GrabaDetalleGuias(nidk, ncant, nidg)
 	Local lC, lp
 	lC			  = "FunDetalleGuiaVentas"

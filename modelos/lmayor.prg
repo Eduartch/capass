@@ -117,7 +117,7 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 	\	From fe_ldiario As a
 	\	inner Join fe_plan As b On b.idcta = a.ldia_idcta
 	\	Where a.ldia_acti = 'A' And ldia_inic = 'I' And ldia_fech = '<<fii>>' And ldia_tran <> 'T'
-	If this.ncodt>0 Then
+	If This.ncodt>0 Then
 		\And ldia_codt=<<This.ncodt>>
 	Endif
 	\Group By a.ldia_idcta,ncta,ctasunat,nomb) As z GROUP BY z.ncta,z.ctasunat, z.nomb,ctap,idcta
@@ -143,7 +143,7 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 	\(select b.ncta,ctasunat,b.nomb,SUM(a.ldia_debe-a.ldia_itrd) as debe,SUM(a.ldia_haber-a.ldia_itrh) as haber,ldia_idcta as idcta
 	\from fe_ldiario as a inner join fe_plan as b on b.idcta=a.ldia_idcta
 	\where a.ldia_acti='A' and ldia_fech between '<<dfi>>' and '<<dff>>' and ldia_tran<>'T' and ldia_inic<>'I'
-	If this.ncodt>0 Then
+	If This.ncodt>0 Then
 		\ And ldia_codt=<<This.ncodt>>
 	Endif
 	\ group by a.ldia_idcta,ncta,ctasunat,nomb) as z GROUP BY ncta,ctasunat,nomb,ctap,idcta
@@ -180,7 +180,7 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		Else
 	        \ and ldia_fech between '<<dfi>>' and '<<dff>>'
 		Endif
-		If this.ncodt>0  Then
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
 		Endif
 		\	Group By a.ldia_idcta,ncta,ctasunat,nomb) As z GROUP BY z.ncta,z.ctasunat, z.nomb,idcta
@@ -200,7 +200,7 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		Else
 	        \ and ldia_fech between '<<dfi>>' and '<<dff>>'
 		Endif
-		If this.ncodt>0  Then
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
 		Endif
 		\	Group By a.ldia_idcta,ncta,ctasunat,nomb) As Y Group By ncta,ctasunat,nomb,idcta) As z Group By z.ncta,z.ctasunat, z.nomb,pcta,idcta
@@ -221,7 +221,7 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		Else
 	        \ and ldia_fech between '<<dfi>>' and '<<dff>>'
 		Endif
-		If this.ncodt>0  Then
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
 		Endif
 		\ group by a.ldia_idcta,ncta,ctasunat,nomb)as y group by ncta,ctasunat,nomb,idcta) as z group by z.ncta,z.ctasunat, z.nomb,pcta,idcta
@@ -242,7 +242,7 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		Else
 	        \ and ldia_fech between '<<dfi>>' and '<<dff>>'
 		Endif
-		If this.ncodt>0  Then
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
 		Endif
 		\	Group By a.ldia_idcta,ncta,ctasunat,nomb)As Y Group By ncta,ctasunat,nomb,idcta) As z Group By z.ncta,z.ctasunat, z.nomb,pcta,idcta
@@ -271,7 +271,7 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		\(Select b.ncta,ctasunat,b.nomb,Sum(a.ldia_debe-a.ldia_itrd) As debe,Sum(a.ldia_haber-a.ldia_itrh) As haber,ldia_idcta As idcta
 		\From fe_ldiario As a inner Join fe_plan As b On b.idcta=a.ldia_idcta
 		\Where a.ldia_acti='A' And ldia_fech Between '<<dfi>>'  And  '<<dff>>' And ldia_tran<>'T' And ldia_inic<>'I'
-		If this.ncodt>0  Then
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
 		Endif
 		\Group By a.ldia_idcta,ncta,ctasunat,nomb) As z Group By z.ncta,z.ctasunat, z.nomb,idcta
@@ -284,10 +284,10 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		\(Select ncta,nomb,ctasunat,Sum(debe) As debe,Sum(haber) As haber,idcta From
 		\(Select Left(b.ncta,2) As ncta,ctasunat,b.nomb,Sum(a.ldia_debe-a.ldia_itrd) As debe,Sum(a.ldia_haber-a.ldia_itrh) As haber,
 		\ldia_idcta As idcta From fe_ldiario As a inner Join fe_plan As b On b.idcta=a.ldia_idcta
-		\Where a.ldia_acti='A' And ldia_fech Between '<<dfi>>'  And  '<<dff>>' And ldia_tran<>'T' And ldia_inic<>'I' 
-		If this.ncodt>0  Then
+		\Where a.ldia_acti='A' And ldia_fech Between '<<dfi>>'  And  '<<dff>>' And ldia_tran<>'T' And ldia_inic<>'I'
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
-		ENDIF
+		Endif
 		\Group By a.ldia_idcta,ncta,ctasunat,nomb) As Y Group By ncta,ctasunat,nomb,idcta)
 		\As z Group By z.ncta,z.ctasunat, z.nomb,idcta
 		Set Textmerge Off
@@ -300,9 +300,9 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		\(Select Left(b.ncta,4) As ncta,ctasunat,b.nomb,Sum(a.ldia_debe-a.ldia_itrd) As debe,Sum(a.ldia_haber-a.ldia_itrh) As haber,
 		\ldia_idcta As idcta From fe_ldiario As a inner Join fe_plan As b On b.idcta=a.ldia_idcta
 		\Where a.ldia_acti='A' And ldia_fech Between '<<dfi>>'  And  '<<dff>>' And ldia_tran<>'T' And ldia_inic<>'I'
-		If this.ncodt>0  Then
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
-		ENDIF
+		Endif
 		\ Group By a.ldia_idcta,ncta,ctasunat,nomb) As Y Group By ncta,ctasunat,nomb,idcta)
 		\As z Group By z.ncta,z.ctasunat, z.nomb,idcta
 		Set Textmerge Off
@@ -315,15 +315,41 @@ Define Class lmayor As OData Of 'd:\capass\database\data.prg'
 		\(Select Left(b.ncta,5) As ncta,ctasunat,b.nomb,Sum(a.ldia_debe-a.ldia_itrd) As debe,
 		\Sum(a.ldia_haber-a.ldia_itrh) As haber,ldia_idcta As idcta
 		\From fe_ldiario As a inner Join fe_plan As b On b.idcta=a.ldia_idcta
-		\Where a.ldia_acti='A' And ldia_fech Between '<<dfi>>'  And  '<<dff>>'  And ldia_tran<>'T' And ldia_inic<>'I' 
-		If this.ncodt>0  Then
+		\Where a.ldia_acti='A' And ldia_fech Between '<<dfi>>'  And  '<<dff>>'  And ldia_tran<>'T' And ldia_inic<>'I'
+		If This.ncodt>0  Then
 	        \ and ldia_codt=<<this.ncodt>>
-		ENDIF
+		Endif
 		\Group By a.ldia_idcta,ncta,ctasunat,nomb) As Y Group By ncta,ctasunat,nomb,idcta)
 		\As z Group By z.ncta,z.ctasunat,z.nomb,idcta
 		Set Textmerge Off
 		Set Textmerge To
 	Endcase
+	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Detalle(cta,Ccursor)
+	f1=Cfechas(This.dfi)
+	f2=Cfechas(This.dff)
+	fi=Cfechas(This.fi)
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\select a.ldia_fech,a.ldia_nume,b.ncta,b.nomb,a.ldia_glosa,(a.ldia_debe-a.ldia_itrd) as debe,(a.ldia_haber-a.ldia_itrh) as haber,
+    \if((a.ldia_debe-a.ldia_itrd)>(a.ldia_haber-a.ldia_itrh),(a.ldia_debe-a.ldia_itrd)-(a.ldia_haber-a.ldia_itrh),0) as deudor,
+    \if((a.ldia_haber-a.ldia_itrh)>(a.ldia_debe-a.ldia_itrd),(a.ldia_haber-a.ldia_itrh)-(a.ldia_debe-a.ldia_itrd),0) as acreedor,ldia_acti
+    \from fe_ldiario as a
+    \inner join fe_plan as b on b.idcta=a.ldia_idcta
+    \where a.ldia_acti='A' and ldia_fech between '<<fi>>' and '<<f2>>'  and ldia_tran<>'T'
+	If m.cta>0 Then
+       \ and a.ldia_idcta=<<m.cta>>
+	Endif
+	IF this.ncodt>0 then
+      \ and ldia_codt=<<this.ncodt>>
+	Endif
+	\Order By b.ncta,a.ldia_fech
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC,Ccursor)<1 Then
 		Return 0
 	Endif

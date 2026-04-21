@@ -40,10 +40,10 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	tipocot = ""
 	Function Anular(nid)
 	lsql = "PROANULAPEDIDOS"
-	np1=m.nid
-	TEXT To lp Noshow
+	np1 = m.nid
+	Text To lp Noshow
 	(@estado,?np1)
-	ENDTEXT
+	Endtext
 	If This.ejecutarp(lsql, lp, '') < 1 Then
 		Return 0
 	Endif
@@ -60,9 +60,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Otherwise
 		Cestado = estado3
 	Endcase
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
       UPDATE fe_rped SET rped_esta='<<cestado>>' WHERE idautop=<<nid>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(m.lC) < 1 Then
 		Return 0
 	Endif
@@ -71,13 +71,13 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Function CreatemporalCotizaciones(Calias)
 	Create Cursor Precios(Precio N(8, 2), Coda N(8), iden N(1), Nitem N(3))
 	Create  Cursor (Calias) (Descri c(200), Unid c(4), cant N(10, 3), Prec N(13, 5), Nreg N(8), idco N(8), Moneda c(20), ;
-		Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Coda N(8), Valida c(1), pos N(5), costo N(13, 8), pre1 N(8, 2), Pre2 N(8, 2), Pre3 N(8, 2), ;
-		uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), calma c(5), aprecios c(1), come N(7), a1 c(15), idped N(10), valida1 c (1), permitido N(1), ;
-		Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), Detalle c(180), ;
-		nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), pmenor N(8, 2), pmayor N(8, 2), ;
-		Contacto c(120), Transportista c(120), dire1 c(120), fono1 c(20), dias N(2), Vendedor c(100), tipro c(1), Item N(4), ;
-		codc N(6), razon c(120), fech d, Cod c(20), orden N(3), coda1 c(15), pre0 N(13, 8), cantoferta N(10, 2), Precio1 N(13, 8), Tdoc c(2), swd N(1) Default 0, como N(7, 3), ;
-		Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), cantmayor N(8, 2), grati c(1), cant2 N(10, 3))
+		  Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Coda N(8), Valida c(1), pos N(5), costo N(13, 8), pre1 N(8, 2), Pre2 N(8, 2), Pre3 N(8, 2), ;
+		  uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), calma c(5), aprecios c(1), come N(7), a1 c(15), idped N(10), valida1 c (1), permitido N(1), ;
+		  Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), Detalle c(180), ;
+		  nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), pmenor N(8, 2), pmayor N(8, 2), ;
+		  Contacto c(120), Transportista c(120), dire1 c(120), fono1 c(20), dias N(2), Vendedor c(100), tipro c(1), Item N(4), ;
+		  codc N(6), razon c(120), fech d, Cod c(20), orden N(3), coda1 c(15), pre0 N(13, 8), cantoferta N(10, 2), Precio1 N(13, 8), Tdoc c(2), swd N(1) Default 0, como N(7, 3), ;
+		  Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), cantmayor N(8, 2), grati c(1), cant2 N(10, 3))
 	Select (Calias)
 	Index On Descri Tag Descri
 	Index On Nitem Tag Items
@@ -163,17 +163,17 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function mostrarcotizacion1(opt, cndoc, Ccursor)
-	IF !PEMSTATUS(goapp,'productoscp',5) then
-	    ADDPROPERTY(goapp,'productooscp','')
-	ENDIF     
+	If !Pemstatus(goApp, 'productoscp', 5) Then
+		AddProperty(goApp, 'productooscp', '')
+	Endif
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 		   \Select  a.idart,a.Descri,a.Unid,a.cant,a.idven,a.Vendedor,a.Prec,a.premay,a.premen,a.fech,a.IDautoP,a.Impo,a.Ndoc,a.aten,
            \a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,a.idclie,a.razo,a.nruc,a.Dire,a.ciud,a.rped_mone,a.Nreg,ifnull(a.fono,'') As fono,ifnull(a.fax,'') As fax,
            \b.prod_come As come,b.prod_comc As Comc,
-           IF goapp.Productoscp='S' then
-            \ prod_ocan,prod_cmay,IF(b.prod_uti0>1,ROUND(IF(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti0,((a.prec*v.igv*v.dola)+p.prec)*prod_uti0),0.5),0) AS pre0,
-           ENDIF 
+	If goApp.Productoscp = 'S' Then
+            \ prod_ocan,prod_cmay,If(b.prod_uti0>1,Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti0,((a.Prec*v.igv*v.dola)+p.Prec)*prod_uti0),0.5),0) As pre0,
+	Endif
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti1,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti1),2),0) As pre1,
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti2,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti2),2),0) As Pre2,
            \ifnull(Round(If(tmon='S',((b.Prec*v.igv)+p.Prec)*prod_uti3,((b.Prec*v.igv*v.dola)+p.Prec)*prod_uti3),2),0) As Pre3,
@@ -196,20 +196,20 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function MostrarCotizacionesFacturadasmercaderiasResumnen(np1, Ccursor)
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
 	SELECT  a.ndoc,a.fech, b.razo, a.Form, a.valor,a.igv,a.Impo,a.idauto,a.fusua From   fe_rcom As a
 	inner Join fe_clie As b On b.idclie=a.idcliente
 	inner Join fe_canjesp As c On  c.canp_idau=a.idauto
 	inner join fe_usua as u on u.idusua=a.idusua
 	Where c.canp_idap = <<np1>> And a.Acti = 'A' And c.canp_acti = 'A'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function MostrarCotizacionesFacturadasmercaderiasDetalle(np1, Ccursor)
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
 		SELECT  a.ndoc,a.fech, b.razo, a.Form, a.valor,a.igv,a.Impo,a.idauto,a.fusua,
 		       p.descri,p.unid,k.cant,k.prec,u.nomb as usuario From   fe_rcom As a
 			 inner Join fe_clie As b On b.idclie=a.idcliente
@@ -218,23 +218,23 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 			 inner join fe_art as p on p.idart=k.idart
 			 inner join fe_usua as u on u.idusua=a.idusua
 			 Where c.canp_idap = <<np1>> And a.Acti = 'A' And c.canp_acti = 'A'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function MuestraCotizaciones(Cd)
-	TEXT To lC Noshow Textmerge Pretext 7
+	Text To lC Noshow Textmerge Pretext 7
       SELECT * from vmuestracotizaciones where ndoc='<<cd>>'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'pedidos') < 0 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarcotizacionpornumeropsystr(cndoc, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
       SELECT   `a`.`idart` ,`b`.`descri`,`b`.`unid` ,`a`.`cant`,IFNULL(`m`.`idven`,0) AS `idven`,
 	  IFNULL(`m`.`nomv`,'') AS `Vendedor`, `a`.`prec`, `b`.`premay`,  `b`.`premen`,
 	  `c`.`fech` , `c`.`idautop` ,  `c`.`impo`,  `c`.`ndoc` ,
@@ -254,7 +254,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	   LEFT JOIN `fe_vend` `m`   ON ((`m`.`idven` = `c`.`idven`))
 	   INNER JOIN fe_fletes p ON p.idflete=b.idflete, fe_gene v
 	   WHERE `a`.`acti` <> 'I'   AND `c`.`acti` <> 'I' AND ndoc='<<cndoc>>'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -343,7 +343,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarparacanjepsysm(cnumero, Ccursor)
-	TEXT To m.lC Noshow Textmerge Pretext 7
+	Text To m.lC Noshow Textmerge Pretext 7
 	   select a.descri,a.unid,b.prec,b.idart as coda,a.cost,c.ndoc,
 	   b.cant,c.idclie as codc,x.nomb as usua,c.form,d.razo,d.dire,d.ciud,ifnull(d.ndni,'') as ndni,d.nruc,c.tdoc,c.idven,c.idautop,c.facturado,
 	   a.prod_idco,c.rped_auto,b.pedi_perc,c.rped_incl,c.rped_sper,c.rped_agen,d.clie_corr,a.prod_perc,prod_icbper,rped_dias,forma,rped_mone,prod_detr,clie_rete
@@ -353,14 +353,14 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	   INNER JOIN fe_clie as d On(d.idclie=c.idclie)
 	   inner join fe_usua as x on x.idusua=c.rped_idus
 	   WHERE c.ndoc='<<cnumero>>' AND    b.cant>0 and b.prec>0 and b.acti='A' and c.acti='A'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(m.lC, "pedidos") < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarparacanjespsysb(cnumero, Ccursor)
-	TEXT To lC Noshow Textmerge Pretext 7
+	Text To lC Noshow Textmerge Pretext 7
 	   SELECT a.dped_cost  AS costo,
 	   c.tdoc,  c.form, c.idclie , a.idart, b.prod_tigv  AS prod_tigv,  b.descri,
 	   x.pres_desc  AS unid,  a.cant       AS cant,  a.prec,  b.premay,  b.premen     AS premen,  c.fech,  c.idautop    AS idautop,
@@ -378,14 +378,14 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	    JOIN fe_presentaciones x   ON x.pres_idpr = v.epta_pres
 	    join fe_clie as d on d.idclie=c.idclie
 	    WHERE c.acti = 'A'      AND a.acti = 'A' and c.ndoc='<<cnumero>>'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarunacotizacionpsysb(cnumero, Ccursor)
-	TEXT To lC Noshow Textmerge Pretext  7
+	Text To lC Noshow Textmerge Pretext  7
 	SELECT
 	  a.dped_cost AS costo,	  a.idart     AS idart,
 	  b.prod_tigv AS prod_tigv,	  b.descri    AS descri,
@@ -409,14 +409,14 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	     LEFT JOIN fe_clie d      ON d.idclie = c.idclie
 	     LEFT JOIN fe_vend m     ON m.idven = c.idven
 	WHERE a.acti <> 'I'       AND c.acti <> 'I'  and c.ndoc='<<cnumero>>'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function buscarunacotizacioniaisac(nid, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
      	   select a.idart,a.descri as descri,a.unid,a.cant,a.idven,a.vendedor,a.prec,a.fech,a.idautop,a.impo,a.ndoc,a.aten,
            a.forma,a.plazo,a.validez,a.entrega,a.detalle,a.idclie,a.razo,a.nruc,a.dire,a.ciud,a.rped_mone,a.nreg,ifnull(a.fono,'') as fono,
            ifnull(a.fax,'') as fax,b.prod_come as come,b.prod_comc as comc,rped_gara,
@@ -432,7 +432,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
            left join fe_art b on b.idart=a.idart
            left join fe_fletes p on p.idflete=b.idflete, fe_gene v
            WHERE a.idautop=<<nid>>   order by orden;
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
@@ -527,11 +527,11 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara23 = This.Cgarantia
 	goApp.npara24 = This.vigv
 	goApp.npara25 = This.Tigv
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, "icot" )
 	If nid < 1  Then
 		Return 0
@@ -556,9 +556,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara13 = np13
 	goApp.npara14 = np14
 	goApp.npara15 = np15
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-	ENDTEXT
+	Endtext
 	m.nidetalle = This.EJECUTARf(lC, lp, cur)
 	If  m.nidetalle < 1  Then
 		Return 0
@@ -570,9 +570,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Select * From tacc Where Nitem = m.nitem1 Into Cursor xtacc
 	Select xtacc
 	Scan All
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	     INSERT INTO fe_varios(vari_desc,vari_cant,vari_prec,vari_idco,vari_unid,vari_idar,vari_grup)values('<<xtacc.descri>>',<<xtacc.cant>>,<<xtacc.prec>>,<<pk>>,'<<xtacc.unid>>',<<xtacc.idart>>,<<xtacc.grupo>>)
-		ENDTEXT
+		Endtext
 		If This.Ejecutarsql(lC) < 1 Then
 			Sw = 0
 			Exit
@@ -584,11 +584,11 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function buscarvarioscotizacioniaisac(nid, nitem1, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT vari_desc,vari_unid,vari_cant,vari_prec,vari_idco,vari_idar,vari_grup FROM fe_varios AS v
     INNER JOIN fe_ped AS p ON p.`idped`= v.`vari_idco`
     left  join fe_art as a on a.idart=v.vari_idar WHERE vari_acti='A' and vari_idco=<<nid>> order by vari_idva
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -599,9 +599,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function CamnbiaraFacturado(np1)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	UPDATE fe_rped SET facturado="S" WHERE idautop=<<np1>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -609,7 +609,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function verificasitieneentregas(np1)
 	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	 SELECT y.idped as idautop FROM
 		fe_ped AS a
 	    INNER JOIN fe_rped AS c ON c.idautop=a.idautop
@@ -618,7 +618,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		(SELECT p.entregado,a.idped FROM vpentregas AS p
 		INNER JOIN fe_ped AS a ON a.idped=p.idped WHERE a.idautop=<<np1>>) AS t GROUP BY idped) AS y ON y.idped=a.idped
 		WHERE a.acti='A' AND c.acti='A' AND c.idautop=<<np1>> LIMIT 1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -630,7 +630,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarpedidoparaentregapsysl(nid, Ccursor)
-	TEXT To lC Noshow Textmerge Pretext 7
+	Text To lC Noshow Textmerge Pretext 7
 	    select a.idart,b.descri,b.unid,a.prec,pedido,entregado,y.idped from
 		fe_ped as a
 		inner join fe_art as b on b.idart=a.idart
@@ -645,7 +645,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		select cast(0 as decimal(12,2)) as pedido,p.entregado,a.idped from vpentregas as p
 		inner join fe_ped as a on a.idped=p.idped WHERE a.idautop=<<this.nidautop>>) as t group by idped) as y on y.idped=a.idped
 		where a.acti='A' and c.acti='A' and c.idautop=<<this.nidautop>> and c.facturado<>'S'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -687,11 +687,11 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function verificarsiyaestaregistrada(Cd)
 	Ccursor = 'c' + Sys(2015)
-	TEXT To lC Noshow
+	Text To lC Noshow
     SELECT a.idautop  FROM fe_rped AS a
     INNER JOIN fe_ped AS b ON b.idautop=a.idautop
     WHERE TRIM(a.ndoc)='<<cd>>' AND a.acti='A' AND b.acti='A' limit 1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -736,7 +736,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function listarproductosconentregaspsysl(Ccursor)
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
 	    select a.idart,concat(TRIM(b.descri),' ',TRIM(cast(a.idart as char(10)))) as descri,
 	    b.unid,a.prec,pedido,entregado,y.idped,
 	    round(if(tmon='S',(b.prec*g.igv)+f.prec,(b.prec*g.igv*g.dola)+f.prec),2) as costo,
@@ -757,14 +757,14 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		inner join fe_ped as a on a.idped=p.idped where a.idautop=<<this.nidautop>>) as t group by idped) as y   on y.idped=a.idped
 		,fe_gene as g
 		where a.acti='A' and c.acti='A' and c.idautop=<<this.nidautop>>
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(m.lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function listarpedidosparacanjepsysl(Ccursor)
-	TEXT To m.lC Noshow Textmerge
+	Text To m.lC Noshow Textmerge
 	    select a.idart,concat(TRIM(b.descri),' ',TRIM(cast(a.idart as char(10)))) as descri,
 	    b.unid,a.prec,a.cant,a.idped,a.cant as entregado,
 	    round(if(tmon='S',(b.prec*g.igv)+f.prec,(b.prec*g.igv*g.dola)+f.prec),2) as costo,
@@ -776,7 +776,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		inner join fe_fletes as f on f.idflete=b.idflete
 		inner join fe_rped as c on c.idautop=a.idautop,fe_gene as g
 		where a.acti='A' and c.acti='A' and c.idautop=<<this.nidautop>>
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(m.lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -940,28 +940,28 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function ingresadetalleordenado(objdetalle)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	INSERT INTO fe_ped(idart,cant,prec,idautop,pedi_orde)VALUES(<<objdetalle.ncoda>>,<<objdetalle.ncant>>,<<objdetalle.nprec>>,<<objdetalle.nidauto>>,<<objdetalle.norden>>)
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function ingresadetalle(objdetalle)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	INSERT INTO fe_ped(idart,cant,prec,idautop)VALUES(<<objdetalle.ncoda>>,<<objdetalle.ncant>>,<<objdetalle.nprec>>,<<objdetalle.nidauto>>)
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function ingresadetalleconunidades(objdetalle)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	INSERT INTO fe_ped(idart,cant,prec,idautop,dped_epta,dped_equi,dped_posi)
 	VALUES(<<objdetalle.ncoda>>,<<objdetalle.ncant>>,<<objdetalle.nprec>>,<<objdetalle.nidauto>>,<<objdetalle.nepta>>,<<objdetalle.nequi>>,<<objdetalle.npos>>)
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -976,9 +976,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara4 = objdetalle.nr
 	goApp.npara5 = objdetalle.Ctipo
 	goApp.npara6 = objdetalle.norden
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
-	ENDTEXT
+	Endtext
 	If This.ejecutarp(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -991,9 +991,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara3 = objdetalle.nprec
 	goApp.npara4 = objdetalle.nr
 	goApp.npara5 = objdetalle.Ctipo
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
-	ENDTEXT
+	Endtext
 	If This.ejecutarp(lC, lp, '') < 1 Then
 		Return 0
 	Endif
@@ -1009,9 +1009,9 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara6 = objdetalle.nequi
 	goApp.npara7 = objdetalle.Ctipo1
 	goApp.npara8 = objdetalle.npos
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
-	ENDTEXT
+	Endtext
 	If This.ejecutarp(lC, lp, '') < 1 Then
 		Return 0
 	Endif
@@ -1037,10 +1037,10 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara16 = ""
 	goApp.npara17 = ""
 	goApp.npara18 = This.Cmoneda
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-	ENDTEXT
+	Endtext
 	nid = This.EJECUTARf(lC, lp, 'idcot')
 	If nid < 1 Then
 		Return 0
@@ -1067,17 +1067,17 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara16 = ""
 	goApp.npara17 = "S"
 	goApp.npara18 = This.nidautop
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-	ENDTEXT
+	Endtext
 	If This.ejecutarp(lC, lp, "") < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function buscarcotizacionpsysn(cndoc, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	   SELECT  `a`.`idart`,  `b`.`descri`,  `b`.`unid`, `a`.`cant`, IFNULL(`m`.`idven`,0) AS `idven`,  IFNULL(`m`.`nomv`,'') AS `Vendedor`,
 	  `a`.`prec` , `c`.`fech`,  `c`.`idautop`,  `c`.`impo`, `c`.`ndoc`,  `c`.`aten`,  `c`.`forma`,
 	  `c`.`plazo`,  `c`.`validez`,  `c`.`entrega`,`c`.`detalle`, IFNULL(`d`.`idclie`,0) AS `idclie`,  IFNULL(`d`.`razo`,'') AS `razo`,
@@ -1097,7 +1097,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	     LEFT JOIN `fe_clie` `d` ON `d`.`idclie` = `c`.`idclie`
 	     LEFT JOIN `fe_vend` `m` ON `m`.`idven` = `c`.`idven`,fe_gene AS v
 	     WHERE `a`.`acti` = 'A'  AND `c`.`acti` = 'A' AND c.ndoc='<<m.cndoc>>'  order by pedi_orde
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1107,7 +1107,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
     SELECT  `a`.`idart` ,  `b`.`descri`,  `b`.`unid` ,  `a`.`cant` AS `cant`,
     `a`.`prec` ,  `b`.`pre1`      AS `premay`,  `b`.`pre2`      AS `premen`,  `c`.`fech` ,  `c`.`idautop`, `c`.`impo`,  `c`.`ndoc`,
     `c`.`aten` ,  `c`.`forma`     AS `forma`,  `c`.`plazo`,  `c`.`validez`   AS `validez`,
@@ -1119,7 +1119,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
     JOIN `fe_art` `b`   ON `b`.`idart` = `a`.`idart`
     LEFT JOIN `fe_clie` `d` ON `d`.`idclie` = `c`.`idclie`
     WHERE `a`.`acti` <> 'I' AND `c`.`acti` <> 'I' and c.idautop=<<this.nidautop>> order by idped
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1258,8 +1258,8 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Return  1
 	Endfunc
 	Function listar(Ccursor)
-	fi=Cfechas(This.dfi)
-	ff=Cfechas(This.dff)
+	fi = Cfechas(This.dfi)
+	ff = Cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select a.Ndoc,a.fech,b.Descri,b.Unid,c.cant,c.Prec,Round(c.cant*c.Prec,2) As Importe,
@@ -1271,12 +1271,12 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	\	inner Join fe_vend As e On(e.idven=a.idven)
 	\	Left Join fe_clie As d On(d.idclie=a.idclie)
 	\	inner Join fe_usua As x On x.Idusua=a.rped_idus
-	\	Where a.fech Between '<<fi>>' And '<<ff>>' and a.acti='A' and c.acti='A'
+	\	Where a.fech Between '<<fi>>' And '<<ff>>' And a.Acti='A' And c.Acti='A'
 	If This.nidclie > 0 Then
 		          \ And a.idclie=<<This.nidclie>>
 	Endif
-	If Len(Alltrim(This.cserie))>0 Then
-	\ and LEFT(a.ndoc,3)='<<this.cserie>>'
+	If Len(Alltrim(This.cserie)) > 0 Then
+	\ And Left(a.Ndoc,3)='<<this.cserie>>'
 	Endif
 	 \ Order By a.Ndoc
 	Set Textmerge Off
@@ -1286,8 +1286,8 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function buscarcotizacionparafacturarpsysw(cnumero,Ccursor)
-	TEXT To lC Noshow Textmerge
+	Function buscarcotizacionparafacturarpsysw(cnumero, Ccursor)
+	Text To lC Noshow Textmerge
 	select  a.descri,a.unid,b.prec,b.idart as coda,a.cost,
 		   b.cant,c.idclie as codc,x.nomb as usua,c.form,d.razo,d.dire,c.rped_idus,
 		   d.ciud,ifnull(d.ndni,'') as ndni,d.nruc,c.tdoc,c.idven,c.idautop,c.facturado,
@@ -1300,13 +1300,87 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 		   inner join fe_usua as x on x.idusua=c.rped_idus
 		   inner join fe_fletes as p on p.idflete=a.idflete, fe_gene v
 		   WHERE c.ndoc='<<cnumero>>' AND b.cant>0 and b.prec>0 and b.acti='A' and c.acti='A'
-	ENDTEXT
-	If this.EJECutaconsulta(lC,Ccursor) < 1
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarxidpsysg(niDAUTO, Ccursor)
+	Text To lC Noshow Textmerge
+	SELECT   `b`.`prod_icbper` AS `prod_icbper`,  `c`.`tdoc`        AS `tdoc`,
+	  `c`.`form`        AS `form`,  `c`.`idclie`      AS `codc`,  `a`.`idart`       AS `coda`,
+	  `b`.`descri`      AS `descri`,  `x`.`pres_desc`   AS `unid`,  `a`.`cant`        AS `cant`,
+	  `a`.`prec`        AS `prec`,  `b`.`premay`      AS `premay`,  `b`.`premen`      AS `premen`,
+	  `c`.`fech`        AS `fech`,  `c`.`idautop`     AS `idautop`,  `c`.`impo`        AS `impo`,
+	  `a`.`dped_epta`   AS `dped_epta`,  `c`.`ndoc`        AS `ndoc`,
+	  `b`.`prod_idco`   AS `idco`,  `b`.`uno`         AS `uno`,
+	  `b`.`dos`         AS `dos`, `b`.`tre`         AS `tre`,
+	  `b`.`cua`         AS `cua`,  `a`.`dped_equi`   AS `dped_equi`,
+	  `n`.`nomb`        AS `Usua`,  `c`.`rped_idus`   AS `rped_idus`,
+	  `c`.`idpcped`     AS `idpcped`,  `c`.`fecho`       AS `fecho`,
+	  `m`.`nomv`        AS `nomv`,  `c`.`idven`       AS `idven`,
+	  `c`.`idtienda`    AS `idtienda`,  `c`.`facturado`   AS `facturado`,
+	  `a`.`dped_posi`   AS `pos`,  `c`.`aten`        AS `aten`,
+	  `c`.`forma`       AS `forma`,  `c`.`plazo`       AS `plazo`,
+	  `c`.`validez`     AS `validez`,  `b`.`tipro`       AS `tipro`,
+	  `b`.`cost`        AS `costo`,  `b`.`premay`      AS `pre1`,d.razo,d.dire,d.ciud,d.ndni,d.nruc,
+	  `b`.`premen`      AS `pre2`,  IFNULL(`b`.`pre3`,0) AS `pre3`,  `a`.`idped`       AS `nreg`,  `c`.`rped_serv`   AS `rped_serv`
+	FROM `fe_ped` `a`
+	     JOIN `fe_rped` `c`           ON `a`.`idautop` = `c`.`idautop`
+	     JOIN `fe_art` `b`          ON `b`.`idart` = `a`.`idart`
+	     JOIN `fe_fletes` `p`         ON `p`.`idflete` = `b`.`idflete`
+	     JOIN `fe_vend` `m`         ON `m`.`idven` = `c`.`idven`
+	     JOIN `fe_usua` `n`       ON `n`.`idusua` = `c`.`rped_idus`
+	     JOIN `fe_epta` `v`      ON `v`.`epta_idep` = `a`.`dped_epta`
+	     JOIN `fe_presentaciones` `x`     ON `x`.`pres_idpr` = `v`.`epta_pres`
+		 JOIN  fe_clie AS d ON d.idclie=c.idclie 
+	WHERE `c`.`acti` = 'A' AND c.acti='A' AND c.idautop=<<m.niDAUTO>>
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1
+		Return 0
+	Endif
+	Return 1
+	ENDFUNC
+	Function buscarxdctopsysg(niDAUTO, Ccursor)
+	Text To lC Noshow Textmerge
+	SELECT   `b`.`prod_icbper` AS `prod_icbper`,  `c`.`tdoc`        AS `tdoc`,
+	  `c`.`form`        AS `form`,  `c`.`idclie`      AS `codc`,  `a`.`idart`       AS `coda`,
+	  `b`.`descri`      AS `descri`,  `x`.`pres_desc`   AS `unid`,  `a`.`cant`        AS `cant`,
+	  `a`.`prec`        AS `prec`,  `b`.`premay`      AS `premay`,  `b`.`premen`      AS `premen`,
+	  `c`.`fech`        AS `fech`,  `c`.`idautop`     AS `idautop`,  `c`.`impo`        AS `impo`,
+	  `a`.`dped_epta`   AS `dped_epta`,  `c`.`ndoc`        AS `ndoc`,
+	  `b`.`prod_idco`   AS `idco`,  `b`.`uno`         AS `uno`,
+	  `b`.`dos`         AS `dos`, `b`.`tre`         AS `tre`,
+	  `b`.`cua`         AS `cua`,  `a`.`dped_equi`   AS `dped_equi`,
+	  `n`.`nomb`        AS `Usua`,  `c`.`rped_idus`   AS `rped_idus`,
+	  `c`.`idpcped`     AS `idpcped`,  `c`.`fecho`       AS `fecho`,
+	  `m`.`nomv`        AS `nomv`,  `c`.`idven`       AS `idven`,
+	  `c`.`idtienda`    AS `idtienda`,  `c`.`facturado`   AS `facturado`,
+	  `a`.`dped_posi`   AS `pos`,  `c`.`aten`        AS `aten`,
+	  `c`.`forma`       AS `forma`,  `c`.`plazo`       AS `plazo`,
+	  `c`.`validez`     AS `validez`,  `b`.`tipro`       AS `tipro`,
+	  `b`.`cost`        AS `costo`,  `b`.`premay`      AS `pre1`,d.razo,d.dire,d.ciud,d.ndni,d.nruc,
+	  `b`.`premen`      AS `pre2`,  IFNULL(`b`.`pre3`,0) AS `pre3`,  `a`.`idped`       AS `nreg`,  `c`.`rped_serv`   AS `rped_serv`
+	FROM `fe_ped` `a`
+	     JOIN `fe_rped` `c`           ON `a`.`idautop` = `c`.`idautop`
+	     JOIN `fe_art` `b`          ON `b`.`idart` = `a`.`idart`
+	     JOIN `fe_fletes` `p`         ON `p`.`idflete` = `b`.`idflete`
+	     JOIN `fe_vend` `m`         ON `m`.`idven` = `c`.`idven`
+	     JOIN `fe_usua` `n`       ON `n`.`idusua` = `c`.`rped_idus`
+	     JOIN `fe_epta` `v`      ON `v`.`epta_idep` = `a`.`dped_epta`
+	     JOIN `fe_presentaciones` `x`     ON `x`.`pres_idpr` = `v`.`epta_pres`
+		 JOIN  fe_clie AS d ON d.idclie=c.idclie 
+	WHERE `c`.`acti` = 'A' AND c.acti='A' AND TRIM(c.ndoc)='<<m.niDAUTO>>'
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
 
 
 

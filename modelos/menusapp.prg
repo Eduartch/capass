@@ -71,13 +71,26 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function consultadata2(N, ct, nidus, dFecha, Ccursor)
 	Df = Cfechas(dFecha)
-	TEXT To lC Noshow Textmerge
-	  SELECT a.Menu_idme AS iKey,a.Menu_text AS Texto,a.menu_enla AS Parent,a.menu_clav AS clave,menu_tipo FROM fe_menus a
-	  INNER  JOIN fe_opt b ON b.opti_idme=a.menu_idme
-	  WHERE b.opti_idus=<<nidus>> AND b.opti_acti=1 AND '<<df>>' BETWEEN b.opti_feci AND b.opti_fecf
-	  UNION ALL
-	  SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo FROM fe_menus WHERE  menu_enla='0_'
-	ENDTEXT
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
+	Endif
+	If goApp.Proyecto = 'psysg' Then
+		Text To lC Noshow Textmerge
+		  SELECT a.Menu_idme AS iKey,a.Menu_text AS Texto,a.menu_enla AS Parent,a.menu_clav AS clave,menu_tipo,menu_para,menu_prot FROM fe_menus a
+		  INNER  JOIN fe_opt b ON b.opti_idme=a.menu_idme
+		  WHERE b.opti_idus=<<nidus>> AND b.opti_acti=1 AND '<<df>>' BETWEEN b.opti_feci AND b.opti_fecf
+		  UNION ALL
+		  SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo,menu_para,menu_prot FROM fe_menus WHERE  menu_enla='0_'
+		Endtext
+	Else
+		Text To lC Noshow Textmerge
+		  SELECT a.Menu_idme AS iKey,a.Menu_text AS Texto,a.menu_enla AS Parent,a.menu_clav AS clave,menu_tipo FROM fe_menus a
+		  INNER  JOIN fe_opt b ON b.opti_idme=a.menu_idme
+		  WHERE b.opti_idus=<<nidus>> AND b.opti_acti=1 AND '<<df>>' BETWEEN b.opti_feci AND b.opti_fecf
+		  UNION ALL
+		  SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo FROM fe_menus WHERE  menu_enla='0_'
+		Endtext
+	Endif
 	If This.EJECutaconsulta(lC, Ccursor) < 1  Then
 		Return 0
 	Endif
@@ -94,9 +107,18 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function consultadata0(Ccursor)
-	TEXT To lC Noshow Textmerge
-	SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo FROM fe_menus
-	ENDTEXT
+	Select fe_gene
+	If Fsize("menu_para") > 0 Then
+	    _Screen.menuprot='S'
+		Text To lC Noshow Textmerge
+	    SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo,menu_para,menu_prot FROM fe_menus
+		Endtext
+	Else
+		  _Screen.menuprot=''
+		Text To lC Noshow Textmerge
+	    SELECT Menu_idme AS iKey,Menu_text AS Texto,menu_enla AS Parent,menu_clav AS clave,menu_tipo FROM fe_menus
+		Endtext
+	Endif
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -114,27 +136,30 @@ Define Class menusapp As Odata Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function opcionesporusuario(Ccursor)
 	Df = Cfechas(fe_gene.fech)
-	TEXT To lC NOSHOW TEXTMERGE
+	Text To lC Noshow Textmerge
 	      SELECT opti_idop FROM fe_opt WHERE opti_idus=<<goapp.nidusua>> AND opti_Acti=1 AND '<<df>>' between opti_feci AND opti_fecf
 	      order by opti_idop
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function opcionesUsuario(nidus,Ccursor)
-	If This.Idsesion>0 Then
+	Function opcionesUsuario(nidus, Ccursor)
+	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	TEXT TO lc NOSHOW
+	Text To lC Noshow
     SeLECT a.menu_text,b.opti_acti,b.opti_feci,b.opti_fecf,b.opti_idop,opti_idus,a.menu_idme FROM fe_opt b
     inner join fe_menus a on a.menu_idme=b.opti_idme
     where b.opti_idus=?nidus AND LEFT(a.menu_enla,2)<>'0_' AND opti_acti=1  order by a.menu_text;
-	ENDTEXT
-	If This.EJECutaconsulta(lC,Ccursor)<1 Then
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
+

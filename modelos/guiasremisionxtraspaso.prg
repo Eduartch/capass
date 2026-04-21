@@ -28,7 +28,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 		NAuto = IngresaTraspasoAlmacenEnviado(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, goApp.Tienda, 0, 0, 0, 0, 0, 'P')
 	Else
 		NAuto = IngresaResumenTraspasos(This.Tdoc, 'E', This.Ndoc, This.Fecha, This.Fecha, This.Detalle, 0, 0, 0, This.Ndo2, 'S', fe_gene.dola, fe_gene.igv, 'T', 0, 'V', goApp.nidusua, 1, goApp.Tienda, 0, 0, 0, 0, m.nflete)
-	Endif
+	ENDIF
 	If NAuto < 1 Then
 		This.DEshacerCambios()
 		Return 0
@@ -48,7 +48,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 			This.DEshacerCambios()
 			Return 0
 		Endif
-	Endif
+	ENDIF
 	If  This.GeneraCorrelativo() = 1  Then
 		If 	GRabarCambios() = 0 Then
 			Return 0
@@ -185,13 +185,14 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 	Go Top
 	Sw = 1
 	Do While !Eof()
-		If goApp.Proyecto = 'psysm' Then
+		If ALLTRIM(goApp.Proyecto) == 'psysm' Then
 			oproductos.nidart = tmpv.Coda
 			If oproductos.consultastockpsysm(This.sucursal1, tmpv.cant) < 1 Then
 				This.Cmensaje = oproductos.Cmensaje
 				Sw = 0
 				Exit
-			Endif
+			ENDIF
+	
 		Else
 			oproductos.nidart = tmpv.Coda
 			oproductos.nidtda = This.sucursal1
@@ -221,13 +222,13 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 					Exit
 				Endif
 			Endif
-		Else
-			If goApp.Proyecto = 'psys' Then
+		ELSE
+			If ALLTRIM(goApp.Proyecto) == 'psys' Then
 				nidk = INGRESAKARDEXPer(NAuto, tmpv.Coda, 'V', tmpv.Prec, tmpv.cant, 'I', 'T', 0,  This.sucursal1, 0, 0, 0)
 			Else
 				nidk = IngresaDtraspasos(NAuto, tmpv.Coda, 'V', tmpv.Prec, tmpv.cant, 'I', 0, 'T', This.Detalle, This.sucursal1, This.sucursal2, 0)
-			Endif
-			If nidk = 0 Then
+			ENDIF
+			If nidk < 1 Then
 				Sw = 0
 				This.Cmensaje = 'Al Obtener ID del Kardex'
 				Exit
@@ -239,7 +240,6 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 		m.oitems.nidart = tmpv.Coda
 		If This.RegistraItemsGuia(m.oitems) < 1
 			s = 0
-			Cmensaje = This.Cmensaje
 			Exit
 		Endif
 		If This.Coningresosucursal = 'S' Then
@@ -254,6 +254,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 				Exit
 			Endif
 		Endif
+		Wait WINDOW 'hola'
 		If  oproductos.ActualizaStock(tmpv.Coda, This.sucursal1, tmpv.cant, 'V') < 1 Then
 			Sw = 0
 			This.Cmensaje = oproductos.Cmensaje

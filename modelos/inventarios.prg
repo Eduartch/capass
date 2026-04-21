@@ -247,12 +247,14 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 		   Where a.tipo='C' and a.acti='A' and b.acti='A' AND b.fech between '<<fi>>' and '<<ff>>' and b.tcom<>'T'  and tdoc not in('GI','20')
 		   Union All
 		   Select idart as coda,c.alma,cast(000000.00 as decimal(12,2)) as si,cast(0000000.00 as decimal(12,2))  As compras,cant As ventas
-		   From fe_kar as c inner join fe_rcom as d
-		   on  d.idauto=c.idauto Where c.tipo='V' and c.acti='A' and d.acti='A' AND d.fech between '<<fi>>' and '<<ff>>' and d.tcom<>'T'  and tdoc not in('GI','20')
+		   From fe_kar as c 
+		   inner join fe_rcom as d   on  d.idauto=c.idauto 
+		   Where c.tipo='V' and c.acti='A' and d.acti='A' AND d.fech between '<<fi>>' and '<<ff>>' and d.tcom<>'T'  and tdoc not in('GI','20')
 		   union all
 		   Select idart as coda,z.alma,if(tipo='C',cant,-cant) as si,cast(0000000.00 as decimal(12,2))  As compras,cast(000000.00 as decimal(12,2)) As ventas
-		   From fe_kar as z inner join fe_rcom as y  on  y.idauto=z.idauto Where z.acti='A' and y.acti='A' AND
-		   y.fech<'<<fi>>'  AND  y.tcom<>'T' and tdoc not in('GI','20'))
+		   From fe_kar as z 
+		   inner join fe_rcom as y  on  y.idauto=z.idauto 
+		   Where z.acti='A' and y.acti='A' AND  y.fech<'<<fi>>'  AND  y.tcom<>'T' and tdoc not in('GI','20'))
 		   as x group by x.coda) as q
 		   inner join fe_art as b ON b.idart=q.coda
 		   INNER JOIN `fe_mar` AS m ON (b.`idmar`=m.`idmar`)
@@ -915,28 +917,6 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function inventarioporfechavtolote(ccursor)
 	F = Cfechas(This.Fecha)
-*!*		TEXT To lC Noshow Textmerge
-*!*		 SELECT a.idart,descri,unid,prod_unid1,prod_equi1,prod_equi2,b.uno AS cant,kar_lote,kar_fvto,z.uno AS stock,dcat as linea,a.prod_cod1 FROM (
-*!*	     SELECT idart, SUM(CASE k.alma WHEN 1 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS uno,
-*!*		 SUM(CASE k.alma WHEN 2 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS Dos,
-*!*		 SUM(CASE k.alma WHEN 3 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS tres,
-*!*		 SUM(CASE k.alma WHEN 4 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS cuatro,kar_lote,kar_fvto
-*!*		 FROM  fe_kar AS k
-*!*		 INNER JOIN fe_rcom AS r ON r.Idauto = k.Idauto
-*!*		 WHERE r.fech <= '<<f>>' AND r.Acti <> 'I' AND k.Acti <> 'I' GROUP BY k.idart,kar_lote,kar_fvto HAVING uno>0  ORDER BY idart)
-*!*		 AS b
-*!*		 INNER JOIN fe_art AS a ON a.idart=b.idart
-*!*		 inner join fe_cat AS c on c.idcat=a.idcat
-*!*	     INNER JOIN
-*!*		 (SELECT idart, SUM(CASE k.alma WHEN 1 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS uno,
-*!*		 SUM(CASE k.alma WHEN 2 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS Dos,
-*!*		 SUM(CASE k.alma WHEN 3 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS tres,
-*!*		 SUM(CASE k.alma WHEN 4 THEN IF(Tipo = 'C', cant * k.kar_equi, - cant * k.kar_equi) ELSE 0 END) AS cuatro
-*!*		 FROM  fe_kar AS k
-*!*		 INNER JOIN fe_rcom AS r ON r.Idauto = k.Idauto
-*!*		 WHERE r.fech <= '<<f>>' AND r.Acti <> 'I' AND k.Acti <> 'I' GROUP BY k.idart HAVING uno>0  ORDER BY idart)
-*!*		 AS z ON z.idart=b.idart order by a.idart,kar_fvto desc
-*!*		ENDTEXT
 	TEXT To lc Noshow Textmerge
 	 SELECT a.idart,descri,unid,prod_unid1,prod_equi1,prod_equi2,b.uno AS cant,kar_lote,kar_fvto,z.uno AS stock,dcat AS linea,a.prod_cod1 FROM
     (SELECT idart, idkar,cant*kar_equi AS uno,CAST(0 AS DECIMAL(10,2)) AS dos,CAST(0 AS DECIMAL(10,2)) AS tres,
@@ -1122,11 +1102,11 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	f2 = Cfechas(This.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\Select b.fech,b.Tdoc,b.Ndoc,c.tras_codt As alma,IFNULL(c.tras_codt1,1) As Ndo2,a.Tipo,a.cant,a.idart,b.FUsua,D.nomb As usua,
+	\    Select b.fech,b.Tdoc,b.Ndoc,c.tras_codt As alma,IFNULL(c.tras_codt1,1) As Ndo2,a.Tipo,a.cant,a.idart,b.FUsua,D.nomb As usua,
 	\    e.Descri,e.Unid,F.nomb As origen,g.nomb As destino,c.tras_idau As Idauto,b.Deta  As Refe,b.Impo
-	\    From fe_kar As a
+	\    FROM fe_rcom AS b 
+	\    INNER JOIN fe_kar  AS a ON(a.Idauto=b.Idauto)
 	\    inner Join fe_art As e On(e.idart=a.idart)
-	\    inner Join fe_rcom  As b On(b.Idauto=a.Idauto)
 	\    inner Join (Select p.tras_idau,p.tras_idau1,p.tras_codt,p.tras_codt1
 	\    From  fe_traspaso As p Group By tras_idau,tras_idau1,tras_codt,tras_codt1) As c On (c.tras_idau=b.Idauto)
 	\    inner Join fe_usua As D On(D.idusua=b.idusua)
@@ -2755,14 +2735,15 @@ Define Class inventarios As OData Of 'd:\capass\database\data.prg'
 	Endif
 	\   b.mone,b.idcliente,c.razo as cliente,b.idprov,e.razo as proveedor,
 	\	b.dolar as dola,b.vigv as igv,b.idauto,a.idkar,a.idart
-	\	from fe_kar as a
-	\	inner join fe_rcom as b ON(b.idauto=a.idauto)
+	\	from fe_rcom as b
+	\	inner join fe_kar as a ON(a.idauto=b.idauto)
 	\	left JOIN fe_prov as e ON (e.idprov=b.idprov)
 	\	LEFT JOIN fe_clie as c  ON (c.idclie=b.idcliente)
 	\	WHERE b.fech<='<<ff>>' and a.acti='A' and b.acti='A' and b.tcom<>'T' and b.tdoc not in("20","GI")
-	\	OrDER BY b.fech,a.tipo,b.tdoc,b.ndoc
+	\   order by b.fech,a.tipo,b.tdoc,b.ndoc
 	Set Textmerge Off
 	Set Textmerge To
+	*
 	If This.ejecutaconsulta(lc, ccursor) < 1 Then
 		Return 0
 	Endif

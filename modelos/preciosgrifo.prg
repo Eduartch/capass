@@ -51,7 +51,6 @@ Define Class Preciosproductos As Odata Of 'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endproc
-
 	Procedure ActualizaPreciosPorCliente20
 	lc='ProActualizaPrecioxCliente'
 	cur=""

@@ -10,7 +10,48 @@ Define Class servicio As Custom
 	Endfunc
 	Function validarcompras()
 	Endfunc
-	Function validarVentas()
+	Function validarVentasxsys()
+	obj =(This.oobjeto)
+	nt1 = obj.valor + obj.exonerado + obj.igv + obj.inafecta
+	nt2 = obj.monto
+	If obj.idauto > 0 Then
+		If _Screen.octasxcobrar.VerificaSitienePagos(obj.idauto) < 1 Then
+			This.cmensaje = _Screen.octasxcobrar.cmensaje
+			Return 0
+		Endif
+	Endif
+	Do Case
+	Case Month(obj.fecha) <> goApp.mes  Or Year(obj.fecha) <> Val(goApp.año) Or !esfechaValida(obj.fecha)
+		This.cmensaje = "Fecha No Permitida por el Sistema"
+		Return 0
+	Case Len(Alltrim(obj.SErie)) < 3 Or Len(Alltrim(obj.NUmero)) < 7
+		This.cmensaje = "EL Número de Documento no es Válido"
+		Return 0
+	Case obj.VerificaBloqueoVentaxsys(obj.fecha) < 1
+		This.cmensaje = "No es Posible Registrar en esta Fecha..Esta Bloqueado los Ingresos en este Período"
+		Return 0
+	Case obj.ruc = '***********'
+		This.cmensaje = "Seleccione Otro Cliente"
+		Return 0
+	Case (nt1 <> nt2) Or nt1 = 0 Or nt2 = 0
+		This.cmensaje = "Importes No Permitidos"
+		Return 0
+	Case obj.codigo < 1
+		This.cmensaje = "Seleccione Un CLiente"
+		Return 0
+	Case obj.tdoc = "01" And !validaruc(obj.ruc)
+		This.cmensaje = "RUC de Cliente no Válido"
+		Return 0
+	Case obj.verificarsiesta() < 1
+		If Empty(obj.cmensaje) Then
+			This.cmensaje = "Número de Documento Ya Registrado"
+		Else
+			This.cmensaje = obj.cmensaje
+		Endif
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
 	Endfunc
 	Function validarmarcas()
 	obj =(This.oobjeto)
@@ -106,8 +147,8 @@ Define Class servicio As Custom
 	Endcase
 	Endfunc
 	Function validarproductos()
-	If !Pemstatus(goapp, 'proyecto', 5) Then
-		AddProperty(goapp, 'proyecto', '')
+	If !Pemstatus(goApp, 'proyecto', 5) Then
+		AddProperty(goApp, 'proyecto', '')
 	Endif
 	obj =(This.oobjeto)
 	Do Case
@@ -138,7 +179,7 @@ Define Class servicio As Custom
 	Case obj.nPrec = 0 And (obj.np2 > 0 Or obj.np1 > 0 Or obj.np3 > 0)
 		This.cmensaje = "Ingrese El costo para determinar los precios de Venta"
 		Return 0
-	Case ((obj.ncome * 100) > 10 Or (obj.ncomc * 100) > 10) And Alltrim(goapp.proyecto) = 'psysl'
+	Case ((obj.ncome * 100) > 10 Or (obj.ncomc * 100) > 10) And Alltrim(goApp.proyecto) = 'psysl'
 		This.cmensaje = "La comision no puede ser Mayor a 5%"
 		Return 0
 	Otherwise
@@ -176,13 +217,13 @@ Define Class servicio As Custom
 	Case Len(Alltrim(obj.ndni)) = 8 And  obj.buscardni(obj.ndni, obj.codigo, obj.cmodo) < 1
 		This.cmensaje = "DNI ya Registrado"
 		Return 0
-	Case Len(Alltrim(obj.nruc)) = 11 And !ValidaRuc(obj.nruc)
+	Case Len(Alltrim(obj.nruc)) = 11 And !validaruc(obj.nruc)
 		This.cmensaje = "RUC NO Válido"
 		Return 0
 	Case Trim(obj.nruc)  = '***********'
 		This.cmensaje = "Este Cliente No es Posible Modificar"
 		Return 0
-	Case Len(Alltrim(obj.nruc)) = 11 And ValidaRuc(obj.nruc)
+	Case Len(Alltrim(obj.nruc)) = 11 And validaruc(obj.nruc)
 		If obj.buscaruc(obj.cmodo, obj.nruc, obj.codigo) < 1 Then
 			This.cmensaje = obj.cmensaje
 			Return 0
@@ -198,10 +239,10 @@ Define Class servicio As Custom
 	Case Empty(obj.nombre)
 		This.cmensaje = "Ingrese Nombre del Proveedor"
 		Return 0
-	Case Len(Alltrim(obj.nruc)) = 11 And !ValidaRuc(obj.nruc)
+	Case Len(Alltrim(obj.nruc)) = 11 And !validaruc(obj.nruc)
 		This.cmensaje = "RUC NO Válido"
 		Return 0
-	Case Len(Alltrim(obj.nruc)) = 11 And ValidaRuc(obj.nruc)
+	Case Len(Alltrim(obj.nruc)) = 11 And validaruc(obj.nruc)
 		If obj.buscaruc(obj.cmodo, obj.nruc, obj.codigo) < 1 Then
 			This.cmensaje = obj.cmensaje
 			Return 0
@@ -278,16 +319,16 @@ Define Class servicio As Custom
 		Return 0
 	Case Len(Alltrim(obj.cserie)) < 4 Or Len(Alltrim(obj.cnumero)) < 8;
 			And (Left(obj.cserie, 2) <> 'FN' Or Left(obj.cnumero, 2) <> 'BC' Or ;
-			Left(obj.cserie, 2) <> 'FD' Or Left(obj.cserie, 2) <> 'BD')
+			  Left(obj.cserie, 2) <> 'FD' Or Left(obj.cserie, 2) <> 'BD')
 		This.cmensaje = "Falta Ingresar Correctamente el Número del  Documento"
 		Return 0
 	Case Val(obj.cnumero) = 0
 		This.cmensaje = "Número de Documento NO Válido"
 		Return 0
-	Case obj.ncodigocliente< 1
+	Case obj.ncodigocliente < 1
 		This.cmensaje = "Ingrese Un Cliente"
 		Return 0
-	Case Year(obj.dfecha) <> Val(goapp.Año)
+	Case Year(obj.dfecha) <> Val(goApp.año)
 		This.cmensaje = "La Fecha No es Válida"
 		Return 0
 	Case  PermiteIngresox(obj.dfecha) = 0 Or !esfechaValida(obj.dfecha)
@@ -298,26 +339,248 @@ Define Class servicio As Custom
 			This.cmensaje = "El Importe No Puede Ser Mayor al del Documento"
 			Return 0
 		Endif
-	Case (Len(Alltrim(obj.cnombrecliente)) < 5 Or !ValidaRuc(obj.cruc)) And obj.ctdocref = '01'
+	Case (Len(Alltrim(obj.cnombrecliente)) < 5 Or !validaruc(obj.cruc)) And obj.ctdocref = '01'
 		This.cmensaje = "Es Necesario Ingresar el Nombre Completo de Cliente, RUC Válidos"
 		Return 0
 	Case obj.ctdocref = "03" And (Len(Alltrim(obj.cdni)) <> 8 Or Val(obj.cdni) = 0)
 		This.cmensaje = "Es Obligatorio DNI del Cliente"
 		Return 0
-	Case obj.ctdoc='07'
+	Case obj.ctdoc = '07'
 		ndif = obj.ntotal - obj.ntfactura
 		If ndif > 0.10 Then
 			This.cmensaje = "El Importe No Puede Ser Mayor al del Documento"
 			Return 0
 		Endif
-	Case Left(obj.ctiponotacredito,2) = '13' And  Left(obj.cformapago,1) <>'C'
+	Case Left(obj.ctiponotacredito, 2) = '13' And  Left(obj.cformapago, 1) <> 'C'
 		This.cmensaje = "El documento se debe ingresar como Crédito y fecha de vencimiento "
 		Return 0
 	Otherwise
 		Return 1
 	Endcase
 	Endfunc
+	Function ValidarPresentaciones()
+	obj = This.oobjeto
+	Do Case
+	Case Len(Alltrim(obj.cdesc)) < 1
+		This.cmensaje = "Es Obligatorio la Descripción"
+		Return 0
+	Case obj.ncant < 1
+		This.cmensaje = "Es Obligatorio la Cantidad"
+		Return 0
+	Case obj.buscarsiexiste() < 1
+		This.cmensaje = "Nombre Ya Registrado"
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
+	Function validarVendedores()
+	obj = This.oobjeto
+	Do Case
+	Case Len(Alltrim(obj.cnombre)) = 0
+		This.cmensaje = 'Ingrese Nombre del Vendedor'
+		Return 0
+	Case obj.buscanombre() = 0
+		This.cmensaje = 'Nombre de Vendedor Ya Registrado'
+		Return 0
+	Case obj.cmodo = 'M' And obj.nidv < 1
+		This.cmensaje = 'Seleccione un Vendedor'
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
+	Function validarUsuarios()
+	obj = This.oobjeto
+	Do Case
+	Case Empty(obj.cnombre)
+		This.cmensaje = "Ingrese un Nombre de Usuario"
+		Return 0
+	Case Len(Alltrim(obj.cpassword)) < 6
+		This.cmensaje = 'La Contraseña debe tener mínimo 6 caracteres'
+		Return 0
+	Case obj.cmodo <> 'N' And obj.idusuario < 1
+		This.cmensaje = 'Seleccione un Usuario'
+		Return 0
+	Case obj.buscausuario(obj.cmodo, obj.idusuario, obj.cnombre) < 1
+		This.cmensaje = 'Nombre de Usuario Ya Registrado'
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
+	Function validarventaspsysb()
+	obj = This.oobjeto
+	If This.validarVentas(obj) < 1 Then
+		Return 0
+	Endif
+	Do Case
+	Case This.VerificaIngresoItemsVentas(obj.calias) < 1
+		Return 0
+	Case This.VerificaEquivalencias(obj.calias) < 1
+		Return 0
+	Case This.ValidarTemporalVtas(obj.calias) < 1
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
+	ENDFUNC
+	Function validarventasxsys3()
+	obj = This.oobjeto
+	If This.validarVentas(obj) < 1 Then
+		Return 0
+	Endif
+	Do Case
+	Case This.VerificaIngresoItemsVentas(obj.calias) < 1
+		Return 0
+	Case This.VerificaEquivalencias(obj.calias) < 1
+		Return 0
+*!*		Case This.ValidarTemporalVtas(obj.calias) < 1
+*!*			Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
+	Function validarventaspsysg()
+	obj = This.oobjeto
+	If This.validarVentas(obj) < 1 Then
+		Return 0
+	Endif
+	Do Case
+	Case This.VerificaIngresoItemsVentas(obj.calias) < 1
+		Return 0
+	Case This.VerificaEquivalencias(obj.calias) < 1
+		Return 0
+*!*		Case This.ValidarTemporalVtas(obj.calias)<1
+*!*			Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
+	Function validarVentas(obj)
+	nt1 = obj.valor + obj.exonerado + obj.igv + obj.inafecta
+	nt2 = obj.monto
+	Do Case
+	Case Month(obj.fecha) <> goApp.mes  Or Year(obj.fecha) <> Val(goApp.año) 
+		This.cmensaje = "Mes y Año No Configurados por el Sistema"
+		Return 0
+	Case Len(Alltrim(obj.SErie)) < 3 Or   Alltrim(obj.SErie) = '000' Or Alltrim(obj.SErie) = '0000'
+		This.cmensaje = "La SERIE de Documento no es Válido"
+		Return 0
+	Case Len(Alltrim(obj.NUmero)) < 7  Or Val(obj.NUmero) = 0
+		This.cmensaje = "Número de Documento no es Válido"
+		Return 0
+	Case !esfechaValida(obj.fecha)
+		This.cmensaje = "Fecha de Emisión No Válida"
+		Return .F.
+	Case obj.ruc = '***********'
+		This.cmensaje = "Seleccione Otro Cliente Para esta Venta"
+		Return 0
+	Case obj.codigo < 1
+		This.cmensaje = "Seleccione Un CLiente"
+		Return 0
+	Case obj.tdoc = "01" And !validaruc(obj.ruc)
+		This.cmensaje = "RUC de Cliente no Válido"
+		Return 0
+	Case obj.tdoc = "03" And obj.monto > 700 And Len(Alltrim(obj.dni)) < 8
+		This.cmensaje = "Ingrese DNI del Cliente "
+		Return 0
+	Case (nt1 <> nt2) Or nt1 = 0 Or nt2 = 0
+		This.cmensaje = "Importes No Permitidos"
+		Return 0
+	Case !esfechavalidafvto(obj.Fechavto) And Left(obj.formaPago, 1) = 'C'
+		This.cmensaje = "Fecha de Vencimiento NO Válida"
+		Return 0
+	Case obj.tdoc = '01' And Left(obj.SErie, 1) <> 'F' And  Left(obj.SErie, 1) <> 'E'
+		This.cmensaje = "Para Tipo de Documento Factura La serie debe empezar con F"
+		Return 0
+	Case obj.tdoc = '03' And Left(obj.SErie, 1) <> 'B' And  Left(obj.SErie, 1) <> 'E'
+		This.cmensaje = "Para Tipo de Documento Boleta La serie debe empezar con B"
+		Return 0
+	Case Left(obj.formaPago, 1) = 'C'  And (obj.Fechavto - obj.fecha) = 0
+		This.cmensaje = "Ingrese Los días de Vencimiento"
+		Return 0
+	Case obj.verificarsiesta() < 1
+		If Empty(obj.cmensaje) Then
+			This.cmensaje = "Número de Documento Ya Registrado"
+		Else
+			This.cmensaje = obj.cmensaje
+		Endif
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
+	Function VerificaIngresoItemsVentas(calias)
+	Select (calias)
+	valido = 1
+	Select (calias)
+	Scan All
+		If (cant * Prec) <= 0 Then
+			valido = 0
+			Exit
+		Endif
+	Endscan
+	Return valido
+	Endfunc
+	Function VerificaEquivalencias(calias)
+	Select (calias)
+	Locate For equi = 0 And !Empty(coda)
+	If Found()
+		This.cmensaje = "El Item: " + Alltrim(Desc) + " no Tiene Equivalencia"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ValidarTemporalVtas(calias)
+	Local Sw As Integer
+	Sw		 = 1
+	cmensaje = ""
+	Select (calias)
+	Scan All
+		Do Case
+		Case costo <= 0 And tipro = 'K' And grati <> 'S'
+			Sw		 = 0
+			cmensaje = "No hay Costo del Producto: " + Rtrim(Desc)
+			Exit
+		Case (cant * Prec) <= 0 And tipro = 'K' And grati <> 'S'
+			Sw		 = 0
+			cmensaje = "Ingrese Cantidad O Precio para El Producto: " + Rtrim(Desc)
+			Exit
+		Case Prec < costo And aprecios <> 'A' And grati <> 'S'
+			Sw		 = 0
+			cmensaje = "El Producto: " + Rtrim(Desc) + " Tiene Un precio Por Debajo del Costo y No esta Autorizado para hacer esta Venta"
+			Exit
+		Case cant * costo <= 0 And grati = 'S' And Prec = 0
+			cmensaje = "El Item: " + Alltrim(Desc) + " No Tiene Cantidad o Costo para la Transferencia Gratuita"
+			Sw		 = 0
+		Endcase
+	Endscan
+	If Sw = 0 Then
+		This.cmensaje = cmensaje
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

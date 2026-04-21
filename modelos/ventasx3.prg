@@ -65,8 +65,9 @@ Define Class ventasx3 As Ventas  Of 'd:\capass\modelos\ventas.prg'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow
 	\Select  ndoc As dcto,a.fech,b.nruc,b.Razo,If(a.mone='S','Soles','Dólares') As moneda,a.valor,a.rcom_exon,a.rcom_inaf,rcom_otro,
-	\	    a.igv,a.Impo,rcom_hash,rcom_mens,mone,a.Tdoc,a.ndoc,idauto,rcom_arch,b.clie_corr,tcom
-	\	    From fe_rcom As a Join fe_clie As b On (a.Idcliente=b.idcliE)
+	\	    a.igv,a.Impo,rcom_hash,rcom_mens,mone,a.Tdoc,a.ndoc,idauto,rcom_arch,b.clie_corr,tcom,fono
+	\	    From fe_rcom As a 
+	\       Join fe_clie As b On (a.Idcliente=b.idcliE)
 	\	    Where a.fech Between '<<f1>>' And '<<f2>>'  And  a.Acti<>'I'  And Left(ndoc,1) In("F","B","P")
 	If This.codt > 0 Then
 		   \ And a.codt=<<This.codt>>

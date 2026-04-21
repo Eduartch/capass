@@ -135,6 +135,7 @@ Define Class Odata As Custom
 	this.Cmensaje='Ok'
 	Endfunc
 	Function EJECUTARf(tcComando As String, lp As String, NCursor As String )
+	this.conerror=0
 	Local lResultado As Integer
 	Local lR
 *:Global csql

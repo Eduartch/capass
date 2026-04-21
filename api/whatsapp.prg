@@ -8,17 +8,26 @@ Define Class whatsapp As  Custom
 	cfilename=""
 	urlenvio="https://companiasysven.com/app88/sendwhatsapp.php"
 	Function enviar()
-	ls_contentFile = Filetostr(This.carchivo)
-	contpdf		   = Strconv(ls_contentFile, 13)
-	TEXT TO ljson NOSHOW TEXTMERGE
-    {
-    "number": "<<this.cfono>>",
-    "media": "<<contpdf>>",
-    "caption":"<<this.cmensaje>>",
-    "mediatype": "<<this.mediatype>>",
-    "fileName":"<<this.cfilename>>"
-    }
-	ENDTEXT
+	If !Empty(This.cfilename) Then
+		ls_contentFile = Filetostr(This.carchivo)
+		contpdf		   = Strconv(ls_contentFile, 13)
+		TEXT TO ljson NOSHOW TEXTMERGE
+	    {
+	    "number": "<<this.cfono>>",
+	    "media": "<<contpdf>>",
+	    "caption":"<<this.cmensaje>>",
+	    "mediatype": "<<this.mediatype>>",
+	    "fileName":"<<this.cfilename>>"
+	    }
+		ENDTEXT
+	Else
+		TEXT TO ljson NOSHOW TEXTMERGE
+	    {
+	    "number": "<<this.cfono>>",
+	    "text":"<<this.cmensaje>>"
+	    }
+		ENDTEXT
+	Endif
 	Strtofile(ljson,Addbs(Addbs(Sys(5)+Sys(2003)))+'envios.json')
 	oHTTP = Createobject("Microsoft.XMLHTTP")
 	oHTTP.Open("POST", This.urlenvio, .F.)

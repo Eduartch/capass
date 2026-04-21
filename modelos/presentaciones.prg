@@ -1,11 +1,23 @@
 Define Class presentaciones As OData Of 'd:\capass\database\data'
+	cdesc = ""
+	ncant = 0
+	estado = ""
+	nidpres = 0
+	nopt = 0
+	Function MuestraPresentacionespsysg1(cur)
+	lc='PROMUESTRAPRESENTACIONESP'
+	If this.EJECUTARP(lc,'',cur)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 	Function MuestratPresentaciones(np1, cur)
-	lC = 'PROMUESTRAPRESENTACIONESP'
+	lc = 'PROMUESTRAPRESENTACIONESP'
 	goApp.npara1 = np1
 	TEXT To lp Noshow Textmerge
      (?goapp.npara1)
 	ENDTEXT
-	If This.EJECUTARP(lC, lp, cur) < 1 Then
+	If This.EJECUTARP(lc, lp, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -42,7 +54,7 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 		INNER JOIN fe_presentaciones AS a  ON b.epta_pres=a.pres_idpr,fe_gene AS g
 		WHERE b.epta_acti='A' AND a.pres_acti='A' AND epta_idar=<<np1>> ORDER BY b.epta_cant;
 	ENDTEXT
-	If This.EJECutaconsulta(lC, cur) < 1 Then
+	If This.EJECutaconsulta(lc, cur) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -51,11 +63,11 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 	goApp.npara1 = npara1
 	goApp.npara2 = npara2
 	goApp.npara3 = npara3
-	lC = 'PROMUESTRAPRESENTACIONES'
+	lc = 'PROMUESTRAPRESENTACIONES'
 	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
 	ENDTEXT
-	If This.EJECUTARP(lC, lp, cur) < 1  Then
+	If This.EJECUTARP(lc, lp, cur) < 1  Then
 		Return 0
 	Endif
 	Return 1
@@ -64,12 +76,12 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	lC = 'ProMuestraPresentacionesXProducto'
+	lc = 'ProMuestraPresentacionesXProducto'
 	goApp.npara1 = np1
 	TEXT To lp Noshow
      (?goapp.npara1)
 	ENDTEXT
-	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+	If This.EJECUTARP(lc, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -78,19 +90,19 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
-	lC = 'ProMuestraPresentacionesXProducto'
+	lc = 'ProMuestraPresentacionesXProducto'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
 	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2)
 	ENDTEXT
-	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then
+	If This.EJECUTARP(lc, lp, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function registrarunidadesvta(objdetalle)
-	lC = 'FUNCREAEPTA'
+	lc = 'FUNCREAEPTA'
 	cur = "XEpta"
 *  *  idp,lpta.epta_pres,lpta.epta_prec,lpta.epta_cant,lpta.epta_cost,lpta.epta_marg,lpta.epta_mone,lpta.epta_esti
 	goApp.npara1 = objdetalle.idart
@@ -104,14 +116,14 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
 	ENDTEXT
-	nidp=This.EJECUTARf(lC, lp, cur)
-	If nidp <1  Then
+	nidp = This.EJECUTARf(lc, lp, cur)
+	If nidp < 1  Then
 		Return 0
 	Endif
 	Return nidp
 	Endfunc
 	Function actualizarunidadesvta(objdetalle)
-	lC = 'PROACTUALIZAEPTA'
+	lc = 'PROACTUALIZAEPTA'
 *ncoda,lpta.epta_pres,lpta.epta_prec,lpta.epta_cant,lpta.epta_idep,1,lpta.epta_cost,lpta.epta_marg,lpta.epta_mone,lpta.epta_esti
 	goApp.npara1 = objdetalle.idart
 	goApp.npara2 = objdetalle.idpres
@@ -120,52 +132,110 @@ Define Class presentaciones As OData Of 'd:\capass\database\data'
 	goApp.npara5 = objdetalle.idep
 	goApp.npara6 = 1
 	goApp.npara7 =  objdetalle.ncosto
-	goApp.npara8 =objdetalle.nmargen
-	goApp.npara9= objdetalle.cmoneda
-	goApp.npara10=objdetalle.cestilo
+	goApp.npara8 = objdetalle.nmargen
+	goApp.npara9 = objdetalle.cmoneda
+	goApp.npara10 = objdetalle.cestilo
 	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
 	ENDTEXT
-	If This.EJECUTARP(lC, lp, '') <1 Then
+	If This.EJECUTARP(lc, lp, '') < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function desactivarunidadesvta(nid)
-	TEXT TO lc NOSHOW TEXTMERGE
+	TEXT To lC Noshow Textmerge
 	UPDATE fe_epta SET epta_acti='I' WHERE epta_idep=<<nid>>
 	ENDTEXT
-	If This.ejecutarsql(lC)<1 Then
+	If This.ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function RegistraUnidadesPR(cparam1,cparam2)
-	np1=cparam1
-	np2=cparam2
-	TEXT TO lc NOSHOW
+	Function RegistraUnidadesPR(cparam1, cparam2)
+	np1 = cparam1
+	np2 = cparam2
+	TEXT To lC Noshow
         UPDATE fe_presentaciones SET pres_unid=?np2 WHERE pres_idpr=?np1
 	ENDTEXT
-	If This.ejecutarsql(lC)<1 Then
+	If This.ejecutarsql(lc) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-*!*	*************************
-*!*		Function MuestraPresentacionesXProducto1(np1, np2, cur)
-*!*		lC = 'ProMuestraPresentacionesXProducto'
-*!*		goApp.npara1 = np1
-*!*		goApp.npara2 = np2
-*!*		TEXT To lp Noshow
-*!*	     (?goapp.npara1,?goapp.npara2)
-*!*		ENDTEXT
-*!*		If EJECUTARP(lC, lp, cur) = 0 Then
-*!*			Errorbd(ERRORPROC + 'Mostrando Presentaciones de Productos')
-*!*			Return 0
-*!*		Else
-*!*			Return 1
-*!*		Endif
-*!*		Endfunc
+	Function Crear()
+	oser = Newobject("servicio", " d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "presentaciones"
+	rpta = oser.Inicializar(This, 'presentaciones')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
+	goApp.npara1 = This.cdesc
+	goApp.npara2 = This.ncant
+	ccur = 'c_' + Sys(2015)
+	lc = 'FunCreaPresentaciones'
+	TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2)
+	ENDTEXT
+	nid = This.EJECUTARf(lc, lp, ccur)
+	If m.nid < 1 Then
+		Return 0
+	Endif
+	Return m.nid
+	Endfunc
+	Function Editar()
+	oser = Newobject("servicio", " d:\capass\services\service.prg")
+	oser.oobjeto = This
+	oser.centidad = "presentaciones"
+	rpta = oser.Inicializar(This, 'presentaciones')
+	If m.rpta < 1 Then
+		This.Cmensaje = oser.Cmensaje
+		Return 0
+	Endif
+	oser = Null
+	goApp.npara1 = This.cdesc
+	goApp.npara2 = This.ncantc
+	goApp.npara3 = This.nidpres
+	goApp.npara4 = This.nopt
+	lc = 'ProActualizaPresentaciones'
+	cur = ""
+	TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
+	ENDTEXT
+	If This.EJECUTARP(lc, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function buscarsiexiste()
+	Ccursor = 'c_' + Sys(2015)
+	Set Textmerge On
+	Set Textmerge To Memvar lc Noshow Textmerge
+	\Select pres_idpr From fe_presentaciones Where Trim(pres_desc)='<<TRIM(this.cdesc)>>' And pres_acti<>'I'
+	If This.nidpres > 0 Then
+	    \ And pres_idpr<><<This.nidpres>>
+	Endif
+	\ LIMIT 1
+	Set Textmerge Off
+	Set Textmerge To
+	If This.EJECutaconsulta(lc, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (Ccursor)
+	If  pres_idpr > 0 Then
+		This.Cmensaje = "Nombre  de Presentación Ya Regisatrado"
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
 
 

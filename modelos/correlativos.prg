@@ -247,7 +247,7 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Ccursor = 'c' + Sys(2015)
 	TEXT To lg Textmerge Noshow
-	  select gene_corc FROM fe_gene WHERE idgene=1;
+	  select gene_corc FROM fe_gene WHERE idgene=1 limit 1;
 	ENDTEXT
 	If This.EJECutaconsulta(lg, Ccursor) < 1 Then
 		Return 0

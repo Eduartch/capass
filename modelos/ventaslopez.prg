@@ -1067,7 +1067,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 		       abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(0 as decimal(12,2))) as cant,c.clie_conta,r.idcliente,
 		       ifnull(k.prec,ABS(r.impo)) as prec,LEFT(r.ndoc,4) as serie,SUBSTR(r.ndoc,5) as numero,
 		       ifnull(a.unid,'') as unid,ifnull(a.descri,r.deta) as descri,r.deta,ifnull(k.idart,CAST(0 as decimal(8))) as idart,w.ndoc as dcto,
-		       w.fech as fech1,w.tdoc as tdoc1,r.rcom_hash,u.nomb as usuario,r.rcom_mret,ifnull(t.nomb,ff.ptop) as ptop,r.rcom_detr,;
+		       w.fech as fech1,w.tdoc as tdoc1,r.rcom_hash,u.nomb as usuario,r.rcom_mret,ifnull(t.nomb,ff.ptop) as ptop,r.rcom_detr,
 		       CAST(0 As decimal(10,2)) As rcom_mdet,CAST(0 as decimal(10,2)) as vuelto
 		       from fe_rcom r
 		       inner join fe_clie c on c.idclie=r.idcliente

@@ -73,7 +73,7 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
     \ Select a.lres_fech As fechahora,b.nomb As Usuario,c.ndoc,d.nomb As Autorizo,
     \ e.razo As referencia,c.fech,c.Impo,p.Descri As producto,p.unid,k.cant As cantidad,k.Prec As precio,
     \If(lres_tipo='A','Actualización','Eliminación') As estadoa,lres_idau From fe_aresumen As a
-    \ inner Join fe_usua As b On b.idusua=a.lres_idus
+    \ LEFT JOIN fe_usua AS b ON b.idusua=a.lres_idus
     \ inner Join fe_rcom As c On c.idauto=a.lres_idau
     \ inner Join fe_kar As k On k.idauto=a.lres_idau
     \ inner Join fe_art As p On p.idart=k.idart

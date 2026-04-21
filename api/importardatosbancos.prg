@@ -31,7 +31,7 @@ Define Class importabancos As Custom
 	Endif
 	Endfunc
 	Function desdeexcel(xArchivo)
-	Create Cursor ctasexcel(Fecha d, operacion c(12), concepto c(100), Importe N(12, 2), nro N(2), idcta N(8), ncta c(15), Moneda c(1))
+	Create Cursor ctasexcel(Fecha d, operacion c(12), concepto c(100) null, Importe N(12, 2), nro N(2), idcta N(8), ncta c(15), Moneda c(1))
 	Select ctasexcel
 	xTabla = Alias()
 *-- Creo el objeto Excel
