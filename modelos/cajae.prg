@@ -1,5 +1,6 @@
 Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	dFecha = Date()
+	idcaja=0
 	codt = 0
 	Ndoc = ""
 	Nsgte = 0
@@ -16,6 +17,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	nidprov=0
 	NAuto = 0
 	Cmoneda = ""
+	cdcto=""
 	cTdoc = ""
 	cforma = ""
 	dfi = Date()
@@ -142,25 +144,57 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Function IngresaDatosLCajaEe(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10)
 	lc = "FunIngresaDatosLcajaEe"
 	cur = "Ca"
-	goapp.npara1 = np1
-	goapp.npara2 = np2
-	goapp.npara3 = np3
-	goapp.npara4 = np4
-	goapp.npara5 = np5
-	goapp.npara6 = np6
-	goapp.npara7 = np7
-	goapp.npara8 = np8
-	goapp.npara9 = np9
-	goapp.npara10 = np10
+	npara1 = np1
+	npara2 = np2
+	npara3 = np3
+	npara4 = np4
+	npara5 = np5
+	npara6 = np6
+	npara7 = np7
+	npara8 = np8
+	npara9 = np9
+	npara10 = np10
 	TEXT To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
+    (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10)
 	ENDTEXT
 	nidpc = This.EJECUTARf(lc, lp, cur)
-	If nidpc < 0 Then
+	If nidpc < 1 Then
 		Return 0
-	Else
-		Return nidpc
 	Endif
+	Return nidpc
+	Endfunc
+	Function IngresarPagos()
+	If This.nidusua > 0 Then
+		nidcajero = This.nidusua
+	Else
+		nidcajero = goapp.nidusua
+	Endif
+	If  This.codt>0 Then
+		m.ncodt=This.codt
+	Else
+		m.ncodt=goapp.tienda
+	Endif
+	lc = "FunIngresaDatosLcajaEemas"
+	cur = "Ca"
+	np1=This.dFecha
+	np2=This.Ndoc
+	np3=This.cdetalle
+	np4=This.nidcta
+	np5=This.ndebe
+	np6=This.nhaber
+	np7=This.Cmoneda
+	np8=This.ndolar
+	np9=m.nidcajero
+	np10=This.nidclpr
+	np11=m.ncodt
+	TEXT To lp Noshow
+    (?np1,?np2,?np3,?np4,?np5,?np6,?np7,?np8,?np9,?np10,?np11)
+	ENDTEXT
+	nidpc = This.EJECUTARf(lc, lp, cur)
+	If nidpc < 1 Then
+		Return 0
+	Endif
+	Return nidpc
 	Endfunc
 	Function IngresaDatosLCajaEFectivo11(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14)
 	lc = "ProIngresaDatosLcajaEefectivo"
@@ -211,17 +245,34 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Endif
 	Return 1
 	Endfunc
-	Function IngresaDatosLCajaEFectivo11()
-	lc = "ProIngresaDatosLcajaEefectivo11"
+	Function IngresaDatosLCajaEFectivo13()
+	lrutina = "ProIngresaDatosLcajaEefectivo11"
 	If This.nidusua > 0 Then
 		nidcajero = This.nidusua
 	Else
 		nidcajero = goapp.nidusua
 	Endif
-	TEXT To lp Noshow Textmerge
-     ('<<cfechas(this.dfecha)>>','','<<this.cdetalle>>',<<this.nidcta>>,<<this.ndebe>>,<<this.nhaber>>,'<<this.cmoneda>>',<<this.ndolar>>,<<nidcajero>>,<<this.nidclpr>>,<<this.NAuto>>,'<<this.cforma>>','<<this.ndoc>>','<<this.cTdoc>>',<<this.codt>>)
+	df=Cfechas(This.dFecha)
+	np1=This.dFecha
+	np2=This.Ndoc
+	np3=This.cdetalle
+	np4=This.nidcta
+	np5=This.ndebe
+	np6=This.nhaber
+	np7=This.Cmoneda
+	np8=This.ndolar
+	np9=m.nidcajero
+	np10=This.nidclpr
+	np11=This.NAuto
+	np12=This.cforma
+	np13=This.cdcto
+	np14=This.cTdoc
+	np15=This.codt
+*!*		MESSAGEBOX(lp)
+	TEXT TO lparams NOSHOW
+    (?np1,?np2,?np3,?np4,?np5,?np6,?np7,?np8,?np9,?np10,?np11,?np12,?np13,?np14,?np15)
 	ENDTEXT
-	If This.EJECUTARP(lc, lp, "") < 1 Then
+	If This.EJECUTARP(lrutina, lparams, "") < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -241,6 +292,29 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Select (Ccursor)
 	nsaldo = Iif(Isnull(saldo), 0, saldo)
 	Return nsaldo
+	Endfunc
+	Function RegistraTraspasodeBancos()
+	lc = "FunTraspasoDatosLcajaE"
+	cur = 'c_' + Sys(2015)
+	goapp.npara1 = This.dFecha
+	goapp.npara2 = This.Ndoc
+	goapp.npara3 = This.cdetalle
+	goapp.npara4 = This.nidcta
+	goapp.npara5 = This.ndebe
+	goapp.npara6 = This.nhaber
+	goapp.npara7 = This.Cmoneda
+	goapp.npara8 = This.ndolar
+	goapp.npara9 = This.nidusua
+	goapp.npara10 = This.nidclpr
+	goapp.npara11 = This.codt
+	TEXT To lp Noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
+	ENDTEXT
+	nidc = This.EJECUTARf(lc, lp, cur)
+	If nidc < 0 Then
+		Return 0
+	Endif
+	Return nidc
 	Endfunc
 	Function TraspasoDatosLCajaE(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12)
 	lc = "FunTraspasoDatosLcajaE"
@@ -581,7 +655,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 		\	inner Join fe_usua As c On c.idusua=a.lcaj_idus
 		\	Left Join rvendedores As p On p.idauto=a.lcaj_idau
 		\	Left Join fe_vend As z On z.idven=p.codv
-		\	Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau=0 And a.lcaj_idus=<<nidusuario>>)
+		\	Where lcaj_fech='<<f>>' And lcaj_acti<>'I' And lcaj_idau=0 And a.lcaj_idus=<<This.nidusua>>)
 		\	As b Order By tipo,Ndoc,tdoc
 	Set Textmerge Off
 	Set Textmerge To
@@ -651,8 +725,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Return nidc
 	Endfunc
 	Function TraspasoDatosLCajaEMasConBancos(obcos)
-	Set Procedure To d:\capass\modelos\correlativos Additive
-	ocorr = Createobject("correlativo")
+	ocorr = Newobject("correlativo","d:\capass\modelos\correlativos.prg")
 	ocorr.Ndoc = obcos.cndoc
 	ocorr.Nsgte = obcos.Nsgte
 	ocorr.Idserie = obcos.Idserie
@@ -776,7 +849,7 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Endif
 	Select (Ccursor)
 	If nid > 0 Then
-		This.cmensaje = ' En este fecha no se permite Registros '
+		This.cmensaje = ' En este Fecha no se permite Registros ... La caja no esta Habilitada'
 		Return 0
 	Endif
 	Return 1
@@ -784,7 +857,13 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Function informextipomvto(ctipo, Ccursor)
 	Set Textmerge On
 	Set Textmerge To Memvar lc Noshow Textmerge
-	\Select  lcaj_fech As fecha,lcaj_dcto As dcto,lcaj_deta As detalle,lcaj_acre As egreso,u.nomb As cajero,lcaj_fope As fechaoperacion
+	\Select  lcaj_fech As fecha,lcaj_dcto As dcto,lcaj_deta As detalle,
+	If ctipo = 'E' Then
+		\lcaj_acre As egreso
+	Else
+	   \lcaj_deud As egreso
+	Endif
+	\,u.nomb As cajero,lcaj_fope As fechaoperacion
 	\From fe_lcaja  As l
 	\inner Join fe_usua As u On u.idusua=l.lcaj_idus
 	\Where lcaj_acti='A' And lcaj_fech Between '<<dfi>>' And '<<dff>>'
@@ -806,22 +885,130 @@ Define Class cajae As OData Of  'd:\capass\database\data.prg'
 	Endfunc
 	Function IngresaDatosLCajaEFectivoxsys()
 	lc = "ProIngresaDatosLcajaE1"
-	goapp.npara1=this.dFecha
-	goapp.npara2=this.ndoc
-	goapp.npara3=this.cdetalle
-	goapp.npara4=this.nidcta
-	goapp.npara5=this.ndebe
-	goapp.npara6=this.nhaber
-	goapp.npara7=this.Cmoneda
-	goapp.npara8=this.ndolar
+	goapp.npara1=This.dFecha
+	goapp.npara2=This.Ndoc
+	goapp.npara3=This.cdetalle
+	goapp.npara4=This.nidcta
+	goapp.npara5=This.ndebe
+	goapp.npara6=This.nhaber
+	goapp.npara7=This.Cmoneda
+	goapp.npara8=This.ndolar
 	goapp.npara9=goapp.nidusua
-	goapp.npara10=this.nidclpr
-	goapp.npara11=this.NAuto
+	goapp.npara10=This.nidclpr
+	goapp.npara11=This.NAuto
 	goapp.npara12=goapp.tienda
 	TEXT to lp noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
 	ENDTEXT
-	If this.EJECUTARP(lc,lp,'')<1 Then
+	If This.EJECUTARP(lc,lp,'')<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizaDatosLCaja()
+	lc="ProActualizaDatosLcajaE"
+	cur=""
+	npara1=This.dFecha
+	npara2=This.Ndoc
+	npara3=This.cdetalle
+	npara4=This.nidcta
+	npara5=This.ndebe
+	npara6=This.nhaber
+	npara7=This.idcaja
+	npara8=0
+	npara9=This.Cmoneda
+	npara10=This.ndolar
+	TEXT to lp noshow
+     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10)
+	ENDTEXT
+	If This.EJECUTARP(lc,lp,cur)<1 Then
+		Return 0
+	Endif
+	This.cmensaje='ok'
+	Return 1
+	Endfunc
+	Function IngresaDatosLCajaECreditosx()
+	lc = "FunIngresaDatosLcajaECreditos"
+	cur = "Cred"
+	npara1 = This.dFecha
+	npara2 = This.Ndoc
+	npara3 = This.cdetalle
+	npara4 = This.nidcta
+	npara5 = This.ndebe
+	npara6 = This.nhaber
+	npara7 = This.Cmoneda
+	npara8 = This.ndolar
+	npara9 = This.nidusua
+	npara10 = This.nidclpr
+	npara11 =This.NAuto
+	npara12 = This.cforma
+	npara13 = This.Ndoc
+	npara14= This.codt
+	TEXT To lp Noshow
+    (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7, ?npara8,?npara9,?npara10,?npara11,?npara12,?npara13,?npara14)
+	ENDTEXT
+	If This.EJECUTARf(lc, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return cred.Id
+	Endfunc
+	Function registrar(ocorr)
+	If This.iniciaTransaccion()<1 Then
+		Return 0
+	Endif
+	If This.IngresaDatosLCajaEFectivo13()<1 Then
+		This.deshacerCambios()
+		Return 0
+	Endif
+	If ocorr.GeneraCorrelativo1() < 1 Then
+		This.cmensaje=ocorr.cmensaje
+		This.deshacerCambios()
+		Return 0
+	Endif
+	If This.GrabarCambios()<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function BuscarpordctoTienda(np1,ntienda,Ccursor)
+	lc="PROMUESTRALCAJAE"
+	npara1=np1
+	npara2=ntienda
+	TEXT to lp noshow
+     (?npara1,?npara2)
+	ENDTEXT
+	If This.EJECUTARP(lc,lp,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Anularxsys(nenlazado,ctipo)
+	If This.iniciaTransaccion()<1 Then
+		Return 0
+	Endif
+	TEXT TO Lc NOSHOW TEXTMERGE
+      UPDATE fe_lcaja SET lcaj_acti='I' WHERE lcaj_idca=<<this.Idcaja>> and lcaj_acti='A'
+	ENDTEXT
+	If This.Ejecutarsql(lc)<1 Then
+		This.deshacerCambios()
+		Return 0
+	Endif
+	If m.nenlazado> 0 Then
+		If m.ctipo='S' Then
+			TEXT TO lc NOSHOW TEXTMERGE
+		         UPDATE fe_deu SET acti='I' WHERE deud_idce=<<this.Idcaja>> and acti='A'
+			ENDTEXT
+		Else
+			TEXT TO lc NOSHOW TEXTMERGE
+		         UPDATE fe_cred SET acti='I' WHERE cred_idce=<<this.Idcaja>> and acti='A'
+			ENDTEXT
+		Endif
+		If This.Ejecutarsql(lc)<1 Then
+			This.deshacerCambios()
+			Return
+		Endif
+	Endif
+	If This.GrabarCambios()<1 Then
 		Return 0
 	Endif
 	Return 1

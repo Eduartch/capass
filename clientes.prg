@@ -39,10 +39,31 @@ Define Class cliente As   Odata Of  'd:\capass\database\data.prg'
 	This.linea	   = m.linea
 	This.Rpm	   = m.crpm
 	This.zona	   = m.nidz
-	Endproc
+	ENDPROC
+	Function Crear
+	Local lC, lp
+	m.lC		  = 'FUNCREACLIENTE'
+	cur			  = "xt"
+	goApp.npara1  = This.nruc
+	goApp.npara2  = This.nombre
+	goApp.npara3  = This.Direccion
+	goApp.npara4  = This.ciudad
+	goApp.npara5  = This.fono
+	goApp.npara6  = This.fax
+	goApp.npara7  = This.ndni
+	goApp.npara8  = This.Usuario
+	goApp.npara9  = ID()
+	Text To m.lp Noshow
+	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
+	Endtext
+	nid = This.EJECUTARf(m.lC, m.lp, cur)
+	If nid < 1 Then
+		Return 0
+	Endif
+	Return nid
+	Endfunc
 	Function CreaCliente
 	Local lC, lp
-*:Global Cmensaje, cur
 	m.lC		  = 'FUNCREACLIENTE'
 	cur			  = "xt"
 	goApp.npara1  = This.nruc

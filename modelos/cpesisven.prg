@@ -27,7 +27,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function consultarcdrhost(cTdoc, cnumero, niDAUTO)
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	 "entidad": "<<this.cose>>",
 	 "ruc": "<<this.nruc>>",
@@ -37,7 +37,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	 "ndoc": "<<cnumero>>",
 	 "idauto": 0
 	 }
-	ENDTEXT
+	Endtext
 	oHTTP = Createobject("MSXML2.XMLHTTP")
 	oHTTP.Open("post", This.urlcdr, .F.)
 	oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -55,13 +55,13 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			cdr = orpta.cdr
 			crpta = orpta.Mensaje
 			If goApp.Grabarxmlbd = 'S' Then
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 		         update fe_rcom set rcom_fecd=curdate(),rcom_cdr=?cdr,rcom_mens=?crpta where idauto=<<nidauto>>
-				ENDTEXT
+				Endtext
 			Else
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 		         update fe_rcom set rcom_fecd=curdate(),rcom_mens=?crpta where idauto=<<nidauto>>
-				ENDTEXT
+				Endtext
 			Endif
 			If This.Ejecutarsql(lC) < 1 Then
 				Return 0
@@ -89,7 +89,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	Endfunc
 	Function consultarcdr(cTdoc, cnumero, niDAUTO)
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	 "entidad": "<<this.cose>>",
 	 "ruc": "<<this.nruc>>",
@@ -99,7 +99,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	 "ndoc": "<<cnumero>>",
 	 "idauto": 0
 	 }
-	ENDTEXT
+	Endtext
 	oHTTP = Createobject("MSXML2.XMLHTTP")
 	oHTTP.Open("post", This.urlcdr, .F.)
 	oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -112,18 +112,18 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 *!*		MESSAGEBOX(lcHtml)
 	Set Procedure To d:\Librerias\nfJsonRead.prg Additive
 	orpta = nfJsonRead(lcHTML)
-	If  Vartype(orpta.estado) <> 'U' then
+	If  Vartype(orpta.estado) <> 'U' Then
 		If Left(orpta.estado, 1) = '0' Then
 			cdr = orpta.cdr
 			crpta = orpta.Mensaje
 			If goApp.Grabarxmlbd = 'S' Then
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 		         update fe_rcom set rcom_fecd=curdate(),rcom_cdr=?cdr,rcom_mens=?crpta where idauto=<<nidauto>>
-				ENDTEXT
+				Endtext
 			Else
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 		         update fe_rcom set rcom_fecd=curdate(),rcom_mens=?crpta where idauto=<<nidauto>>
-				ENDTEXT
+				Endtext
 			Endif
 			If This.Ejecutarsql(lC) < 1 Then
 				Return 0
@@ -152,7 +152,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function ConsultaBoletasyNotasporenviar(f1, f2)
 	Local lC
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    SELECT resu_fech,enviados,resumen,resumen-enviados,enviados-resumen
 		FROM(SELECT resu_fech,CAST(SUM(enviados) AS DECIMAL(12,2)) AS enviados,CAST(SUM(resumen) AS DECIMAL(12,2))AS resumen FROM(
 		SELECT resu_fech,CASE tipo WHEN 1 THEN resu_impo ELSE 0 END AS enviados,
@@ -168,7 +168,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 		WHERE  f.fech between '<<f1>>' and '<<f2>>' and f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1)='F' AND w.tdoc='03' AND f.idcliente>0 ) AS x)
 		AS y GROUP BY resu_fech ORDER BY resu_fech) AS zz  WHERE resumen-enviados>=1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'rbolne') < 1 Then
 		Return 0
 	Endif
@@ -218,15 +218,15 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function consultarguiasxenviar(Ccursor)
 	Set Procedure To d:\capass\modelos\guiasremision Additive
-	oguias=Createobject("GuiaRemision")
-	If oguias.consultarguiasxenviar(Ccursor)<1 Then
-		This.Cmensaje=oguias.Cmensaje
+	oguias = Createobject("GuiaRemision")
+	If oguias.consultarguiasxenviar(Ccursor) < 1 Then
+		This.Cmensaje = oguias.Cmensaje
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function consultarguiasxenviaralpharmaco(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	      SELECT fech,ndoc,cliente,Transportista,idguia,motivo,ticket FROM
           (SELECT fech,ndoc,cliente,Transportista,idguia,'V' AS motivo,guia_tick AS ticket FROM  vguiasventas
           WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T'
@@ -259,14 +259,14 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
           INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
           WHERE LEFT(guia_ndoc,1)='T'  AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A')AS w
           GROUP BY fech,ndoc,cliente,Transportista,idguia,motivo,ticket  ORDER BY fech,ndoc
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function consultarguiasxenviarxtienda(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	       SELECT fech,ndoc,cliente,Transportista,idguia,motivo,ticket FROM
           (SELECT fech,ndoc,cliente,Transportista,idguia,'V' AS motivo,guia_tick as ticket FROM  vguiasventas
            WHERE LEFT(ndoc,1)<>'S' AND LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T' and guia_codt=<<this.codt>>
@@ -282,7 +282,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
            LEFT JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
            WHERE LEFT(guia_ndoc,1)='T'  AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A'  and guia_codt=<<this.codt>>)AS w
            GROUP BY fech,ndoc,cliente,Transportista,idguia,motivo,ticket  ORDER BY fech,ndoc
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -290,9 +290,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function descargarxmldesdedata(carfile, nid)
 	Local lC
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        CAST(rcom_xml as char) as rcom_xml,CAST(rcom_cdr as char) as rcom_cdr FROM fe_rcom WHERE idauto=<<nid>>
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, 'filess') < 1 Then
 		Return
 	Endif
@@ -327,9 +327,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function descargarxmlguiadesdedata(carfile, nid)
 	Local lC
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        CAST(guia_xml AS CHAR) AS guia_xml,CAST(guia_cdr AS CHAR) AS guia_cdr FROM fe_guias WHERE guia_idgui=<<nid>>
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, 'filess') < 1 Then
 		Return
 	Endif
@@ -405,7 +405,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			ls_user		  = LcRucEmisor + lcUser_Sol
 
 		Endcase
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		   <soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 		   <soapenv:Header>
@@ -425,7 +425,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		      </ser:getStatusCdr>
 		   </soapenv:Body>
 		</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			This.Cmensaje = loXMLBody.parseError.reason
@@ -479,7 +479,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
 		Endcase
 		cnum = Right("00000000" + Alltrim(cnumero), 8)
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		<SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 		<wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -504,7 +504,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		      </ser:getStatusCdr>
 		   </soapenv:Body>
 		</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			Return - 1
@@ -553,7 +553,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
 			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
 		Endcase
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		  <soapenv:Header>
 		   <wsse:Security soapenv:mustUnderstand="0" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -572,7 +572,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		      </ser:getStatusCdr>
 		   </soapenv:Body>
 		</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			Return - 1
@@ -621,7 +621,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(Oempresa.gene_csol))
 			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(Oempresa.Gene_usol))
 		Endcase
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		  <soapenv:Header>
 			<wsse:Security   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -643,7 +643,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			      </ser:getStatusCdr>
 			   </soapenv:Body>
 			</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			Return - 1
@@ -702,7 +702,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 
 
 		crespuesta = Iif(Type('oempresa') = 'U', fe_gene.nruc, Oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe"
 	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 	xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -723,7 +723,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	</ser:getStatusCdr>
 	</soapenv:Body>
 	</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
@@ -814,13 +814,13 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		If goApp.Grabarxmlbd = 'S' Then
 			cdrxml = Filetostr(cfilecdr)
 			cdrxml  =  ""
-			TEXT  To lC Noshow Textmerge
+			Text  To lC Noshow Textmerge
                   UPDATE fe_rcom SET rcom_mens='<<rptaSunat>>',rcom_cdr='<<cdrxml>>' WHERE idauto=<<pk>>
-			ENDTEXT
+			Endtext
 		Else
-			TEXT  To lC Noshow Textmerge
+			Text  To lC Noshow Textmerge
                   UPDATE fe_rcom SET rcom_mens='<<rptaSunat>>' WHERE idauto=<<pk>>
-			ENDTEXT
+			Endtext
 		Endif
 		If  This.Ejecutarsql(lC) < 1 Then
 			Return 0
@@ -841,9 +841,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endfunc
 	Function Actualizarestadoenviocpe()
 	fenvio = Cfechas(This.dfenvio)
-	TEXT  To lC Noshow Textmerge
+	Text  To lC Noshow Textmerge
     UPDATE fe_rcom SET rcom_mens='<<this.cmensaje>>',rcom_fecd='<<fenvio>>' WHERE idauto=<<this.nidauto>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -898,7 +898,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\    From fe_rcom As a
 	\    Join fe_clie As b On (a.idcliente=b.idclie)
 	\    Join fe_usua u On u.idusua=a.idusua
-	\    Where a.Acti='A' And Left(Ndoc,1) In ('F') And Left(rcom_mens,1)<>'0' And  Impo<>0 And a.Tdoc='01' and datediff(curdate(),a.fech)>=VAL(goapp.Diasenviocpe) and DATEDIFF(CURDATE(),a.fech)<=MAXDIASENVIO
+	\    Where a.Acti='A' And Left(Ndoc,1) In ('F') And Left(rcom_mens,1)<>'0' And  Impo<>0 And a.Tdoc='01' And datediff(Curdate(),a.fech)>=Val(goApp.Diasenviocpe) And datediff(Curdate(),a.fech)<=MAXDIASENVIO
 	If This.confechas = 1 Then
 	  \ And  a.fech Between '<<f1>>' And '<<f2>>'
 	Endif
@@ -915,7 +915,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\    INNER Join fe_ncven g On g.ncre_idan=a.Idauto
 	\    INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
     \    Where a.Acti='A' And Left(a.Ndoc,1) In ('F') And Left(a.rcom_mens,1)<>'0'  And a.Impo<>0  And w.Tdoc='01' And a.Tdoc In("07","08")
-    \   and datediff(curdate(),a.fech)>=VAL(goapp.Diasenviocpe) and DATEDIFF(CURDATE(),a.fech)<=MAXDIASENVIO
+    \   And datediff(Curdate(),a.fech)>=Val(goApp.Diasenviocpe) And datediff(Curdate(),a.fech)<=MAXDIASENVIO
 	If This.confechas = 1 Then
 	  \ And  a.fech Between '<<f1>>' And '<<f2>>'
 	Endif
@@ -1063,7 +1063,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,rcom_otro,
-	\    a.igv,a.Impo,If(mone='S','Soles','Dólares') As moneda,rcom_hash,rcom_mens,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,
+	\    a.igv,a.Impo,If(mone='S','Soles','Dólares') As Moneda,rcom_hash,rcom_mens,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,
 	\    ndo2,b.fono,nruc,a.tcom
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
@@ -1076,7 +1076,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	\    Union All
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,rcom_otro,
-	\    a.igv,a.Impo,IF(a.mone='S','Soles','Dólares') As moneda,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,
+	\    a.igv,a.Impo,If(a.mone='S','Soles','Dólares') As Moneda,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,
 	\    ndo2,b.fono,nruc,a.tcom
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
@@ -1210,7 +1210,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\	    INNER Join fe_ncven g On g.ncre_idan=a.Idauto
 	\	    INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 	\       Where a.Acti<>'I' And Left(a.Ndoc,1) In ('F') And Left(a.rcom_mens,1)<>'0'
-	\	    And a.Impo<>0  And w.Tdoc='01' And a.Tdoc In("07","08") And a.codt=<<This.codt>>
+	\	    And w.Tdoc='01' And a.Tdoc In("07","08") And a.codt=<<This.codt>>
 	If This.confechas = 1 Then
 	   \ And  a.fech Between '<<f1>>' And '<<f2>>'
 	Endif
@@ -1274,9 +1274,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Enddo
 	Endfunc
 	Function Test()
-	TEXT To lC Noshow
+	Text To lC Noshow
 	  select empresa FROM fe_gene WHERE idgene=1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'test') < 1 Then
 		Return 0
 	Endif
@@ -1371,7 +1371,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,rcom_otro,
 	\    a.igv,a.Impo,rcom_hash,rcom_mens,rcom_arch,mone,a.Tdoc,a.Ndoc,dolar,Idauto,b.ndni,a.idcliente,b.clie_corr,a.vigv,
-	\    ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,tcom,Tdoc,cast(DATEDIFF(curdate(), a.fech)  as unsigned) as dias 
+	\    ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,tcom,Tdoc,Cast(datediff(Curdate(), a.fech)  As unsigned) As dias
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
 	\    Where  a.Acti<>'I' And Left(Ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'  And  (Impo<>0 Or rcom_otro>0)   And a.Tdoc='01'
@@ -1384,7 +1384,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	\    Union All
 	\    Select a.Ndoc As dcto,a.fech,b.razo,a.valor,a.rcom_exon,a.rcom_otro,
 	\    a.igv,a.Impo,a.rcom_hash,a.rcom_mens,a.rcom_arch,a.mone,a.Tdoc,a.Ndoc,a.dolar,a.Idauto,b.ndni,a.idcliente,b.clie_corr,a.vigv,
-	\    a.ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,a.tcom,w.Tdoc,cast(DATEDIFF(curdate(), a.fech)  as unsigned) as dias 
+	\    a.ndo2,b.fono,nruc,Concat(Trim(b.Dire),' ',Trim(b.ciud)) As Direccion,a.tcom,w.Tdoc,Cast(datediff(Curdate(), a.fech)  As unsigned) As dias
 	\    From fe_rcom As a
 	\    INNER Join fe_clie As b On (a.idcliente=b.idclie)
 	\    INNER Join fe_ncven g On g.ncre_idan=a.Idauto
@@ -1417,7 +1417,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
     \ndo2,b.fono,nruc,tcom,a.vigv,Tdoc,rcom_hash
     \From fe_rcom As a
 	\Join fe_clie As b On (a.idcliente=b.idclie)
-	\Where  a.Acti<>'I' And Left(Ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'   And a.Tdoc='01'  And  (Impo<>0 Or rcom_otro>0)
+	\Where  a.Acti<>'I' And Left(Ndoc,1) In ('F') And Left(rcom_mens,1)<>'0'   And a.Tdoc='01'   And nruc<>'***********'
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And a.codt=<<goApp.tienda>>
@@ -1462,9 +1462,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function descargarxmlguiadesdedata(carfile, nid)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        select CAST(guia_xml AS CHAR) AS guia_xml,CAST(guia_cdr AS CHAR) AS guia_cdr FROM fe_guias WHERE guia_idgui=<<nid>>
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'filess') < 1 Then
 		Return 0
 	Endif
@@ -1501,13 +1501,13 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function verificarbajasxanular(Ccursor)
-	TEXT To lC Noshow
+	Text To lC Noshow
          SELECT r.tdoc as Tipo_dcto,r.ndoc as Numero_Dcto,r.fech as fecha,f.baja_fech as fecha_Baja,
 		 c.nruc as Ruc,c.ndni as DNI,c.razo as cliente,r.valor as valor_gravado,r.igv,r.impo as Importe,baja_idau FROM fe_bajas f
 		 inner join fe_rcom r on r.idauto=f.baja_idau
 		 inner join fe_clie as c on c.idclie=r.idcliente
 		 where (r.acti='A' or  length(Trim(baja_mens))=0)  order by ndoc;
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1517,44 +1517,57 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	If !Pemstatus(goApp, 'proyecto', 5) Then
 		AddProperty(goApp, 'proyecto', '')
 	Endif
-	If !Pemstatus(goApp,'vtascondetraccion',5) Then
+	If !Pemstatus(goApp, 'vtascondetraccion', 5) Then
 		AddProperty(goApp, 'vtascondetraccion', '')
-	ENDIF
-	If !Pemstatus(goApp,'vtascondetraccion',5) Then
+	Endif
+	If !Pemstatus(goApp, 'vtascondetraccion', 5) Then
 		AddProperty(goApp, 'vtascondetraccion', '')
-	ENDIF
-	IF !PEMSTATUS(goApp,'Clientesconretencion',5) then
-	   ADDPROPERTY(goApp,'Clientesconretencion','')
-    ENDIF 	   
+	Endif
+	If !Pemstatus(goApp, 'Clientesconretencion', 5) Then
+		AddProperty(goApp, 'Clientesconretencion', '')
+	Endif
+	If !Pemstatus(goApp, 'vtasconanticipo', 5) Then
+		AddProperty(goApp, 'vtasconanticipo', '')
+	Endif
 	Set Textmerge On
 	Set  Textmerge To Memvar lC Noshow Textmerge
-   \ Select  r.Idauto,r.Ndoc,r.Tdoc,r.fech As dFecha,r.mone,valor,Cast(0 As Decimal(12,2)) As inafectas,Cast(0 As Decimal(12,2)) As gratificaciones,
-   \ Cast(0 As Decimal(12,2)) As exoneradas,'10' As Tigv,vigv,v.rucfirmad,v.razonfirmad,ndo2,v.nruc As rucempresa,v.Empresa,v.Ubigeo,
-   \ v.ptop,v.ciudad,v.distrito,c.nruc,'6' As tipodoc,c.razo,Concat(Trim(c.Dire),' ',Trim(c.ciud)) As Direccion,c.ndni,rcom_otro,kar_cost As costoRef,Deta,
-   \ 'PE' As pais,r.igv,Cast(0 As Decimal(12,2)) As tdscto,Cast(0 As Decimal(12,2)) As Tisc,Impo,Cast(0 As Decimal(12,2)) As montoper,k.Incl,
-   \ Cast(0 As Decimal(12,2)) As totalpercepcion,k.cant,k.Prec,Left(r.Ndoc,4) As Serie,Substr(r.Ndoc,5) As numero,a.Unid,a.Descri,k.idart As Coda,
-   \ IFNULL(unid_codu,'NIU')As unid1,s.codigoestab,r.Form,v.gene_cert,v.Clavecertificado As clavecerti,v.Gene_usol,v.gene_csol
+	\Select r.Idauto,r.Ndoc,r.Tdoc,r.fech As dFecha,r.mone,r.valor,r.rcom_inaf As inafectas,
+	\r.rcom_otro As gratificaciones,r.rcom_exon As exoneradas,'10' As Tigv,r.vigv,
+	\v.rucfirmad,v.razonfirmad,r.ndo2,v.nruc As rucempresa,v.Empresa,v.Ubigeo,
+	\v.ptop,v.ciudad,v.distrito,c.nruc,'6' As tipodoc,c.razo,
+	\Concat(Trim(c.Dire),' ',Trim(c.ciud)) As Direccion,c.ndni,r.rcom_otro,kar_cost As costoRef,r.Deta,
+	\'PE' As pais,r.igv,Cast(0 As Decimal(12,2)) As tdscto,Cast(0 As Decimal(12,2)) As Tisc,
+	\r.Impo,Cast(0 As Decimal(12,2)) As montoper,k.Incl, Cast(0 As Decimal(12,2)) As totalpercepcion,k.cant,
+	\k.Prec,Left(r.Ndoc,4) As Serie,Substr(r.Ndoc,5) As numero,a.Unid,a.Descri,k.idart As Coda,
+	\IFNULL(unid_codu,'NIU')As unid1,s.codigoestab,r.Form,v.gene_cert,v.Clavecertificado As clavecerti,v.Gene_usol,r.rcom_icbper,
+	\v.gene_csol,k.prec as precioo,kar_icbper
+	If goApp.vtasconanticipo = 'S' Then
+		\,IFNULL(z.Ndoc,'') As dctoanticipo, IFNULL(z.Impo,Cast(0 As Decimal(10,2))) As totalanticipo,IFNULL(z.valor+z.rcom_exon,Cast(0 As Decimal(10,2))) As valorganticipo
+	Else
+	   \,'' As dctoanticipo,Cast(0 As Decimal(10,2)) As totalanticipo,Cast(0 As Decimal(10,2)) As valorganticipo
+	Endif
 	If Alltrim(Lower(goApp.Proyecto)) == 'psys' Then
 	      \,r.rcom_ocom
 	Endif
-	If Alltrim(Lower(goApp.Proyecto)) == 'psysr' Then
-	      \,r.rcom_mret,rcom_mdet
-	Endif
-	If goApp.Vtascondetraccion='S' Then
+	If goApp.Vtascondetraccion = 'S' Then
 	   \,r.rcom_mdet
-	ENDIF
-	If goApp.Clientesconretencion='S' Then
+	Endif
+	If goApp.Clientesconretencion = 'S' Then
 	   \,r.rcom_mret
-	ENDIF
+	Endif
    \ From fe_rcom r
    \ INNER Join fe_clie c On c.idclie=r.idcliente
    \ INNER Join fe_kar k On k.Idauto=r.Idauto
    \ INNER Join fe_art a On a.idart=k.idart
    \ INNER Join fe_sucu s On s.idalma=r.codt
+	If goApp.vtasconanticipo = 'S' Then
+   \  Left Join fe_rcom As z On z.Idauto=r.rcom_idan
+	Endif
    \ Left Join fe_unidades As u On u.unid_codu=a.Unid, fe_gene As v
    \ Where r.Idauto=<<pkid>> And r.Acti='A' And k.Acti='A'
 	Set Textmerge Off
 	Set Textmerge To
+*!*		MESSAGEBOX(lc)
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1565,13 +1578,13 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		AddProperty(goApp, 'cdatos', '')
 	Endif
 	If goApp.Cdatos = 'S' Then
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	    UPDATE fe_sucu as f SET gene_nres=f.gene_nres+1 WHERE idalma=<<goapp.tienda>>
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	     UPDATE fe_gene  as f SET gene_nres=f.gene_nres+1 WHERE idgene=1
-		ENDTEXT
+		Endtext
 	Endif
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
@@ -1582,7 +1595,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Do Case
 	Case np2 = '01' Or np2 = '03' Or np2 = '20'
 		If np3 = 'S' Then
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 			  	select 4 as codv,c.idauto,0 as idart,CAST(if(detv_item=1,detv_cant,0) as decimal(12,2)) as cant,if(detv_item=1,detv_prec,0) as prec,c.codt as alma,
           		c.tdoc as tdoc1,
 			    c.ndoc as dcto,c.fech as fech1,c.vigv,c.valor,c.igv,
@@ -1595,9 +1608,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			    inner join fe_usua as u on u.idusua=c.idusua
 			    inner join fe_detallevta as m on m.detv_idau=c.idauto
           		where c.idauto=<<np1>> group by descri order by detv_ite1
-			ENDTEXT
+			Endtext
 		Else
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 			    select  a.codv,a.idauto,a.alma,a.idkar,a.idauto,a.idart,a.cant,a.prec,a.alma,c.tdoc as tdoc1,
 			    c.ndoc as dcto,c.fech as fech1,c.vigv,c.valor,c.igv,c.rcom_vimp,
 			    c.fech,c.fecr,c.form,c.deta,c.rcom_exon,c.ndo2,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,c.pimpo,u.nomb as usuario,
@@ -1609,10 +1622,10 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 			    inner join fe_clie as d on(c.idcliente=d.idclie)
 			    inner join fe_usua as u on u.idusua=c.idusua
 			    where c.idauto=<<np1>> and a.acti='A';
-			ENDTEXT
+			Endtext
 		Endif
 	Case np2 = '08'
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 			   select r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,abs(r.valor) as valor,r.ndo2,
 		       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,' ' as nomv,r.form,r.rcom_vimp,
 		       abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(1 as decimal(12,2))) as cant,
@@ -1627,9 +1640,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		       inner join fe_rcom as w on w.idauto=f.ncre_idau
 		       inner join fe_usua as u on u.idusua=r.idusua
 		       where r.idauto=<<np1>> and r.acti='A' and r.tdoc='08'
-		ENDTEXT
+		Endtext
 	Case np2 = '07'
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 			   select r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,abs(r.valor) as valor,r.ndo2,r.rcom_vimp,
 		       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,' ' as nomv,r.form,u.nomb as usuario,
 		       abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(1 as decimal(12,2))) as cant,
@@ -1644,7 +1657,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		       inner join fe_rcom as w on w.idauto=f.ncre_idau
 		       inner join fe_usua as u on u.idusua=r.idusua
 		       where r.idauto=<<np1>> and r.acti='A' and r.tdoc='07'
-		ENDTEXT
+		Endtext
 	Endcase
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
@@ -1656,9 +1669,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Return 1
 	Endfunc
 	Function nroimpresion(niDAUTO)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        UPDATE fe_rcom SET rcom_vimp=rcom_vimp+1 WHERE idauto=<<nidauto>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -1857,9 +1870,9 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 *!*					XML = orpta.XML
 *!*					cdr = orpta.cdr
 				crpta = Alltrim(orpta.rpta)
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 		          update fe_rcom set rcom_fecd=curdate(),rcom_mens='<<crpta>>' where idauto=<<this.niDAUTO>>
-				ENDTEXT
+				Endtext
 				If This.Ejecutarsql(lC) < 1 Then
 					Return 0
 				Endif
@@ -1880,7 +1893,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	Endif
 	Endfunc
 	Function ConsultaApisunat
-	Lparameters cTdoc, Cserie, cnumero, dFecha, nimpo,niDAUTO
+	Lparameters cTdoc, Cserie, cnumero, dFecha, nimpo, niDAUTO
 	Local Obj As "empty"
 	Local oHTTP As "MSXML2.XMLHTTP"
 	Local lcHTML
@@ -1892,7 +1905,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		Cruc = Oempresa.nruc
 	Endif
 *MESSAGEBOX(cruc,16,'Hola')
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	"ruc":"<<cruc>>",
 	"tdoc":"<<ctdoc>>",
@@ -1901,7 +1914,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	"cfecha":"<<dfecha>>",
 	"cimporte":"<<nimpo>>"
 	}
-	ENDTEXT
+	Endtext
 *!*	wait WINDOW cserie
 *!*	wait WINDOW cnumero
 *!*		MESSAGEBOX(cdata)
@@ -1912,7 +1925,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	If oHTTP.Status <> 200 Then
 		AddProperty(Obj, "vdvto", '-1')
 		AddProperty(Obj, "mensaje", "Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status)))
-		This.Cmensaje="Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status))
+		This.Cmensaje = "Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status))
 *Return Obj
 		Return 0
 	Endif
@@ -1923,7 +1936,7 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 		AddProperty(Obj, "estadoruc", "")
 		AddProperty(Obj, "estadodom", "")
 		AddProperty(Obj, "mensaje", "No hay Respuesta de SUNAT")
-		This.Cmensaje="No hay Respuesta de SUNAT"
+		This.Cmensaje = "No hay Respuesta de SUNAT"
 		Return 0
 	Endif
 	Set Procedure To d:\Librerias\nfJsonRead.prg Additive
@@ -1932,24 +1945,24 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
 	AddProperty(Obj, "estadoruc", ocomp.estadoruc)
 	AddProperty(Obj, "estadodom", ocomp.condomicilio)
 	AddProperty(Obj, "mensaje", ocomp.Mensaje)
-	This.Cmensaje=ocomp.Mensaje
+	This.Cmensaje = ocomp.Mensaje
 	If ocomp.estadocomprobante = '1' Then
-		TEXT TO lc NOSHOW TEXTMERGE
+		Text To lC Noshow Textmerge
 		   UPDATE fe_rcom SET rcom_mens='0,Aceptado' WHERE idauto=<<m.nidauto>>
-		ENDTEXT
-		If This.Ejecutarsql(lC)<1 Then
+		Endtext
+		If This.Ejecutarsql(lC) < 1 Then
 			Return 0
 		Endif
 		Return 1
 	Else
 		Return  0
 	Endif
-	ENDFUNC
+	Endfunc
 	Function consultarguiasxenviarpsysu(Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	      SELECT fech,ndoc,cliente,Transportista,idguia,motivo,ticket FROM
           (SELECT fech,ndoc,cliente,Transportista,idguia,'V' AS motivo,guia_tick AS ticket FROM  vguiasventas
-          WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T' and guia_codt=<<this.codt>> 
+          WHERE LEFT(guia_mens,1)<>'0' AND LEFT(ndoc,1)='T' and guia_codt=<<this.codt>>
           UNION ALL
           SELECT guia_fech AS guia_fech,guia_ndoc AS ndoc,c.razo AS cliente,t.razon AS transportista,guia_idgui AS idguia,guia_moti AS motivo,
           guia_tick AS ticket FROM fe_guias AS g
@@ -1979,13 +1992,62 @@ Define Class cpesisven As OData Of 'd:\capass\database\data'
           INNER JOIN fe_tra AS t ON t.idtra=a.guia_idtr,fe_gene  AS g
           WHERE LEFT(guia_ndoc,1)='T'  AND  LEFT(guia_mens,1)<>'0' AND guia_moti='T' AND guia_acti='A' and guia_codt=<<this.codt>>)AS w
           GROUP BY fech,ndoc,cliente,Transportista,idguia,motivo,ticket  ORDER BY fech,ndoc
-	ENDTEXT
+	Endtext
+	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function consultarcpexreimprimirxsysg(np1, Ccursor)
+	If This.idsesion > 0 Then
+		Set DataSession To This.idsesion
+	Endif
+	Set Textmerge On
+	Set Textmerge To Memvar lC Noshow Textmerge
+	\Select  a.codv,a.Idauto,a.alma,a.idkar,a.Idauto,a.idart,a.cant,a.Prec,a.alma,c.Tdoc As tdoc1,c.Ndoc As dcto,c.fech As fech1,c.vigv,a.kar_prel As preciolista,Cast(0 As Decimal(12,2)) As detraccion,
+	\c.fech,c.fecr,c.Form,c.Deta,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,
+	If goApp.Direcciones = 'S' Then
+	\IFNULL(dd.dire_dire,d.Dire) As Dire,If(!Isnull(dd.dire_dire),'',d.ciud) As ciud,
+	Else
+	\ d.Dire,d.ciud,
+	Endif
+	If goApp.Promopuntos = 'S' Then
+	\ Cast(IFNULL(dpro_acum,0) As unsigned )As puntos,
+	Else
+	\ Cast(0 As unsigned )As puntos,
+	Endif
+	If _Screen.vtasconplacas = 'S' Then
+	   \ a.kar_deta,
+	Else
+	   \ ''  As kar_deta,
+	Endif
+	\d.ndni,c.pimpo,u.nomb As usuario,c.Tdoc,c.Ndoc,c.dolar As dola,c.mone,b.Descri,b.Unid,c.rcom_hash,
+	\u.nomb As nomv,c.Impo,IFNULL(p.fevto,c.fech) As fvto,c.rcom_dsct,c.valor,c.igv,Cast(0 As unsigned) As puntos,rcom_detr,c.fusua,c.rcom_otro
+	\From fe_rcom As c
+	\INNER Join fe_kar As a On a.Idauto=c.Idauto
+	\INNER Join fe_clie As d On(c.idcliente=d.idclie)
+	\INNER Join fe_art As b On(b.idart=a.idart)
+	\INNER Join fe_usua As u On u.idusua=c.idusua
+	\Left Join (Select rcre_idau,Min(c.fevto) As fevto From fe_rcred As r INNER Join fe_cred As c On c.cred_idrc=r.rcre_idrc
+    \Where rcre_acti='A' And Acti='A' And rcre_idau=<<np1>> Group By rcre_idau) As p On p.rcre_idau=c.Idauto
+	If goApp.Direcciones = 'S' Then
+    \ Left Join fe_direcciones As dd On dd.dire_iddi=c.alma
+	Endif
+	If goApp.Promopuntos = 'S' Then
+	\ Left Join (Select dpro_idau,dpro_acum From fe_dpromo Where dpro_idau=<<np1>> And dpro_acti='A') As pt On pt.dpro_idau=c.Idauto
+	Endif
+	\Where c.Idauto=<<np1>> And a.Acti='A'
+	Set Textmerge Off
+	Set Textmerge To
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 Enddefine
+
+
+
 
 
 

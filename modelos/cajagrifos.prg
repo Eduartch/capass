@@ -148,15 +148,15 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		        \ And lect_idco In(5,6,7,8)
 			Endcase
 		Case fe_gene.nruc = '20609681609'
-            	Do Case
+			Do Case
 			Case This.nisla = 1
 		        \ And lect_idco In(1,2)
 			Case This.nisla = 2
 		        \ And lect_idco In(3,4)
 			Case This.nisla = 3
 		        \ And lect_idco In(5,6)
-		   Case This.nisla = 4
-		        \ And lect_idco In(7,8)     
+			Case This.nisla = 4
+		        \ And lect_idco In(7,8)
 			Endcase
 		Otherwise
 			Do Case
@@ -166,8 +166,8 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		        \ And lect_idco In(3,4)
 			Case This.nisla = 3
 		        \ And lect_idco In(5,6,7,8)
-		   	Case This.nisla = 4
-		        \ And lect_idco In(9,10)     
+			Case This.nisla = 4
+		        \ And lect_idco In(9,10)
 			Endcase
 		Endcase
 	Endif
@@ -226,7 +226,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 		\Where  lcaj_idle=<<This.nidlectura>> And lcaj_acti<>'I' And lcaj_acre>0 and LEFT(lcaj_ndoc,6)<>'gastos'
 	If This.nisla > 0 Then
 		\ And lcaj_codt=<<This.nisla>>
-	ENDIF
+	Endif
 	\Union All
 		\Select "Gastos" As detalle,ifnull(Sum(lcaj_acre),0) As Impo,'E' As tipo,'S' As lcaj_form,'' As isla  From
 		\fe_lcaja As a
@@ -294,7 +294,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	\	  Where a.lcaj_acti='A' And lcaj_form='T'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_deud>0 And lcaj_idau>0  And lcaj_idus>0
 	If goApp.conectasucursales = 'S' Then
 	\ And lcaj_codt=<<goApp.tienda>>
-	ENDIF
+	Endif
 	\	  Union All
 	\	  Select "Ventas C/Depósito-Yape" As detalle,ifnull(Sum(a.lcaj_deud),Cast(0 As Decimal(12,2))) As Total_Ventas,'' As producto,'' As unid,
 	\	  Cast(0 As Decimal(12,2)) As Cantidad,
@@ -315,7 +315,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	\	  Select "Vales Consumo" As detalle,ifnull(Sum(a.lcaj_acre),Cast(0 As Decimal(12,2))) As  Total_Ventas,'' As producto,'' As unid,
 	\	  Cast(0 As Decimal(12,2)) As Cantidad,
 	\	  Cast(0 As Decimal(9,4)) As Precio,Cast(0 As Decimal(12,2)) As  venta,'S' As tipo From fe_lcaja  As a
-	\	  Where a.lcaj_acti='A' And lcaj_form='E'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_idtra<=0  And lcaj_acre>0 And (lcaj_idau=0 Or lcaj_clpr=0)
+	\	  Where a.lcaj_acti='A' And lcaj_form='E'  And lcaj_fech='<<fi>>' And lcaj_acti='A' And lcaj_idtra<1  And lcaj_acre>0 And  lcaj_idde=0 and (lcaj_idau=0 Or lcaj_clpr=0)
 *!*		If goApp.conectasucursales = 'S' Then
 *!*		\ And lcaj_codt=<<goApp.tienda>>
 *!*		Endif
@@ -367,11 +367,30 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	nsaldo = Iif(Isnull(saldo), 0, saldo)
 	Return nsaldo
 	Endfunc
-	Function ImprimeTransferenciaBoveda(nidx)
+	Function ImprimeTransferenciaBoveda(nidxcaja)
+	m.nidtr=m.nidxcaja
 	TEXT To lC Noshow
-	SELECT lcaj_fope AS fope,lcaj_fech AS fecha,lcaj_acre AS importe,lcaj_deta as refe FROM
-    fe_lcaja AS l INNER JOIN fe_usua AS u ON u.idusua=l.lcaj_idus
-    WHERE lcaj_idca=?nidx AND lcaj_acti='A' AND lcaj_form='E' AND lcaj_acre>0
+	SELECT lcaj_fope AS fope,lcaj_fech AS fecha,lcaj_acre AS importe,lcaj_deta as refe,
+	"Transferencia" as tipo,lcaj_dcto as ndoc FROM
+    fe_lcaja AS l
+    INNER JOIN fe_usua AS u ON u.idusua=l.lcaj_idus
+    WHERE lcaj_idca=?m.nidtr AND lcaj_acti='A'  and lcaj_acre>0
+	ENDTEXT
+	If This.EJECutaconsulta(lC, 'tr') < 1 Then
+		Return 0
+	Endif
+	Select tr
+	Go Top
+	Report Form Transfer To Printer Prompt Noconsole
+	Return 1
+	Endfunc
+	Function Imprimir(nidx)
+	TEXT To lC Noshow
+	SELECT lcaj_fope AS fope,lcaj_fech AS fecha,if(lcaj_acre>0,lcaj_acre,lcaj_deud) AS importe,lcaj_deta as refe,
+	IF(lcaj_deud>0,'Ingresos','Egresos') as tipo,lcaj_dcto as ndoc  FROM
+    fe_lcaja AS l
+    INNER JOIN fe_usua AS u ON u.idusua=l.lcaj_idus
+    WHERE lcaj_idca=?nidx AND lcaj_acti='A' AND lcaj_form='E'
 	ENDTEXT
 	If This.EJECutaconsulta(lC, 'tr') < 1 Then
 		Return 0
@@ -442,7 +461,7 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	Select (Ccursor)
 	nsaldo = Iif(Isnull(saldo), 0, saldo)
 	Return nsaldo
-	ENDFUNC
+	Endfunc
 	Function Saldoboveda()
 	Ccursor = 'c_' + Sys(2015)
 	Set Textmerge On
@@ -458,6 +477,200 @@ Define Class cajagrifos As Caja  Of 'd:\capass\modelos\caja'
 	Select (Ccursor)
 	nsaldo = Iif(Isnull(saldo), 0, saldo)
 	Return nsaldo
+	Endfunc
+	Function IngresaDatosLCajaEFectivoCturnos20Transferencia()
+*dFecha, "gastos", cdetalle, 0, 0, nhaber, 'S', fe_gene.dola, goApp.idcajero, 0, 0, 'E', cndoc, "", m.ncodt, goApp.IDturno, 0, goApp.Idlecturas
+	lC="FunIngresaDatosLcajaEfectivoCturnos20Transferencia"
+	cur="vtra"
+	npara1=This.dFecha
+	npara2=This.Ndoc
+	npara3=This.Cdetalle
+	npara4=This.Nidcta
+	npara5=This.ndebe
+	npara6=This.Nhaber
+	npara7=This.Cmoneda
+	npara8=This.Ndolar
+	npara9=This.Nidusua
+	npara10=This.Nidclpr
+	npara11=This.nidauto
+	npara12=This.Cforma
+	npara13=This.Cdcto
+	npara14=This.Ctdoc
+	npara15=This.codt
+	npara16=This.nturno
+	npara17=This.ndscto
+	If  goApp.ConectaControlador='Y' Then
+		npara18=This.nidlectura
+	Else
+		npara18=This.nidtran
+	Endif
+	TEXT to lp noshow
+     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10,?npara11, ?npara12,?npara13,?npara14,?npara15,?npara16,?npara17,?npara18)
+	ENDTEXT
+	m.nidx= This.EJECUTARF(lC,lp,cur)
+	If m.nidx<1 Then
+		Return 0
+	Endif
+	If This.ImprimeTransferenciaBoveda(m.nidx) < 1 Then
+		Return 0
+	Endif
+	Return m.nidx
+	Endfunc
+	Function IngresaDatosLCajaEFectivoCturnosDvto()
+*dFecha, "", cdetalle, 0, ndebe, nhaber, 'S', fe_gene.dola, nidcajero, 0, 0, 'E', cndoc, "", m.ncodt, goApp.IDturno
+	lC="funIngresaDatosLcajaEfectivoCturnos"
+	cur="ft"
+	npara1=This.dFecha
+	npara2=This.Ndoc
+	npara3=This.Cdetalle
+	npara4=This.Nidcta
+	npara5=This.ndebe
+	npara6=This.Nhaber
+	npara7=This.Cmoneda
+	npara8=This.Ndolar
+	npara9=This.Nidusua
+	npara10=This.Nidclpr
+	npara11=This.nidauto
+	npara12=This.Cforma
+	npara13=This.Cdcto
+	npara14=This.Ctdoc
+	npara15=This.codt
+	npara16=This.nidlectura
+	TEXT to lp noshow
+     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10,?npara11, ?npara12,?npara13,?npara14,?npara15,?npara16)
+	ENDTEXT
+	m.nidx= This.EJECUTARF(lC,lp,cur)
+	If m.nidx<1 Then
+		Return 0
+	Endif
+	If This.Imprimir(m.nidx) < 1 Then
+		Return 0
+	Endif
+	Return m.nidx
+	Endfunc
+	Function ActualizaIdTransferenciaCaja(np1)
+	npara1=np1
+	TEXT to lsql noshow
+      UPDATE fe_lcaja  SET lcaj_idtra=?npara1 WHERE lcaj_idca=?npara1
+	ENDTEXT
+	If This.ejecutarsql(lsql)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Registrarop()
+	ocorr = Newobject("correlativo","d:\capass\modelos\correlativos.prg")
+	If This.Iniciatransaccion()<1 Then
+		Return 0
+	Endif
+	nidx= This.IngresaDatosLCajaEFectivoCturnos20Transferencia()
+	If m.nidx<1 Then
+		This.deeshacerCambios()
+		Return 0
+	Endif
+	ocorr.Nsgte = This.Nsgte
+	ocorr.Idserie = This.Idserie
+	If ocorr.GeneraCorrelativo1() < 1 Then
+		This.cmensaje = ocorr.cmensaje
+		This.deshacerCambios()
+		Return 0
+	Endif
+	If This.GrabarCambios() < 1 Then
+		Return 0
+	Endif
+	If This.Imprimir(m.nidx) < 1 Then
+		Return 0
+	Endif
+	ocorr=Null
+	Return 1
+	Endfunc
+	Function Registrarop1(nidcajero)
+	ocorr = Newobject("correlativo","d:\capass\modelos\correlativos.prg")
+	If This.Iniciatransaccion()<1 Then
+		Return 0
+	Endif
+	nidcaja= This.IngresaDatosLCajaEFectivoCturnosDvto()
+	If m.nidcaja  <1 Then
+		This.deeshacerCambios()
+		Return 0
+	Endif
+	If This.Concargo=1 Then
+		opla=Newobject("planilla","d:\capass\modelos\planilla.prg")
+		opla.nimpoe=0
+		opla.nactae=This.Nhaber
+		opla.dFecha=This.dFecha
+		opla.ctipo="P"
+		opla.nidus=This.Nidusua
+		opla.nidcaja=m.nidcaja
+		opla.nidem=m.nidcajero
+		opla.cdeta=Alltrim(This.Ndoc) + ' ' + Alltrim(This.Cdetalle)
+		If opla.IngresarPagosActa()<1 Then
+			This.cmensaje=opla.cmensaje
+			This.deshacerCambios()
+			Return 0
+		Endif
+	Endif
+	ocorr.Nsgte = This.Nsgte
+	ocorr.Idserie = This.Idserie
+	If ocorr.GeneraCorrelativo1() < 1 Then
+		This.cmensaje = ocorr.cmensaje
+		This.deshacerCambios()
+		Return 0
+	Endif
+	If This.GrabarCambios() < 1 Then
+		Return 0
+	Endif
+	If This.Imprimir(m.nidcaja) < 1 Then
+		Return 0
+	Endif
+	ocorr=Null
+	Return 1
+	Endfunc
+	Function RegistrarTransferencia(nidcajero1,nidcajero2)
+	ocorr = Newobject("correlativo","d:\capass\modelos\correlativos.prg")
+	If This.Iniciatransaccion()<1 Then
+		Return 0
+	Endif
+	m.ndebe=This.ndebe
+	m.Nhaber=This.Nhaber
+	This.Nhaber=m.ndebe
+	This.ndebe=0
+	This.nidtran=0
+	This.Nidusua=m.nidcajero1
+	nidxcaja = This.IngresaDatosLCajaEFectivoCturnos20Transferencia()
+*IngresaDatosLCajaEFectivoCturnos20Transferencia(dFecha, "", cdetalle, 0, 0, ndebe, 'S', fe_gene.dola, goApp.idcajero, 0, 0, 'E', cndoc, "", m.ncodt, goApp.IDturno, 0, 0)
+	If m.nidxcaja < 1 Then
+		This.deshacerCambios()
+		Return 0
+	Endif
+	This.Nhaber=0
+	This.ndebe=m.ndebe
+	This.nidtran=m.nidxcaja
+	This.Nidusua=m.nidcajero2
+	If This.IngresaDatosLCajaEFectivoCturnos20Transferencia()<1 Then
+*(dFecha, "", cdetalle, 0, ndebe, 0, 'S', fe_gene.dola, nidcajero1, 0, 0, 'E', cndoc, "", m.ncodt, goApp.IDturno, 0, nidx) = 0 Then
+		This.deshacerCambios()
+		Return 0
+	Endif
+	If This.ActualizaIdTransferenciaCaja(m.nidxcaja) < 1 Then
+		This.deshacerCambios()
+		Return 0
+	Endif
+	ocorr.Nsgte = This.Nsgte
+	ocorr.Idserie = This.Idserie
+	If ocorr.GeneraCorrelativo1() < 1 Then
+		This.cmensaje = ocorr.cmensaje
+		This.deshacerCambios()
+		Return 0
+	Endif
+	If This.GrabarCambios() < 1 Then
+		Return 0
+	Endif
+	If This.ImprimeTransferenciaBoveda(m.nidxcaja) < 1 Then
+		Return 0
+	Endif
+	ocorr=Null
+	Return 1
 	Endfunc
 Enddefine
 

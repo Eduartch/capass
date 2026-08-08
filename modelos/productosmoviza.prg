@@ -125,7 +125,7 @@ Define Class productosmoviza As producto  Of 'd:\capass\modelos\productos.prg'
 	goApp.npara6 = np6
 	goApp.npara7 = np7
 	goApp.npara8 = np8
-	goApp.npara8 = np9
+	goApp.npara9 = np9
 	If goApp.ListaPreciosPorTienda = 'S' Then
 		Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9)
@@ -142,7 +142,6 @@ Define Class productosmoviza As producto  Of 'd:\capass\modelos\productos.prg'
 	Return nid
 	Endfunc
 	Function ActualizapreciosEpta(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11)
-	Local lC, lp
 	Local lC, lp
 	If !Pemstatus(goApp, 'ListaPreciosPorTienda', 5) Then
 		AddProperty(goApp, 'ListaPreciosPorTienda', '')
@@ -178,11 +177,11 @@ Define Class productosmoviza As producto  Of 'd:\capass\modelos\productos.prg'
 		Set DataSession To This.Idsesion
 	Endif
 	lC = 'ProMuestraProductosConStockmas'
-	goApp.npara1 = np1
-	goApp.npara2 = np2
-	goApp.npara3  = This.constock
+	npara1 = np1
+	npara2 = np2
+	npara3  = This.constock
 	Text To lp Noshow
-        (?goapp.npara1,?goapp.npara2,?goapp.npara3)
+        (?npara1,?npara2,?npara3)
 	Endtext
 	This.conconexion = 1
 	If This.EJECUTARP(lC, lp, Ccursor) < 1 Then

@@ -16,10 +16,10 @@ Define Class Imprimir As Custom
 	ConvistaPrevia = ""
 	Cgarantia = ""
 	reimpresion = ''
-	Impresora=''
-	abrirpdf=''
+	Impresora = ''
+	abrirpdf = ''
 	crucempresa = ''
-	cvtasconservicio=''
+	cvtasconservicio = ''
 	Procedure ImprimeComprobante
 	Lparameters cmodoimpresion
 	This.ImprimeComprobanteM(cmodoimpresion)
@@ -133,8 +133,8 @@ Define Class Imprimir As Custom
 			Cruc = This.crucempresa
 		Endif
 	Endif
-	If !Pemstatus(goApp,'impresora',5) Then
-		AddProperty(goApp,'impresora','')
+	If !Pemstatus(goApp, 'impresora', 5) Then
+		AddProperty(goApp, 'impresora', '')
 	Endif
 	Cruta = Addbs(Addbs(Sys(5) + Sys(2003)) + Alltrim(Cruc))
 	Set Procedure To FoxbarcodeQR Additive
@@ -289,7 +289,7 @@ Define Class Imprimir As Custom
 				Report Form (cArchivo) To Printer Noconsole
 			Endif
 		Else
-			This.Cmensaje='Formato No Encontrado'
+			This.Cmensaje = 'Formato No Encontrado'
 		Endif
 		m.oFbc = Null
 		cpropiedad = "Otraimpresionvtas"
@@ -344,15 +344,15 @@ Define Class Imprimir As Custom
 	This.CrearPdf(This.Archivo, This.ArchivoPdf, cmodo)
 	Endfunc
 	Function cambiarimpresoranormalpdf(creporte)
-	If This.Idsesion>0 Then
+	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	If !Empty(This.ArchivoPdf) Then
-		If !Directory(Addbs(Addbs(Sys(5)+Sys(2003))+'Pdf')) Then
-			Mkdir Addbs(Addbs(Sys(5)+Sys(2003))+'Pdf'
+		If !Directory(Addbs(Addbs(Sys(5) + Sys(2003)) + 'Pdf')) Then
+			Mkdir Addbs(Addbs(Sys(5) + Sys(2003))) + 'Pdf'
 		Endif
 	Else
-		cpdf=This.ArchivoPdf
+		cpdf = This.ArchivoPdf
 	Endif
 *!*		wait WINDOW 'hola'+cpdf
 	If !Pemstatus(goApp, "Impresoranormal", 5)
@@ -442,7 +442,7 @@ Define Class Imprimir As Custom
 	Endproc
 	Procedure ImprimeComprobanteComoticketM
 	Lparameters cmodo, cctdoc
-	If This.Idsesion>0 Then
+	If This.Idsesion > 0 Then
 		Set DataSession To This.Idsesion
 	Endif
 	Set Procedure To FoxbarcodeQR Additive
@@ -481,7 +481,7 @@ Define Class Imprimir As Custom
 			Else
 				This.Calias = "tmpvg"
 			Endif
-		Case cctdoc='OS'
+		Case cctdoc = 'OS'
 			cArchivo = Addbs(Addbs(Sys(5) + Sys(2003)) + Alltrim(Cruc)) + 'ticketos.frx'
 		Otherwise
 			cArchivo = Addbs(Addbs(Sys(5) + Sys(2003)) + Alltrim(Cruc)) + 'ticket.frx'
@@ -491,17 +491,17 @@ Define Class Imprimir As Custom
 	Endif
 	This.GeneraQR()
 	If !Empty(This.Calias) Then
-	    calias=this.calias 
+		Calias = This.Calias
 		Select (This.Calias)
 		Go Top
 	Else
-	    calias='tmpv'
+		Calias = 'tmpv'
 		Select tmpv
 		Go Top
 	Endif
 	Go Top
-	If !Pemstatus(goApp,'impresora',5) Then
-		AddProperty(goApp,'impresora','')
+	If !Pemstatus(goApp, 'impresora', 5) Then
+		AddProperty(goApp, 'impresora', '')
 	Endif
 	If  Empty(goApp.Impresora) Then
 		Report Form (cArchivo) To Printer Prompt Noconsole
@@ -574,7 +574,15 @@ Define Class Imprimir As Custom
 	Function  CrearPdf(np1, np2, np3)
 	Private oFbc
 	Local lcImpresora, lcImpresoraActual, lcStrings, lnResultado
-	Do "Foxypreviewer.App" With "Release"
+	If !File(np1) Then
+		This.Cmensaje = 'No se encuentra el formato de Impresión'
+		Return 0
+	Endif
+	cfilefoxypreview = Addbs(Sys(5) + Sys(2003)) + 'Foxypreviewer.App'
+	If !File(m.cfilefoxypreview) Then
+		This.Cmensaje = 'No esta el Generador de PDF'
+		Return 0
+	Endif
 	Set Procedure To CapaDatos, abrirpdf, FoxbarcodeQR Additive
 	m.oFbc = Createobject("FoxBarcodeQR")
 	If !Pemstatus(goApp, 'archivoqr', 5) Then
@@ -652,12 +660,13 @@ Define Class Imprimir As Custom
 		Endif
 	Endif
 	If np3 = 'S' Then
-		abrirpdf(carchivopdf )
+		abrirpdf(carchivopdf)
 	Endif
 	m.oFbc = Null
 	Release Obj
 	Do Foxypreviewer.App With "Release"
-	Endproc
+	Return 1
+	Endfunc
 	Function cambiarimpresoranormal(creporte)
 	If This.Idsesion > 1 Then
 		Set DataSession To This.Idsesion
@@ -770,8 +779,90 @@ Define Class Imprimir As Custom
 		Endif
 	Endif
 	m.oFbc = Null
-	Endproc
+	Endfunc
+	Function CrearPDFReportes(creporte)
+	If Empty(This.Calias) Then
+		This.Cmensaje = 'No esta seleccionado los Datos'
+		Return 0
+	Endif
+	If VerificaAlias(This.Calias) = 0 Then
+		This.Cmensaje = 'No esta Activo los Datos del informe'
+		Return 0
+	Endif
+	crutareporte = Addbs(Addbs(Sys(5) + Sys(2003)) + 'Reports') + Alltrim(m.creporte) + '.frx'
+	If !File(m.crutareporte) Then
+		This.Cmensaje = 'No se encuentra el formato de Impresión ' + Alltrim(m.crutareporte)
+		Return 0
+	Endif
+	cfilefoxypreview = Addbs(Sys(5) + Sys(2003)) + 'Foxypreviewer.App'
+	If !File(m.cfilefoxypreview) Then
+		This.Cmensaje = 'No se encuentra el Generador de PDF ' + m.cfilefoxypreview
+		Return 0
+	Endif
+	If Empty(This.ArchivoPdf)
+		This.Cmensaje = "No ha especificado el nombre del Archivo PDF"
+		Return 0
+	Endif
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
+	If !Directory(Addbs(Addbs(Sys(5) + Sys(2003)) + 'Pdf')) Then
+		Mkdir Addbs(Addbs(Sys(5) + Sys(2003))) + 'Pdf'
+	Endif
+	cpdf = This.ArchivoPdf
+	If !Pemstatus(goApp, "Impresoranormal", 5)
+		goApp.AddProperty("Impresoranormal", "")
+	Else
+		lcImpresora = goApp.Impresoranormal
+	Endif
+	Do "FoxyPreviewer.App"
+	Select (This.Calias)
+	Go Top
+	If !Empty(goApp.Impresoranormal) Then
+		Declare Integer SetDefaultPrinter In WINSPOOL.DRV ;
+			String pszPrinter
+		lcImpresoraActual = ObtenerImpresoraActual()
+		lcImpresora		  = goApp.Impresoranormal
+		lnResultado		  = SetDefaultPrinter(lcImpresora)
+		Set Printer To Name (lcImpresora)
+		Report Form (creporte)  Object Type 10 To File (m.cpdf)
+		lnResultado = SetDefaultPrinter(lcImpresoraActual)
+		Set Printer To Name (lcImpresoraActual)
+	Else
+		conerror = 0
+		Try
+			Report Form (creporte)  Object Type 10 To File (m.cpdf)
+		Catch To oerr
+			This.Cmensaje = oerr.Message
+			conerror = 1
+		Finally
+		Endtry
+	Endif
+	Do Foxypreviewer.App With "Release"
+	this.mostrarpdf(m.cpdf)
+	If m.conerror = 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function Mostrarpdf(cFile)
+	DECLARE INTEGER ShellExecute IN "Shell32.dll" ;    
+	INTEGER hwnd, ;    
+	STRING lpVerb, ;   
+	STRING lpFile, ;    
+	STRING lpParameters, ;
+	STRING lpDirectory, ;    
+	LONG nShowCmd
+	=ShellExecute(0,"Open",cfile,"","",0)
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
 
 
 

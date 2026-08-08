@@ -33,8 +33,8 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	nidserie = 0
 	montonotacredito13 = 0
 	otraserie = ""
-	nsgte=0
-	nidserie=0
+	nsgte = 0
+	nidserie = 0
 	Function VAlidar
 	If This.nformaplicar = 0 Then
 		Select Sum(devo) As tdevo From tmpn Into Cursor tdevol
@@ -297,15 +297,19 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	Return m.nid
 	Endfunc
 	Function psysngrabar()
+	Sw=1
+	nidpagos = 0
 	oser = Newobject("servicio", "d:\capass\services\service.prg")
 	m.rpta = oser.Inicializar(This, 'NotasCreditoVentas')
+*!*		WAIT WINDOW 'hola'+TRANSFORM(m.rpta)
 	If m.rpta < 1 Then
 		This.Cmensaje = oser.Cmensaje
 		Return 0
 	Endif
 	oser = Null
+*!*		WAIT WINDOW 'hola1'+This.cTdoc
 	_Screen.oventas.Tdoc = This.cTdoc
-	_Screen.oventas.formaPago=This.cformapago
+	_Screen.oventas.formaPago = This.cformapago
 	_Screen.oventas.Serie = This.Cserie
 	_Screen.oventas.numero = This.cnumero
 	_Screen.oventas.Fecha = This.dFecha
@@ -335,6 +339,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	ocaja.cforma = This.cformapago
 	ocaja.Ndoc = This.Cserie + This.cnumero
 	ocaja.cTdoc = This.cTdoc
+	cndcto=This.Cserie+This.cnumero
 	okardex = Newobject("regkardex", "d:\capass\modelos\regkardex.prg")
 	If This.IniciaTransaccion() < 1 Then
 		Return 0
@@ -394,7 +399,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 			AddProperty(objdetalle, 'nidrc', 0)
 			AddProperty(objdetalle, 'tpago', This.nTotal)
 			Sw = 1
-			nidp = 0
+		
 			Select  tmp
 			Scan For tmp.pagos > 0
 				objdetalle.nacta = tmp.pagos
@@ -402,8 +407,8 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 				objdetalle.ctipo = tmp.tipo
 				objdetalle.nctrol = tmp.ncontrol
 				objdetalle.nidrc = tmp.rcre_idrc
-				nidp = _Screen.octasxcobrar.CancelaCreditos(objdetalle)
-				If nidp < 1 Then
+				nidpagos = _Screen.octasxcobrar.CancelaCreditos(objdetalle)
+				If nidpagos < 1 Then
 					m.Sw = 0
 					This.Cmensaje = _Screen.octasxcobrar.Cmensaje
 					Exit
@@ -440,6 +445,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 			Insert Into tmpv(Desc, cant, Prec, Ndoc)Values(Alltrim(This.cmotivo), 1, 1 * This.nTotal, This.Cserie + This.cnumero)
 		Endif
 	Else
+		Sw=1
 		okardex.nidauto = This.nidauto
 		okardex.ctipo = 'V'
 		okardex.cincl = "I"
@@ -499,10 +505,10 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 			Select tmpn
 			Skip
 		Enddo
-	Endif
-	If Sw = 0 Then
-		This.DEshacerCambios()
-		Return 0
+		If Sw = 0 Then
+			This.DEshacerCambios()
+			Return 0
+		Endif
 	Endif
 	Select Idauto From tmpn Where Idauto > 0 Into Cursor Xt Group By Idauto
 	Select Xt
@@ -530,7 +536,7 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 			Endif
 		Endif
 	Else
-		If Val(This.cnumero) >= This.nsgte
+		If Val(This.cnumero) >= This.nsgte THEN 
 			If _Screen.ocorrelativo.GeneraCorrelativo1() < 1 Then
 				This.Cmensaje = _Screen.ocorrelativo.Cmensaje
 				This.DEshacerCambios()
@@ -541,37 +547,58 @@ Define Class notacreditovtas As OData Of 'd:\capass\database\data'
 	If This.GRabarCambios() < 1 Then
 		Return 0
 	Endif
-	Return 1
+	Return This.nidauto
 	Endfunc
-	Function registrarxsys(nidrven,nidtdoc)
-	nidr=nidrven
-	TEXT TO lc NOSHOW
+	Function registrarxsys(nidrven)
+	nidr = nidrven
+	TEXT To lC Noshow
       UPDATE fe_refe SET acti='I' WHERE idrven=?nidr
 	ENDTEXT
-	If This.ejecutarsql(lC)<1
+	If This.ejecutarsql(lC) < 1
 		Return 0
 	Endif
-	swn=1
+	swn = 1
 	Select ld
 	Scan All
-		nidtdoc=ld.Tdoc
-		cndoc=ld.Ndoc
-		nimpo=ld.Impo
-		dFecha=ld.fech
-		TEXT TO lc NOSHOW
+		nidtdoc = ld.Tdoc
+		cndoc = ld.Ndoc
+		nimpo = ld.Impo
+		dFecha = ld.fech
+		TEXT To lC Noshow
 	         INSERT INTO fe_refe(idrven,idtdoc,ndoc,impo,fech)values(?nidr,?nidtdoc,?cndoc,?nimpo,?dfecha)
 		ENDTEXT
-		If This.ejecutarsql(lC)<1 Then
-			swn=0
+		If This.ejecutarsql(lC) < 1 Then
+			swn = 0
 			Exit
 		Endif
 	Endscan
-	If swn=0 Then
+	If swn = 0 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
+	Function IngresarNotasCreditoVentas13(Obj)
+	Local cur As String
+	Local lC, lp
+*.NAuto, Xt.Idauto, nidpagos, This.Parent.txttotalnc.Value,Thisform.txtfechavto.Value
+	lC			 = 'FUNINGRESANOTASCREDITOventas1'
+	cur			 = "xi"
+	npara1 = Obj.NAuto
+	npara2 = Obj.Idauto
+	npara3 = Obj.nidpagos
+	npara4 = Obj.totalnc
+	npara5 = Obj.fechavto
+	TEXT To lp Noshow
+   (?npara1,?npara2,?npara3,?npara4,?npara5)
+	ENDTEXT
+	nid = This.EJECUTARf(lC, lp, cur)
+	If m.nid < 1 Then
+		Return 0
+	Endif
+	Return xi.Id
+	Endfunc
 Enddefine
+
 
 
 

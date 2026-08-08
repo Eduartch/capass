@@ -373,7 +373,7 @@ Define Class exportar As Custom
 
 	oExcel.Sheets(1).Select
 	oExcel.Cells(lnRowPos, 1).Select
-
+    
 	If !Empty(cFileSave)
 		oExcel.DisplayAlerts = .F.
 		oExcel.ActiveWorkBook.SaveAs(cFileSave)

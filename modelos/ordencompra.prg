@@ -510,8 +510,8 @@ Define Class OrdendeCompra As OData Of 'd:\capass\database\data.prg'
 	Endif
 	\ From `fe_rocom` `a`
     \ Join `fe_docom` `b`    On `b`.`doco_idro` = `a`.`ocom_idroc`
-    \ Join `fe_art` `c`       On `b`.`doco_coda` = `c`.`idart`
-    \ Join `fe_prov` `d`       On `d`.`idprov` = `a`.`ocom_idpr`
+    \ Join `fe_art` `c`      On `b`.`doco_coda` = `c`.`idart`
+    \ Join `fe_prov` `d`     On `d`.`idprov` = `a`.`ocom_idpr`
     \ Join `fe_usua` `e`     On `e`.`idusua` = `a`.`ocom_idus`
     \ Where `a`.`ocom_acti` <> 'I'   And `b`.`doco_acti` <> 'I' And a.ocom_ndoc='<<cndoc>>'
 	Set Textmerge Off

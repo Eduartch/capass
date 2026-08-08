@@ -1030,12 +1030,12 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara9 = This.nidven
 	goApp.npara10 = This.ncodt
 	goApp.npara11 = This.tipocot
-	goApp.npara12 = ""
-	goApp.npara13 = ""
-	goApp.npara14 = ""
-	goApp.npara15 = ""
-	goApp.npara16 = ""
-	goApp.npara17 = ""
+	goApp.npara12 = this.caten
+	goApp.npara13 = this.cforma
+	goApp.npara14 = this.cplazo
+	goApp.npara15 = this.cvalidez
+	goApp.npara16 = this.centrega
+	goApp.npara17 = this.cdetalle
 	goApp.npara18 = This.Cmoneda
 	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
@@ -1059,12 +1059,12 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	goApp.npara8 = This.nidven
 	goApp.npara9 = This.ncodt
 	goApp.npara10 = 'p'
-	goApp.npara11 = ""
-	goApp.npara12 = ""
-	goApp.npara13 = ""
-	goApp.npara14 = ""
-	goApp.npara15 = ""
-	goApp.npara16 = ""
+	goApp.npara11 = this.caten
+	goApp.npara12 = this.cforma
+	goApp.npara13 = this.cplazo
+	goApp.npara14 = this.cvalidez
+	goApp.npara15 = this.Centrega
+	goApp.npara16 = this.Cdetalle
 	goApp.npara17 = "S"
 	goApp.npara18 = This.nidautop
 	Text To lp Noshow
@@ -1111,8 +1111,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
     SELECT  `a`.`idart` ,  `b`.`descri`,  `b`.`unid` ,  `a`.`cant` AS `cant`,
     `a`.`prec` ,  `b`.`pre1`      AS `premay`,  `b`.`pre2`      AS `premen`,  `c`.`fech` ,  `c`.`idautop`, `c`.`impo`,  `c`.`ndoc`,
     `c`.`aten` ,  `c`.`forma`     AS `forma`,  `c`.`plazo`,  `c`.`validez`   AS `validez`,
-    `c`.`entrega`,  `c`.`detalle` ,  `d`.`idclie`    AS `idclie`,
-    `d`.`razo` ,  `d`.`nruc` ,  `d`.`dire` ,  `c`.`rped_mone`,
+    `c`.`entrega`,  `c`.`detalle` ,  `d`.`idclie`    AS `idclie`,    `d`.`razo` ,  `d`.`nruc` ,  `d`.`dire` ,  `c`.`rped_mone`,
     `d`.`ciud`,  `d`.`fono` ,  `d`.`fax` ,  `a`.`idped`     AS `nreg`,  `c`.`idven`
     FROM `fe_ped` `a`
     JOIN `fe_rped` `c`   ON `a`.`idautop` = `c`.`idautop`
@@ -1264,7 +1263,7 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select a.Ndoc,a.fech,b.Descri,b.Unid,c.cant,c.Prec,Round(c.cant*c.Prec,2) As Importe,
 	\d.razo,e.nomv,a.idpcped,a.aten,a.Forma,a.plazo,a.validez,a.entrega,a.Detalle,x.nomb As usua,
-	\If(tipopedido='P','Proforma','Nota Pedido') As tipopedido,a.IDautoP,a.fecho,a.rped_mone As Mone,
+	\If(tipopedido='P','Cotizacion','Proforma') As tipopedido,a.IDautoP,a.fecho,a.rped_mone As Mone,
     \a.idclie As codigo,b.idart From fe_rped As a
 	\	inner Join fe_ped As c On(c.IDautoP=a.IDautoP)
 	\	inner Join fe_art As b On(b.idart=c.idart)
@@ -1273,11 +1272,18 @@ Define Class cotizacion As OData Of 'd:\capass\database\data.prg'
 	\	inner Join fe_usua As x On x.Idusua=a.rped_idus
 	\	Where a.fech Between '<<fi>>' And '<<ff>>' And a.Acti='A' And c.Acti='A'
 	If This.nidclie > 0 Then
-		          \ And a.idclie=<<This.nidclie>>
+	 \ And a.idclie=<<This.nidclie>>
 	Endif
 	If Len(Alltrim(This.cserie)) > 0 Then
 	\ And Left(a.Ndoc,3)='<<this.cserie>>'
-	Endif
+	ENDIF
+	
+	IF fe_gene.nruc='20601140625' AND LEFT(goapp.tipousuario,1)<>'A' then
+	   \ and rped_idus=<<goapp.nidusua>>
+	ENDIF 
+	IF this.ncodt>0 then
+	  \ and idtienda=<<this.ncodt>>
+	ENDIF 
 	 \ Order By a.Ndoc
 	Set Textmerge Off
 	Set Textmerge To

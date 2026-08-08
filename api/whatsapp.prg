@@ -1,17 +1,17 @@
 Define Class whatsapp As  Custom
-	cfono=""
-	ctexto=""
-	cdcto=""
-	cmensaje=""
-	carchivo=""
-	mediatype=""
-	cfilename=""
-	urlenvio="https://companiasysven.com/app88/sendwhatsapp.php"
+	cfono = ""
+	ctexto = ""
+	cdcto = ""
+	cmensaje = ""
+	carchivo = ""
+	mediatype = ""
+	cfilename = ""
+	urlenvio = "https://companiasysven.com/app88/sendwhatsapp.php"
 	Function enviar()
 	If !Empty(This.cfilename) Then
 		ls_contentFile = Filetostr(This.carchivo)
 		contpdf		   = Strconv(ls_contentFile, 13)
-		TEXT TO ljson NOSHOW TEXTMERGE
+		Text To ljson Noshow Textmerge
 	    {
 	    "number": "<<this.cfono>>",
 	    "media": "<<contpdf>>",
@@ -19,28 +19,30 @@ Define Class whatsapp As  Custom
 	    "mediatype": "<<this.mediatype>>",
 	    "fileName":"<<this.cfilename>>"
 	    }
-		ENDTEXT
+		Endtext
 	Else
-		TEXT TO ljson NOSHOW TEXTMERGE
+		Text To ljson Noshow Textmerge
 	    {
 	    "number": "<<this.cfono>>",
 	    "text":"<<this.cmensaje>>"
 	    }
-		ENDTEXT
+		Endtext
 	Endif
-	Strtofile(ljson,Addbs(Addbs(Sys(5)+Sys(2003)))+'envios.json')
+	Strtofile(ljson, Addbs(Addbs(Sys(5) + Sys(2003))) + 'envios.json')
 	oHTTP = Createobject("Microsoft.XMLHTTP")
 	oHTTP.Open("POST", This.urlenvio, .F.)
 	oHTTP.setRequestHeader("Content-Type ", "application/json")
 	oHTTP.Send(m.ljson)
 	If oHTTP.Status <> 200 Then
-		This.cmensaje = "Servicio WEB NO Disponible....." + Alltrim(Str(oHTTP.Status))
+		This.cmensaje = "Servicio NO Disponible....." + Alltrim(Str(oHTTP.Status))
+		lcHTML = oHTTP.responseText
+		Strtofile(lcHTML, Addbs(Sys(5) + Sys(2003)) + 'c.txt')
 		Return 0
 	Endif
 	lcHTML = oHTTP.responseText
-*!*		MESSAGEBOX(lcHTML)
+*	MESSAGEBOX(lcHTML)
 	Set Procedure To d:\Librerias\nfJsonRead.prg Additive
-	conerror=0
+	conerror = 0
 	Try
 		orpta = nfJsonRead(lcHTML)
 	Catch To loException
@@ -63,7 +65,7 @@ Define Class whatsapp As  Custom
 	Function _clipboard(taFileList)
 	Local lnDataLen, lcDropFiles, llOk, i, lhMem, lnPtr, lCurData
 	#Define CF_HDROP 15
-	If Type(taFileList,1) != 'A'
+	If Type(taFileList, 1) != 'A'
 		lCurData = taFileList
 		Dimension taFileList(1)
 		taFileList[1] = lCurData
@@ -80,32 +82,32 @@ Define Class whatsapp As  Custom
 	llOk = .T.
 * Build DROPFILES structure
 	lcDropFiles = ;
-		CHR(20) + Replicate(Chr(0),3) + ; 	&& pFiles
-	Replicate(Chr(0),8) + ; 		&& pt
-	Replicate(Chr(0),8)  			&& fNC + fWide
+		Chr(20) + Replicate(Chr(0), 3) + ; 	&& pFiles
+		Replicate(Chr(0), 8) + ; 		&& pt
+		Replicate(Chr(0), 8)  			&& fNC + fWide
 * Add zero delimited file list
-	For i= 1 To Alen(taFileList,1)
+	For i = 1 To Alen(taFileList, 1)
 * 1-D and 2-D (1st column) arrays
-		lcDropFiles = lcDropFiles + Iif(Alen(taFileList,2)=0, taFileList[i], taFileList[i,1]) + Chr(0)
+		lcDropFiles = lcDropFiles + Iif(Alen(taFileList, 2) = 0, taFileList[i], taFileList[i, 1]) + Chr(0)
 	Endfor
 * Final CHR(0)
 	lcDropFiles = lcDropFiles + Chr(0)
 	lnDataLen = Len(lcDropFiles)
 * Copy DROPFILES structure into the allocated memory
-	lhMem = GlobalAlloc(GMEM_MOVABLE+GMEM_ZEROINIT+GMEM_SHARE, lnDataLen)
+	lhMem = GlobalAlloc(GMEM_MOVABLE + GMEM_ZEROINIT + GMEM_SHARE, lnDataLen)
 	lnPtr = GlobalLock(lhMem)
-	=CopyFromStr(lnPtr, @lcDropFiles, lnDataLen)
-	=GlobalUnlock(lhMem)
+	= CopyFromStr(lnPtr, @lcDropFiles, lnDataLen)
+	= GlobalUnlock(lhMem)
 * Open clipboard and store DROPFILES into it
 	llOk = (OpenClipboard(0) <> 0)
 	If llOk
-		=EmptyClipboard()
+		= EmptyClipboard()
 		llOk = (SetClipboardData(CF_HDROP, lhMem) <> 0)
 		If Not llOk
-			=GlobalFree(lhMem)
+			= GlobalFree(lhMem)
 		Endif
 * Close clipboard
-		=CloseClipboard()
+		= CloseClipboard()
 	Endif
 	This.UnloadApiDlls()
 	Return llOk
@@ -158,7 +160,7 @@ Define Class whatsapp As  Custom
 	Declare Sleep In kernel32 Integer
 	Declare Integer FindWindow In WIN32API String, String
 	Declare Integer ShowWindow In WIN32API Integer, Integer
-	Declare Integer ShellExecute In SHELL32.Dll Integer hndWin, String cAction, String cFileName, String cParams, String cDir, Integer nShowWin
+	Declare Integer ShellExecute In SHELL32.Dll Integer hndWin, String cAction, String cfilename, String cParams, String cDir, Integer nShowWin
 
 	lhwnd = FindWindow(0, "WhatsApp")                                 && Busca la ventana WhatsApp y devulve su puntero
 	If lhwnd # 0                                                         && 0 si no fue hallada
@@ -192,10 +194,10 @@ Define Class whatsapp As  Custom
 		Sleep(700)
 *!*ShowWindow (lhwnd, 11)                                && Fuerza al minimizado de la ventana
 		oKey = Null
-		This.cmensaje="Enviado Ok"
+		This.cmensaje = "Enviado Ok"
 		llResult = .T.
 	Else
-		This.cmensaje="Whatsapp no está disponible, abralo o instalelo"
+		This.cmensaje = "Whatsapp no está disponible, abralo o instalelo"
 		llResult = .F.
 	Endif
 	Clear Dlls "Sleep", "FindWindow", "ShowWindow", "ShellExecute"
@@ -1220,3 +1222,4 @@ Enddefine
 *!*		Messagebox ( "Whatsapp is not activated!" )
 *!*	Endif
 *!*	Endfunc
+

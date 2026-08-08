@@ -13,13 +13,16 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	nidicpber = 0
 	ndetraccion = 0
 	ctmvto = ""
+	nidcontometro=0
 	cdetalle=""
 	cTdoc = ""
 	cincl = ""
 	ntigv = 0
 	nidkar = 0
 	nopcion = 0
+	cplaca=""
 	nirta = 0
+	npreclista=0
 	dfi = Date()
 	dff = Date()
 	nplus=0
@@ -54,7 +57,7 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
+	Endfunc
 	Function registrakardexventaspsysn()
 	lC = "proregistraKardexventas"
 	TEXT To lp Noshow Textmerge
@@ -179,30 +182,56 @@ Define Class regkardex As OData Of  'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function INGRESAKARDEXIcbper()
-	*.Auto, vtas2.Coda, vtas2.icbper, vtas2.Prec, vtas2.cant, 'I', 'K', .Codv, Iif(This.ctipovta='C',0,.Tienda), vtas2.costo, 0
+*.Auto, vtas2.Coda, vtas2.icbper, vtas2.Prec, vtas2.cant, 'I', 'K', .Codv, Iif(This.ctipovta='C',0,.Tienda), vtas2.costo, 0
 	Local lC, lp
 	cur			  = "nidk"
 	lC			  = "FunIngresaKardexIcbper"
-	goApp.npara1  = this.niDAUTO
-	goApp.npara2  = this.ncoda
-	goApp.npara3  = this.nidicpber
+	goApp.npara1  = This.niDAUTO
+	goApp.npara2  = This.ncoda
+	goApp.npara3  = This.nidicpber
 	goApp.npara4  = This.nprec
-	goApp.npara5  = this.ncant
-	goApp.npara6  = this.cincl
-	goApp.npara7  = this.ctmvto
-	goApp.npara8  = this.nidv
-	goApp.npara9  = this.nidtda
-	goApp.npara10 = this.ncosto
-	goApp.npara11 =this.ncomi
+	goApp.npara5  = This.ncant
+	goApp.npara6  = This.cincl
+	goApp.npara7  = This.ctmvto
+	goApp.npara8  = This.nidv
+	goApp.npara9  = This.nidtda
+	goApp.npara10 = This.ncosto
+	goApp.npara11 =This.ncomi
 	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11)
 	ENDTEXT
-     nid=this.EJECUTARf(lC, lp, cur)
-     IF m.nid<1 Then
+	nid=This.EJECUTARf(lC, lp, cur)
+	If m.nid<1 Then
 		Return 0
 	Endif
 	Return m.nid
+	Endfunc
+****************************
+	Function RegistrarconDetalle()
+	lC = 'FunIngresaKardexdetalle'
+	cur = "Xt"
+	npara1 = This.niDAUTO
+	npara2 = this.ncoda
+	npara3 = this.Ctipo
+	npara4 = this.nprec
+	npara5 = this.ncant
+	npara6 = this.cincl
+	npara7 = this.ctmvto
+	npara8 = this.nidv
+	npara9 = this.nidtda
+	npara10 = this.nidcontometro
+	npara11 = this.ncosto
+	npara12 = this.npreclista
+	npara13 = this.cplaca
+	TEXT To lp Noshow
+     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9, ?npara10,?npara11,?npara12,?npara13)
+	ENDTEXT
+	nidk=This.EJECUTARf(lC, lp, cur)
+	If nidk< 1 Then
+		Return 0
+	Endif
+    Return nidk
 	Endfunc
 Enddefine
 

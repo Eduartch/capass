@@ -149,7 +149,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Endif
 	lcHTML = oHTTP.responseText
 	Strtofile(lcHTML,Addbs(Sys(5)+Sys(2003))+'rpta.txt')
-*!*		Messagebox(lcHTML)
+*	Messagebox(lcHTML)
 	orpta = nfJsonRead(lcHTML)
 	If  Vartype(orpta.rpta) <> 'U' Then
 		If Left(orpta.rpta,1)='0' Then
@@ -388,7 +388,7 @@ Define Class liqcompra As Compras Of d:\capass\modelos\Compras
 	Endif
 	If Left(This.cforma, 1) = 'E'  Then
 		ocaja.NAuto = NAuto
-		If ocaja.IngresaDatosLCajaEFectivo11() < 1 Then
+		If ocaja.IngresaDatosLCajaEFectivo13() < 1 Then
 			This.Cmensaje = ocaja.Cmensaje
 			This.DEshacerCambios()
 			Return 0

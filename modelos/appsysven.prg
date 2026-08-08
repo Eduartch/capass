@@ -57,9 +57,10 @@ Define Class appsysven As Odata Of 'd:\capass\database\data.prg'
 	nmes   = Month(ff)
 	nanio  = Year(ff)
 	fe	   = Cfechas(ff)
-	Text To cupdate Noshow Textmerge
-       UPDATE fe_gene SET fech='<<fe>>',año=<<nanio>>,gene_nbaj=1,gene_nres=<<ninicioenvios>>,mes=<<nmes>> WHERE idgene=1
-	Endtext
+	ninic=IIF(m.ninicioenvios=0,1,m.ninicioenvios)
+    Text To cupdate Noshow Textmerge
+       UPDATE fe_gene SET fech='<<fe>>',año=<<nanio>>,gene_nbaj=1,gene_nres=<<ninic>>,mes=<<nmes>> WHERE idgene=1
+	ENDTEXT
 	If This.Ejecutarsql(cupdate) < 1 Then
 		Return 0
 	Endif

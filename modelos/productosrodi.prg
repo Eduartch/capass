@@ -271,6 +271,21 @@ Define Class productosrodi As Producto Of 'd:\capass\modelos\productos'
 	Endif
 	Return 1
 	Endfunc
+	Function listarInventarioUsados(dfecha,ncodt,Ccursor)
+	fecha=cfechas(dfecha)
+	TEXT TO lc NOSHOW TEXTMERGE
+	  SELECT pusa_desc AS descri,stock,funultimoprecio(karu_idar) AS precio,ROUND(stock*funultimoprecio(karu_idar),2) AS importe FROM(
+	  SELECT SUM(IF(rcom_tipo='I',karu_cant,-karu_cant)) AS stock,karu_idar
+	  FROM fe_rcomu AS c
+	  INNER JOIN fe_karu AS b ON b.karu_idau=c.rcom_idau
+	  WHERE rcom_codt=<<ncodt>> AND c.rcom_acti='A' AND b.karu_Acti='A' and rcom_fech<='<<fecha>>' GROUP BY karu_idar) AS xx
+	  INNER JOIN fe_produsados AS a ON a.pusa_idco=xx.karu_idar ORDER BY pusa_desc
+	ENDTEXT
+	If This.ejecutaconsulta(lC,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
 
 

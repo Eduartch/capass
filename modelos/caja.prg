@@ -8,6 +8,30 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	conusuario = 0
 	idusuario = 0
 	ante = 0
+	idcaja=0
+	nidauto=0
+	codt = 0
+	Ndoc = ""
+	Nsgte = 0
+	Idserie = 0
+	nidprovedor = 0
+	cdetalle = ""
+	nidcta = 0
+	ndebe = 0
+	nhaber = 0
+	ndolar = 0
+	nidusua = 0
+	nidclpr = 0
+	nidclie=0
+	nidprov=0
+	NAuto = 0
+	ndscto=0
+	cmoneda = ""
+	cdcto=""
+	cTdoc = ""
+	cforma = ""
+	concargo=0
+	nidtran=0
 	Function Registrarcaja(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15)
 	Local lC, lp
 *:Global cur
@@ -28,10 +52,10 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	goApp.npara13 = m.np13
 	goApp.npara14 = m.np14
 	goApp.npara15 = m.np15
-	Text To m.lp Noshow
+	TEXT To m.lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,
       ?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(m.lC, m.lp, cur) < 1 Then
 		Return 0
 	Else
@@ -40,9 +64,9 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	Endfunc
 	Function buscasiestaregistradodcto(np1, np2)
 	Local lC
-	Text To m.lC Noshow Textmerge
+	TEXT To m.lC Noshow Textmerge
 	Select  lcaj_idca  As idcaja  From fe_lcaja Where lcaj_dcto='<<np1>>' And lcaj_acti = 'A'  And lcaj_tdoc = '<<np2>>'
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(m.lC, 'yaestaencaja') < 1 Then
 		Return 0
 	Endif
@@ -54,11 +78,11 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	Endfunc
 	Function listarCajaChicaNotaria(np1, Ccursor)
 	Local lC
-	Text To m.lC Noshow Textmerge
+	TEXT To m.lC Noshow Textmerge
 	   Select  lcaj_dcto As dcto, lcaj_deud As importe,lcaj_deta as detalle, lcaj_fope As fechahora
 	   From fe_lcaja
 	   Where lcaj_fech='<<np1>>'   And lcaj_acti = 'A'  lcaj_idus = 0   And lcaj_tdoc = 'Ti'  Order By lcaj_dcto
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(m.lC, m.Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -66,9 +90,9 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	Endfunc
 	Function buscaropencaja(np1)
 	Ccursor = 'C' + Sys(2015)
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	      SELECT lcaj_ndoc  as operacion FROM fe_lcaja WHERE TRIM(lcaj_ndoc)='<<np1>>' AND lcaj_acti='A'  AND lcaj_deud>0 limit 1
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -83,11 +107,11 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	f1 = cfechas(ff1)
 	f2 = cfechas(ff2)
 	Ccursor = 'c_' + Sys(2015)
-	Text To lC Noshow Textmerge Pretext 7
+	TEXT To lC Noshow Textmerge Pretext 7
 	    select SUM(if(a.lcaj_deud<>0,lcaj_deud,0)) as ingresoss,SUM(if(a.lcaj_acre<>0,lcaj_acre,0)) as egresoss
-	    FROM fe_lcaja  as a WHERE  a.lcaj_fech between '<<f1>>' and '<<f2>>'  and a.lcaj_acti='A' and a.lcaj_form='E' 
+	    FROM fe_lcaja  as a WHERE  a.lcaj_fech between '<<f1>>' and '<<f2>>'  and a.lcaj_acti='A' and a.lcaj_form='E'
 	    and lcaj_idus=<<this.nidusua>>  and lcaj_mone='<<this.cmoneda>>' group by lcaj_idus
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1
 		Return 0
 	Endif
@@ -247,7 +271,7 @@ Define Class caja As Odata Of "d:\capass\database\data.prg"
 	\Order By lcaj_dcto
 	Set Textmerge Off
 	Set Textmerge To
-    If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1

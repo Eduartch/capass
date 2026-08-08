@@ -1,4 +1,4 @@
-#Define ERRORPROC "Inconevientes"
+#Define ERRORPROC ""
 #Define MSGTITULO "Sisven"
 #Define MENSAJE1 "NO Se envío el comprobante Por las siguientes razones"+Chr(13)+Chr(10)+" NO Hay Conexión a Internet "+Chr(13)+Chr(10)
 #Define MENSAJE2 "NO Hay Respuesta desde la WEB SERVICE DE SUNAT"+Chr(13)+Chr(10)
@@ -133,19 +133,19 @@ Select;
 	'' As errpro3, ;
 	Iif(Importe > 3500, '1', ' ') As Mpago, ;
 	Icase(Tdoc = '01', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
-	Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
-	Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '10', '0', ;
-	Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
-	Tdoc = '16', '0', ;
-	Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
-	Iif(Month(fech) = nmes, '1', '9')) As estado;
+	  Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
+	  Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
+	  Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Tdoc = '10', '0', ;
+	  Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Tdoc = '16', '0', ;
+	  Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
+	  Iif(Month(fech) = nmes, '1', '9')) As estado;
 	From registro Where Left(Razo, 5) <> '-----'  Into Cursor lreg
 *Iif(Empty(fechad),Ctod("01/01/0001"),fechad) As fechad
 
@@ -191,9 +191,9 @@ Select;
 	Round(Val(Ndoc), 0) As nrocomp, ;
 	' ' As consolidado, ;
 	Icase(Tdoc = '01', Iif(Left(nruc, 1) = '*', '0', '6'), ;
-	Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
-	Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
-	Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
+	  Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
+	  Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
+	  Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
 	Icase(Tdoc = '03', Iif(Empty(ndni), '0' + Space(11), ndni + Space(3)), Tdoc = '01', Iif(Left(nruc, 1) = '*', '0' + Space(11), nruc), Iif(Empty(nruc), ndni + Space(3), Iif(Left(nruc, 1) = '*', '-' + Space(11), nruc))) As nruc, ;
 	Iif(Tdoc = '03', Iif(Empty(ndni), '-' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '-' + Space(40), Razo)) As Cliente, ;
 	0.00 As exporta, ;
@@ -336,9 +336,9 @@ Set Textmerge To ((cr1))
 nl = 0
 Scan
 	If nl = 0 Then
-        \\<<Periodo>>|<<nrolote>>|<<esta>>|<<ncta>>|<<Codigo1>>|<<Ccostos>>|<<Moneda>>|<<tipodcto>>|<<nruc>>|<<Tdoc>>|<<Serie>>|<<Ndoc>>|<<Fecha>>|<<fechavto>>|<<fechar>>|<<detalle>>|<<desc1>>|<<debe>>|<<haber>>|<<estructura>>|<<estado>>|
+        \\<<Periodo>>|<<nrolote>>|<<esta>>|<<ncta>>|<<Codigo1>>|<<Ccostos>>|<<Moneda>>|<<tipodcto>>|<<nruc>>|<<Tdoc>>|<<Serie>>|<<Ndoc>>|<<Fecha>>|<<fechavto>>|<<fechar>>|<<Alltrim(detalle)>>|<<desc1>>|<<debe>>|<<haber>>|<<estructura>>|<<estado>>|
 	Else
-         \<<Periodo>>|<<nrolote>>|<<esta>>|<<ncta>>|<<Codigo1>>|<<Ccostos>>|<<Moneda>>|<<tipodcto>>|<<nruc>>|<<Tdoc>>|<<Serie>>|<<Ndoc>>|<<Fecha>>|<<fechavto>>|<<fechar>>|<<detalle>>|<<desc1>>|<<debe>>|<<haber>>|<<estructura>>|<<estado>>|
+         \<<Periodo>>|<<nrolote>>|<<esta>>|<<ncta>>|<<Codigo1>>|<<Ccostos>>|<<Moneda>>|<<tipodcto>>|<<nruc>>|<<Tdoc>>|<<Serie>>|<<Ndoc>>|<<Fecha>>|<<fechavto>>|<<fechar>>|<<Alltrim(detalle)>>|<<desc1>>|<<debe>>|<<haber>>|<<estructura>>|<<estado>>|
 	Endif
 	nl = nl + 1
 Endscan
@@ -486,10 +486,10 @@ goApp.npara14 = np14
 goApp.npara15 = np15
 goApp.npara16 = np16
 goApp.npara17 = np17
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Asientos  a Libro Diario')
 	Return 0
@@ -505,9 +505,9 @@ lC			 = "ProAnulaDatosLibroDiarioPLe5"
 goApp.npara1 = np1
 goApp.npara2 = np2
 goApp.npara3 = np3
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Asientos  a Libro Diario')
 	Return 0
@@ -600,12 +600,12 @@ goApp.npara27 = oret.np27
 goApp.npara28 = oret.np28
 goApp.npara29 = oret.np29
 goApp.npara30 = oret.np30
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,
       ?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29,?goapp.npara30)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Documentos a Registros de No Domicilados')
 	Return 0
@@ -651,12 +651,12 @@ goApp.npara29 = oret.np29
 goApp.npara30 = oret.np30
 goApp.npara31 = oret.np31
 goApp.npara32 = oret.np32
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,
       ?goapp.npara26,?goapp.npara27,?goapp.npara28,?goapp.npara29,?goapp.npara30,?goapp.npara31,?goapp.npara32)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Documentos a Registros de No Domicilados')
 	Return 0
@@ -837,7 +837,7 @@ crespuesta	   = ls_fileName
 ls_base64	   = Strconv(ls_contentFile, 13) && Encoding base 64
 Do Case
 Case  goApp.ose = 'conastec'
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 	<soapenv:Header>
 	<wsse:Security   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -856,9 +856,9 @@ Case  goApp.ose = 'conastec'
 	</ser:sendBill>
 	</soapenv:Body>
 	</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Case  goApp.ose = 'bizlinks'
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
 		<SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 		<wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" soap:mustUnderstand="1">
@@ -875,15 +875,15 @@ Case  goApp.ose = 'bizlinks'
 		</ns2:sendBill>
 		</soap:Body>
 		</soap:Envelope>
-	ENDTEXT
+	Endtext
 Case goApp.ose = "efact"
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
-     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" 
-     xmlns:ser="http://service.sunat.gob.pe" 
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+     <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+     xmlns:ser="http://service.sunat.gob.pe"
      xmlns:wsse="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 	   <soapenv:Header>
-	   <wsse:Security soapenv:mustUnderstand="0" 
-	   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" 
+	   <wsse:Security soapenv:mustUnderstand="0"
+	   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
 	   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
 	      <wsse:UsernameToken>
 	        <wsse:Username><<ls_user>></wsse:Username>
@@ -898,10 +898,10 @@ Case goApp.ose = "efact"
 	      </ser:sendBill>
 	   </soapenv:Body>
 	</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Otherwise
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
-			<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" 
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+			<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe"
 			xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 			xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 				<soapenv:Header>
@@ -919,7 +919,7 @@ Otherwise
 					</ser:sendBill>
 				</soapenv:Body>
 			</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Endcase
 If goApp.ose = 'bizlinks' Then
 	oXMLHttp = Createobject("MSXML2.XMLHTTP.6.0")
@@ -955,9 +955,9 @@ If (oXMLHttp.Status <> 200) Then
 	CMensajedetalle	= leerXMl(Alltrim(oXMLHttp.responseText), "<detail>", "</detail>")
 	CMensajeM	= leerXMl(Alltrim(oXMLHttp.responseText), "<message>", "</message>")
 	If !Empty(CmensajeError) Or !Empty(CMensajeMensaje) Or !Empty(CMensajeM) Then
-		Messagebox(('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Alltrim(CmensajeError) + ' ' + Alltrim(CMensajeMensaje) + ' ' + Alltrim(CMensajedetalle) + ' ' + Alltrim(CMensajeM)), 16, MSGTITULO)
+		Aviso(('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Alltrim(CmensajeError) + ' ' + Alltrim(CMensajeMensaje) + ' ' + Alltrim(CMensajedetalle) + ' ' + Alltrim(CMensajeM)))
 	Else
-		Messagebox('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Nvl(oXMLHttp.responseText, ''), 16, MSGTITULO)
+		Aviso('Estado ' + Alltrim(Str(oXMLHttp.Status)) + '-' + Nvl(oXMLHttp.responseText, ''))
 	Endif
 	Return 0
 Endif
@@ -968,7 +968,7 @@ CMensajeMensaje	= leerXMl(Alltrim(oXMLHttp.responseText), "<faultstring>", "</fa
 CMensajeMensaje	= leerXMl(Alltrim(oXMLHttp.responseText), "<faultstring>", "</faultstring>")
 CMensajedetalle	= leerXMl(Alltrim(oXMLHttp.responseText), "<detail>", "</detail>")
 If !Empty(CmensajeError) Or !Empty(CMensajeMensaje) Then
-	Messagebox((Alltrim(CmensajeError) + ' ' + Alltrim(CMensajeMensaje) + ' ' + Alltrim(CMensajedetalle)), 16, 'Sisven')
+	Aviso((Alltrim(CmensajeError) + ' ' + Alltrim(CMensajeMensaje) + ' ' + Alltrim(CMensajedetalle)))
 	Return 0
 Endif
 *Messagebox(oXMLHttp.responseText,16,'Sisven')
@@ -1248,7 +1248,7 @@ crespuesta	   = ls_fileName
 ls_base64	   = Strconv(ls_contentFile, 13) && Encoding base 64
 Do Case
 Case  goApp.ose = 'conastec'
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 	<soapenv:Header>
 	<wsse:Security   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -1267,9 +1267,9 @@ Case  goApp.ose = 'conastec'
 	</ser:sendSummary>
 	</soapenv:Body>
 	</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Case goApp.ose = "efact"
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" xmlns:wsse="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 	   <soapenv:Header>
 	   <wsse:Security soapenv:mustUnderstand="0" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1286,9 +1286,9 @@ Case goApp.ose = "efact"
 	    </ser:sendSummary>
 	   </soapenv:Body>
 	</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Case goApp.ose = 'bizlinks'
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 	<soapenv:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 	<wsse:Security soap:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="soap">
@@ -1305,9 +1305,9 @@ Case goApp.ose = 'bizlinks'
 	      </ser:sendSummary>
 	   </soapenv:Body>
 	</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Otherwise
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 				<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 					<soapenv:Header>
@@ -1325,7 +1325,7 @@ Otherwise
 						</ser:sendSummary>
 					</soapenv:Body>
 				</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Endcase
 If goApp.ose = 'bizlinks' Then
 	oXMLHttp = Createobject("MSXML2.XMLHTTP.6.0")
@@ -1404,6 +1404,7 @@ Scan All
 		Else
 			carxml = ""
 		Endif
+		carxml = ""
 		If RegistraResumenBajas(curb.fech, curb.Tdoc, curb.Serie, curb.numero, curb.Motivo, carxml, cresp, goApp.cArchivo, crhash, curb.Idauto) = 0 Then
 			Aviso("NO se Registro EL Informe de BAJA en Base de Datos")
 			Exit
@@ -1414,6 +1415,7 @@ Scan All
 		Else
 			carxml = ""
 		Endif
+		carxml = ""
 		_Screen.orboletas.dfecha = curb.fech
 		_Screen.orboletas.cTdoc = curb.Tdoc
 		_Screen.orboletas.Cserie = curb.Serie
@@ -1571,7 +1573,7 @@ ctipoarchivo = Justfname(cArchivo)
 crespuesta	 = ls_fileName
 Do Case
 Case  goApp.ose = 'conastec'
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		<soapenv:Header>
 		<wsse:Security   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -1588,9 +1590,9 @@ Case  goApp.ose = 'conastec'
 		</ser:getStatus>
 		</soapenv:Body>
 		</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Case goApp.ose = "efact"
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" xmlns:wsse="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 	   <soapenv:Header>
 	   <wsse:Security soapenv:mustUnderstand="0" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1606,9 +1608,9 @@ Case goApp.ose = "efact"
 	     </ser:getStatus>
 	   </soapenv:Body>
 	</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Case  goApp.ose = 'bizlinks'
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 			<soapenv:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 			<wsse:Security soap:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="soap">
@@ -1624,9 +1626,9 @@ Case  goApp.ose = 'bizlinks'
 			      </ser:getStatus>
 			   </soapenv:Body>
 			</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Otherwise
-	TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 			<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 				<soapenv:Header>
@@ -1643,7 +1645,7 @@ Otherwise
 					</ser:getStatus>
 				</soapenv:Body>
 			</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 Endcase
 If goApp.ose = 'bizlinks' Then
 	oXMLHttp = Createobject("MSXML2.XMLHTTP.6.0")
@@ -1704,7 +1706,7 @@ ArchivoRespuestaSunat.LoadXML(oXMLHttp.responseText)			&&Llenamos el archivo de 
 
 TxtB64 = ArchivoRespuestaSunat.selectSingleNode("//content")  &&Ahora Buscamos el nodo "applicationResponse" llenamos la variable TxtB64 con el contenido del nodo "applicationResponse"
 If Vartype(TxtB64) <> 'O' Then
-	Messagebox('Aún No Hay Respuesta de los Servidores de SUNAT Código de Respuesta ' + Alltrim(cresp), 16, MSGTITULO)
+	Aviso('Aún No Hay Respuesta de los Servidores de SUNAT Código de Respuesta ' + Alltrim(cresp))
 	Return  0
 Endif
 If Type('oempresa') = 'U' Then
@@ -1743,18 +1745,18 @@ If !Empty(rptaSunat)
 	If Len(Alltrim(rptaSunat)) <= 100 Then
 		Mensaje(rptaSunat)
 	Else
-		Messagebox(Left(rptaSunat, 240), 0, MSGTITULO)
+		Aviso(Left(rptaSunat, 240))
 		Return 0
 	Endif
 Endif
 If !Empty(rptaSunat) Then
 	If Substr(ctipoarchivo, 13, 2) = 'RA' Then
 		If ActualizaResumenBajas(cticket, cfilecdr) = 0 Then
-			Messagebox("NO se Grabo la Respuesta de SUNAT en Base de Datos", 16, MSGTITULO)
+			Aviso("NO se Grabo la Respuesta de SUNAT en Base de Datos")
 		Endif
 	Else
 		If ActualizaResumenBoletas(cticket, cfilecdr) = 0 Then
-			Messagebox("NO se Grabo la Respuesta de SUNAT en Base de Datos", 16, MSGTITULO)
+			Aviso("NO se Grabo la Respuesta de SUNAT en Base de Datos")
 		Endif
 	Endif
 	If Left(rptaSunat, 1) == '0' Then
@@ -1853,15 +1855,15 @@ Local lC
 *:Global carchivo, cciud, chash, cmone, cndoc, ctdoc, dfvto, ncon, nf, ni, nimpo, x
 If VerificaAlias("tmpv") = 0 Then
 	Create Cursor tmpv(Coda N(8), Desc c(120), Unid c(6), Prec N(13, 8), cant N(10, 2), Ndoc c(12), alma N(10, 2), Peso N(10, 2), ;
-		Impo N(10, 2), tipro c(1), ptoll c(50), fect d, perc N(5, 2), cletras c(120), ;
-		nruc c(11), razon c(120), Direccion c(190), fech d, fechav d, Ndo2 c(12), Vendedor c(50), Form c(20), ;
-		Referencia c(150), hash c(30), dni c(8), Mone c(1), Tdoc1 c(2), dcto c(12), fech1 d, detalle c(120), Contacto c(120), Archivo c(120), costoRef N(12, 5))
+		  Impo N(10, 2), tipro c(1), ptoll c(50), fect d, perc N(5, 2), cletras c(120), ;
+		  nruc c(11), razon c(120), Direccion c(190), fech d, fechav d, Ndo2 c(12), Vendedor c(50), Form c(20), ;
+		  Referencia c(150), hash c(30), dni c(8), Mone c(1), Tdoc1 c(2), dcto c(12), fech1 d, detalle c(120), Contacto c(120), Archivo c(120), costoRef N(12, 5))
 Else
 	Zap In tmpv
 Endif
 Do Case
 Case np2 = '01' Or np2 = '03'
-	TEXT To lC Noshow
+	Text To lC Noshow
 				Select  A.codv,	A.idauto,A.alma,A.idkar,						A.idart,A.cant,
 						ifnull(A.Prec, Cast(0 As Decimal(12, 5))) As Prec,
 						A.alma,c.tdoc As tdoc1,						c.ndoc As dcto,
@@ -1898,9 +1900,9 @@ Case np2 = '01' Or np2 = '03'
 						On p.idauto = c.idauto
 					Where c.idauto = ?np1
 						And A.Acti = 'A';
-	ENDTEXT
+	Endtext
 Case np2 = '08'
-	TEXT To lC Noshow
+	Text To lC Noshow
 			   Select  r.idauto,
 					   r.ndoc,
 					   r.tdoc,
@@ -1953,9 +1955,9 @@ Case np2 = '08'
 				   Where r.idauto = ?np1
 					   And r.Acti = 'A'
 					   And r.tdoc = '08'
-	ENDTEXT
+	Endtext
 Case np2 = '07'
-	TEXT To lC Noshow
+	Text To lC Noshow
 			   Select  r.idauto,
 					   r.ndoc,
 					   r.tdoc,
@@ -2008,7 +2010,7 @@ Case np2 = '07'
 				   Where r.idauto = ?np1
 					   And r.Acti = 'A'
 					   And r.tdoc = '07'
-	ENDTEXT
+	Endtext
 Endcase
 ncon = AbreConexion()
 If SQLExec(ncon, lC, 'kardex') < 0 Then
@@ -2030,10 +2032,10 @@ Scan All
 	cciud = Iif(!Empty(Kardex.distrito), "-" + Alltrim(Kardex.distrito), "") + "-" + Alltrim(Kardex.ciud) + "" + Iif(!Empty(Kardex.dpto), "-" + Kardex.dpto, "")
 	Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc, hash, nruc, razon, Direccion, fech, fechav, Ndo2, Vendedor, Form, Referencia, dni, Mone, dcto, Tdoc1, fech1, costoRef);
 		Values(Kardex.idart, Kardex.Descri, Kardex.Unid, Iif(Kardex.cant = 0, 1, Kardex.cant), Kardex.Prec, ;
-		Kardex.Ndoc, Kardex.rcom_hash, Kardex.nruc, Kardex.Razo, Alltrim(Kardex.Dire) + ' ' + Alltrim(cciud), Kardex.fech, Kardex.fvto, ;
-		Kardex.Ndo2, Kardex.nomv, ;
-		Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', Kardex.Form = 'H', 'Cheque', 'Factoring'), ;
-		Kardex.Deta, Kardex.ndni, Kardex.Mone, Kardex.dcto, Kardex.Tdoc1, Kardex.fech1, Kardex.costo)
+		  Kardex.Ndoc, Kardex.rcom_hash, Kardex.nruc, Kardex.Razo, Alltrim(Kardex.Dire) + ' ' + Alltrim(cciud), Kardex.fech, Kardex.fvto, ;
+		  Kardex.Ndo2, Kardex.nomv, ;
+		  Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', Kardex.Form = 'H', 'Cheque', 'Factoring'), ;
+		  Kardex.Deta, Kardex.ndni, Kardex.Mone, Kardex.dcto, Kardex.Tdoc1, Kardex.fech1, Kardex.costo)
 Endscan
 Local Cimporte
 Cimporte = Diletras(nimpo, cmone)
@@ -2053,9 +2055,9 @@ Endproc
 *******************************
 Function  generaCorrelativoEnvioResumenBoletas()
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
 	UPDATE fe_gene  as f SET gene_nres=f.gene_nres+1 WHERE idgene=1
-ENDTEXT
+Endtext
 If Ejecutarsql(lC) < 0 Then
 	Return 0
 Endif
@@ -2064,9 +2066,9 @@ Endfunc
 *****************************
 Function  generaCorrelativoEnvioResumenBajas()
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
 	   UPDATE fe_gene  as f SET gene_nbaj=f.gene_nbaj+1 WHERE idgene=1
-ENDTEXT
+Endtext
 If Ejecutarsql(lC) < 0 Then
 	Return 0
 Endif
@@ -2088,9 +2090,9 @@ goApp.npara9  = np9
 goApp.npara10 = np10
 lC			  = "proIngresaRbajas"
 cur			  = []
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando el Informe de Bajas')
 	Return 0
@@ -2119,10 +2121,10 @@ goApp.npara12 = np12
 goApp.npara13 = np13
 goApp.npara14 = np14
 goApp.npara15 = np15
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Resumen de Boletas')
 	Return 0
@@ -2133,28 +2135,27 @@ Endfunc
 *******************************
 Function ActualizaResumenBoletas(np1, np2)
 Local lC, lp
-*:Global cdrxml, crptaSunat, cur
 cur			 = []
 lC			 = "ProactualizaResumenBoletas"
 goApp.npara1 = np1
 goApp.npara2 = np2
 crptaSunat	 = LeerRespuestaSunat(np2)
 cdrxml		 = Filetostr(np2)
+cdrxml = ""
 If goApp.Grabarxmlbd = 'S' Then
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?crptaSunat,?cdrxml)
-	ENDTEXT
+	Endtext
 Else
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?crptaSunat)
-	ENDTEXT
+	Endtext
 Endif
 If EJECUTARP(lC, lp, cur) = 0 Then
-	Errorbd(ERRORPROC + ' ' + ' Actualizando Respuesta de Sunat')
+	Errorbd('Actualizando Respuesta de Sunat')
 	Return 0
-Else
-	Return 1
 Endif
+Return 1
 Endfunc
 ****************************
 Function ActualizaResumenBajas(np1, np2)
@@ -2166,14 +2167,15 @@ lC			 = "ProactualizaRBajas"
 goApp.npara1 = np1
 goApp.npara2 = np2
 cdrxml		 = Filetostr(np2)
+cdrxml = ""
 If goApp.Grabarxmlbd = 'S' Then
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?crptaSunat,?cdrxml)
-	ENDTEXT
+	Endtext
 Else
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?crptaSunat)
-	ENDTEXT
+	Endtext
 Endif
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Actualizando Respuesta de Sunat')
@@ -2201,24 +2203,24 @@ If goApp.Grabarxmlbd = 'S' Then
 	Else
 		cxml   = Filetostr(cArchivo)
 		cdrxml = Filetostr(np3)
-*!*			cxml   = ""
-*!*			cdrxml = ""
+		cxml   = ""
+		cdrxml = ""
 	Endif
 	If File(cArchivo) And File(np3) Then
-		TEXT To lcpk Noshow
+		Text To lcpk Noshow
           UPDATE fe_rcom SET rcom_mens=?crptaSunat,rcom_arch=?carchivo,rcom_fecd=?dfenvio,rcom_xml=?cxml,rcom_cdr=?cdrxml WHERE idauto=?np1
-		ENDTEXT
+		Endtext
 	Else
 		If File(cArchivo) And !File(np3)
-			TEXT To lcpk Noshow
+			Text To lcpk Noshow
               UPDATE fe_rcom SET rcom_mens=?crptaSunat,rcom_arch=?carchivo,rcom_fecd=?dfenvio,rcom_xml=?cxml WHERE idauto=?np1
-			ENDTEXT
+			Endtext
 		Endif
 	Endif
 Else
-	TEXT To lcpk Noshow
+	Text To lcpk Noshow
        UPDATE fe_rcom SET rcom_hash=?np2,rcom_mens=?crptaSunat,rcom_arch=?carchivo,rcom_fecd=?dfenvio WHERE idauto=?np1
-	ENDTEXT
+	Endtext
 Endif
 If SQLExec(goApp.bdConn, lcpk) < 1 Then
 	Errorbd(lcpk)
@@ -2239,15 +2241,15 @@ If goApp.Grabarxmlbd = 'S' Then
 		cxml = ""
 	Else
 		cxml = Filetostr(cArchivo)
-*!*			cxml=""
+		cxml = ""
 	Endif
-	TEXT  To lC Noshow
+	Text  To lC Noshow
        UPDATE fe_rcom SET rcom_arch=?carchivo,rcom_xml=?cxml WHERE idauto=?np1
-	ENDTEXT
+	Endtext
 Else
-	TEXT  To lC Noshow
+	Text  To lC Noshow
        UPDATE fe_rcom SET rcom_arch=?carchivo WHERE idauto=?np1
-	ENDTEXT
+	Endtext
 Endif
 If SQLExec(goApp.bdConn, lC) < 1 Then
 	Errorbd(lC)
@@ -2260,11 +2262,11 @@ Procedure ReimprimirStandar(np1, np2, np3)
 Local lC
 If VerificaAlias("tmpv") = 0 Then
 	Create Cursor tmpv(Coda N(8), Desc c(120), Unid c(15), Prec N(13, 8), cant N(12, 3), Ndoc c(12), alma N(10, 2), Peso N(10, 2), ;
-		Impo N(10, 2), tipro c(1), ptoll c(50), fect d, perc N(5, 2), cletras c(120), Tdoc c(2), dias N(4), ;
-		nruc c(11), razon c(150), Direccion c(190), fech d, fechav d, Ndo2 c(12), Vendedor c(50), Forma c(20), Form c(20), Guia c(15), duni c(15), ;
-		Referencia c(120), hash c(30), dni c(11), Mone c(1), Tdoc1 c(2), dcto c(12), fech1 d, Usuario c(30), Tigv N(5, 3), detalle c(120), Contacto c(120), Archivo c(120), ;
-		valor N(12, 2), igv N(12, 2), Total N(12, 2), gratuitas N(12, 2), Exon N(12, 2), Importe N(12, 2), ;
-		copia c(1), detraccion N(10, 2), coddetrac c(10), anticipo N(12, 2), refanticipo c(60))
+		  Impo N(10, 2), tipro c(1), ptoll c(50), fect d, perc N(5, 2), cletras c(120), Tdoc c(2), dias N(4), ;
+		  nruc c(11), razon c(150), Direccion c(190), fech d, fechav d, Ndo2 c(12), Vendedor c(50), Forma c(20), Form c(20), Guia c(15), duni c(15), ;
+		  Referencia c(120), hash c(30), dni c(11), Mone c(1), Tdoc1 c(2), dcto c(12), fech1 d, Usuario c(30), Tigv N(5, 3), detalle c(120), Contacto c(120), Archivo c(120), ;
+		  valor N(12, 2), igv N(12, 2), Total N(12, 2), gratuitas N(12, 2), Exon N(12, 2), Importe N(12, 2), ;
+		  copia c(1), detraccion N(10, 2), coddetrac c(10), anticipo N(12, 2), refanticipo c(60))
 Else
 	Zap In tmpv
 Endif
@@ -2278,7 +2280,7 @@ Case np2 = '01' Or np2 = '03' Or np2 = '20'
 	If cx = 'S' Then
 		If goApp.Vtasconanticipo = 'S' Then
 			If fe_gene.nruc = "20439488736" Then
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 				  	4 as codv,c.idauto,0 as idart,m.detv_cant as cant,m.detv_prec as prec,c.codt as alma,
 	          		c.tdoc as tdoc1,c.ndoc as dcto,c.fech as fech1,c.vigv,
 				    c.fech,c.fecr,c.form,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,
@@ -2298,9 +2300,9 @@ Case np2 = '01' Or np2 = '03' Or np2 = '20'
 				    Left Join fe_rcom As z On z.Idauto=c.rcom_idan
 				    left join fe_rcom as w on w.idauto=c.rcom_idan2
 	          		where c.idauto=<<np1>>
-				ENDTEXT
+				Endtext
 			Else
-				TEXT To lC Noshow Textmerge
+				Text To lC Noshow Textmerge
 				  	4 as codv,c.idauto,0 as idart,m.detv_cant as cant,m.detv_prec as prec,c.codt as alma,
 	          		c.tdoc as tdoc1,c.ndoc as dcto,c.fech as fech1,c.vigv,
 				    c.fech,c.fecr,c.form,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,
@@ -2317,11 +2319,11 @@ Case np2 = '01' Or np2 = '03' Or np2 = '20'
 				    where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
 				    Left Join fe_rcom As z On z.Idauto=c.rcom_idan
 	          		where c.idauto=<<np1>>
-				ENDTEXT
+				Endtext
 			Endif
 		Endif
 		If goApp.vtascondetraccion = 'S' Then
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 			  	4 as codv,c.idauto,0 as idart,
                 CAST(ifnull(m.detv_cant,1)  as decimal(12,2))as cant,CAST(ifnull(m.detv_prec,c.impo) as decimal(12,4)) as prec,c.codt as alma,
           		c.tdoc as tdoc1,c.ndoc as dcto,c.fech as fech1,c.vigv,
@@ -2337,9 +2339,9 @@ Case np2 = '01' Or np2 = '03' Or np2 = '20'
 			    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
                 where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
           		where c.idauto=<<np1>>
-			ENDTEXT
+			Endtext
 		Else
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 			  	4 as codv,c.idauto,0 as idart,
                 CAST(ifnull(m.detv_cant,1)  as decimal(12,2))as cant,CAST(ifnull(m.detv_prec,c.impo) as decimal(12,4)) as prec,c.codt as alma,
           		c.tdoc as tdoc1,c.ndoc as dcto,c.fech as fech1,c.vigv,
@@ -2355,10 +2357,10 @@ Case np2 = '01' Or np2 = '03' Or np2 = '20'
 			    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
                 where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
           		where c.idauto=<<np1>>
-			ENDTEXT
+			Endtext
 		Endif
 	Else
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 			    a.codv,a.idauto,a.alma,a.idkar,a.idauto,a.idart,a.cant,a.prec,a.alma,c.tdoc as tdoc1,
 			    c.ndoc as dcto,c.fech as fech1,c.vigv,c.valor,c.igv,c.impo,
 			    c.fech,c.fecr,c.form,c.deta,c.rcom_exon,c.ndo2,c.igv,c.idcliente,d.razo,d.nruc,d.dire,d.ciud,d.ndni,c.pimpo,u.nomb as usuario,
@@ -2373,10 +2375,10 @@ Case np2 = '01' Or np2 = '03' Or np2 = '20'
 			    left join (select rcre_idau,min(c.fevto) as fevto from fe_rcred as r inner join fe_cred as c on c.cred_idrc=r.rcre_idrc
                 where rcre_acti='A' and acti='A' and rcre_idau=<<np1>> group by rcre_idau) as p on p.rcre_idau=c.idauto
 			    where c.idauto=<<np1>> and a.acti='A';
-		ENDTEXT
+		Endtext
 	Endif
 Case np2 = '08'
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 			   r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,abs(r.valor) as valor,r.ndo2,
 		       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,' ' as nomv,r.form,
 		       abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(0 as decimal(12,2))) as cant,
@@ -2393,9 +2395,9 @@ Case np2 = '08'
 		       inner join fe_rcom as w on w.idauto=f.ncre_idau
 		       inner join fe_usua as u on u.idusua=r.idusua
 		       where r.idauto=<<np1>> and r.acti='A' and r.tdoc='08'
-	ENDTEXT
+	Endtext
 Case np2 = '07'
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 			   r.idauto,r.ndoc,r.tdoc,r.fech,r.mone,abs(r.valor) as valor,r.ndo2,
 		       r.vigv,c.nruc,c.razo,c.dire,c.ciud,c.ndni,' ' as nomv,r.form,u.nomb as usuario,
 		       abs(r.igv) as igv,abs(r.impo) as impo,ifnull(k.cant,CAST(0 as decimal(12,2))) as cant,
@@ -2412,7 +2414,7 @@ Case np2 = '07'
 		       inner join fe_rcom as w on w.idauto=f.ncre_idau
 		       inner join fe_usua as u on u.idusua=r.idusua
 		       where r.idauto=<<np1>> and r.acti='A' and r.tdoc='07'
-	ENDTEXT
+	Endtext
 Endcase
 If EJECutaconsulta(lC, 'kardex') < 1 Then
 	Return
@@ -2450,12 +2452,12 @@ Select Kardex
 Scan All
 	nf = nf + 1
 	Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc, hash, nruc, razon, Direccion, fech, fechav, Ndo2, Vendedor, Form, ;
-		Referencia, dni, Mone, dcto, Tdoc1, fech1, Usuario, Guia, Forma, Tigv, Tdoc);
+		  Referencia, dni, Mone, dcto, Tdoc1, fech1, Usuario, Guia, Forma, Tigv, Tdoc);
 		Values(Iif(Vartype(Kardex.idart) = 'N', Kardex.idart, Val(Kardex.idart)), Kardex.Descri, Kardex.Unid, Iif(Kardex.cant = 0, 1, Kardex.cant), Kardex.Prec, ;
-		Kardex.Ndoc, Kardex.rcom_hash, Kardex.nruc, Kardex.Razo, Alltrim(Kardex.Dire) + ' ' + Alltrim(Kardex.ciud), Kardex.fech, Kardex.fvto, ;
-		Kardex.Ndo2, Kardex.nomv, Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), ;
-		Kardex.Deta, Kardex.ndni, Kardex.Mone, Kardex.dcto, Kardex.Tdoc1, Kardex.fech1, Kardex.Usuario, Kardex.Ndo2, ;
-		Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), Kardex.vigv, cTdoc)
+		  Kardex.Ndoc, Kardex.rcom_hash, Kardex.nruc, Kardex.Razo, Alltrim(Kardex.Dire) + ' ' + Alltrim(Kardex.ciud), Kardex.fech, Kardex.fvto, ;
+		  Kardex.Ndo2, Kardex.nomv, Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), ;
+		  Kardex.Deta, Kardex.ndni, Kardex.Mone, Kardex.dcto, Kardex.Tdoc1, Kardex.fech1, Kardex.Usuario, Kardex.Ndo2, ;
+		  Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), Kardex.vigv, cTdoc)
 Endscan
 Local Cimporte
 Cimporte = Diletras(nimpo, cmone)
@@ -2548,9 +2550,9 @@ Local lC, lp
 lC			 = "ProMuestratabla34"
 goApp.npara1 = np1
 goApp.npara2 = np2
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Mostrando Tabla 34')
 	Return 0
@@ -2566,9 +2568,9 @@ lC			 = "ProGrabatabla34PlanCuentas"
 cur			 = ""
 goApp.npara1 = np1
 goApp.npara2 = np2
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Actualizando Plan de Cuentas con  Tabla 34')
 	Return 0
@@ -2977,9 +2979,9 @@ goApp.npara7  = np7
 goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.37')
 	Return 0
@@ -3003,9 +3005,9 @@ goApp.npara7  = np7
 goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.12')
 	Return 0
@@ -3020,9 +3022,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta12"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.12')
 	Return 0
@@ -3037,9 +3039,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta37"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.37')
 	Return 0
@@ -3059,9 +3061,9 @@ goApp.npara3 = np3
 goApp.npara4 = np4
 goApp.npara5 = np5
 goApp.npara6 = np6
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.34')
 	Return 0
@@ -3076,9 +3078,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta34"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.34')
 	Return 0
@@ -3105,9 +3107,9 @@ goApp.npara2 = np2
 goApp.npara3 = np3
 goApp.npara4 = np4
 goApp.npara5 = np5
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.41')
 	Return 0
@@ -3122,9 +3124,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta41"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.41')
 	Return 0
@@ -3149,9 +3151,9 @@ goApp.npara7  = np7
 goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.42')
 	Return 0
@@ -3166,9 +3168,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta42"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.42')
 	Return 0
@@ -3192,9 +3194,9 @@ goApp.npara7  = np7
 goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.46')
 	Return 0
@@ -3214,9 +3216,9 @@ goApp.npara3 = np3
 goApp.npara4 = np4
 goApp.npara5 = np5
 goApp.npara6 = np6
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.50')
 	Return 0
@@ -3231,9 +3233,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta46"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.46')
 	Return 0
@@ -3248,9 +3250,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta50"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.50')
 	Return 0
@@ -3275,9 +3277,9 @@ goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
 goApp.npara11 = np11
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Detalle de Cta.19')
 	Return 0
@@ -3292,9 +3294,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaDcta19"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Detalle de Cta.19')
 	Return 0
@@ -3327,10 +3329,10 @@ goApp.npara16 = np16
 goApp.npara17 = np17
 goApp.npara18 = np18
 goApp.npara19 = np19
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,
      ?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Registrando Balance de Comprobación')
 	Return 0
@@ -3345,9 +3347,9 @@ Local lC, lp
 cur			 = []
 lC			 = "ProAnulaBalanceComprobacion"
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Anulando Balance de Comprobación')
 	Return 0
@@ -3365,14 +3367,14 @@ Else
 	dfi = dfinicio
 Endif
 Df = dfi - 1
-TEXT To lC Noshow
+Text To lC Noshow
 Select  z.ncta, z.nomb, If(z.debe > z.haber, z.debe - z.haber, 0) As adeudor, If(z.haber > z.debe, z.haber - z.debe, 0) As aacreedor,
 idcta  From
 (Select  b.ncta, b.nomb, Sum(A.ldia_debe - A.ldia_itrd) As debe, Sum(A.ldia_haber - A.ldia_itrh) As haber,
 b.idcta,  Max(A.ldia_nume) As ldia_nume From fe_ldiario As A
 inner Join fe_plan As b	  On b.idcta = A.ldia_idcta
 Where A.ldia_acti = 'A'	  And ldia_fech <= ?df  And ldia_tran <> 'T'  Group By A.ldia_idcta) As z
-ENDTEXT
+Endtext
 ncon = AbreConexion()
 If SQLExec(ncon, lC, 'mayora') < 0 Then
 	Errorbd(lC)
@@ -3383,13 +3385,13 @@ Create Cursor mayor(ncta c(15), nomb c(60), adeudor N(12, 2), aacreedor N(12, 2)
 Select * From mayora Where (adeudor + aacreedor) > 0 Into Cursor rlmayora
 Select mayor
 Append From Dbf("rlmayora")
-TEXT To lC Noshow
+Text To lC Noshow
 Select  z.ncta,z.nomb,z.debe,z.haber,idcta  From (Select  b.ncta,
 b.nomb,Sum(A.ldia_debe - A.ldia_itrd) As debe,Sum(A.ldia_haber - A.ldia_itrh) As haber,b.idcta
 From fe_ldiario As A
 inner Join fe_plan As b  On b.idcta = A.ldia_idcta
 Where A.ldia_acti = 'A'  And ldia_fech Between ?dfi And ?dff  And ldia_tran <> 'T' Group By A.ldia_idcta) As z
-ENDTEXT
+Endtext
 ncon = AbreConexion()
 If SQLExec(ncon, lC, 'rlmayor') < 0 Then
 	Errorbd(lC)
@@ -3496,7 +3498,7 @@ If !Empty(goApp.ose) Then
 			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
 			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		   <soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 		   <soapenv:Header>
@@ -3516,7 +3518,7 @@ If !Empty(goApp.ose) Then
 		      </ser:getStatusCdr>
 		   </soapenv:Body>
 		</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			Return - 1
@@ -3569,7 +3571,7 @@ If !Empty(goApp.ose) Then
 			ls_user		  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
 		cnum = Right("00000000" + Alltrim(cnumero), 8)
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		<SOAP-ENV:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 		<wsse:Security xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -3594,7 +3596,7 @@ If !Empty(goApp.ose) Then
 		      </ser:getStatusCdr>
 		   </soapenv:Body>
 		</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			Return - 1
@@ -3644,7 +3646,7 @@ If !Empty(goApp.ose) Then
 			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
 			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		  <soapenv:Header>
 		   <wsse:Security soapenv:mustUnderstand="0" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -3663,7 +3665,7 @@ If !Empty(goApp.ose) Then
 		      </ser:getStatusCdr>
 		   </soapenv:Body>
 		</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			Return - 1
@@ -3712,7 +3714,7 @@ If !Empty(goApp.ose) Then
 			ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
 			ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
 		Endcase
-		TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		  <soapenv:Header>
 			<wsse:Security   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -3734,7 +3736,7 @@ If !Empty(goApp.ose) Then
 			      </ser:getStatusCdr>
 			   </soapenv:Body>
 			</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 		If Not loXMLBody.LoadXML( lcEnvioXML )
 			Error loXMLBody.parseError.reason
 			Return - 1
@@ -3819,13 +3821,13 @@ If !Empty(goApp.ose) Then
 		If goApp.Grabarxmlbd = 'S' Then
 			cdrxml = Filetostr(cfilecdr)
 			cdrxml  =  ""
-			TEXT  To lC Noshow
+			Text  To lC Noshow
             UPDATE fe_rcom SET rcom_mens=?rptaSunat,rcom_cdr=?cdrxml WHERE idauto=?pk
-			ENDTEXT
+			Endtext
 		Else
-			TEXT  To lC Noshow
+			Text  To lC Noshow
             UPDATE fe_rcom SET rcom_mens=?rptaSunat WHERE idauto=?pk
-			ENDTEXT
+			Endtext
 		Endif
 		If SQLExec(goApp.bdConn, lC) < 0 Then
 			Errorbd(lC)
@@ -3850,7 +3852,7 @@ Else
 	lcUserName = LcRucEmisor + lcUser_Sol
 	lcURL	   = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
 
-	TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+	Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe"
 	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 	xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -3871,7 +3873,7 @@ Else
 	</ser:getStatus>
 	</soapenv:Body>
 	</soapenv:Envelope>
-	ENDTEXT
+	Endtext
 
 	If Not loXMLBody.LoadXML( lcEnvioXML )
 		Error loXMLBody.parseError.reason
@@ -3987,10 +3989,10 @@ goApp.npara15 = np15
 goApp.npara16 = np16
 goApp.npara17 = np17
 goApp.npara18 = np18
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Asientos  a Libro Diario')
 	Return 0
@@ -4004,9 +4006,9 @@ Local lC
 *:Global car
 car = Sys(5) + Sys(2003) + "\FirmaXML\" + Alltrim(fe_gene.nruc) + "-" + Alltrim(np3) + "-" + Left(np2, 4) + '-' + Alltrim(Substr(np2, 5)) + ".xml"
 If File((car)) Then
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
       UPDATE fe_rcom SET rcom_arch='<<car>>' WHERE idauto=<<np1>>
-	ENDTEXT
+	Endtext
 	If Ejecutarsql(lC) < 1 Then
 		Return
 	Endif
@@ -4028,9 +4030,9 @@ Else
 	car = Sys(5) + Sys(2003) + "\FirmaXML\" + Alltrim(oempresa.nruc) + "\" + Alltrim(fe_gene.nruc) + "-" + Alltrim(np3) + "-" + Left(np2, 4) + '-' + Alltrim(Substr(np2, 5)) + ".xml"
 Endif
 If File((car)) Then
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
      UPDATE fe_rcom SET rcom_arch='<<car>>' WHERE idauto=<<np1>>
-	ENDTEXT
+	Endtext
 	If Ejecutarsql(lC) < 1 Then
 		Return
 	Endif
@@ -4085,7 +4087,7 @@ Wait Clear
 
 If Type('oExcel') # 'O'
 	Messagebox("No se puede procesar el archivo porque no tiene la aplicación" ;
-		+ Chr(13) + "Microsoft Excel instalada en su computadora.", 16, _vfp.msgbox_error)
+		  + Chr(13) + "Microsoft Excel instalada en su computadora.", 16, _vfp.msgbox_error)
 	Return .F.
 Endif
 
@@ -4171,7 +4173,7 @@ Do While lnPos < Reccount(Ccursor)
 *** Cuerpo de la hoja ***
 *************************
 	oConnection = XLSheet.QueryTables.Add("TEXT;"  + cDefault  + Ccursor  + ".txt", ;
-		XLSheet.Range("A"  + Alltrim(Str(lnRowPos))))
+		  XLSheet.Range("A"  + Alltrim(Str(lnRowPos))))
 
 	With oConnection
 		.Name						  = Ccursor
@@ -4247,9 +4249,9 @@ Endfunc
 ************************
 Procedure ActualizarArchivoEnvio(cfile, cticket)
 Local lC
-TEXT To lC Noshow
+Text To lC Noshow
    UPDATE fe_resboletas SET resu_arch=?cfile WHERE resu_tick=?cticket
-ENDTEXT
+Endtext
 If SQLExec(goApp.bdConn, lC) < 0 Then
 	Errorbd(lC)
 Endif
@@ -4259,10 +4261,10 @@ Function  ActualizaBxb
 Lparameters ndesde, nhasta
 Local lC
 *:Global np1, np3, sw
-TEXT To lC Noshow
+Text To lC Noshow
 	Select  idauto,	numero From(Select  idauto,	ndoc,Cast(mid(ndoc, 5) As unsigned) As numero
 	From fe_rcom f Where Acti = 'A'	And idcliente > 0) As x Where numero Between ?ndesde And ?nhasta
-ENDTEXT
+Endtext
 If SQLExec(goApp.bdConn, lC, 'crb') < 0 Then
 	Errorbd(lC)
 	Return
@@ -4273,9 +4275,9 @@ Select crb
 Go Top
 Scan All
 	np1 = crb.Idauto
-	TEXT  To lC Noshow
+	Text  To lC Noshow
            UPDATE fe_rcom SET rcom_mens=?np3 WHERE idauto=?np1
-	ENDTEXT
+	Endtext
 	If SQLExec(goApp.bdConn, lC) < 0 Then
 		Errorbd(lC)
 		Sw = 0
@@ -4289,9 +4291,9 @@ Local lC
 *:Global cdeta1, chash, cmone, cndoc, ctdoc, cx, ncon, nf, nimpo, vvigv
 If VerificaAlias("tmpv") = 0 Then
 	Create Cursor tmpv(Coda N(8), Desc c(120), Unid c(15), Prec N(13, 8), cant N(10, 2), Ndoc c(12), alma N(10, 2), Peso N(10, 2), ;
-		Impo N(10, 2), tipro c(1), ptoll c(50), fect d, perc N(5, 2), cletras c(120), Tdoc c(2), ;
-		nruc c(11), razon c(120), Direccion c(190), fech d, fechav d, Ndo2 c(12), Vendedor c(50), Forma c(20), Form c(20), Guia c(15), duni c(15), ;
-		Referencia c(120), hash c(30), dni c(8), Mone c(1), Tdoc1 c(2), dcto c(12), fech1 d, Usuario c(30), Tigv N(5, 3), detalle c(120), Contacto c(120), Archivo c(120))
+		  Impo N(10, 2), tipro c(1), ptoll c(50), fect d, perc N(5, 2), cletras c(120), Tdoc c(2), ;
+		  nruc c(11), razon c(120), Direccion c(190), fech d, fechav d, Ndo2 c(12), Vendedor c(50), Forma c(20), Form c(20), Guia c(15), duni c(15), ;
+		  Referencia c(120), hash c(30), dni c(8), Mone c(1), Tdoc1 c(2), dcto c(12), fech1 d, Usuario c(30), Tigv N(5, 3), detalle c(120), Contacto c(120), Archivo c(120))
 Else
 	Zap In tmpv
 Endif
@@ -4303,7 +4305,7 @@ Case np2 = '01' Or np2 = '03'
 		cx = np3
 	Endif
 	If cx = 'S' Then
-		TEXT To lC Noshow
+		Text To lC Noshow
 				  Select  4 As codv, c.idauto, 1 As idart,
 						  ifnull(A.cant, 1) As cant,
 						  ifnull(A.Prec, 0) As Prec,
@@ -4387,10 +4389,10 @@ Case np2 = '01' Or np2 = '03'
 					  inner Join fe_detallevta As m
 						  On m.detv_idau = c.idauto
 					  Where c.idauto = ?np1
-		ENDTEXT
+		Endtext
 ****
 
-		TEXT To lC Noshow
+		Text To lC Noshow
 				  Select  4 As codv,
 						  c.idauto,
 						  0 As idart,
@@ -4435,9 +4437,9 @@ Case np2 = '01' Or np2 = '03'
 					  Where c.idauto = ?np1
 					  Group By Descri
 					  Order By detv_ite1
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lC Noshow
+		Text To lC Noshow
 				Select  A.codv,
 						A.idauto,
 						A.alma,
@@ -4488,10 +4490,10 @@ Case np2 = '01' Or np2 = '03'
 						On u.idusua = c.idusua
 					Where c.idauto = ?np1
 						And A.Acti = 'A';
-		ENDTEXT
+		Endtext
 	Endif
 Case np2 = '08'
-	TEXT To lC Noshow
+	Text To lC Noshow
 			   Select  r.idauto,
 					   r.ndoc,
 					   r.tdoc,
@@ -4538,9 +4540,9 @@ Case np2 = '08'
 				   Where r.idauto = ?np1
 					   And r.Acti = 'A'
 					   And r.tdoc = '08'
-	ENDTEXT
+	Endtext
 Case np2 = '07'
-	TEXT To lC Noshow
+	Text To lC Noshow
 			   Select  r.idauto,
 					   r.ndoc,
 					   r.tdoc,
@@ -4587,7 +4589,7 @@ Case np2 = '07'
 				   Where r.idauto = ?np1
 					   And r.Acti = 'A'
 					   And r.tdoc = '07'
-	ENDTEXT
+	Endtext
 Endcase
 ncon = AbreConexion()
 If SQLExec(ncon, lC, 'kardex') < 0 Then
@@ -4607,12 +4609,12 @@ Select Kardex
 Scan All
 	nf = nf + 1
 	Insert Into tmpv(Coda, Desc, Unid, cant, Prec, Ndoc, hash, nruc, razon, Direccion, fech, fechav, Ndo2, Vendedor, Form, ;
-		Referencia, dni, Mone, dcto, Tdoc1, fech1, Usuario, Guia, Forma, Tigv, Tdoc);
+		  Referencia, dni, Mone, dcto, Tdoc1, fech1, Usuario, Guia, Forma, Tigv, Tdoc);
 		Values(Iif(Vartype(Kardex.idart) = 'N', Kardex.idart, Val(Kardex.idart)), Kardex.Descri, Kardex.Unid, Iif(Kardex.cant = 0, 1, Kardex.cant), Kardex.Prec, ;
-		Kardex.Ndoc, Kardex.rcom_hash, Kardex.nruc, Kardex.Razo, Alltrim(Kardex.Dire) + ' ' + Alltrim(Kardex.ciud), Kardex.fech, Kardex.fech, ;
-		Kardex.Ndo2, Kardex.nomv, Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), ;
-		Kardex.Deta, Kardex.ndni, Kardex.Mone, Kardex.dcto, Kardex.Tdoc1, Kardex.fech1, Kardex.Usuario, Kardex.Ndo2, ;
-		Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), Kardex.vigv, cTdoc)
+		  Kardex.Ndoc, Kardex.rcom_hash, Kardex.nruc, Kardex.Razo, Alltrim(Kardex.Dire) + ' ' + Alltrim(Kardex.ciud), Kardex.fech, Kardex.fech, ;
+		  Kardex.Ndo2, Kardex.nomv, Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), ;
+		  Kardex.Deta, Kardex.ndni, Kardex.Mone, Kardex.dcto, Kardex.Tdoc1, Kardex.fech1, Kardex.Usuario, Kardex.Ndo2, ;
+		  Icase(Kardex.Form = 'E', 'Efectivo', Kardex.Form = 'C', 'Crédito', Kardex.Form = 'T', 'Tarjeta', Kardex.Form = 'D', 'Depósito', 'Cheque'), Kardex.vigv, cTdoc)
 Endscan
 Local Cimporte
 Cimporte = Diletras(nimpo, cmone)
@@ -4745,13 +4747,13 @@ goApp.npara21 = np21
 goApp.npara22 = np22
 goApp.npara23 = np23
 goApp.npara24 = np24
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
-	Errorbd(ERRORPROC + ' Ingresando Cabecera de Documento')
+	Errorbd(ERRORPROC + ' Ingresando' + lC)
 	Return 0
 Else
 	Return Xn.Id
@@ -4775,10 +4777,10 @@ goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
 goApp.npara11 = np11
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Salidas de Productos por Transferencia Gratuita')
 	Return 0
@@ -4917,10 +4919,10 @@ goApp.npara16 = np16
 goApp.npara17 = np17
 goApp.npara18 = np18
 goApp.npara19 = np19
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Asientos  a Libro Diario')
 	Return 0
@@ -4960,10 +4962,10 @@ goApp.npara14 = np14
 goApp.npara15 = np15
 goApp.npara16 = np16
 goApp.npara17 = np17
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Asientos  a Libro Diario')
 	Return 0
@@ -5092,7 +5094,7 @@ Define Class comprobantex As Custom
 
 
 
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	"ctabla":"<<ctabla>>",
 	"nidauto":"<<nidauto>>",
@@ -5107,7 +5109,7 @@ Define Class comprobantex As Custom
 	"cdrxml":"<<contcdr>>",
 	"nombrecdr":"<<nombrecdr>>"
 	}
-	ENDTEXT
+	Endtext
 *!*		oHTTP = Createobject("MSXML2.XMLHTTP")
 *!*		oHTTP.Open("post", pURL_WSDL, .F.)
 *!*		oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -5128,9 +5130,9 @@ Define Class comprobantex As Custom
 	Local lC
 *:Global nid
 	nid = This.niDAUTO
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
            idauto,rcom_arch FROM fe_rcom WHERE LEFT(rcom_mens,1)='0'  AND idauto=<<nid>>
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, 'lr') < 1 Then
 		Return 0
 	Else
@@ -5141,11 +5143,11 @@ Enddefine
 *************************
 Function ActualizarcontraseñaUsuariosHosting(Cruc)
 curl = "http://compania-sysven.com/pass.php"
-TEXT To cdata Noshow Textmerge
+Text To cdata Noshow Textmerge
 	{
 	"nruc":"<<cruc>>"
 	}
-ENDTEXT
+Endtext
 oHTTP = Createobject("MSXML2.XMLHTTP")
 oHTTP.Open("post", curl, .F.)
 oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -5242,9 +5244,9 @@ Function verificaSiestaAnulada(cndoc, cTdoc)
 Local lC
 *:Global nid, nidauto
 nid = 0
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
       COUNT(*) as idauto from fe_rcom where ndoc='<<cndoc>>' and tdoc='<<ctdoc>>' and impo=0 and idcliente>0 and acti='A' group by ndoc
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, 'anulada') < 1 Then
 	Return 0
 Else
@@ -5390,7 +5392,7 @@ ls_fileName	   = Justfname(ps_fileZip)
 ls_contentFile = Filetostr(ps_fileZip)
 crespuesta	   = ls_fileName
 ls_base64	   = Strconv(ls_contentFile, 13) && Encoding base 64
-TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 		xmlns:ser="http://service.sunat.gob.pe"
 		xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -5409,7 +5411,7 @@ TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 					</ser:sendBill>
 		 </soapenv:Body>
 	</soapenv:Envelope>
-ENDTEXT
+Endtext
 oXMLHttp = Createobject("MSXML2.ServerXMLHTTP.6.0")
 oXMLBody = Createobject('MSXML2.DOMDocument.6.0')
 If !(oXMLBody.LoadXML(ls_envioXML)) Then
@@ -5495,13 +5497,13 @@ crptaSunat = LeerRespuestaSunat(np3)
 If goApp.Grabarxmlbd = 'S' Then
 	cxml   = Filetostr(cArchivo)
 	cdrxml = Filetostr(np3)
-	TEXT  To lC Noshow
+	Text  To lC Noshow
        UPDATE fe_guias SET guia_hash=?np2,guia_mens=?crptaSunat,guia_arch=?carchivo,guia_feen=?dfenvio,guia_xml=?cxml,guia_cdr=?cdrxml WHERE guia_idgui=?np1
-	ENDTEXT
+	Endtext
 Else
-	TEXT  To lC Noshow
+	Text  To lC Noshow
        UPDATE fe_guias SET guia_hash=?np2,guia_mens=?rptaSunat,guia_arch=?carchivo,guia_feen=?dfenvio WHERE guia_idgui=?np1
-	ENDTEXT
+	Endtext
 Endif
 If SQLExec(goApp.bdConn, lC) < 1 Then
 	Errorbd(lC)
@@ -5519,13 +5521,13 @@ Endif
 cArchivo = goApp.cArchivo
 cxml	 = Filetostr(cArchivo)
 If goApp.Grabarxmlbd = 'S' Then
-	TEXT  To lC Noshow
+	Text  To lC Noshow
          UPDATE fe_guias SET guia_hash=?np2,guia_arch=?carchivo,guia_xml=?cxml WHERE guia_idgui=?np1
-	ENDTEXT
+	Endtext
 Else
-	TEXT  To lC Noshow Textmerge
+	Text  To lC Noshow Textmerge
          UPDATE fe_guias SET guia_hash=?np2,guia_arch=?carchivo WHERE guia_idgui=?np1
-	ENDTEXT
+	Endtext
 Endif
 If SQLExec(goApp.bdConn, lC) < 1 Then
 	Errorbd(lC)
@@ -5550,10 +5552,10 @@ goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
 goApp.npara11 = np11
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando KARDEX  con ICBPER')
 	Return 0
@@ -5590,11 +5592,11 @@ goApp.npara20 = np20
 goApp.npara21 = np21
 goApp.npara22 = np22
 goApp.npara23 = np23
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) <  1  Then
-	Mensaje(' Ingresando Cabecera de Documento')
+	Mensaje(' Ingresando ' + lC)
 	Return 0
 Else
 	Return Xn.Id
@@ -5630,11 +5632,11 @@ goApp.npara21 = np21
 goApp.npara22 = np22
 goApp.npara23 = np23
 goApp.npara24 = np24
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Actualizando Cabecera de Documento de Ventas ICBPER')
 	Return 0
@@ -5665,10 +5667,10 @@ goApp.npara14 = np14
 goApp.npara15 = np15
 goApp.npara16 = np16
 goApp.npara17 = np17
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + 'Ingresando Kardex x Unidades')
 	Return 0
@@ -5695,10 +5697,10 @@ goApp.npara10 = np10
 goApp.npara11 = np11
 goApp.npara12 = np12
 goApp.npara13 = np13
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + 'Ingresando Kardex x Unidades')
 	Return 0
@@ -5731,10 +5733,10 @@ goApp.npara16 = np16
 goApp.npara17 = np17
 goApp.npara18 = np18
 goApp.npara19 = np19
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + 'Actualizando Kardex ')
 	Return 0
@@ -5803,7 +5805,7 @@ If !Pemstatus(goApp, cpropiedad, 5)
 Endif
 crespuesta = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc) + '-' + ctipodcto + '-' + Cserie + '-' + cnumero + '.zip'
 *lsURL  =  "https://e-factura.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
-TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe"
 	xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 	xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -5824,7 +5826,7 @@ TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 	</ser:getStatusCdr>
 	</soapenv:Body>
 	</soapenv:Envelope>
-ENDTEXT
+Endtext
 
 If Not loXMLBody.LoadXML( lcEnvioXML )
 	Error loXMLBody.parseError.reason
@@ -5919,13 +5921,13 @@ Case Left(rptaSunat, 1) = '0'
 	If goApp.Grabarxmlbd = 'S' Then
 *!*			cdrxml = Filetostr(cfilecdr)
 		cdrxml = ""
-		TEXT To lC Noshow
+		Text To lC Noshow
          UPDATE fe_rcom SET rcom_mens=?rptaSunat,rcom_fecd=?dfenvio,rcom_cdr=?cdrxml WHERE idauto=?pk
-		ENDTEXT
+		Endtext
 	Else
-		TEXT  To lC Noshow
+		Text  To lC Noshow
          UPDATE fe_rcom SET rcom_mens=?rptaSunat,rcom_fecd=?dfenvio WHERE idauto=?pk
-		ENDTEXT
+		Endtext
 	Endif
 	If SQLExec(goApp.bdConn, lC) < 0 Then
 		Errorbd(lC)
@@ -5950,7 +5952,6 @@ Endproc
 ******************************************
 Function  EnviarBoletasyNotas
 Lparameters Df
-
 Local ocomp As "comprobante"
 *:Global cpropiedad
 cpropiedad = "cdatos"
@@ -5965,7 +5966,7 @@ F	  = Cfechas(Df)
 dfecha = Date()
 If goApp.cdatos = 'S' Then
 	nidt = goApp.Tienda
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 		fech,tdoc,
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,
 		If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
@@ -5997,11 +5998,11 @@ If goApp.cdatos = 'S' Then
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
         inner join fe_clie c on c.idclie=f.idcliente
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>> and f.impo<>0
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, "rboletas") < 1 Then
 		Return 0
 	Endif
-	TEXT To lcx Noshow Textmerge
+	Text To lcx Noshow Textmerge
 		serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo
 		from(select
@@ -6024,9 +6025,9 @@ If goApp.cdatos = 'S' Then
 		FROM fe_rcom f
 		inner join fe_ncven g on g.ncre_idan=f.idauto inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>> order by f.ndoc) as x group by serie
-	ENDTEXT
+	Endtext
 Else
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 		fech,tdoc,
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,
 		If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
@@ -6059,11 +6060,11 @@ Else
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
         inner join fe_clie c on c.idclie=f.idcliente
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and  f.impo<>0
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, "rboletas") < 1 Then
 		Return 0
 	Endif
-	TEXT To lcx Noshow Textmerge
+	Text To lcx Noshow Textmerge
 		serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo
 		from(select
@@ -6088,7 +6089,7 @@ Else
 		inner join fe_ncven g on g.ncre_idan=f.idauto
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' order by f.ndoc) as x group by serie
-	ENDTEXT
+	Endtext
 Endif
 If EJECutaconsulta(lcx, "rb1") < 1 Then
 	Return 0
@@ -6096,12 +6097,8 @@ Endif
 
 Select Tdoc, Serie, desde, hasta, valor, Exon, 000000.00 As inafectas, igv, Impo, 0.00 As gratificaciones, Df As fech;
 	From rb1 Into Cursor curb
-
-
 Select fech, Tdoc, Serie, numero, tipodoc, ndni, valor, rcom_exon As Exon, 000000.00 As inafectas, igv, Impo, 0.00 As gratificaciones, trefe, serieref, numerorefe, Idauto;
 	From Rboletas Into Cursor crb
-
-
 Select crb
 ocomp.itemsdocumentos = Reccount()
 tr					  = ocomp.itemsdocumentos
@@ -6208,9 +6205,9 @@ If !Empty(goApp.ticket) Then
 			dfenvio	= fe_gene.fech
 			np3		= "0 El Resumen de Boletas ha sido aceptada " + goApp.ticket
 			dfenvio	= Cfechas(fe_gene.fech)
-			TEXT To lC Noshow
+			Text To lC Noshow
                     UPDATE fe_rcom SET rcom_mens=?np3,rcom_fecd=?dfenvio WHERE idauto=?np1
-			ENDTEXT
+			Endtext
 			If SQLExec(goApp.bdConn, lC) < 0 Then
 				Errorbd(lC)
 				v = 0
@@ -6247,9 +6244,9 @@ lC			 = "ProactualizaResumenBoletas"
 goApp.npara1 = np1
 goApp.npara2 = np2
 goApp.npara3 = np3
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Actualizando Respuesta de Sunat')
 	Return 0
@@ -6266,9 +6263,9 @@ lC			 = "ProactualizaRBajas"
 goApp.npara1 = np1
 goApp.npara2 = np2
 goApp.npara3 = np3
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Actualizando Respuesta de Sunat')
 	Return 0
@@ -6318,7 +6315,7 @@ lsURL		  =  "https://e-factura.sunat.gob.pe/ol-it-wsconscpegem/billConsultServic
 ls_ruc_emisor = Iif(Type('oempresa') = 'U', fe_gene.nruc, oempresa.nruc)
 ls_pwd_sol	  = Iif(Type('oempresa') = 'U', Alltrim(fe_gene.gene_csol), Alltrim(oempresa.gene_csol))
 ls_user		  = ls_ruc_emisor + Iif(Type('oempresa') = 'U', Alltrim(fe_gene.Gene_usol), Alltrim(oempresa.Gene_usol))
-TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+Text To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		   <soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 		   <soapenv:Header>
@@ -6338,7 +6335,7 @@ TEXT To lcEnvioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		      </ser:getStatusCdr>
 		   </soapenv:Body>
 		</soapenv:Envelope>
-ENDTEXT
+Endtext
 If Not loXMLBody.LoadXML( lcEnvioXML )
 	Error loXMLBody.parseError.reason
 	Return - 1
@@ -6405,13 +6402,13 @@ Case Left(rptaSunat, 1) = '0'
 	Mensaje(rptaSunat)
 	If goApp.Grabarxmlbd = 'S' Then
 		cdrxml = Filetostr(cfilecdr)
-		TEXT  To lC Noshow
+		Text  To lC Noshow
            UPDATE fe_guias SET guia_mens=?rptaSunat,guia_cdr=?cdrxml WHERE guia_idgui=?pk
-		ENDTEXT
+		Endtext
 	Else
-		TEXT  To lC Noshow
+		Text  To lC Noshow
           UPDATE fe_guias SET guia_mens=?rptaSunat WHERE guia_idgui=?pk
-		ENDTEXT
+		Endtext
 	Endif
 	If SQLExec(goApp.bdConn, lC) < 0 Then
 		Errorbd(lC)
@@ -6450,10 +6447,10 @@ goApp.npara15 = np15
 goApp.npara16 = np16
 goApp.npara17 = np17
 goApp.npara18 = np18
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' ' + ' Ingresando Asientos  a Libro Diario')
 	Return 0
@@ -6473,6 +6470,7 @@ Endproc
 *****************************
 Function Ejecutarsql(tcComando As String, lp As String, NCursor As String )
 Local lR As Integer
+Local laError[1], lcError
 NCursor = Iif(Vartype(NCursor) <> "C", "", NCursor)
 If Empty(NCursor) Then
 	lR = SQLExec(goApp.bdConn, tcComando)
@@ -6482,7 +6480,21 @@ Endif
 If lR > 0 Then
 	Return 1
 Else
-	Errorbd(tcComando)
+	If Aerror(laError) > 0 Then
+		lcMsg = ""
+		lcMsgEmail = Alltrim(tcComando)
+		For ln = 1 To Alen(laError, 2)
+			lcMsg = lcMsg + Transform(laError(1, ln)) + Chr(13)
+			m.lcMsgEmail = m.lcMsgEmail + ' ' + Transform(laError(1, ln))
+		Endfor
+		Aviso(lcMsg)
+		_Screen.ocorreo.emailcliente = "soporte@companysysven.com"
+		_Screen.ocorreo.asunto = " Error Database: - " + Alltrim(fe_gene.Empresa)
+		_Screen.ocorreo.Cmensaje = Alltrim(m.lcMsgEmail)
+		If _Screen.ocorreo.enviarasoporte() < 1 Then
+		Else
+		Endif
+	Endif
 	Return 0
 Endif
 Endfunc
@@ -6499,9 +6511,9 @@ goApp.npara1 = np1
 goApp.npara2 = np2
 goApp.npara3 = np3
 goApp.npara4 = np4
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) < 1 Then
 	Errorbd(ERRORPROC + ' Ingresando Detalles Guias de Ventas')
 	Return 0
@@ -6527,10 +6539,10 @@ goApp.npara9  = np9
 goApp.npara10 = np10
 goApp.npara11 = np11
 goApp.npara12 = np12
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,
      ?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) < 1 Then
 	Errorbd(ERRORPROC + ' Ingresando Guias de Remisión Por Compras')
 	Return 0
@@ -6541,14 +6553,14 @@ Endfunc
 *********************************
 Function CreaTemporalGuiasElectronicas(Calias)
 Create Cursor (Calias)(Coda N(8), duni c(20), Descri c(120), Unid c(20), cant N(10, 2), Prec N(10, 8), uno N(10, 2), Dos N(10, 2), lote c(15), ;
-	Peso N(8, 4), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(20), fecr d, detalle c(120), fechafactura d, costo N(10, 3), ;
-	calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ;
-	ptoll c(120), Archivo c(120), valida1 c(1), valido c(1), stock N(10, 2), ;
-	razon c(120), nruc c(11), ndni c(8), conductor c(120), marca c(100), Placa c(15), ;
-	placa1 c(15), Constancia c(30), equi N(8, 4), prem N(10, 4), pos N(3), idepta N(5), ;
-	brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), comi N(5, 3), idem N(8), ;
-	Tigv N(5, 3), caant N(12, 2), nlote c(20), fechavto d, tipotra c(15), Tp c(1) Default 'N', estilo c(1) Default 'N', porc N(5, 2), ;
-	tipro c(1) Default 'K', ctramos c(1), htramos c(1), cant1 N(10, 2), codigoe N(8), Precio1 N(13, 5), Item N(8), Codigo1 c(30), Idauto N(10), remitente c(150), rucremitente c(11))
+	  Peso N(8, 4), alma N(10, 2), Ndoc c(12), Nreg N(10), codc c(5), tref c(2), Refe c(20), fecr d, detalle c(120), fechafactura d, costo N(10, 3), ;
+	  calma c(3), Valida c, Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), fech d, fect d, ptop c(150), ;
+	  ptoll c(120), Archivo c(120), valida1 c(1), valido c(1), stock N(10, 2), ;
+	  razon c(120), nruc c(11), ndni c(8), conductor c(120), marca c(100), Placa c(15), ;
+	  placa1 c(15), Constancia c(30), equi N(8, 4), prem N(10, 4), pos N(3), idepta N(5), ;
+	  brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), comi N(5, 3), idem N(8), ;
+	  Tigv N(5, 3), caant N(12, 2), nlote c(20), fechavto d, tipotra c(15), Tp c(1) Default 'N', estilo c(1) Default 'N', porc N(5, 2), ;
+	  tipro c(1) Default 'K', ctramos c(1), htramos c(1), cant1 N(10, 2), codigoe N(8), Precio1 N(13, 5), Item N(8), Codigo1 c(30), Idauto N(10), remitente c(150), rucremitente c(11))
 Select (Calias)
 Index On Descri Tag Descri
 Index On Nitem Tag Items
@@ -6568,7 +6580,7 @@ Procedure ImportaTCSunat(nmes, nanio)
 Set Procedure To  d:\capass\modelos\importadatos Additive
 Obj = Createobject("importadatos")
 If Obj.ImportaTCSunat(nmes, nanio) < 1 Then
-	Messagebox(Obj.Cmensaje, 16, MSGTITULO)
+	Aviso(Obj.Cmensaje)
 Endif
 Endproc
 ********************************************
@@ -6592,9 +6604,9 @@ Otherwise
 	Endif
 Endcase
 F = Cfechas(Df)
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
      valor,venta FROM fe_mon WHERE fech='<<f>>'
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, 'tca') < 1 Then
 	Return  0
 Endif
@@ -6619,9 +6631,9 @@ If VerificaAlias("curTcambio") = 1 Then
 			tcc	= attca
 			tcv	= attcv
 		Endif
-		TEXT To lC Noshow
+		Text To lC Noshow
            INSERT INTO fe_mon(fech,valor,venta)values(?df,?tcc,?tcv)
-		ENDTEXT
+		Endtext
 		If SQLExec(goApp.bdConn, lC) < 0 Then
 			Sw = 0
 			Exit
@@ -6634,9 +6646,9 @@ If VerificaAlias("curTcambio") = 1 Then
 	Else
 		GRabarCambios()
 		If tcv > fe_gene.dola  And nm = Month(fe_gene.fech) And Na = Year(fe_gene.fech) Then
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
                  UPDATE fe_gene SET dola=<<tcv>> where idgene=1
-			ENDTEXT
+			Endtext
 			If Ejecutarsql(lC) < 1 Then
 				Return  0
 			Endif
@@ -6810,9 +6822,9 @@ goApp.npara5 = np5
 goApp.npara6 = np6
 goApp.npara7 = np7
 goApp.npara8 = np8
-TEXT To lp Noshow
+Text To lp Noshow
 	     (@estado,?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Anulando Transacciones ')
 	Return 0
@@ -6823,9 +6835,9 @@ Endfunc
 ******************************************
 Function BuscaSoloproducto(np1, Ccursor)
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
      * FROM fe_art WHERE idart=<<np1>>
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, Ccursor) < 1 Then
 	Return 0
 Else
@@ -6945,42 +6957,42 @@ Function CreatemporalVtasgratuitas(Calias)
 Create Cursor Precios(Precio N(8, 2), Coda N(8), iden N(1), Nitem N(2))
 Create Cursor Autorizado(Coda N(8), cant N(12, 2), Prec N(12, 2), Prea N(12, 2), Unid c(15), Nitem N(5), Idusua N(5), idusuaa N(5))
 Create Cursor (Calias)(Coda N(8), Desc c(80), Unid c(4), Prec N(13, 5), cant N(10, 3), ;
-	Ndoc c(12), Nreg N(8), alma N(10, 2), pmayor N(8, 2), pmenor N(8, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
-	pos N(2), comi N(7, 3), prem N(8, 2), premax N(8, 2), costo N(10, 2), tras c(1), calma c(60), uno N(10, 2), Dos N(10, 2), ;
-	Nitem N(3), Valida c(1), Impo N(10, 2), Acti c(1), tipro c(1), idcosto N(10), valido c(1), Precio N(10, 2), ;
-	aprecios c(1), Modi c(1), cletras c(120), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
-	Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Tdoc c(2), Archivo c(120), valida1 c(1), Peso N(10, 2))
+	  Ndoc c(12), Nreg N(8), alma N(10, 2), pmayor N(8, 2), pmenor N(8, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
+	  pos N(2), comi N(7, 3), prem N(8, 2), premax N(8, 2), costo N(10, 2), tras c(1), calma c(60), uno N(10, 2), Dos N(10, 2), ;
+	  Nitem N(3), Valida c(1), Impo N(10, 2), Acti c(1), tipro c(1), idcosto N(10), valido c(1), Precio N(10, 2), ;
+	  aprecios c(1), Modi c(1), cletras c(120), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
+	  Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Tdoc c(2), Archivo c(120), valida1 c(1), Peso N(10, 2))
 Endfunc
 **************************
 Function CreaTemporalvtasporservicios(Calias)
 Create Cursor (Calias)(Nitem N(2), Desc c(120), Unid c(15), cant N(10, 4), Prec N(16, 7), nitem1 N(2), nitem2 N(2), Tipovta c(1), ;
-	Ndoc c(12), hash c(30), fech d, codc N(5), Guia c(12), Direccion c(120), dni c(8), Forma c(30), fono c(15), Archivo c(120), detalle c(120), ;
-	Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Form c(30), Referencia c(120), Ndo2 c(12), fechav d, ;
-	cletras c(150), Tigv N(5, 3), valor N(12, 2), igv N(12, 2), Total N(12, 2), Exon N(12, 2), Tdoc c(2), valida1 c(1), detraccion N(10, 2), ;
-	coddetrac c(10), Impo N(12, 2), anticipo N(12, 2), refanticipo  c(60), idanticipo N(8), pordetra N(8, 2))
+	  Ndoc c(12), hash c(30), fech d, codc N(5), Guia c(12), Direccion c(120), dni c(8), Forma c(30), fono c(15), Archivo c(120), detalle c(120), ;
+	  Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Form c(30), Referencia c(120), Ndo2 c(12), fechav d, ;
+	  cletras c(150), Tigv N(5, 3), valor N(12, 2), igv N(12, 2), Total N(12, 2), Exon N(12, 2), Tdoc c(2), valida1 c(1), detraccion N(10, 2), ;
+	  coddetrac c(10), Impo N(12, 2), anticipo N(12, 2), refanticipo  c(60), idanticipo N(8), pordetra N(8, 2))
 Endfunc
 *********************************
 Function CREATEMPORALVTASPORSERVICIOS1(Calias)
 Create Cursor (Calias)(Nitem N(2), Desc c(120), Unid c(5), cant N(8, 2), Prec N(13, 7), nitem1 N(2), nitem2 N(2), ;
-	Ndoc c(12), hash c(30), fech d, codc N(5), Guia c(12), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
-	Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Form c(30), Referencia c(120), ticbper N(6, 2), icbper N(6, 2), ;
-	Ndo2 c(12), fechav d, cletras c(150), Tigv N(5, 3), Archivo c(120), coda1 c(15), valor N(12, 2), igv N(12, 2), Impo N(12, 2), ;
-	detraccion N(8, 2), Tdoc c(2), pordetra N(5, 2), coddetrac c(10), Total N(12, 2), Contacto c(100), detalle c(120), tipoletra c(1) Default '', ;
-	gratuita N(10, 2), costoRef N(6, 2), perc N(10, 2), anticipo N(12, 2), Coda c(10))
+	  Ndoc c(12), hash c(30), fech d, codc N(5), Guia c(12), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
+	  Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Form c(30), Referencia c(120), ticbper N(6, 2), icbper N(6, 2), ;
+	  Ndo2 c(12), fechav d, cletras c(150), Tigv N(5, 3), Archivo c(120), coda1 c(15), valor N(12, 2), igv N(12, 2), Impo N(12, 2), ;
+	  detraccion N(8, 2), Tdoc c(2), pordetra N(5, 2), coddetrac c(10), Total N(12, 2), Contacto c(100), detalle c(120), tipoletra c(1) Default '', ;
+	  gratuita N(10, 2), costoRef N(6, 2), perc N(10, 2), anticipo N(12, 2), Coda c(10))
 Endfunc
 *********************************
 Function creaTemporalGuiasTransportista(Calias)
 Create Cursor (Calias)(Nitem N(2), Desc c(120), Unid c(5), cant N(10, 4), Peso N(16, 7), nitem1 N(2), nitem2 N(2), ;
-	Ndoc c(12), hash c(30), fech d, fect d, Direccion c(120), dni c(8), Archivo c(120), detalle c(120), ;
-	remitente c(120), nrucr c(11), Referencia c(120), Ndo2 c(12), destinatario c(120), nrucd c(11), razont c(100), ruct c(11), ;
-	marca c(100), Placa c(20), placa1 c(11), Constancia c(20), brevete c(20), configuracion c(20), ptop c(120), ptoll c(120))
+	  Ndoc c(12), hash c(30), fech d, fect d, Direccion c(120), dni c(8), Archivo c(120), detalle c(120), ;
+	  remitente c(120), nrucr c(11), Referencia c(120), Ndo2 c(12), destinatario c(120), nrucd c(11), razont c(100), ruct c(11), ;
+	  marca c(100), Placa c(20), placa1 c(11), Constancia c(20), brevete c(20), configuracion c(20), ptop c(120), ptoll c(120))
 Endfunc
 *********************************
 Function Createmporalpreventacunidades(Calias)
 Create Cursor unidades(uequi N(7, 4), ucoda N(8), uunid c(15), uitem N(4), uprecio N(12, 6), uidepta N(8), ucosto N(10, 2), ucomi N(6, 3))
 Create Cursor (Calias)(Descri c(120), Unid c(15), cant N(10, 2), Prec N(13, 8), Impo N(12, 2), Nreg N(8), pmayor N(8, 2), pmenor N(8, 2), Nitem N(4), ;
-	Ndoc c(10), costo N(13, 8), pos N(1), Tdoc c(2), Form c(1), tipro c(1), alma N(10, 2), Item N(4), Coda N(8), Valida c(1), perc N(8, 2), ;
-	calma c(3), idco N(8), codc N(8), aprecios c(1), comi N(7, 4), npagina N(4), equi N(8, 2) Default 1, duni c(15), idepta N(8), valida1 c(1), Fecha d, Cliente c(120), Vendedor c(100))
+	  Ndoc c(10), costo N(13, 8), pos N(1), Tdoc c(2), Form c(1), tipro c(1), alma N(10, 2), Item N(4), Coda N(8), Valida c(1), perc N(8, 2), ;
+	  calma c(3), idco N(8), codc N(8), aprecios c(1), comi N(7, 4), npagina N(4), equi N(8, 2) Default 1, duni c(15), idepta N(8), valida1 c(1), Fecha d, Cliente c(120), Vendedor c(100))
 Select (Calias)
 Index On Descri Tag Descri
 Index On Nitem Tag Items
@@ -7025,13 +7037,22 @@ Endif
 If r > 0 Then
 	Return 1
 Else
-	Aviso(csql)
-	If Aerror(laError) > 0
+	If Aerror(laError) > 0 Then
 		lcMsg = ""
+		lcMsgEmail = m.csql
 		For ln = 1 To Alen(laError, 2)
 			lcMsg = lcMsg + Transform(laError(1, ln)) + Chr(13)
+			m.lcMsgEmail = m.lcMsgEmail + ' ' + Transform(laError(1, ln))
 		Endfor
 		Aviso(lcMsg)
+		_Screen.ocorreo.emailcliente = "soporte@companysysven.com"
+		_Screen.ocorreo.asunto = " Error Database: - " + Alltrim(fe_gene.Empresa)
+		_Screen.ocorreo.Cmensaje = Alltrim(m.lcMsgEmail)
+		If _Screen.ocorreo.enviarasoporte() < 1 Then
+		Else
+		Endif
+	Else
+		Aviso(csql)
 	Endif
 	Return 0
 Endif
@@ -7105,7 +7126,7 @@ Endwith
 ****************************
 Function HayInternet()
 Declare Long InternetGetConnectedState In "wininet.dll" Long lpdwFlags, Long dwReserved
-If InternetGetConnectedState(0,0) <> 1
+If InternetGetConnectedState(0, 0) <> 1
 	Aviso("Sin conexión a Internet")
 	Return  0
 Endif
@@ -7162,9 +7183,9 @@ goApp.npara9  = np9
 goApp.npara10 = np10
 goApp.npara11 = np11
 goApp.npara12 = np12
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Guias Por Consignación')
 	Return 0
@@ -7189,9 +7210,9 @@ goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
 goApp.npara11 = np11
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Actualizando Guias Por Consignación')
 	Return 0
@@ -7204,13 +7225,13 @@ Function verificasiyatieneoferta(np1)
 Local lC
 *:Global codigopro
 codigopro = Val(goApp.Codigopromocion)
-TEXT To lC Noshow Textmerge Pretext 7
+Text To lC Noshow Textmerge Pretext 7
   CAST(IFNULL(SUM(cant),0) AS DECIMAL(6,2)) AS cant,idart FROM
   fe_rcom AS r
   INNER JOIN fe_kar AS k ON k.idauto=r.idauto
   INNER JOIN fe_clie AS c ON c.idclie=r.`idcliente`
   WHERE idart=<<codigopro>> AND k.acti='A' AND r.acti='A' AND TRIM(deta)='<<np1>>'  GROUP BY idart
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, 'ofertas') < 1 Then
 	Return 0
 Endif
@@ -7332,16 +7353,28 @@ Return (lnNumError)
 Endfunc
 *****************************************
 Function AbreConexion(nopcion)
+*!*	If Len(Alltrim(_Screen.conector)) = 0 Then
+*!*		lcC1 = "Driver={MySQL ODBC 5.1 Driver};Port=3306;Server=" + Alltrim(_Screen.Server) + ";Database=" + Alltrim(_Screen.Database) + ";Uid=" + Alltrim(_Screen.User) + ";Pwd=" + Alltrim(_Screen.pwd) + ";OPTION=131329;"
+*!*	Else
+*!*		lcC1 = "Driver={" + Alltrim(_Screen.conector) + "};Port=3306;Server=" + Alltrim(_Screen.Server)  + ";Database=" + Alltrim(_Screen.Database) + ";Uid=" + Alltrim(_Screen.User) + ";Pwd=" + Alltrim(_Screen.pwd) + ";OPTION=131329;"
+*!*	ENDIF
 If Len(Alltrim(_Screen.conector)) = 0 Then
-	lcC1 = "Driver={MySQL ODBC 5.1 Driver};Port=3306;Server=" + Alltrim(_Screen.Server) + ";Database=" + Alltrim(_Screen.Database) + ";Uid=" + Alltrim(_Screen.User) + ";Pwd=" + Alltrim(_Screen.pwd) + ";OPTION=131329;"
+	m.lcC1 = "Driver={" + Alltrim(_Screen.conector) + "};Port=" + Alltrim(_Screen.puerto) + ";Server=" + Alltrim(_Screen.Server)  + ";Database=" + Alltrim(_Screen.Database) + ";Uid=" + Alltrim(_Screen.User) + ";Pwd=" + Alltrim(_Screen.pwd);
+		+ Iif(Len(Alltrim(_Screen.charset)) > 0, ';' + Alltrim(_Screen.charset), '');
+		+ Iif(Len(Alltrim(_Screen.sslmode)) > 0, ';' + Alltrim(_Screen.sslmode), '');
+		+ Iif(Len(Alltrim(_Screen.Option)) > 0, ';' + Alltrim(_Screen.Option), '')
 Else
-	lcC1 = "Driver={" + Alltrim(_Screen.conector) + "};Port=3306;Server=" + Alltrim(_Screen.Server)  + ";Database=" + Alltrim(_Screen.Database) + ";Uid=" + Alltrim(_Screen.User) + ";Pwd=" + Alltrim(_Screen.pwd) + ";OPTION=131329;"
+	m.lcC1 = "Driver={" + Alltrim(_Screen.conector) + "};Port=" + Alltrim(_Screen.puerto) + ";Server=" + Alltrim(_Screen.Server)  + ";Database=" + Alltrim(_Screen.Database) + ";Uid=" + Alltrim(_Screen.User) + ";Pwd=" + Alltrim(_Screen.pwd);
+		+ Iif(Len(Alltrim(_Screen.charset)) > 0, ';' + Alltrim(_Screen.charset), '');
+		+ Iif(Len(Alltrim(_Screen.sslmode)) > 0, ';' + Alltrim(_Screen.sslmode), '');
+		+ Iif(Len(Alltrim(_Screen.Option)) > 0, ';' + Alltrim(_Screen.Option), '')
 Endif
 = SQLSetprop(0, "DispLogin", 3)
 idconecta = Sqlstringconnect(lcC1) && ESTABLECER LA CONEXION
 If idconecta < 1 Then
 	= Aerror(laError)
-	aviso(laError[2])
+	Aviso(laError[2])
+*	MESSAGEBOX(m.lcC1)
 	Return - 1
 Else
 	= SQLSetprop(idconecta, 'PacketSize', 5000)
@@ -7358,7 +7391,7 @@ Procedure controlerrores(toExc As Exception)
 cform = ""
 If Type( "_Screen.ActiveForm" ) = "O"
 	oform = _Screen.ActiveForm
-	cform = "Opción: " + oform.Caption
+	cform = "Opción: " + Alltrim(oform.Caption)
 Else
 	cform = "Opción"
 Endif
@@ -7366,6 +7399,9 @@ Do Case
 *!*	CASE m.toExc.ErrorNo=1
 *!*	    Cmensaje=" El Archivo No existe "
 *!*		Do Form ka_error With Cmensaje
+Case m.toExc.ErrorNo = 125
+	Cmensaje = "La impresora no está disponible."
+	Do Form ka_error With Cmensaje
 Case m.toExc.ErrorNo = 1426
 	Cmensaje = "El Programa que intenta Ejecutar no responde"
 	Do Form ka_error With Cmensaje
@@ -7385,14 +7421,14 @@ Case m.toExc.ErrorNo = 1733
 Otherwise
 	Local lcErrorInfo
 	cproyecto = Sys(2003) + ' - ' + Alltrim(goApp.calma) + ' ' + Alltrim(Id()) + ' ' + m.cform
-	m.lcErrorInfo = "Error N°..........: " + Transform(m.toExc.ErrorNo)  + CR + ;
-		"Linea No....: " + Transform(m.toExc.Lineno) + CR + ;
-		"Mensaje.....: " + m.toExc.Message + CR + ;
-		"Programa.. .: " + m.toExc.Procedure + CR + ;
-		"Detalle.....: " + m.toExc.Details + CR + ;
-		"StackLevel..: " + Transform(m.toExc.StackLevel) + CR + ;
-		"Linea.......: " + m.toExc.LineContents + CR + ;
-		"Comentario..: " + m.toExc.Comment + CR + ;
+	m.lcErrorInfo = "Error N°..........: " + Alltrim(Transform(m.toExc.ErrorNo))  + '-' +;
+		"Linea No....: " + Transform(m.toExc.Lineno) + '-' + ;
+		"Mensaje.....: " + Alltrim(m.toExc.Message)  + ' ' +;
+		"Programa.. .: " + Alltrim(m.toExc.Procedure) + ' ' + ;
+		"Detalle.....: " + Alltrim(m.toExc.Details) + ' ' + ;
+		"StackLevel..: " + Alltrim(Transform(m.toExc.StackLevel)) + ' ' + ;
+		"Linea.......: " + Alltrim(m.toExc.LineContents) + ' ' + ;
+		"Comentario..: " + Alltrim(m.toExc.Comment) + ' ' + ;
 		"Proyecto....: " + cproyecto
 	Do Form ka_error With m.lcErrorInfo
 Endcase
@@ -7419,18 +7455,18 @@ Endfunc
 Function CreaTemporalAlmacenes()
 Create Cursor Precios(Precio N(8, 2), Coda N(8), iden N(1), Nitem N(2))
 Create Cursor tmpv(Coda N(8), Descri c(150), Unid c(4), Prec N(13, 5), cant N(10, 3), ;
-	Ndoc c(12), Nreg N(8), alma N(10, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), Impo N(12, 2), ;
-	pos N(2), comi N(7, 3), prem N(8, 2), premax N(8, 2), costo N(10, 2),;
-	uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), sie N(10, 2), och N(10, 2), nue N(10, 2), die N(10, 2), onc N(10, 2), doce N(10, 2),;
-	trece N(10, 2), catorce N(10, 2), quince N(10, 2),;
-	Valida c(1), Acti c(1), tipro c(1), idcosto N(10), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), ;
-	dni c(8), Forma c(30), fono c(15), Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Ndo2 c(12), Form c(30), ;
-	aprecios c(1), Modi c(1), cletras c(120), SerieProducto c(60), Idseriep N(5), valida1 c(1), Codigo1 c(30), ;
-	Referencia c(120), fechav d, codigof c(40), Idseriex N(5), fect d, ;
-	tref c(2), Refe c(20), fecr d, detalle c(120), fechafactura d, ;
-	calma c(3), Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), ptop c(150), ptoll c(120), Archivo c(120), ;
-	ndni c(8), conductor c(120), marca c(100), Placa c(15), placa1 c(15), Constancia c(30), almacen1 c(50), almacen2 c(50), ;
-	brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), equi N(8, 3), Peso N(8, 2), origen c(100), destino c(100), tipotra c(15))
+	  Ndoc c(12), Nreg N(8), alma N(10, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), Impo N(12, 2), ;
+	  pos N(2), comi N(7, 3), prem N(8, 2), premax N(8, 2), costo N(10, 2),;
+	  uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), sie N(10, 2), och N(10, 2), nue N(10, 2), die N(10, 2), onc N(10, 2), doce N(10, 2),;
+	  trece N(10, 2), catorce N(10, 2), quince N(10, 2),;
+	  Valida c(1), Acti c(1), tipro c(1), idcosto N(10), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), ;
+	  dni c(8), Forma c(30), fono c(15), Vendedor c(60), dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Ndo2 c(12), Form c(30), ;
+	  aprecios c(1), Modi c(1), cletras c(120), SerieProducto c(60), Idseriep N(5), valida1 c(1), Codigo1 c(30), ;
+	  Referencia c(120), fechav d, codigof c(40), Idseriex N(5), fect d, ;
+	  tref c(2), Refe c(20), fecr d, detalle c(120), fechafactura d, ;
+	  calma c(3), Nitem N(3), saldo N(10, 2), idin N(8), nidkar N(10), coda1 c(15), ptop c(150), ptoll c(120), Archivo c(120), ;
+	  ndni c(8), conductor c(120), marca c(100), Placa c(15), placa1 c(15), Constancia c(30), almacen1 c(50), almacen2 c(50), ;
+	  brevete c(20), razont c(120), ructr c(11), Motivo c(1), Codigo c(30), equi N(8, 3), Peso N(8, 2), origen c(100), destino c(100), tipotra c(15))
 Create Cursor Seriesp(SerieProducto c(60), Idseriep N(5), Coda N(5), Nitem N(10), remitente c(100), rucremitente c(11))
 Endfunc
 ***********************
@@ -7452,10 +7488,10 @@ goApp.npara10 = np10
 goApp.npara11 = np11
 goApp.npara12 = np12
 goApp.npara13 = np13
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' No Es Posible Registrar el Detalle del Traspaso')
 	Return 0
@@ -7493,11 +7529,11 @@ goApp.npara21 = np21
 goApp.npara22 = np22
 goApp.npara23 = np23
 goApp.npara24 = np24
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(Erroproc + ' Registrando Traspasos')
 	Return 0
@@ -7521,9 +7557,9 @@ goApp.npara7  = np7
 goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Guias de Remisión Por Ventas')
 	Return 0
@@ -7547,9 +7583,9 @@ goApp.npara7  = np7
 goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Guias de Remisión Traspaso')
 	Return 0
@@ -7573,9 +7609,9 @@ goApp.npara7  = np7
 goApp.npara8  = np8
 goApp.npara9  = np9
 goApp.npara10 = np10
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Guias de Remisión Por Ventas')
 	Return 0
@@ -7586,9 +7622,9 @@ Endfunc
 ***************************
 Function VerificaSiguiaVtaEstaIngresada(np1)
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
      guia_idgui as idauto FROM fe_guias WHERE guia_ndoc='<<np1>>' AND guia_acti='A'
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, 'Ig') < 1 Then
 	Return 0
 Else
@@ -7602,9 +7638,9 @@ Endfunc
 ***************************
 Function VerificaSiguiaVtaEstaIngresadavtas(np1)
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
      guia_idgui as idauto FROM fe_guias WHERE guia_ndoc='<<np1>>' AND guia_acti='A' and guia_moti='V'
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, 'Ig') < 1 Then
 	Return 0
 Else
@@ -7617,31 +7653,29 @@ Endif
 Endfunc
 *****************************
 Procedure Errorbd(ccomando As String)
-Local laError
 Local lcError
-Dimension laError(1)
 = Aerror(laError)
-If Type("laError") = "A"
+If Type("laError", 1) = "A"
 	lcError = laError(1, 3)
 Else
 	lcError = 'Hubo Un error de Conexión a la Base de Datos'
 Endif
-Cmensaje = Alltrim(ccomando) + Chr(13) + Chr(13) + 	lcError
+Cmensaje = Alltrim(ccomando) + ' ' + lcError
 Do Form ka_error With Cmensaje
 Endproc
 *******************************
 Function  CreatmpLetras(Calias)
 Create Cursor (Calias)(Ndoc c(20), dias N(3), fevto d, detalle c(25), impc N(10, 2), Sw N(1) Default 0, mrete N(10, 2), ;
-	Impo N(10, 2), Razo c(100), nruc c(11), fono c(10)Null, Dire c(100), dni c(10), Cimporte c(80), ciud c(80), ;
-	anombre c(100), adire c(100), afono c(10)Null, anruc c(11), fech d, Tipo c(1), situa c(10), ;
-	inic N(10, 2), impoo N(10, 2), impresion N(1), codc N(15), dscto N(10, 2), nmonto N(12, 2), ide N(8), Mensaje c(30), chkdni N(1), Moneda c(1))
+	  Impo N(10, 2), Razo c(100), nruc c(11), fono c(10)Null, Dire c(100), dni c(10), Cimporte c(80), ciud c(80), ;
+	  anombre c(100), adire c(100), afono c(10)Null, anruc c(11), fech d, Tipo c(1), situa c(10), ;
+	  inic N(10, 2), impoo N(10, 2), impresion N(1), codc N(15), dscto N(10, 2), nmonto N(12, 2), ide N(8), Mensaje c(30), chkdni N(1), Moneda c(1))
 Endfunc
 *******************************
 Function  GeneraCorrelativoBancos(np1)
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
      UPDATE fe_sucu SET empr_banc=empr_banc+1 WHERE idalma=<<np1>>
-ENDTEXT
+Endtext
 If SQLExec(goApp.bdConn, lC) < 1 Then
 	Errorbd(lC)
 	Return 0
@@ -7652,9 +7686,9 @@ Endfunc
 ********************************
 Function BuscarSeriesBancos(np1)
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
 Select  empr_banc From fe_sucu Where idalma =<<np1>>
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, 'correlativo') < 1 Then
 	Return 0
 Endif
@@ -7665,9 +7699,9 @@ Function MuestraClientes10(np1, Ccursor)
 Local lC, lp
 lC			 = 'PROMUESTRACLIENTES10'
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, Ccursor) = 0 Then
 	Errorbd(ERRORPROC + 'Mostrando Clientes')
 	Return 0
@@ -7699,10 +7733,10 @@ goApp.npara15 = np15
 goApp.npara16 = np16
 goApp.npara17 = np17
 goApp.npara18 = np18
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC +  '   Ingresando Créditos con sucursal')
 	Return 0
@@ -7727,7 +7761,7 @@ Endfunc
 Define Class Resumenboletas As Custom
 	Function ConsultaBoletasyNotasporenviar(f1, f2)
 	Local lC
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    resu_fech,enviados,resumen,resumen-enviados,enviados-resumen
 		FROM(SELECT resu_fech,CAST(SUM(enviados) AS DECIMAL(12,2)) AS enviados,CAST(SUM(resumen) AS DECIMAL(12,2))AS resumen FROM(
 		SELECT resu_fech,CASE tipo WHEN 1 THEN resu_impo ELSE 0 END AS enviados,
@@ -7743,7 +7777,7 @@ Define Class Resumenboletas As Custom
 		INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 		WHERE  f.fech between '<<f1>>' and '<<f2>>' and f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1)='F' AND w.tdoc='03' AND f.idcliente>0 ) AS x)
 		AS y GROUP BY resu_fech ORDER BY resu_fech) AS zz  WHERE resumen-enviados>=1
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, 'rbolne') < 1 Then
 		Return 0
 	Endif
@@ -7760,7 +7794,7 @@ Define Class Resumenboletas As Custom
 		goApp.AddProperty("cdatos", "")
 	Endif
 	If goApp.cdatos = 'S' Then
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	    resu_fech,enviados,resumen,resumen-enviados,enviados-resumen
 		FROM(SELECT resu_fech,CAST(SUM(enviados) AS DECIMAL(12,2)) AS enviados,CAST(SUM(resumen) AS DECIMAL(12,2))AS resumen FROM(
 		SELECT resu_fech,CASE tipo WHEN 1 THEN resu_impo ELSE 0 END AS enviados,
@@ -7776,10 +7810,10 @@ Define Class Resumenboletas As Custom
 		INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 		WHERE f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1) in('F','B') AND w.tdoc='03' AND f.idcliente>0 and f.codt=<<goapp.tienda>>) AS x)
 		AS y GROUP BY resu_fech ORDER BY resu_fech) AS zz  WHERE resumen-enviados>=1
-		ENDTEXT
+		Endtext
 	Else
 
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 	    resu_fech,enviados,resumen,resumen-enviados,enviados-resumen
 		FROM(SELECT resu_fech,CAST(SUM(enviados) AS DECIMAL(12,2)) AS enviados,CAST(SUM(resumen) AS DECIMAL(12,2))AS resumen FROM(
 		SELECT resu_fech,CASE tipo WHEN 1 THEN resu_impo ELSE 0 END AS enviados,
@@ -7795,7 +7829,7 @@ Define Class Resumenboletas As Custom
 		INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 		WHERE f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1)in('F','B') AND w.tdoc='03' AND f.idcliente>0 ) AS x)
 		AS y GROUP BY resu_fech ORDER BY resu_fech) AS zz  WHERE resumen-enviados>=1
-		ENDTEXT
+		Endtext
 	Endif
 	If EJECutaconsulta(lC, 'rbolne') < 1 Then
 		Return 0
@@ -7808,9 +7842,9 @@ Define Class cpe As Custom
 	Function descargarxmldesdedata(carfile, nid)
 	Local lC
 *:Global cdr, cdrxml, crutaxml, crutaxmlcdr, cxml
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
       CAST(rcom_xml as char) as rcom_xml,CAST(rcom_cdr as char) as rcom_cdr FROM fe_rcom WHERE idauto=<<nid>>
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, 'filess') < 1 Then
 		Return
 	Endif
@@ -7855,9 +7889,9 @@ Define Class cpe As Custom
 	Function descargarxmlguiadesdedata(carfile, nid)
 	Local lC
 *:Global cdr, cdrxml, crutaxml, crutaxmlcdr, cxml
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
        CAST(guia_xml AS CHAR) AS guia_xml,CAST(guia_cdr AS CHAR) AS guia_cdr FROM fe_guias WHERE guia_idgui=<<nid>>
-	ENDTEXT
+	Endtext
 	If EJECutaconsulta(lC, 'filess') < 1 Then
 		Return
 	Endif
@@ -7902,14 +7936,14 @@ Enddefine
 Function CreatemporalVentasPsys3(Calias)
 Create Cursor Precios(Precio N(8, 2), Coda N(8), iden N(1), Nitem N(2))
 Create Cursor (Calias)(Coda N(8), Desc c(120), Unid c(4), Prec N(13, 8), cant N(10, 4), ;
-	Ndoc c(12), Nreg N(8), alma N(10, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
-	pos N(2), come N(7, 3), Comc N(7, 3), prem N(8, 2), premax N(8, 2), costo N(10, 2), calma c(3), uno N(10, 2), Dos N(10, 2), costoRef N(12, 4), ;
-	Nitem N(3), Valida c(1), Impo N(10, 2), Acti c(1), tipro c(1), idcosto N(10), aprecios c(1), Modi c(1), cletras c(120), ;
-	perc N(5, 2), Precio N(13, 8), perc1 N(5, 2), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
-	dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Ndo2 c(12), Form c(30), nint N(2), caant N(10, 2), comi N(8, 4), ;
-	Referencia c(120), Vendedor c(50), fechav d, copia c(1), Archivo c(120), Tigv N(5, 2), Idauto N(12), IDautoP N(12), Tdoc c(2), ;
-	valida1 c(1), ticbper N(6, 2), coda1 c(15), icbper N(6, 2), Precio1 N(13, 8), valor N(12, 2), igv N(12, 2), saldo N(12, 2), Total N(12, 2), ;
-	coddetrac c(10), detraccion N(10, 2), idalma N(3), anticipo N(10, 2), refanticipo c(60), Tienda c(10), ctda c(10), Codigo1 c(15), tda N(2))
+	  Ndoc c(12), Nreg N(8), alma N(10, 2), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
+	  pos N(2), come N(7, 3), Comc N(7, 3), prem N(8, 2), premax N(8, 2), costo N(10, 2), calma c(3), uno N(10, 2), Dos N(10, 2), costoRef N(12, 4), ;
+	  Nitem N(3), Valida c(1), Impo N(10, 2), Acti c(1), tipro c(1), idcosto N(10), aprecios c(1), Modi c(1), cletras c(120), ;
+	  perc N(5, 2), Precio N(13, 8), perc1 N(5, 2), hash c(30), fech d, codc N(5), Guia c(10), Direccion c(120), dni c(8), Forma c(30), fono c(15), ;
+	  dias N(3), razon c(120), nruc c(11), Mone c(1) Default 'S', Ndo2 c(12), Form c(30), nint N(2), caant N(10, 2), comi N(8, 4), ;
+	  Referencia c(120), Vendedor c(50), fechav d, copia c(1), Archivo c(120), Tigv N(5, 2), Idauto N(12), IDautoP N(12), Tdoc c(2), ;
+	  valida1 c(1), ticbper N(6, 2), coda1 c(15), icbper N(6, 2), Precio1 N(13, 8), valor N(12, 2), igv N(12, 2), saldo N(12, 2), Total N(12, 2), ;
+	  coddetrac c(10), detraccion N(10, 2), idalma N(3), anticipo N(10, 2), refanticipo c(60), Tienda c(10), ctda c(10), Codigo1 c(15), tda N(2))
 
 
 
@@ -8074,9 +8108,9 @@ Local lC, lp
 lC			 = "FUnVerificaBloqueo"
 goApp.npara1 = np1
 Ccursor		 = 'v'
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, Ccursor) = 0 Then
 	Errorbd(ERRORPROC + ' No Se Puede Obtener el estado del Bloqueo para este Registro')
 	Return 0
@@ -8091,15 +8125,15 @@ Local lp
 cur	= "Ctaspr"
 Na	= Val(goApp.año)
 If Na >= 2020 Then
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
      pcta as ctap,GROUP_CONCAT(TRIM(nomb)) AS nomb FROM (
      SELECT LEFT(ncta,2) AS pcta,nomb FROM fe_plan WHERE plan_acti='A' AND RIGHT(ncta,2)='00' ORDER BY pcta) AS p GROUP BY pcta
-	ENDTEXT
+	Endtext
 Else
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
       pcta as ctap,GROUP_CONCAT(TRIM(nomb)) AS nomb FROM (
       SELECT LEFT(ncta,2) AS pcta,nomb FROM fe_plan WHERE plan_acti='A' AND RIGHT(ncta,2)='00' ORDER BY pcta) AS p GROUP BY pcta
-	ENDTEXT
+	Endtext
 Endif
 If EJECutaconsulta(lp, cur) <= 0 Then
 	Return 0
@@ -8258,7 +8292,7 @@ Define Class InactivityTimer As Timer
 * Every event counts as activity
 *------------------------------------------------------------
 	Procedure WndProc( ;
-		HWnd As Long, Msg As Long, wParam As Long, Lparam As Long )
+		  HWnd As Long, Msg As Long, wParam As Long, Lparam As Long )
 	This.tLastActivity = Datetime()
 	_Screen.Caption	   = Str(Val(_Screen.Caption) + 1)
 	Return CallWindowProc(This.nOldProc, HWnd, Msg, wParam, Lparam)
@@ -8298,13 +8332,13 @@ Function Color2RGBpair
 * Based on function Color2RGB_1 by ???
 Lparameters tnColorFore, tnColorBack
 Return Strtran("RGB(" + ;
-	Str(tnColorFore % 256, 3) + "," + ;
-	Str(Floor(tnColorFore % 256^2 / 256), 3) + "," + ;
-	Str(Floor(tnColorFore / 256^2), 3) + "," + ;
-	Str(tnColorBack % 256, 3) + "," + ;
-	Str(Floor(tnColorBack % 256^2 / 256), 3) + "," + ;
-	Str(Floor(tnColorBack / 256^2), 3) + ;
-	")", " ", "")
+	  Str(tnColorFore % 256, 3) + "," + ;
+	  Str(Floor(tnColorFore % 256^2 / 256), 3) + "," + ;
+	  Str(Floor(tnColorFore / 256^2), 3) + "," + ;
+	  Str(tnColorBack % 256, 3) + "," + ;
+	  Str(Floor(tnColorBack % 256^2 / 256), 3) + "," + ;
+	  Str(Floor(tnColorBack / 256^2), 3) + ;
+	  ")", " ", "")
 Endfunc
 ***************************
 Function  ValidarSerie(Cserie)
@@ -8375,7 +8409,7 @@ Else
 	Cruc = oempresa.nruc
 Endif
 *MESSAGEBOX(cruc,16,'Hola')
-TEXT To cdata Noshow Textmerge
+Text To cdata Noshow Textmerge
 	{
 	"ruc":"<<cruc>>",
 	"tdoc":"<<ctdoc>>",
@@ -8384,7 +8418,7 @@ TEXT To cdata Noshow Textmerge
 	"cfecha":"<<dfecha>>",
 	"cimporte":"<<nimpo>>"
 	}
-ENDTEXT
+Endtext
 *!*	wait WINDOW cserie
 *!*	wait WINDOW cnumero
 *!*	MESSAGEBOX(cdata)
@@ -8428,7 +8462,7 @@ Else
 	Cruc = oempresa.nruc
 Endif
 *MESSAGEBOX(cruc,16,'Hola')
-TEXT To cdata Noshow Textmerge
+Text To cdata Noshow Textmerge
 	{
 	"ruc":"<<cruc>>",
 	"ndoc":"<<cndoc>>",
@@ -8438,7 +8472,7 @@ TEXT To cdata Noshow Textmerge
 	"ticket":"<<cticket>",
 	"idauto":"<<nidauto>>"
 	}
-ENDTEXT
+Endtext
 
 oHTTP = Createobject("MSXML2.XMLHTTP")
 oHTTP.Open("post", pURL_WSDL, .F.)
@@ -8481,7 +8515,7 @@ Else
 	Cruc = oempresa.nruc
 Endif
 *MESSAGEBOX(cruc,16,'Hola')
-TEXT To cdata Noshow Textmerge
+Text To cdata Noshow Textmerge
 	{
 	"ruc":"<<cruc>>",
 	"tdoc":"<<ctdoc>>",
@@ -8491,7 +8525,7 @@ TEXT To cdata Noshow Textmerge
 	"cimporte":"<<nimpo>>",
 	"ctoken":"<<token>>"
 	}
-ENDTEXT
+Endtext
 oHTTP = Createobject("MSXML2.XMLHTTP")
 oHTTP.Open("post", pURL_WSDL, .F.)
 oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -8528,9 +8562,9 @@ If odvto.Vdvto = '0' Then
 	np3		= "0 El Resumen de Boletas ha sido aceptado desde APISUNAT"
 	ctoken = ovdvto.token
 	dfenvio	= Cfechas(fe_gene.fech)
-	TEXT To lcr Noshow Textmerge
+	Text To lcr Noshow Textmerge
      UPDATE fe_resboletas SET resu_mens='<<np3>>',resu_feen=CURDATE() WHERE resu_tick='<<cticket>>';
-	ENDTEXT
+	Endtext
 	ncon = AbreConexion()
 	Sw	 = 1
 	Select * From rmvtos Where Alltrim(rmvtos.resu_tick) = cticket Into Cursor ax
@@ -8541,11 +8575,11 @@ If odvto.Vdvto = '0' Then
 		nhasta = ax.resu_hast
 		cTdoc  = ax.resu_tdoc
 		Cserie = ax.resu_serie
-		TEXT To lC Noshow
+		Text To lC Noshow
 			Select  idauto,numero,tdoc,fech,Impo,ndoc From(Select  idauto,ndoc,Cast(mid(ndoc, 5) As unsigned) As numero,tdoc,fech,Impo
 							From fe_rcom F 	Where tdoc = ?ctdoc And Acti = 'A' 	And idcliente > 0) As x Where numero Between ?ndesde
 					And ?nhasta  and Left(ndoc, 4) = ?cserie
-		ENDTEXT
+		Endtext
 		If SQLExec(ncon, lC, 'crb') < 0 Then
 			Errorbd(lC)
 			Sw = 0
@@ -8559,9 +8593,9 @@ If odvto.Vdvto = '0' Then
 			If od.Vdvto = '1' Then
 				Mensaje(od.Mensaje)
 				crpta = od.Mensaje
-				TEXT  To lC Noshow Textmerge Pretext 7
+				Text  To lC Noshow Textmerge Pretext 7
                      UPDATE fe_rcom SET rcom_mens='<<crpta>>',rcom_fecd='<<dfenvio>>' WHERE idauto=<<np1>>
-				ENDTEXT
+				Endtext
 				If Ejecutarsql(lC) < 1 Then
 					Sw = 0
 					Exit
@@ -8598,9 +8632,9 @@ Local lC, lcr
 *:Global cserie, ctdoc, dfenvio, ndesde, nhasta, np1, np3, odvto, sw
 np3		= "0 El Resumen de Boletas ha sido aceptado desde API-SUNAT"
 dfenvio	= Cfechas(fe_gene.fech)
-TEXT To lcr Noshow Textmerge
+Text To lcr Noshow Textmerge
    UPDATE fe_resboletas SET resu_mens='<<np3>>',resu_feen=CURDATE() WHERE resu_tick='<<cticket>>';
-ENDTEXT
+Endtext
 Sw	 = 1
 Select * From rmvtos Where Alltrim(rmvtos.resu_tick) = cticket Into Cursor ax
 Select ax
@@ -8614,10 +8648,10 @@ Scan All
 	Else
 		Cserie = ax.resu_serie
 	Endif
-	TEXT To lC Noshow
+	Text To lC Noshow
 			Select  idauto,	numero,tdoc,fech,Impo,ndoc FROM (Select  idauto,	ndoc,Cast(mid(ndoc, 5) As unsigned) As numero,tdoc,	fech,Impo From fe_rcom F
 			Where tdoc = ?ctdoc And Acti = 'A'  And idcliente > 0 and impo<>0) As x where numero Between ?ndesde And ?nhasta And Left(ndoc, 4) = ?cserie order by ndoc
-	ENDTEXT
+	Endtext
 	If SQLExec(goApp.bdConn, lC, 'crb') < 1 Then
 		Errorbd(lC)
 		Sw = 0
@@ -8639,9 +8673,9 @@ Scan All
 		odvto = ConsultaApisunat(crb.Tdoc, cseriedcto, Trim(Substr(crb.Ndoc, 5)), Dtoc(crb.fech), Alltrim(Str(Abs(crb.Impo), 12, 2)))
 		If odvto.Vdvto = '1' Then
 			Mensaje(odvto.Mensaje + ' ' + crb.Ndoc)
-			TEXT  To lC Noshow Textmerge Pretext 7
+			Text  To lC Noshow Textmerge Pretext 7
                UPDATE fe_rcom SET rcom_mens='<<np3>>',rcom_fecd='<<dfenvio>>' WHERE idauto=<<np1>>
-			ENDTEXT
+			Endtext
 			If Ejecutarsql(lC) < 1 Then
 				Sw = 0
 				Exit
@@ -8713,9 +8747,9 @@ goApp.npara3 = np3
 goApp.npara4 = np4
 goApp.npara5 = np5
 ccur		 = ""
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, ccur) = 0 Then
 	Errorbd(ERRORPROC + ' No Se Puede Actualizar Margenes de Ventas')
 	Return 0
@@ -8726,9 +8760,9 @@ Endfunc
 **************************************
 Function CreaTemporalOcompra(Calias)
 Create Cursor (Calias)(Coda N(8), Descri c(150), Unid c(4), cant N(10, 3), Prec N(13, 5), d1 N(7, 4), Nreg N(8), Ndoc c(10), Nitem N(5), uno N(10, 2), Dos N(10, 2), ;
-	Incluido c(1), Razo c(120), aten c(120), Moneda c(20), facturar c(200), despacho c(200), Forma c(100), observa c(200), fech d, ;
-	tipro c(1), come N(8, 2), Comc N(8, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), Codigo c(20), Peso N(10, 5),;
-	Agencia1 c(120),Agencia2 c(120),Agencia3 c(120),Agencia4 c(120),Agencia5 c(120),Agencia6 c(120))
+	  Incluido c(1), Razo c(120), aten c(120), Moneda c(20), facturar c(200), despacho c(200), Forma c(100), observa c(200), fech d, ;
+	  tipro c(1), come N(8, 2), Comc N(8, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), Codigo c(20), Peso N(10, 5),;
+	  Agencia1 c(120), Agencia2 c(120), Agencia3 c(120), Agencia4 c(120), Agencia5 c(120), Agencia6 c(120))
 Select (Calias)
 Index On Descri Tag Descri
 Index On Nitem Tag Items
@@ -8803,11 +8837,11 @@ Endfunc
 Function Obtenercuotascredito(pkid)
 Local lC
 *:Global cpropiedad, cvalor, x
-TEXT To lC Noshow  Textmerge
+Text To lC Noshow  Textmerge
      ndoc,impo,fevto FROM fe_cred AS c
      INNER JOIN fe_rcred AS r   ON r.`rcre_idrc`=c.`cred_idrc`
      WHERE rcre_idau=<<pkid>> and impo>0 AND acti='A'
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, 'cuotascredito') < 1 Then
 	Return 0
 Endif
@@ -8831,9 +8865,9 @@ Endfunc
 ***************************************
 Function  ActualizaClienteRetenedor(np1, np2)
 Local lC
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
     UPDATE fe_clie SET clie_rete='<<np2>>' where idclie=<<np1>>
-ENDTEXT
+Endtext
 If Ejecutarsql(lC) >= 1 Then
 	Mensaje("Gurdado Ok")
 	Return 1
@@ -8856,9 +8890,9 @@ goApp.npara5 = np5
 goApp.npara6 = np6
 goApp.npara7 = np7
 goApp.npara8 = np8
-TEXT To lp Noshow
+Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Detalle de la Venta Por Servicios  ')
 	Return 0
@@ -8869,17 +8903,17 @@ Endfunc
 *************************************
 Function CreatemporalCotizaciones(Calias)
 Create Cursor Precios(Precio N(14, 8), Coda N(8), iden N(1), Nitem N(3))
-Create Cursor Autorizado(Coda N(8), cant N(12, 2), Prec N(12, 2), Prea N(12, 2), Unid c(15), Nitem N(5), Idusua N(5), idusuaa N(5),Descri c(100),usuario1 c(20),usuario2 c(20),cliente c(120))
+Create Cursor Autorizado(Coda N(8), cant N(12, 2), Prec N(12, 2), Prea N(12, 2), Unid c(15), Nitem N(5), Idusua N(5), idusuaa N(5), Descri c(100), usuario1 c(20), usuario2 c(20), Cliente c(120))
 Create  Cursor (Calias) (Coda N(8), idco N(8), Descri c(120), Unid c(4), Precio1 N(13, 8), cant N(10, 3), Prec N(14, 8), Nreg N(8), ;
-	Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Valida c(1), pos N(5), costo N(13, 8), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
-	uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), sie N(10, 2), och N(10, 2), nue N(10, 2), die N(10, 2), onc N(10, 2),;
-	calma c(20), aprecios c(1), come N(7), a1 c(15), idped N(10), valida1 c (1), permitido N(1), ;
-	Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), detalle c(180), ;
-	nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), pmenor N(8, 2), pmayor N(8, 2),  ;
-	Contacto c(120), Transportista c(120), dire1 c(120), fono1 c(20), dias N(2), Vendedor c(100), tipro c(1), Item N(4), ;
-	codc N(6), razon c(120), fech d, Cod c(20), orden N(3), coda1 c(15), pre0 N(13, 8), cantoferta N(10, 2),  Tdoc c(2), swd N(1) Default 0, como N(7, 3), ;
-	Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), foco c(1) Default 'N', Form c(1), cantmayor N(8, 2), premax N(13, 5), precioreg c(1),;
-	equi N(10, 2), prem N(10, 2), duni c(20), idepta N(8), grati c(1), cuno N(10, 3), cdos N(10, 3), tuno N(10, 2), tdos N(10, 2), cuno1 N(10, 2), cdos1 N(10, 2), Modi c(1))
+	  Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Valida c(1), pos N(5), costo N(13, 8), pre1 N(8, 2), pre2 N(8, 2), Pre3 N(8, 2), ;
+	  uno N(10, 2), Dos N(10, 2), tre N(10, 2), cua N(10, 2), cin N(10, 2), sei N(10, 2), sie N(10, 2), och N(10, 2), nue N(10, 2), die N(10, 2), onc N(10, 2), doce N(10, 2),;
+	  calma c(20), aprecios c(1), come N(7), a1 c(15), idped N(10), valida1 c (1), permitido N(1), ;
+	  Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), detalle c(180), ;
+	  nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), pmenor N(8, 2), pmayor N(8, 2),  ;
+	  Contacto c(120), Transportista c(120), dire1 c(120), fono1 c(20), dias N(2), Vendedor c(100), tipro c(1), Item N(4), ;
+	  codc N(6), razon c(120), fech d, Cod c(20), orden N(3), coda1 c(15), pre0 N(13, 8), cantoferta N(10, 2),  Tdoc c(2), swd N(1) Default 0, como N(7, 3), ;
+	  Importe N(10, 2), idproy N(5), valor N(12, 2), igv N(12, 2), foco c(1) Default 'N', Form c(1), cantmayor N(8, 2), premax N(13, 5), precioreg c(1),;
+	  equi N(10, 2), prem N(10, 2), duni c(20), idepta N(8), grati c(1), cuno N(10, 3), cdos N(10, 3), tuno N(10, 2), tdos N(10, 2), cuno1 N(10, 2), cdos1 N(10, 2), Modi c(1))
 Select  (Calias)
 Index On Descri Tag Descri
 Index On Nitem Tag Items
@@ -9008,10 +9042,10 @@ Define Class W_CLASE_E_MAIL As Custom
 				Endif
 			Endwith
 *--- Los CharSet deben estar inmediatamente antes que el método SEND(). Se usan para mostrar vocales acentuadas y letras eñe
-			.BodyPart.Charset	  = "UTF-8"
-			.TextBodyPart.Charset = "UTF-8"
+			.BodyPart.charset	  = "UTF-8"
+			.TextBodyPart.charset = "UTF-8"
 			If !Empty(This.cPaginaHTML) Then
-				.HTMLBodyPart.Charset = "UTF-8"
+				.HTMLBodyPart.charset = "UTF-8"
 			Endif
 *--- Se trata de enviar el e-mail
 			.Send()
@@ -9072,11 +9106,11 @@ Define Class W_CLASE_E_MAIL As Custom
 
 	Function Solicitaemail(cemail)
 	Url = 'http://companysysven.com/dcorreo.php'
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	"nombre":"<<cemail>>"
 	}
-	ENDTEXT
+	Endtext
 	oHTTP = Createobject("Microsoft.XMLHTTP")
 	oHTTP.Open("post", Url, .F.)
 	oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -9143,7 +9177,7 @@ Define Class guiaTrasnportista As Custom
 		Return 0
 	Endif
 	nidg = IngresaGuiasTransportista(This.fech, This.ptop, This.ptoll, 0, This.fect, ;
-		goApp.nidusua, This.detalle, This.Idtransportista, This.Ndoc, goApp.Tienda, This.idremitente, This.iddestinatario, This.idtransportista1)
+		  goApp.nidusua, This.detalle, This.Idtransportista, This.Ndoc, goApp.Tienda, This.idremitente, This.iddestinatario, This.idtransportista1)
 	If nidg = 0 Then
 		DEshacerCambios()
 		Return 0
@@ -9212,7 +9246,7 @@ Define Class guiaTrasnportista As Custom
 		Return 0
 	Endif
 	If ActualizaGuiasTransportista(This.fech, This.ptop, This.ptoll, 0, This.fect, ;
-			goApp.nidusua, This.detalle, This.Idtransportista, This.Ndoc, goApp.Tienda, This.idremitente, This.iddestinatario, This.idtransportista1, This.idguia) = 0 Then
+			  goApp.nidusua, This.detalle, This.Idtransportista, This.Ndoc, goApp.Tienda, This.idremitente, This.iddestinatario, This.idtransportista1, This.idguia) = 0 Then
 		DEshacerCambios()
 		Return 0
 	Endif
@@ -9288,10 +9322,10 @@ goApp.npara10 = np10
 goApp.npara11 = np11
 goApp.npara12 = np12
 goApp.npara13 = np13
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,
      ?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Guias de Remisión Transportista')
 	Return 0
@@ -9313,9 +9347,9 @@ goApp.npara5 = np5
 goApp.npara6 = np6
 goApp.npara7 = np7
 goApp.npara8 = np8
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) < 1 Then
 	Errorbd(ERRORPROC + ' Ingresando Detalles Guias Transportista')
 	Return 0
@@ -9343,10 +9377,10 @@ goApp.npara11 = np11
 goApp.npara12 = np12
 goApp.npara13 = np13
 goApp.npara14 = np14
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,
      ?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Guias de Remisión Transportista')
 	Return 0
@@ -9361,9 +9395,9 @@ Local lC, lp
 lC			 = "ProActualizadetalleGuiasTransportista"
 cur			 = ""
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) < 1 Then
 	Errorbd(ERRORPROC + ' Desactivando Detalles Guias Transportista')
 	Return 0
@@ -9377,49 +9411,39 @@ Local lC, lp
 *:Global cur
 lC			  = 'FuningresaDocumentoElectronico'
 cur			  = "Xn"
-goApp.npara1  = np1
-goApp.npara2  = np2
-goApp.npara3  = np3
-goApp.npara4  = np4
-goApp.npara5  = np5
-goApp.npara6  = np6
-goApp.npara7  = np7
-goApp.npara8  = np8
-goApp.npara9  = np9
-goApp.npara10 = np10
-goApp.npara11 = np11
-goApp.npara12 = np12
-goApp.npara13 = np13
-goApp.npara14 = np14
-goApp.npara15 = np15
-goApp.npara16 = np16
-goApp.npara17 = np17
-goApp.npara18 = np18
-goApp.npara19 = np19
-goApp.npara20 = np20
-goApp.npara21 = np21
-goApp.npara22 = np22
-goApp.npara23 = np23
-goApp.npara24 = np24
-goApp.npara25 = np25
-*FOR x=1 TO 25
-*   WAIT WINDOW 'hola'
-*  cpara='np'+ALLTRIM(STR(x))
-*   WAIT WINDOW EVALUATE(cpara)
-*NEXT
-
-
-
-*cad=goapp.npara1,goapp.npara2,goapp.npara3,goapp.npara4,goapp.npara5,goapp.npara6,goapp.npara7,goapp.npara8,goapp.npara9,goapp.npara10,goapp.npara11,goapp.npara12,goapp.npara13,goapp.npara14,goapp.npara15,goapp.npara16,goapp.npara17,goapp.npara18,goapp.npara19,goapp.npara20,goapp.npara21,goapp.npara22,goapp.npara23,goapp.npara24,goapp.npara25
-TEXT To lp Noshow
-(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-ENDTEXT
+npara1  = np1
+npara2  = np2
+npara3  = np3
+npara4  = np4
+npara5  = np5
+npara6  = np6
+npara7  = np7
+npara8  = np8
+npara9  = np9
+npara10 = np10
+npara11 = np11
+npara12 = np12
+npara13 = np13
+npara14 = np14
+npara15 = np15
+npara16 = np16
+npara17 = np17
+npara18 = np18
+npara19 = np19
+npara20 = np20
+npara21 = np21
+npara22 = np22
+npara23 = np23
+npara24 = np24
+npara25 = np25
+Text To lp Noshow
+(?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10,?npara11,?npara12,?npara13,?npara14,?npara15,?npara16,?npara17,?npara18,?npara19,?npara20,?npara21,?npara22,?npara23,?npara24,?npara25)
+Endtext
 If EJECUTARf(lC, lp, cur) < 1 Then
-	Errorbd(' Ingresando Cabecera de Documento CPE Con RETENCION' )
+	Errorbd(' Ingresando ' + lC )
 	Return 0
-Else
-	Return Xn.Id
 Endif
+Return Xn.Id
 Endfunc
 *******************************
 Function IngresaDocumentoElectronicocondetraccion(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17, np18, np19, np20, np21, np22, np23, np24, np25)
@@ -9452,11 +9476,11 @@ goApp.npara22 = np22
 goApp.npara23 = np23
 goApp.npara24 = np24
 goApp.npara25 = np25
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
-	Errorbd(ERRORPROC + ' Ingresando Cabecera de Documento CPE Con DETRACCION' )
+	Errorbd(ERRORPROC + ' Ingresando ' + lC )
 	Return 0
 Else
 	Return Xn.Id
@@ -9467,7 +9491,7 @@ Function validarvtas()
 *:Global x
 x = validacaja(_Screen.ActiveForm.txtfeCHA.Value)
 If x = "C"
-	_Screen.ActiveForm.Mensaje="La caja de Esta Fecha Esta Cerrada"
+	_Screen.ActiveForm.Mensaje = "La caja de Esta Fecha Esta Cerrada"
 	Return .F.
 Endif
 Select (_Screen.ActiveForm.Grivta.RecordSource)
@@ -9629,13 +9653,13 @@ Local cur As String
 Local lC, lp
 lC			 = 'FUNINGRESANOTASCREDITOventas1'
 cur			 = "xi"
-goApp.npara1 = np1
-goApp.npara2 = np2
-goApp.npara3 = np3
-goApp.npara4 = np4
-TEXT To lp Noshow
-(?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4)
-ENDTEXT
+npara1 = np1
+npara2 = np2
+npara3 = np3
+npara4 = np4
+Text To lp Noshow
+(?npara1,?npara2,?npara3,?npara4)
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Notas Credito de Ventas 1 ')
 	Return 0
@@ -9644,7 +9668,7 @@ Else
 Endif
 Endfunc
 ************************
-Function IngresarNotasCreditoVentas13(np1, np2, np3, np4,np5)
+Function IngresarNotasCreditoVentas13(np1, np2, np3, np4, np5)
 Local cur As String
 Local lC, lp
 lC			 = 'FUNINGRESANOTASCREDITOventas1'
@@ -9654,9 +9678,9 @@ goApp.npara2 = np2
 goApp.npara3 = np3
 goApp.npara4 = np4
 goApp.npara5 = np5
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Notas Credito de Ventas 1 ')
 	Return 0
@@ -9694,13 +9718,13 @@ goApp.npara22 = np22
 goApp.npara23 = np23
 goApp.npara24 = np24
 goApp.npara25 = np25
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
-	Errorbd(ERRORPROC + ' Ingresando Cabecera de Documento con Detracción')
+	Errorbd(ERRORPROC + ' Ingresando' + lC)
 	Return 0
 Else
 	Return Xn.Id
@@ -9739,11 +9763,11 @@ goApp.npara24 = np24
 goApp.npara25 = np25
 goApp.npara26 = np26
 *goApp.npara27 = np27
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) < 1 Then
 	Errorbd(ERRORPROC + ' Actualizando Cabecera de Documento de Compras/Ventas')
 	Return 0
@@ -9769,10 +9793,10 @@ goApp.npara11 = np11
 goApp.npara12 = np12
 goApp.npara13 = np13
 goApp.npara14 = np14
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,
      ?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Cancelaciones de Cliente A Caja Efectivo')
 	Return 0
@@ -9799,10 +9823,10 @@ goApp.npara12 = np12
 goApp.npara13 = np13
 goApp.npara14 = np14
 goApp.npara15 = np15
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,
       ?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Datos A Libro Caja Efectivo Con Cuentas Contable')
 	Return 0
@@ -9814,11 +9838,11 @@ Endfunc
 Function createmporalcotizacionesU(Calias)
 Create Cursor unidades(uequi N(7, 4), ucoda N(8), uunid c(15), uitem N(4), uprecio N(12, 6), uidepta N(8), ucosto N(10, 2))
 Create  Cursor (Calias)(Descri c(100), Unid c(15), duni c(15), cant N(10, 3), Prec N(13, 5), Nreg N(8), pos N(5), pmayor N(8, 2), pmenor N(8, 2), ;
-	Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Valida c(1), idepta N(8), idco N(8), tipro c(1), calma c(3), aprecios c(1), ;
-	equi N(12, 8), prem N(12, 8), uno N(12, 2), Dos N(12, 2), costo N(12, 2), Item N(8), Coda N(8), ;
-	Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), detalle c(180), ;
-	nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), ;
-	codc N(6), razon c(120), fech d, Cod c(20), orden N(3), valida1 c(1))
+	  Ndoc c(10), prevta N(13, 5), Nitem N(5), alma N(10, 2), Valida c(1), idepta N(8), idco N(8), tipro c(1), calma c(3), aprecios c(1), ;
+	  equi N(12, 8), prem N(12, 8), uno N(12, 2), Dos N(12, 2), costo N(12, 2), Item N(8), Coda N(8), ;
+	  Direccion c(180), fono c(15), atencion c(100), vigv N(6, 4), Forma c(100), validez c(100), plazo c(100), entrega c(100), detalle c(180), ;
+	  nTotal N(12, 2), Mone c(1), garantia c(100), nruc c(11), nfax c(15), Comc N(7, 4), ;
+	  codc N(6), razon c(120), fech d, Cod c(20), orden N(3), valida1 c(1))
 
 Select (Calias)
 Index On Descri Tag Descri
@@ -9868,9 +9892,9 @@ Endif
 Endfunc
 *****************************
 Function Mostrarsegmentoscliente(Ccursor)
-TEXT To lC Noshow Textmerge
+Text To lC Noshow Textmerge
       segm_segm,segm_idse FROM fe_segmento ORDER BY segm_idse
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, Ccursor) < 1 Then
 	Return 0
 Endif
@@ -9881,9 +9905,9 @@ Function consultarbaja(cticket, odcto)
 Local lC, lcr
 *:Global cserie, ctdoc, dfenvio, ndesde, nhasta, np1, np3, odvto, sw
 np3		= "0 La Comunicación de Baja  ha sido aceptado desde APISUNAT"
-TEXT To lcr Noshow Textmerge
+Text To lcr Noshow Textmerge
    UPDATE fe_bajas SET baja_mens='<<np3>>' WHERE baja_tick='<<cticket>>';
-ENDTEXT
+Endtext
 Sw	 = 1
 np1	  = odcto.Idauto
 odvto = ConsultaApisunat(odcto.Tdoc, odcto.Serie, Alltrim(odcto.nume), odcto.fech, Alltrim(Str(odcto.Impo, 12, 2)))
@@ -9934,9 +9958,9 @@ Function MuestraPlanCuentas(cb)
 lC = "PROMUESTRAPLANCUENTAS"
 goApp.npara1 = cb
 goApp.npara2 = Val(goApp.año)
-TEXT To lp Noshow
+Text To lp Noshow
        (?goapp.npara1,?goapp.npara2)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, 'lctas') = 0 Then
 	Errorbd(ERRORPROC + 'Mostrando Plan de Cuentas ')
 	Return 0
@@ -10092,9 +10116,9 @@ Function DesactivaDtraspaso(np1)
 lC = 'ProDesactivaDtraspaso'
 goApp.npara1 = np1
 ccur = ""
-TEXT To lp Noshow
+Text To lp Noshow
    (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, ccur) = 0 Then
 	Errorbd(ERRORPROC + ' Desactivando Detalle del Traspaso ')
 	Return 0
@@ -10131,11 +10155,11 @@ goApp.npara22 = np22
 goApp.npara23 = np23
 goApp.npara24 = np24
 goApp.npara25 = np25
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Actualizando Cabecera de Documento')
 	Return 0
@@ -10293,11 +10317,11 @@ goApp.npara26 = np26
 *   WAIT WINDOW EVALUATE(cpara)
 *NEXT
 *cad=goapp.npara1,goapp.npara2,goapp.npara3,goapp.npara4,goapp.npara5,goapp.npara6,goapp.npara7,goapp.npara8,goapp.npara9,goapp.npara10,goapp.npara11,goapp.npara12,goapp.npara13,goapp.npara14,goapp.npara15,goapp.npara16,goapp.npara17,goapp.npara18,goapp.npara19,goapp.npara20,goapp.npara21,goapp.npara22,goapp.npara23,goapp.npara24,goapp.npara25
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
-	Errorbd(' Ingresando Cabecera de Documento CPE Con RETENCION' )
+	Errorbd(' Ingresando ' + lC )
 	Return 0
 Else
 	Return Xn.Id
@@ -10318,13 +10342,21 @@ If lR > 0 Then
 	Return 1
 Else
 	csql = 'CALL ' + tcComando + clparametros + ' Ha- ' + Alltrim(Str(goApp.bdConn))
-	Strtofile(csql, Addbs(Sys(5) + Sys(2003)) + 'error0.txt')
+	Strtofile(csql, Addbs(Sys(5) + Sys(2003)) + 'error.txt')
 	If Aerror(laError) > 0 Then
 		lcMsg = ""
+		lcMsgEmail = Alltrim(m.csql)
 		For ln = 1 To Alen(laError, 2)
 			lcMsg = lcMsg + Transform(laError(1, ln)) + Chr(13)
+			m.lcMsgEmail = m.lcMsgEmail + ' ' + Transform(laError(1, ln))
 		Endfor
 		Aviso(lcMsg)
+		_Screen.ocorreo.emailcliente = "soporte@companysysven.com"
+		_Screen.ocorreo.asunto = " Error Db: - " + Alltrim(fe_gene.Empresa)
+		_Screen.ocorreo.Cmensaje = Alltrim(m.lcMsgEmail)
+		If _Screen.ocorreo.enviarasoporte() < 1 Then
+		Else
+		Endif
 	Endif
 	Return 0
 Endif
@@ -10332,6 +10364,7 @@ Endfunc
 ***************
 Function EJECUTARf(tcComando As String, lp As String, NCursor As String )
 Local lResultado As Integer
+Local laError[1], lcError
 NCursor = Iif(Vartype(NCursor) <> "C", "", NCursor)
 Local laError[1], lcError
 If Empty(NCursor) Then
@@ -10343,13 +10376,21 @@ If lR > 0 Then
 	Return 1
 Else
 	csql = 'Select ' + tcComando + Alltrim((lp)) + ' as Id '
-	Strtofile(csql, Addbs(Sys(5) + Sys(2003)) + 'error0.txt')
+	Strtofile(csql, Addbs(Sys(5) + Sys(2003)) + 'error.txt')
 	If Aerror(laError) > 0 Then
 		lcMsg = ""
+		lcMsgEmail = m.csql
 		For ln = 1 To Alen(laError, 2)
 			lcMsg = lcMsg + Transform(laError(1, ln)) + Chr(13)
+			m.lcMsgEmail = m.lcMsgEmail + ' ' + Transform(laError(1, ln))
 		Endfor
 		Aviso(lcMsg)
+		_Screen.ocorreo.emailcliente = "soporte@companysysven.com"
+		_Screen.ocorreo.asunto = " Error Database: - " + Alltrim(fe_gene.Empresa)
+		_Screen.ocorreo.Cmensaje = Alltrim(m.lcMsgEmail)
+		If _Screen.ocorreo.enviarasoporte() < 1 Then
+		Else
+		Endif
 	Endif
 	Return 0
 Endif
@@ -10401,11 +10442,11 @@ goApp.npara23 = np23
 goApp.npara24 = np24
 goApp.npara25 = np25
 goApp.npara26 = np26
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
-	Errorbd(ERRORPROC + ' Ingresando Cabecera de Documento CPE Con DETRACCION' )
+	Errorbd(ERRORPROC + ' Ingresando ' + lC  )
 	Return 0
 Else
 	Return Xn.Id
@@ -10419,7 +10460,7 @@ Endif
 If !Pemstatus(goApp, 'proyecto', 5) Then
 	AddProperty(goApp, 'proyecto', '')
 Endif
-If Vartype(goApp)='O' Then
+If Vartype(goApp) = 'O' Then
 	If goApp.Productoscp = 'S' Or goApp.proyecto = 'psysm' Then
 		If _Screen.ousuarios.closexuser() < 1 Then
 			Aviso(_Screen.ousuarios.Cmensaje)
@@ -10429,7 +10470,7 @@ If Vartype(goApp)='O' Then
 		If goApp.bdConn > 0 Then
 			CierraConexion(goApp.bdConn)
 		Endif
-		goApp.bdConn = Null
+		goApp.bdConn = 0
 	Endif
 Endif
 Close All
@@ -10537,9 +10578,9 @@ cur = "xi"
 goApp.npara1 = np1
 goApp.npara2 = np2
 goApp.npara3 = np3
-TEXT To lp Noshow
+Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' Ingresando Notas Credito de Ventas 1 ')
 	Return 0
@@ -10556,7 +10597,7 @@ Function VerificaCorrelativo(np1, np2, np3)
 *!*	        (SELECT 1 AS cl,MIN(ndoc) AS maximo,MIN(fech) AS fechamaxima FROM fe_rcom f WHERE
 *!*			idcliente>0 AND acti='A' AND tdoc='<<np3>>'  AND ndoc > '<<np1>>') AS r ON r.cl=p.cl
 *!*	ENDTEXT
-TEXT To lC Textmerge Noshow Flags 2 Pretext 1 + 2 + 4
+Text To lC Textmerge Noshow Flags 2 Pretext 1 + 2 + 4
         cl,max(minimo) as minimo,cast(max(fechaminima) as date) as fechaminima,
         max(maximo) as maximo,cast(max(fechamaxima) as date) as fechamaxima from(
 		select 1 as cl,max(numero) as minimo,MAX(fech) as fechaminima,0 as maximo,'0000-00-00' as fechamaxima  from(
@@ -10568,7 +10609,7 @@ TEXT To lC Textmerge Noshow Flags 2 Pretext 1 + 2 + 4
 		SELECT cast(mid(ndoc,5,8) as unsigned) as numero,fech FROM fe_rcom f where
 		idcliente>0 and acti='A' and tdoc='<<np3>>'  and left(ndoc,4)='<<np1>>' and acti='A' order by ndoc desc) as x
 		where numero><<np2>>) as y  group by cl;
-ENDTEXT
+Endtext
 If EJECutaconsulta(lC, "ut") < 1
 	Return 0
 Endif
@@ -10725,8 +10766,8 @@ Select (Calias)
 Go Top
 Do Case
 Case opt = 1
-	_Screen.oimp.ArchivoPdf=m.Cpdf
-	_Screen.oimp.idsesion=_Screen.ActiveForm.DataSessionId
+	_Screen.oimp.ArchivoPdf = m.Cpdf
+	_Screen.oimp.idsesion = _Screen.ActiveForm.DataSessionId
 	_Screen.oimp.cambiarimpresoranormalpdf(cinforme)
 Case opt = 2
 	If !Empty(Cpdf) Then
@@ -10777,9 +10818,9 @@ Endfunc
 Function MuestratVendedoresX(np1, Ccursor)
 lC = 'PROMUESTRAtVENDEDORES'
 goApp.npara1 = np1
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, Ccursor) = 0 Then
 	Errorbd(ERRORPROC + ' Mostrando Lista Vendedores')
 	Return 0
@@ -10861,10 +10902,10 @@ goApp.npara9 = np9
 goApp.npara10 = np10
 goApp.npara11 = np11
 goApp.npara12 = np12
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
 	Errorbd(ERRORPROC + ' No Es Posible Registrar el Detalle del Traspaso')
 	Return 0
@@ -10987,7 +11028,15 @@ Endfunc
 ***************************
 Function preguntaguardar(cmsje)
 Local r As Integer
-Cmensaje = Iif(Parameters() = 0, "¿Desea Guardar Los Datos Registrados [SI/NO/Cancelar]?", cmsje)
+If Parameters() = 0 Then
+	Cmensaje = "¿Desea Guardar Los Datos Registrados [SI/NO/Cancelar]?"
+Else
+	If Empty(m.cmsje) Then
+		Cmensaje = "¿Desea Guardar Los Datos Registrados [SI/NO/Cancelar]?"
+	Else
+		Cmensaje = m.cmsje
+	Endif
+Endif
 r = Messagebox(Cmensaje, 35, MSGTITULO)
 Return r
 Endfunc
@@ -11028,11 +11077,11 @@ goApp.npara24 = np24
 goApp.npara25 = np25
 goApp.npara26 = np26
 goApp.npara27 = np27
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) < 1 Then
 	Errorbd(ERRORPROC + ' Actualizando Cabecera de Documento de Compras/Ventas')
 	Return 0
@@ -11045,9 +11094,9 @@ Function CambiaEstadoTraspaso(np1)
 lC = 'ProTraspasoRecibido'
 goApp.npara1 = np1
 ccur = ""
-TEXT To lp Noshow
+Text To lp Noshow
    (?goapp.npara1)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, ccur) = 0 Then
 	Errorbd(ERRORPROC + ' Al Cammbiar Estado de Transferencia a Recibido  ')
 	Return 0
@@ -11088,11 +11137,11 @@ goApp.npara24 = np24
 goApp.npara25 = np25
 goApp.npara26 = np26
 goApp.npara27 = np27
-TEXT To lp Noshow
+Text To lp Noshow
 (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
 ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25,?goapp.npara26,?goapp.npara27)
-ENDTEXT
+Endtext
 If EJECUTARP(lC, lp, cur) < 1 Then
 	Errorbd(ERRORPROC + ' Actualizando Cabecera de Documento de Compras/Ventas')
 	Return 0
@@ -11149,12 +11198,12 @@ Do While lnEntero > 0
 		lcMiles = 'MIL '
 	Case lnTerna = 3 And (lnUnidades + lnDecenas + lnCentenas # 0)
 		lcMiles = Iif(lnUnidades = 1 And lnDecenas = 0 And ;
-			lnCentenas = 0, 'MILLON ', 'MILLONES ')
+			  lnCentenas = 0, 'MILLON ', 'MILLONES ')
 	Case lnTerna = 4 And (lnUnidades + lnDecenas + lnCentenas # 0)
 		lcMiles = 'MIL MILLONES '
 	Case lnTerna = 5 And (lnUnidades + lnDecenas + lnCentenas # 0)
 		lcMiles = Iif(lnUnidades = 1 And lnDecenas = 0 And ;
-			lnCentenas = 0, 'BILLON ', 'BILLONES ')
+			  lnCentenas = 0, 'BILLON ', 'BILLONES ')
 	Case lnTerna > 5
 		lcRetorno = ' ERROR: NUMERO DEMASIADO GRANDE '
 		Exit
@@ -11223,7 +11272,7 @@ Do While lnEntero > 0
 	Do Case
 	Case lnCentenas = 1
 		lcCadena = Iif(lnUnidades = 0 And lnDecenas = 0, ;
-			'CIEN ', 'CIENTO ') + lcCadena
+			  'CIEN ', 'CIENTO ') + lcCadena
 	Case lnCentenas = 2
 		lcCadena = 'DOSCIENTOS ' + lcCadena
 	Case lnCentenas = 3
@@ -11251,21 +11300,7 @@ If lnTerna = 1
 Endif
 Return lcRetorno
 Endfunc
-*************************************
-Function esFechaValidaAdelantada(dfecha)
-Local tnAnio, tnMes, tnDia
-tnAnio = Year(dfecha)
-tnMes = Month(dfecha)
-tnDia = Day(dfecha)
-Return ;
-	Vartype(tnAnio) = "N" And ;
-	Vartype(tnMes) = "N" And ;
-	Vartype(tnDia) = "N" And ;
-	Between(tnAnio, 2000, 9999) And ;
-	Between(tnMes, 1, 12) And ;
-	Between(tnDia, 1, 31) And ;
-	Not Empty(Date(tnAnio, tnMes, tnDia))
-Endfunc
+
 ***************************
 Function  MuestraZonasX(np1, Ccursor)
 Set Procedure To d:\capass\modelos\zonas Additive
@@ -11299,9 +11334,9 @@ Endfunc
 ********************
 Function devuelveIdCtrlCredito(np1)
 Local ccur As String
-TEXT To lC Noshow
+Text To lC Noshow
   SELECT cred_idrc as idrc FROM fe_cred WHERE ncontrol=?np1
-ENDTEXT
+Endtext
 ccur = 'idctrl'
 If SQLExec(goApp.bdConn, lC, ccur) = 0 Then
 	Errorbd(lC)
@@ -11312,9 +11347,9 @@ Endif
 Endfunc
 ******************
 Function RegistraUnidadesPR(np1, np2)
-TEXT To lC Noshow
+Text To lC Noshow
         UPDATE fe_presentaciones SET pres_unid=?np2 WHERE pres_idpr=?np1
-ENDTEXT
+Endtext
 ncon = AbreConexion()
 If SQLExec(ncon, lC) < 0 Then
 	Errorbd(lC)
@@ -11458,13 +11493,13 @@ goApp.npara22 = np22
 goApp.npara23 = np23
 goApp.npara24 = np24
 goApp.npara25 = np25
-TEXT To lp Noshow
+Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,
       ?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21,?goapp.npara22,?goapp.npara23,?goapp.npara24,?goapp.npara25)
-ENDTEXT
+Endtext
 If EJECUTARf(lC, lp, cur) = 0 Then
-	Errorbd(ERRORPROC + ' Ingresando Cabecera de Documento')
+	Errorbd(ERRORPROC + ' Ingresando ' + lC)
 	Return 0
 Else
 	Return Xn.Id
@@ -11481,15 +11516,14 @@ Endif
 Endfunc
 **********************************************************
 Function Validadeuda(Na)
-If SQLExec(goApp.bdConn,"SELECT ifnull(FunVerificaEstadoDeuda(?na),0) as nid ","IDEU")<0 Then
+If SQLExec(goApp.bdConn, "SELECT ifnull(FunVerificaEstadoDeuda(?na),0) as nid ", "IDEU") < 0 Then
 	Return 0
+Endif
+Vdvto = Iif(Vartype(ideu.nid) = 'N', ideu.nid, Val(ideu.nid))
+If m.Vdvto = 0 Then
+	Return 1
 Else
-	Vdvto=Iif(Vartype(ideu.nid)='N',ideu.nid,Val(ideu.nid))
-	If m.Vdvto=0 Then
-		Return 1
-	Else
-		Return 0
-	Endif
+	Return 0
 Endif
 Endfunc
 ************************
@@ -11524,18 +11558,102 @@ loNode.Text = tcBase64
 lcBinario = loNode.nodeTypedValue
 Strtofile(lcBinario, tcRutaDestino)
 Endfunc
-*!*	*****************************
-*!*	Function Validadeuda(na)
-*!*	If SQLExec(goapp.bdconn,"SELECT ifnull(FunVerificaEstadoDeuda(?na),0) as nid ","IDEU")<0 Then
-*!*		Return 0
-*!*	Else
-*!*		If Val(ideu.nid)=0 Then
-*!*			Return 1
-*!*		Else
-*!*			Return 0
-*!*		Endif
-*!*	Endif
-*!*	Endfunc
+***************************
+Function dfianddff(nmes, Na)
+dfi = Ctod('01/' + Alltrim(Str(nmes)) + '/' + Alltrim(Str(Na)))
+dfecha2	= Ctod('01/' + Trim(Str(Iif(nmes < 12, nmes + 1, 1))) + '/' + Trim(Str(Iif(nmes < 12, Na, Na + 1))))
+dff = dfecha2 - 1
+ofechas = Createobject("empty")
+AddProperty(ofechas, 'dfi', dfi)
+AddProperty(ofechas, 'dff', dff)
+Return ofechas
+Endfunc
+*************************************
+Function esfechaValida(dfecha)
+Local tnAnio, tnMes, tnDia
+tnAnio = Year(dfecha)
+tnMes = Month(dfecha)
+tnDia = Day(dfecha)
+Return ;
+	Vartype(tnAnio) = "N" And ;
+	Vartype(tnMes) = "N" And ;
+	Vartype(tnDia) = "N" And ;
+	Between(tnAnio, 2000, 9999) And ;
+	Between(tnMes, 1, 12) And ;
+	Between(tnDia, 1, 31) And ;
+	Not Empty(Date(tnAnio, tnMes, tnDia));
+	And dfecha <= fe_gene.fech
+Endfunc
+*******************************************
+Function esFechaValidafvto(dfecha)
+*!*	wait WINDOW 'hola'
+*!*	wait WINDOW dfecha
+Local tnAnio, tnMes, tnDia
+tnAnio = Year(dfecha)
+tnMes = Month(dfecha)
+tnDia = Day(dfecha)
+Return ;
+	Vartype(tnAnio) = "N" And ;
+	Vartype(tnMes) = "N" And ;
+	Vartype(tnDia) = "N" And ;
+	Between(tnAnio, 2000, 9999) And ;
+	Between(tnMes, 1, 12) And ;
+	Between(tnDia, 1, 31) And ;
+	Not Empty(Date(tnAnio, tnMes, tnDia))
+Endfunc
+****************************************
+Function esFechaValidaAdelantada(dfecha)
+Local tnAnio, tnMes, tnDia
+tnAnio = Year(dfecha)
+tnMes = Month(dfecha)
+tnDia = Day(dfecha)
+Return ;
+	Vartype(tnAnio) = "N" And ;
+	Vartype(tnMes) = "N" And ;
+	Vartype(tnDia) = "N" And ;
+	Between(tnAnio, 2000, 9999) And ;
+	Between(tnMes, 1, 12) And ;
+	Between(tnDia, 1, 31) And ;
+	Not Empty(Date(tnAnio, tnMes, tnDia))
+Endfunc
+*******************************
+Function validaFechaVto(Calias)
+Local Vdvto As Integer
+If !Used((Calias)) Then
+	Return 0
+Endif
+Vdvto = 1
+Select (Calias)
+Scan All
+	If Fsize("fevto") > 0 Then
+		If !esFechaValidafvto(fevto) Then
+			Vdvto = 0
+			Exit
+		Endif
+	Else
+		If !esFechaValidafvto(fechav) Then
+			Vdvto = 0
+			Exit
+		Endif
+	Endif
+Endscan
+Return Vdvto
+Endfunc
+***************************
+Function ReduceAUnEspacio(tcCadena)
+Return Iif(At(Space(2), tcCadena) = 0, ;
+	  Alltrim(tcCadena), ;
+	  ReduceAUnEspacio(Strtran(tcCadena, Space(2), Space(1))))
+Endfunc
+****************************
+Function LimpiarCadena(tcTexto)
+Local lcSalida
+lcSalida = Alltrim(Transform(tcTexto))
+lcSalida = Strtran(lcSalida, "\", "\\")
+lcSalida = Strtran(lcSalida, "'", "''")
+Return lcSalida
+Endfunc
+
 
 
 

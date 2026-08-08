@@ -5,9 +5,9 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	lC = 'FunSaldoCaja'
 	Calias = 'c_' + Sys(2015)
 	dFecha = Cfechas(This.dFecha)
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
      ('<<dfecha>>',<<this.codt>>)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARf(lC, lp, Calias) < 1 Then
 		If This.conerror = 1 Then
 			Return - 1
@@ -21,7 +21,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	Set DataSession To This.Idsesion
 	dFecha = Cfechas(This.dFecha)
 	nidalma = This.codt
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	     select ifnull(k.prec,0) as prec,ifnull(k.idart,'') as coda,day(a.fech) as dia,ifnull(k.cant,0) as cant,
 		 CASE a.forma
          WHEN 'E' THEN 'Efecivo'
@@ -96,7 +96,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		inner join fe_rcom as b on b.idauto=a.idauto
 		where a.fech='<<dfecha>>'  and a.acti='A' and a.codt=<<nidalma>> and left(a.deta,8)="Cambiada"
 	    order by tdoc,ndoc
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -124,10 +124,10 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	goApp.npara18 = np18
 	goApp.npara19 = np19
 	goApp.npara20 = np20
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,
      ?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
@@ -156,10 +156,10 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	goApp.npara19 = np19
 	goApp.npara20 = np20
 	goApp.npara21 = np21
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,
      ?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17,?goapp.npara18,?goapp.npara19,?goapp.npara20,?goapp.npara21)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
@@ -169,9 +169,9 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	lC = 'FunSaldoCaja'
 	Calias = 'c_' + Sys(2015)
 	dFecha = Cfechas(This.dFecha)
-	Text To lp Noshow Textmerge
+	TEXT To lp Noshow Textmerge
      ('<<dfecha>>',<<this.codt>>)
-	Endtext
+	ENDTEXT
 	If This.EJECUTARf(lC, lp, Calias) < 1 Then
 		If This.conerror = 1 Then
 			Return - 1
@@ -187,7 +187,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	nidalma = This.codt
 *if(a.lcaj_orig<>'CC',if(lcaj_deud>0,if(a.lcaj_form='E',if(left(a.lcaj_deta,8)="Cambiada",0,ifnull(if(a.lcaj_deud=0,0,ROUND(k.cant*k.prec,2)),a.lcaj_deud)),0),0),0) as ingresos,
 *    IF(a.lcaj_orig<>'CC',IF(lcaj_deud>0,IF(a.lcaj_form='E',IF(LEFT(a.lcaj_deta,8)="Cambiada",0,IFNULL(IF(a.lcaj_deud=0,0,ROUND(k.cant*k.prec,2)),a.lcaj_deud)),0),IF(lcaj_deud<0,IF(lcaj_form='E',ROUND(k.cant*k.prec,2),0),0)),0) AS ingresos,
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	     select ifnull(k.prec,0) as prec,ifnull(k.idart,'') as coda,day(a.lcaj_fech) as dia,ifnull(k.cant,0) as cant,
 		 CASE a.lcaj_form
          WHEN 'E' THEN 'Efecivo'
@@ -214,7 +214,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		from fe_lcaja as a
 		left join fe_rcom as b on b.idauto=a.lcaj_idau
 		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<nidalma>> AND tipo='V') as k on k.idauto=b.idauto
-		where a.lcaj_fech='<<dfecha>>' and a.lcaj_acti='A' and a.lcaj_codt=<<nidalma>> and a.caja_form='E' 
+		where a.lcaj_fech='<<dfecha>>' and a.lcaj_acti='A' and a.lcaj_codt=<<nidalma>> and a.caja_form='E'
 		union all
 		select k.prec,k.idart as coda,day(a.lcaj_fech) as dia,k.cant,
 		CASE a.lcaj_form
@@ -267,7 +267,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		inner join fe_rcom as b on b.idauto=a.lcaj_idau
 		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<nidalma>> and left(a.lcaj_deta,8)="Cambiada"
 	    order by tdoc,ndoc
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -313,49 +313,49 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	If Left(goApp.tipousuario, 1) = "G"  Or Left(goApp.tipousuario, 1) = "A"
 		If goApp.Xopcion = 0 Then
 			If todos = 1 Then
-				Text To lC Noshow Textmerge
+				TEXT To lC Noshow Textmerge
                  SELECT idcaja,fech,impo,deta,tmon,origen,idauto FROM fe_caja WHERE origen in ("Ca","CC","CB")  AND acti<>'I' and fech between '<<dfi>>' and '<<dff>>' ORDER BY fech
-				Endtext
+				ENDTEXT
 			Else
-				Text To lC Noshow Textmerge
+				TEXT To lC Noshow Textmerge
              SELECT idcaja,fech,impo,deta,tmon,origen,idauto FROM fe_caja WHERE origen in ("Ca","CC","CB")  AND acti<>'I'  and fech='<<dfecha>>' ORDER BY fech
-				Endtext
+				ENDTEXT
 			Endif
 		Else
 			If todos = 1 Then
-				Text To lC Noshow Textmerge
+				TEXT To lC Noshow Textmerge
                  SELECT lcaj_idca as idcaja,lcaj_fech as fech,if(lcaj_deud>0,lcaj_deud,lcaj_acre) as impo,lcaj_deta as deta,lcaj_mone as tmon,lcaj_orig as origen,lcaj_idau as idauto
                  FROM fe_lcaja WHERE lcaj_orig in ("Ca","CC","CB")  AND lcaj_acti<>'I' and lcaj_fech between '<<dfi>>' and '<<dff>>' ORDER BY lcaj_fech
-				Endtext
+				ENDTEXT
 			Else
-				Text To lC Noshow Textmerge
+				TEXT To lC Noshow Textmerge
 				 SELECT lcaj_idca as idcaja,lcaj_fech as fech,if(lcaj_deud>0,lcaj_deud,lcaj_acre) as impo,lcaj_deta as deta,lcaj_mone as tmon,lcaj_orig as origen,lcaj_idau as idauto
                  FROM fe_lcaja WHERE lcaj_orig in ("Ca","CC","CB")  AND lcaj_acti<>'I' and lcaj_fech='<<dfecha>>' ORDER BY lcaj_fech
-				Endtext
+				ENDTEXT
 			Endif
 		Endif
 	Else
 		If goApp.Xopcion = 0 Then
 			If todos = 1 Then
-				Text  To  lC Noshow Textmerge
+				TEXT  To  lC Noshow Textmerge
                  SELECT idcaja,fech,impo,deta,tmon,origen,idauto FROM fe_caja WHERE origen in ("Ca","CC","CB") and acti<>'I' AND fech between '<<dfi>>' and '<<dff>>'  ORDER BY fech
-				Endtext
+				ENDTEXT
 			Else
-				Text  To  lC Noshow Textmerge
+				TEXT  To  lC Noshow Textmerge
                 SELECT idcaja,fech,impo,deta,tmon,origen,idauto FROM fe_caja WHERE origen in ("Ca","CC","CB") and acti<>'I' AND fech='<<dfecha>>' ORDER BY fech
-				Endtext
+				ENDTEXT
 			Endif
 		Else
 			If todos = 1 Then
-				Text To lC Noshow Textmerge
+				TEXT To lC Noshow Textmerge
                  SELECT lcaj_idca as idcaja,lcaj_fech as fech,if(lcaj_deud>0,lcaj_deud,lcaj_acre) as impo,lcaj_deta as deta,lcaj_mone as tmon,lcaj_orig as origen,lcaj_idau as idauto
                  FROM fe_lcaja WHERE lcaj_orig in ("Ca","CC","CB")  AND lcaj_acti<>'I' and lcaj_fech between '<<dfi>>' and '<<dff>>' ORDER BY lcaj_fech
-				Endtext
+				ENDTEXT
 			Else
-				Text To lC Noshow Textmerge
+				TEXT To lC Noshow Textmerge
 				 SELECT lcaj_idca as idcaja,lcaj_fech as fech,if(lcaj_deud>0,lcaj_deud,lcaj_acre) as impo,lcaj_deta as deta,lcaj_mone as tmon,lcaj_orig as origen,lcaj_idau as idauto
                  FROM fe_lcaja WHERE lcaj_orig in ("Ca","CC","CB")  AND lcaj_acti<>'I' and lcaj_fech='<<dfecha>>' ORDER BY lcaj_fech
-				Endtext
+				ENDTEXT
 			Endif
 		Endif
 	Endif
@@ -456,9 +456,9 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	goApp.npara10 = np10
 	goApp.npara11 = np11
 	goApp.npara12 = np12
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12)
-	Endtext
+	ENDTEXT
 	nidcaja = This.EJECUTARf(lC, lp, cur)
 	If nidcaja < 1 Then
 		Return 0
@@ -533,9 +533,9 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	goApp.npara11 = np11
 	goApp.npara12 = np12
 	goApp.npara13 = np13
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13)
-	Endtext
+	ENDTEXT
 	nidc = This.EJECUTARf(lC, lp, cur)
 	If nidc < 0 Then
 		Return 0
@@ -545,7 +545,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	Set DataSession To This.Idsesion
 	dFecha = Cfechas(This.dFecha)
 	nidalma = This.codt
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 		select day(a.fech) as dia,a.deta,
 		ifnull(if(tdoc='01',concat('F/.',b.ndoc),concat('B/.',b.ndoc)),a.ndoc) as ndoc,ifnull(b.tdoc,'99') as tdoc,
 		origen,tipo,case tipo when "I" then 'a' when "S" then 'b' else 'z' end as orden,
@@ -553,7 +553,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		if(a.origen='CB',a.impo,CAST(0 as decimal(10,2))) as bancos from fe_caja as a
 		left join fe_rcom as b on b.idauto=a.idauto
 		where a.fech='<<df>>' and a.acti='A' and a.impo<>0 and a.codt=<<nidalma>> and a.caja_form='C' order by idcaja
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -563,16 +563,16 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	Set DataSession To This.Idsesion
 	dFecha = Cfechas(This.dFecha)
 	nidalma = This.codt
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 		select day(a.lcaj_fech) as dia,a.lcaj_deta as deta,
 		ifnull(if(tdoc='01',concat('F/.',b.ndoc),concat('B/.',b.ndoc)),a.lcaj_dcto)  as ndoc,ifnull(b.tdoc,'99') as tdoc,
 		lcaj_orig as origen,if(lcaj_deud>0,'I','S') as tipo,if(lcaj_deud>0, 'a' , 'b') as orden,
 		if(a.lcaj_orig='CC',a.lcaj_deud,CAST(0 as decimal(10,2))) as pagos,lcaj_idca As idcaja,
 		if(a.lcaj_orig='CB',a.lcaj_acre,CAST(0 as decimal(10,2))) as bancos from fe_lcaja as a
 		left join fe_rcom as b on b.idauto=a.lcaj_idau
-		where a.lcaj_fech='<<df>>' and a.lcaj_acti='A' and (a.lcaj_deud<>0 or lcaj_acre<>0) 
+		where a.lcaj_fech='<<df>>' and a.lcaj_acti='A' and (a.lcaj_deud<>0 or lcaj_acre<>0)
 		and a.lcaj_codt=<<nidalma>> and a.caja_form='C' order by idcaja
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -591,9 +591,9 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 	goApp.npara8 = np8
 	goApp.npara9 = np9
 	goApp.npara10 = np10
-	Text To lp Noshow
+	TEXT To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10)
-	Endtext
+	ENDTEXT
 	nidc = This.EJECUTARf(lC, lp, cur)
 	If nidc < 1 Then
 		Return 0
@@ -609,12 +609,7 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
 		Return 0
 	Endif
 	dFecha = Cfechas(This.dFecha)
-	*		if(lcaj_acre<>0,0,if(lcaj_form='E',if(lcaj_efec>0,lcaj_efec,ifnull(ROUND(k.cant*k.prec,2),a.lcaj_deud),0))) as ingresos,
-	*IF(lcaj_acre<>0,0,IF(lcaj_form='E',IF(lcaj_efec>0,lcaj_efec,IFNULL(ROUND(k.cant*k.prec,2),a.lcaj_deud)),0)) AS ingresos,
-*!*		if(a.lcaj_form='T',ROUND(k.cant*k.prec,2),0) as tarjeta1,
-*!*	    	if(a.lcaj_form='D',ROUND(k.cant*k.prec,2),0) as deposito,
-*!*	    	if(a.lcaj_form='Y',ROUND(k.cant*k.prec,2),0) as yape,
-	Text To lC Noshow Textmerge
+	TEXT To lC Noshow Textmerge
 	    select if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,if(lcaj_efec>0,0,ifnull(k.prec,0)))) as prec,
 	    IF(lcaj_acre<>0,0,IF(lcaj_ttar='.','',IF(lcaj_efec>0,'',IFNULL(k.idart,'')))) AS coda,day(a.lcaj_fech) as dia,
 	    if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,if(lcaj_efec>0,0,ifnull(k.cant,0)))) as cant,
@@ -629,9 +624,9 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
     	if(a.lcaj_form='D',ROUND(k.cant*k.prec,2),0) as deposito,
     	if(a.lcaj_form='Y',ROUND(k.cant*k.prec,2),0) as yape,
 		if(a.lcaj_acre>0,if(a.lcaj_form='E',a.lcaj_acre,0),0) as gastos,lcaj_fope,'a' as orden,lcaj_idau as idauto,ifnull(c.nruc,'') as nruc,ifnull(c.ndni,'') as ndni from
-		fe_lcaja as a 
-		left join fe_rcom as b on b.idauto=a.lcaj_idau 
-		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k  on k.idauto=b.idauto 
+		fe_lcaja as a
+		left join fe_rcom as b on b.idauto=a.lcaj_idau
+		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k  on k.idauto=b.idauto
 		LEFT join fe_clie as c on c.idclie=b.idcliente
 		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form not in('T','Y','D') and left(a.lcaj_ttar,1)<>'.' and lcaj_efec=0
 		union ALL
@@ -647,8 +642,8 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
         0 AS deposito,
         0 AS yape,
 		0 AS gastos,lcaj_fope,'a' AS orden,lcaj_idau AS idauto,'' AS nruc,'' AS ndni FROM
-		fe_lcaja AS a 
-		LEFT JOIN fe_rcom AS b ON b.idauto=a.lcaj_idau 
+		fe_lcaja AS a
+		LEFT JOIN fe_rcom AS b ON b.idauto=a.lcaj_idau
 		WHERE a.lcaj_fech='<<dfecha>>'  AND a.lcaj_acti='A' AND a.lcaj_codt=<<this.codt>> AND lcaj_efec>0 AND lcaj_form='E'
 		union all
 		select cast(0 as decimal(5))as prec,
@@ -664,9 +659,9 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
         0 AS deposito,
         0 as yape,
 		0 as gastos,lcaj_fope,'b' as orden,lcaj_idau as idauto,'' as nruc,'' as ndni from
-		fe_lcaja as a 
-		left join fe_rcom as b on b.idauto=a.lcaj_idau 
-		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and left(a.lcaj_ttar,1)='.' 
+		fe_lcaja as a
+		left join fe_rcom as b on b.idauto=a.lcaj_idau
+		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and left(a.lcaj_ttar,1)='.'
 		union all
 		SELECT if(lcaj_acre<>0,0,if(lcaj_ttar='.',0,ifnull(k.prec,0))) as prec,
 	    if(lcaj_acre<>0,0,if(lcaj_ttar='.','',ifnull(k.idart,''))) as coda,day(a.lcaj_fech) as dia,
@@ -682,14 +677,51 @@ Define Class cajarodi As cajae Of 'd:\capass\modelos\cajae'
     	if(a.lcaj_form='D',lcaj_deud-lcaj_efec,0) as deposito,
     	if(a.lcaj_form='Y',lcaj_deud-lcaj_efec,0) as yape,
 		0 as gastos,lcaj_fope,'a' as orden,lcaj_idau as idauto,ifnull(c.nruc,'') as nruc,ifnull(c.ndni,'') as ndni  from
-		fe_lcaja as a 
-		left join fe_rcom as b on b.idauto=a.lcaj_idau 
-		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k on k.idauto=b.idauto 
+		fe_lcaja as a
+		left join fe_rcom as b on b.idauto=a.lcaj_idau
+		left join (select idart,alma,cant,prec,idauto from fe_kar as q where acti='A' AND q.alma=<<this.codt>> and tipo='V') as k on k.idauto=b.idauto
 		LEFT join fe_clie as c on c.idclie=b.idcliente
 		where a.lcaj_fech='<<dfecha>>'  and a.lcaj_acti='A' and a.lcaj_codt=<<this.codt>> and a.lcaj_form in('T','D','Y') and left(a.lcaj_ttar,1)<>'.'
 		order by tdoc,ndoc
-	Endtext
+	ENDTEXT
 	If This.EjecutaConsulta(lC, Ccursor) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresaCajachica(np1,np2,np3,np4,np5,np6,np7)
+	Ccursor=""
+	lC='ProIngresaCajaI'
+	goApp.npara1=np1
+	goApp.npara2=np2
+	goApp.npara3=np3
+	goApp.npara4=np4
+	goApp.npara5=np5
+	goApp.npara6=np6
+	goApp.npara7=np7
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7)
+	ENDTEXT
+	If this.EJECUTARP(lC,lp,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc	
+	Function ActualizaCajachica(np1,np2,np3,np4,np5,np6,np7,np8)
+	Ccursor=""
+	lC='ProActualizaCajaI'
+	goApp.npara1=np1
+	goApp.npara2=np2
+	goApp.npara3=np3
+	goApp.npara4=np4
+	goApp.npara5=np5
+	goApp.npara6=np6
+	goApp.npara7=np7
+	goApp.npara8=np8
+	TEXT to lp noshow
+     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8)
+	ENDTEXT
+	If this.EJECUTARP(lC,lp,Ccursor)<1 Then
 		Return 0
 	Endif
 	Return 1

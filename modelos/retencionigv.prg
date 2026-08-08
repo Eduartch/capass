@@ -1,4 +1,6 @@
+#Define Url "http://companiasysven.com/app88/"
 Define Class Retencion As OData Of "d:\capass\database\data.prg"
+	urlenvio = Url + 'envioretencion.php'
 	dFecha = Date()
 	Ncodigo = 0
 	nimpo = 0
@@ -80,7 +82,7 @@ Define Class Retencion As OData Of "d:\capass\database\data.prg"
 	Set Procedure To d:\capass\modelos\ctasxpagar, d:\capass\modelos\Ldiario,d:\capass\modelos\correlativos Additive
 	If This.ctiporetencion='SEEC' Then
 		ocorr=Createobject("correlativo")
-		If ocorr.BuscarSeriesRetencion(1, 'series')<1 Then
+		If ocorr.BuscarSeriesRetencion(Val(goapp.serief), 'series')<1 Then
 			This.Cmensaje=ocorr.Cmensaje
 			Return 0
 		Endif
@@ -324,6 +326,59 @@ Define Class Retencion As OData Of "d:\capass\database\data.prg"
 	where a.rete_acti='A' and LEFT(rete_ndoc,1)='R' and LEFT(rete_mens,1)<>'0' order by rete_ndoc,rete_fech
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function enviarsunat()
+	cruc=fe_gene.nruc
+	TEXT To cdata Noshow Textmerge
+	{
+    "nruc":"<<cruc>>",
+    "idauto":<<this.nidr>>,
+    "empresa":"<<goapp.empresanube>>"
+    }
+	ENDTEXT
+*!*		Messagebox(cdata)
+	Set Procedure To d:\Librerias\nfcursortojson, d:\Librerias\nfcursortoobject, d:\Librerias\nfJsonRead.prg Additive
+	oHTTP = Createobject("MSXML2.XMLHTTP")
+	oHTTP.Open("post", This.urlenvio, .F.)
+	oHTTP.setRequestHeader("Content-Type", "application/json")
+	oHTTP.Send(cdata)
+	If oHTTP.Status <> 200 Then
+		This.Cmensaje = "Servicio WEB NO Disponible " + Alltrim(Str(oHTTP.Status))
+		Return 0
+	Endif
+	lcHTML = oHTTP.responseText
+	Strtofile(lcHTML,Addbs(Sys(5)+Sys(2003))+'rpta.txt')
+*	Messagebox(lcHTML)
+	orpta = nfJsonRead(lcHTML)
+	If  Vartype(orpta.rpta) <> 'U' Then
+		If Left(orpta.rpta,1)='0' Then
+			This.Cmensaje = Alltrim(orpta.rpta)
+			If  This.ActualizarRespuestaSunat()<1 Then
+				Return 0
+			Endif
+		Else
+			This.Cmensaje = Left(Alltrim(orpta.rpta),200)
+			If Alltrim(This.Cmensaje)='soap-env:Client 1033' Then
+				This.Cmensaje='0 Aceptado'
+				If  This.ActualizarRespuestaSunat()<1 Then
+					Return 0
+				Endif
+			Endif
+		Endif
+	Else
+		This.Cmensaje = Alltrim(Left(lcHTML,220))
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizarRespuestaSunat()
+	TEXT TO lc NOSHOW TEXTMERGE
+       UPDATE fe_rret SET rete_mens='<<this.cmensaje>>' WHERE rete_idre=<<this.nidr>>
+	ENDTEXT
+	If This.Ejecutarsql(lC)<1 Then
 		Return 0
 	Endif
 	Return 1

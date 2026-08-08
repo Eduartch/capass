@@ -40,7 +40,7 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Endif
 	cndoc = Alltrim(This.Serie) + Alltrim(This.numero)
 	Do Case
-	Case This.Codigo = 0 Or Empty(This.Codigo)
+	Case This.Codigo < 1  Or Empty(This.Codigo)
 		This.Cmensaje = "Seleccione un Cliente Para Esta Venta"
 		Return .F.
 	Case This.sinserie = "N"
@@ -667,8 +667,8 @@ Define Class ventaslopez As Ventas Of d:\capass\modelos\Ventas
 	Return 1
 	Endfunc
 	Function resumenventaspsysl(ccursor)
-	If This.fechaf-This.fechai>31 Then
-		This.Cmensaje='Hasta 31 Días'
+	If This.fechaf-This.fechai>366 Then
+		This.Cmensaje='Hasta 366 Días'
 		Return 0
 	Endif
 	dfi = Cfechas(This.fechai)

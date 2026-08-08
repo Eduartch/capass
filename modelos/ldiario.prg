@@ -35,24 +35,23 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	lC = 'PROBuscaProvisionDiario'
 	goApp.npara1 = np1
 	goApp.npara2 = np2
-	TEXT To lp Noshow
+	Text To lp Noshow
           (?goapp.npara1,?goapp.npara2)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, ccursor) < 1 Then
 		Return 0
 	Else
 		If bpr.idb > 0 Then
 			This.Cmensaje = "Ya existe La provisión"
 			Return 0
-		Else
-			Return 1
 		Endif
 	Endif
+	Return 1
 	Endfunc
-	Function listardatosncuenta(ncta, ccursor)
-	TEXT To lC Noshow Textmerge
-	SELECT idcta,nomb,ncta FROM fe_plan WHERE TRIM(ncta)='<<TRIM(ncta)>>' limit 1;
-	ENDTEXT
+	Function listardatosncuenta(cccta, ccursor)
+	Text To lC Noshow Textmerge
+	SELECT idcta,nomb,ncta FROM fe_plan WHERE TRIM(ncta)='<<TRIM(cccta)>>' AND plan_acti='A' limit 1;
+	Endtext
 	If This.ejecutaconsulta(lC, ccursor) < 1 Then
 		Return 0
 	Endif
@@ -60,7 +59,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endfunc
 	Function buscarAsiento(cndoc, ccursor)
 	lC = "PROMUESTRADIARIO"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
 	SELECT b.ncta,b.nomb,a.ldia_glosa AS glosa,ldia_debe AS debe,ldia_haber AS haber,ldia_tipo AS tipo,a.ldia_idcta AS idcta,
 	a.ldia_idld AS nreg,ldia_fech AS fecha,ldia_cond AS cond,a.ldia_comp AS Comp,IFNULL(m.razo,'') AS Cliente,IFNULL(q.razo,'') AS Proveedor,
 	IFNULL(m.idcred,CAST(0 AS UNSIGNED)) AS idcred,IFNULL(q.iddeu,CAST(0 AS UNSIGNED)) AS iddeu,ifnull(cred_iddi,CAST(0 as unsigned)) as cred_iddi,
@@ -76,7 +75,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	INNER JOIN fe_rdeu AS r ON r.rdeu_idrd=d.deud_idrd
 	INNER JOIN fe_prov AS p ON p.idprov=r.rdeu_idpr WHERE acti='A' AND deud_iddi>0) AS q ON q.deud_iddi=a.`ldia_idld`
 	WHERE ldia_nume='<<cndoc>>' AND ldia_acti<>'I'
-	ENDTEXT
+	Endtext
 	If This.ejecutaconsulta(lp, 'detalle') < 1 Then
 		Return 0
 	Endif
@@ -84,7 +83,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		idcred, iddeu, idcliente, idproveedor From detalle Into Cursor (ccursor) Group By nreg
 	Return 1
 	Endfunc
-	Procedure  IngresaDatosDiarioBProvision(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17)
+	Function  IngresaDatosDiarioBProvision(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17)
 	cur = "rild"
 	lC = "FunIngresaDatosLibroDiarioBP"
 	goApp.npara1 = np1
@@ -104,17 +103,16 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	goApp.npara15 = np15
 	goApp.npara16 = np16
 	goApp.npara17 = np17
-	TEXT To lp Noshow
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-	ENDTEXT
+	Endtext
 	nidl = This.EJECUTARf(lC, lp, cur)
 	If nidl < 1 Then
 		Return 0
 	Endif
 	Return nidl
-	Endproc
-*********************
+	Endfunc
 	Function  IngresaDatosDiarioCProvision(np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15, np16, np17)
 	cur = "rild"
 	lC = "FunIngresaDatosLibroDiarioCP"
@@ -135,10 +133,10 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	goApp.npara15 = np15
 	goApp.npara16 = np16
 	goApp.npara17 = np17
-	TEXT To lp Noshow
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-	ENDTEXT
+	Endtext
 	nidl = This.EJECUTARf(lC, lp, cur)
 	If nidl < 1 Then
 		Return 0
@@ -165,10 +163,10 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	goApp.npara14 = np14
 	goApp.npara15 = np15
 	goApp.npara16 = np16
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16)
-	ENDTEXT
+	Endtext
 	nidl = This.EJECUTARf(lC, lp, cur)
 	If nidl < 1 Then
 		Return 0
@@ -194,10 +192,10 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	goApp.npara14 = np14
 	goApp.npara15 = np15
 	goApp.npara16 = np16
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16)
-	ENDTEXT
+	Endtext
 	nidl = This.EJECUTARf(lC, lp, cur)
 	If nidl < 1 Then
 		Return 0
@@ -240,6 +238,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		AddProperty(goApp, 'ccostos', '')
 	Endif
 *!*		ncta,nomb,idcta,cdestinod,cdestinoh,tipocta,plan_oper
+	ofechas = dfianddff(This.nmes, This.Na)
+	dfi = cfechas(ofechas.dfi)
+	dff = cfechas(ofechas.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
    \Select b.fecr As fech,b.Tdoc,a.ncta,a.nomb As nombre,Trim(c.razo) As razo,
@@ -261,7 +262,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If goApp.Ccostos = 'S' Then
     \ Left Join fe_centcostos As q On q.cent_idco=b.rcom_ccos
 	Endif
-   \Where  x.Impo <> 0 And b.Acti = 'A'  And x.ecta_acti = 'A' And Month(b.fecr)=<<This.nmes>> And Year(b.fecr)=<<This.Na>> And b.Tdoc Not In ('09','II','GI')
+   \Where  x.Impo <> 0 And b.Acti = 'A'  And x.ecta_acti = 'A' And b.fecr Between '<<dfi>>' And '<<dff>>' And b.Tdoc Not In ('09','II','GI')
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And b.codt=<<goApp.tienda>>
@@ -289,9 +290,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If goApp.Ccostos = 'S' Then
      \ Left Join fe_centcostos As q On q.cent_idco=b.rcom_ccos
 	Endif
-   \Where  x.Impo <> 0 And b.Acti = 'A'
-   \And x.ecta_acti = 'A' And Month(b.fecr)=<<This.nmes>> And Year(b.fecr)=<<This.Na>> And Length(Trim(cdestinod))>0
-   \And x.ecta_acti = 'A' And Month(b.fecr)=<<This.nmes>> And Year(b.fecr)=<<This.Na>>
+   \Where  x.Impo <> 0 And b.Acti = 'A' And x.ecta_acti = 'A' And b.fecr Between '<<dfi>>' And '<<dff>>' And Length(Trim(cdestinod))>0
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And b.codt=<<goApp.tienda>>
@@ -319,9 +318,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If goApp.Ccostos = 'S' Then
    \ Left Join fe_centcostos As q On q.cent_idco=b.rcom_ccos
 	Endif
-   \Where  x.Impo <> 0 And b.Acti = 'A'
-   \And x.ecta_acti = 'A' And Month(b.fecr)=<<This.nmes>> And Year(b.fecr)=<<This.Na>> And Length(Trim(cdestinoh))>0
-   \And x.ecta_acti = 'A' And Month(b.fecr)=<<This.nmes>> And Year(b.fecr)=<<This.Na>>
+   \Where  x.Impo <> 0 And b.Acti = 'A' And x.ecta_acti = 'A' And  b.fecr Between '<<dfi>>' And '<<dff>>' And Length(Trim(cdestinoh))>0
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And b.codt=<<goApp.tienda>>
@@ -372,12 +369,31 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function AnularDatosLibroDiario()
-	TEXT To lp Noshow Textmerge
-	  DELETE from fe_ldiario WHERE MONTH(ldia_fech)=<<this.nmes>> and YEAR(ldia_fech)=<<this.na>> and LEFT(ldia_comp,3)='<<this.ctipodatos>>';
-	ENDTEXT
+	ofechas = dfianddff(This.nmes, This.Na)
+	dfi = cfechas(ofechas.dfi)
+	dff = cfechas(ofechas.dff)
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
+	Endif
+	If !Pemstatus(goApp, 'tiendas', 5) Then
+		AddProperty(goApp, 'tiendas', '')
+	Endif
+	Set Textmerge On
+	Set Textmerge TO Memvar  lp  Noshow Textmerge
+	\Delete From fe_ldiario Where ldia_fech Between '<<dfi>>' And '<<dff>>' And Left(ldia_comp, 3) = '<<this.ctipodatos>>'
+	If goApp.Cdatos = 'S' Then
+		If Empty(goApp.Tiendas) Then
+	      \And ldia_codt=<<goApp.tienda>>
+		Else
+	      \And ldia_codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+		Endif
+	Endif
+	Set Textmerge Off
+	Set Textmerge To
 	If This.Ejecutarsql(lp) < 1  Then
 		Return 0
-	Endif
+	ENDIF
+	this.cmensaje='Anulado ok'
 	Return 1
 	Endfunc
 	Function listaroperacionesventas(ccursor)
@@ -387,6 +403,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If !Pemstatus(goApp, 'tiendas', 5) Then
 		AddProperty(goApp, 'tiendas', '')
 	Endif
+	ofechas = dfianddff(This.nmes, This.Na)
+	dfi = cfechas(ofechas.dfi)
+	dff = cfechas(ofechas.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
     \Select b.Tdoc,b.Ndoc,b.fech,a.ncta As ncta,a.nomb As nombre,c.razo As razo,
@@ -400,7 +419,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\Join fe_rcom b On b.idauto = x.idrven
 	\Join fe_sucu As s On s.idalma=b.codt
 	\Join fe_clie c On c.idclie = b.idcliente
-	\Where  x.Impo > 0 And b.Acti = 'A'  And x.Acti = 'A' And Month(b.fech)=<<This.nmes>> And Year(b.fech)=<<This.Na>> And b.Tdoc In ('01','03','07','08')
+	\Where  x.Impo > 0 And b.Acti = 'A'  And x.Acti = 'A' And b.fech Between '<<dfi>>'  And '<<dff>>' And b.Tdoc In ('01','03','07','08')
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And b.codt=<<goApp.tienda>>
@@ -420,7 +439,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\Join fe_rcom b On b.idauto = x.idrven
 	\Join fe_sucu As s On s.idalma=b.codt
 	\Join fe_clie c On c.idclie = b.idcliente
-	\Where  x.Impo < 0 And b.Acti = 'A'  And x.Acti = 'A' And Month(b.fech)=<<This.nmes>> And Year(b.fech)=<<This.Na>> And b.Tdoc In ('01','03','07','08')
+	\Where  x.Impo < 0 And b.Acti = 'A'  And x.Acti = 'A' And b.fech Between '<<dfi>>'  And '<<dff>>' And b.Tdoc In ('01','03','07','08')
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And b.codt=<<goApp.tienda>>
@@ -443,6 +462,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If !Pemstatus(goApp, 'tiendas', 5) Then
 		AddProperty(goApp, 'tiendas', '')
 	Endif
+	ofechas = dfianddff(This.nmes, This.Na)
+	dfi = cfechas(ofechas.dfi)
+	dff = cfechas(ofechas.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\Select '00' As Tdoc,b.lcaj_ndoc As Ndoc,b.lcaj_fech As fech,b.lcaj_fech As fecr,a.ncta As ncta,
@@ -454,7 +476,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\If(lcaj_tran='T',If(lcaj_acre<>0,If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)),Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As ith,'' As tienda
 	\From  fe_lcaja As b
 	\Join fe_plan a On a.idcta = b.lcaj_idct
-	\ Where  b.lcaj_acti = 'A' And Month(b.lcaj_fech)=<<This.nmes>> And Year(b.lcaj_fech)=<<This.Na>> And (b.lcaj_deud<>0 Or lcaj_acre<>0)
+	\ Where  b.lcaj_acti = 'A' And b.lcaj_fech Between '<<dfi>>' And '<<dff>>' And (b.lcaj_deud<>0 Or lcaj_acre<>0)
 	If goApp.Cdatos = 'S' Then
 		If Empty(goApp.Tiendas) Then
 	      \And b.lcaj_codt=<<goApp.tienda>>
@@ -510,8 +532,8 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function listarcomprasctas(ccursor)
-	dfi = Cfechas(This.dfi)
-	dff = Cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
 	Endif
@@ -532,10 +554,14 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	   \ And  idcta=<<This.nidcta>>
 	Endif
 	If goApp.Cdatos == 'S' Then
-		If Empty(goApp.Tiendas) Then
-	      \ And codt=<<goApp.tienda>>
+		If Alltrim(goApp.proyecto) == 'xsys' Then
+		      \ And idalma=<<goApp.tienda>>
 		Else
-	      \ And codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+			If Empty(goApp.Tiendas) Then
+	         \ And codt=<<goApp.tienda>>
+			Else
+	         \ And codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+			Endif
 		Endif
 	Endif
 	\ Order By Ndoc, tipo
@@ -547,8 +573,8 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function listarventasctas(ccursor)
-	dfi = Cfechas(This.dfi)
-	dff = Cfechas(This.dff)
+	dfi = cfechas(This.dfi)
+	dff = cfechas(This.dff)
 	If !Pemstatus(goApp, 'cdatos', 5) Then
 		AddProperty(goApp, 'cdatos', '')
 	Endif
@@ -568,11 +594,15 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If This.nidcta > 0 Then
 	   \ And  idcta=<<This.nidcta>>
 	Endif
-	If goApp.Cdatos = 'S' Then
-		If Empty(goApp.Tiendas) Then
-	      \ And codt=<<goApp.tienda>>
+	If goApp.Cdatos == 'S' Then
+		If Alltrim(goApp.proyecto) == 'xsys' Then
+		      \ And idalma=<<goApp.tienda>>
 		Else
+			If Empty(goApp.Tiendas) Then
+	      \ And codt=<<goApp.tienda>>
+			Else
 	      \ And codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+			Endif
 		Endif
 	Endif
 	\ Order By fech,Ndoc,tipo
@@ -590,6 +620,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If !Pemstatus(goApp, 'tiendas', 5) Then
 		AddProperty(goApp, 'tiendas', '')
 	Endif
+	ofechas = dfianddff(This.nmes, This.Na)
+	dfi = cfechas(ofechas.dfi)
+	dff = cfechas(ofechas.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\	Select Cast(b.lcaj_fech As Date) As fech,'00' As Tdoc,
@@ -597,17 +630,17 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)) As debe,
 	\	If(lcaj_mone='S',lcaj_deud,Round(lcaj_deud*lcaj_dola,2)) As haber,
 	\	a.nomb As nomb,IFNULL(If(b.lcaj_idau=0,If(lcaj_acre>0,rdeu_idau,rcre_idau),lcaj_idau),0) As idauto,
-	\	b.lcaj_idct As idcta,lcaj_tran As Tran,If(lcaj_acre<>0,'D','H') As tipo,
-	\	'a' As orden,b.lcaj_idca,
+	\	b.lcaj_idct As idcta,lcaj_tran As Tran,If(lcaj_acre<>0,'D','H') As tipo,'a' As orden,b.lcaj_idca,
 	\	If(lcaj_tran='T',If(lcaj_acre<>0,If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)),Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As itd,
 	\	If(lcaj_tran='T',If(lcaj_deud<>0,If(lcaj_mone='S',lcaj_deud,Round(lcaj_deud*lcaj_dola,2)),Cast(0 As Decimal(12,2))),Cast(0 As Decimal(12,2))) As ith,
 	\    'Caj' As tipomvto,'A' As cond,Cast('11' As signed) As Nitem,lcaj_fech As fecha,a.nomb As nombre,'Por las Operaciones de Caja Realizadas' As glosa,lcaj_dcto As dcto
-	\	From  fe_lcaja As b Join fe_plan a On a.idcta = b.lcaj_idct
+	\	From  fe_lcaja As b
+	\   Join fe_plan a On a.idcta = b.lcaj_idct
 	\	Left Join (Select deud_idrd,acta,iddeu From fe_deu Where Acti='A') As d On d.iddeu=lcaj_idde
 	\	Left Join fe_rdeu As r On r.rdeu_idrd=d.deud_idrd
     \   Left Join (Select cred_idrc,idcred,acta From fe_cred Where Acti='A') As c On c.idcred=lcaj_idcr
     \   Left Join fe_rcred As p On p.rcre_idrc=c.cred_idrc
-	\	Where  b.lcaj_acti = 'A' And Month(b.lcaj_fech)=<<This.nmes>> And Year(b.lcaj_fech)=<<This.Na>> And (b.lcaj_deud<>0 Or lcaj_acre<>0) And lcaj_form='E'
+	\	Where  b.lcaj_acti = 'A' And b.lcaj_fech Between '<<dfi>>' And '<<dff>>' And (b.lcaj_deud<>0 Or lcaj_acre<>0) And lcaj_form='E'
 	If goApp.Cdatos = 'S' Then
 	    \And lcaj_codt=<<goApp.tienda>>
 	Endif
@@ -615,12 +648,12 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	Select Cast(b.lcaj_fech As Date) As fech,'00' As Tdoc,Left(Concat("Caj-",Cast(b.lcaj_idca As Char)),12) As Ndoc,'10.11.10' As ncta,
 	\	lcaj_deta As razo,
 	\	If(lcaj_mone='S',lcaj_deud,Round(lcaj_deud*lcaj_dola,2)) As debe,Cast(0 As Decimal(12,2)) As haber,
-	\   a.nomb,b.lcaj_idau As idauto,idctadd As idcta,'N' As Tran,'D'  As tipo,'b' As orden,lcaj_idca,
+	\   a.nomb,b.lcaj_idau As idauto,v.gene_idca As idcta,'N' As Tran,'D'  As tipo,'b' As orden,lcaj_idca,
 	\	Cast(0 As Decimal(12,2)) As itd,Cast(0 As Decimal(12,2)) As ith,'Caj' As tipomvto,'A' As cond,Cast('12'As signed) As Nitem,lcaj_fech As fecha,
 	\   a.nomb As nombre,'Por las Operaciones de Caja Realizadas' As glosa,lcaj_dcto As dcto
 	\	From  fe_lcaja As b
-	\   Join fe_plan a On a.idcta = b.lcaj_idct
-	\	Where  b.lcaj_acti = 'A' And Month(b.lcaj_fech)=<<This.nmes>> And Year(b.lcaj_fech)=<<This.Na>>  And b.lcaj_deud<>0 And lcaj_form='E'
+	\   Join fe_plan a On a.idcta = b.lcaj_idct,fe_gene As v
+	\	Where  b.lcaj_acti = 'A' And b.lcaj_fech Between '<<dfi>>' And '<<dff>>'   And b.lcaj_deud<>0 And lcaj_form='E'
 	If goApp.Cdatos = 'S' Then
 	    \And lcaj_codt=<<goApp.tienda>>
 	Endif
@@ -628,13 +661,12 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	Select Cast(b.lcaj_fech As Date) As fech,'00' As Tdoc,Left(Concat("Caj-",Cast(b.lcaj_idca As Char)),12) As Ndoc,'10.11.10' As ncta,
 	\	lcaj_deta As razo,
 	\	Cast(0 As Decimal(12,2)) As debe,If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)) As haber,
-	\	a.nomb As nomb,b.lcaj_idau As idauto,
-    \   idctadh As idcta,'N' As Tran,'H'  As tipo,'c' As orden,lcaj_idca,
+	\	a.nomb As nomb,b.lcaj_idau As idauto,v.gene_idca  As idcta,'N' As Tran,'H'  As tipo,'c' As orden,lcaj_idca,
 	\	Cast(0 As Decimal(12,2)) As itd,Cast(0 As Decimal(12,2)) As ith,'Caj' As tipomvto,'A' As cond,Cast('13' As signed) As Nitem,
 	\   lcaj_fech As fecha,a.nomb  As nombre,'Por la Cancelación   ' As glosa,lcaj_dcto As dcto
 	\	From  fe_lcaja As b
-	\   Join fe_plan a On a.idcta = b.lcaj_idct
-	\	Where  b.lcaj_acti = 'A' And Month(b.lcaj_fech)=<<This.nmes>> And Year(b.lcaj_fech)=<<This.Na>> And b.lcaj_acre<>0 And lcaj_form='E'
+	\   Join fe_plan a On a.idcta = b.lcaj_idct,fe_gene As v
+	\	Where  b.lcaj_acti = 'A' And b.lcaj_fech Between '<<dfi>>' And '<<dff>>'  And b.lcaj_acre<>0 And lcaj_form='E'
 	If goApp.Cdatos = 'S' Then
 	    \And lcaj_codt=<<goApp.tienda>>
 	Endif
@@ -642,13 +674,12 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	Select Cast(b.lcaj_fech As Date) As fech,'00' As Tdoc,Left(Concat("Caj-",Cast(b.lcaj_idca As Char)),12) As Ndoc,
 	\	cdestinod As ncta,Concat("Dest :",Trim(lcaj_deta)) As razo,
 	\	If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)) As debe,Cast(0 As Decimal(12,2)) As haber,
-  	\   a.nomb,Cast(0 As UNSIGNED) As idauto,
-	\	idctadd As idcta,lcaj_tran As Tran,'D'  As tipo,'d' As orden,lcaj_idca,
+  	\   a.nomb,Cast(0 As UNSIGNED) As idauto,idctadd As idcta,lcaj_tran As Tran,'D'  As tipo,'d' As orden,lcaj_idca,
 	\	Cast(0 As Decimal(12,2)) As itd,Cast(0 As Decimal(12,2)) As ith,'Caj' As tipomvto,'D' As cond,Cast('14' As signed) As Nitem,
 	\   lcaj_fech As fecha,a.nomb  As nombre,'Por El Destino de  Operaciones de Caja Realizadas' As glosa,lcaj_dcto As dcto
 	\	From  fe_lcaja As b
 	\   Join fe_plan a On a.idcta = b.lcaj_idct
-	\	Where  b.lcaj_acti = 'A' And Month(b.lcaj_fech)=<<This.nmes>> And Year(b.lcaj_fech)=<<This.Na>> And Length(Trim(cdestinod))>0 And lcaj_form='E'
+	\	Where  b.lcaj_acti = 'A' And b.lcaj_fech Between '<<dfi>>' And '<<dff>>'  And Length(Trim(cdestinod))>0 And lcaj_form='E'
 	If goApp.Cdatos = 'S' Then
 	    \And lcaj_codt=<<goApp.tienda>>
 	Endif
@@ -656,17 +687,16 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	Select Cast(b.lcaj_fech As Date) As fech,'00' As Tdoc,Left(Concat("Caj-",Cast(b.lcaj_idca As Char)),12) As Ndoc,
 	\	cdestinoh As ncta,Concat("Destino :",Trim(lcaj_deta)) As razo,
 	\	Cast(0 As Decimal(12,2)) As debe,If(lcaj_mone='S',lcaj_acre,Round(lcaj_acre*lcaj_dola,2)) As haber,
-	\	a.nomb,Cast(0 As UNSIGNED)As idauto,
-	\	idctadh As idcta,lcaj_tran As Tran,'H'  As tipo,'e' As orden,lcaj_idca,
+	\	a.nomb,Cast(0 As UNSIGNED)As idauto,idctadh As idcta,lcaj_tran As Tran,'H'  As tipo,'e' As orden,lcaj_idca,
 	\	Cast(0 As Decimal(12,2)) As itd,Cast(0 As Decimal(12,2)) As ith,'Caj' As tipomvto,'D' As cond,Cast('15' As signed) As Nitem,
 	\   lcaj_fech As fecha,a.nomb As nombre,'Por el Destino de las Operaciones de Caja Realizadas' As glosa,lcaj_dcto As dcto
 	\	From  fe_lcaja As b
 	\   Join fe_plan a On a.idcta = b.lcaj_idct
-	\	Where  b.lcaj_acti = 'A' And Month(b.lcaj_fech)=<<This.nmes>> And Year(b.lcaj_fech)=<<This.Na>> And Length(Trim(cdestinoh))>0 And lcaj_form='E'
+	\	Where  b.lcaj_acti = 'A' And b.lcaj_fech Between '<<dfi>>' And '<<dff>>'  And Length(Trim(cdestinoh))>0 And lcaj_form='E'
 	If goApp.Cdatos = 'S' Then
 	    \And lcaj_codt=<<goApp.tienda>>
 	Endif
-    \   Order By fech,lcaj_idca,orden
+    \   Order By fech,Ndoc,orden
 	Set Textmerge Off
 	Set Textmerge To
 	If This.ejecutaconsulta(lC, ccursor) < 1 Then
@@ -681,6 +711,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	If !Pemstatus(goApp, 'tiendas', 5) Then
 		AddProperty(goApp, 'tiendas', '')
 	Endif
+	ofechas = dfianddff(This.nmes, This.Na)
+	dfi = cfechas(ofechas.dfi)
+	dff = cfechas(ofechas.dff)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
 	\	Select cban_fech As fech,'00' As Tdoc,Left(Concat("Ban-",Cast(b.cban_idco As Char)),12) As Ndoc,
@@ -702,7 +735,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\   INNER Join fe_rdeu As F On F.rdeu_idrd=q.deud_idrd Where Acti='A') As d On deud_idcb=b.cban_idco
 	\	Left Join fe_rdeu As q On q.rdeu_idrd=d.deud_idrd
 	\	Left Join (Select cred_idcb,cred_idrc,idcred,acta,Mone From fe_cred Where Acti='A') As e On e.cred_idcb=b.cban_idco Left Join fe_rcred As w On w.rcre_idrc=e.cred_idrc
-	\	Where  b.cban_acti = 'A' And Month(b.cban_fech)=<<This.nmes>> And Year(b.cban_fech)=<<This.Na>>
+	\	Where  b.cban_acti = 'A' And b.cban_fech Between '<<dfi>>' And '<<dff>>' And Year(b.cban_fech)=<<This.Na>>
 	If goApp.Cdatos = 'S' Then
 	    \And x.ctas_codt=<<goApp.tienda>>
 	Endif
@@ -720,7 +753,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	INNER Join fe_plan a On a.idcta = b.cban_idct
 	\	INNER Join fe_ctasb As x On x.ctas_idct=b.cban_idba
 	\	INNER Join fe_plan As T On T.idcta=x.ctas_ncta
-	\	Where  b.cban_acti  In('A') And Month(b.cban_fech)=<<This.nmes>> And Year(b.cban_fech)=<<This.Na>> And cban_debe>0
+	\	Where  b.cban_acti  In('A') And b.cban_fech Between '<<dfi>>' And '<<dff>>' And cban_debe>0
 	If goApp.Cdatos = 'S' Then
 	    \And x.ctas_codt=<<goApp.tienda>>
 	Endif
@@ -738,7 +771,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	INNER Join fe_plan a On a.idcta = b.cban_idct
 	\	INNER Join fe_ctasb As x On x.ctas_idct=b.cban_idba
 	\	INNER Join fe_plan As T On T.idcta=x.ctas_ncta
-	\	Where  b.cban_acti  In('A') And Month(b.cban_fech)=<<This.nmes>> And Year(b.cban_fech)=<<This.Na>>  And cban_haber>0
+	\	Where  b.cban_acti  In('A') And b.cban_fech Between '<<dfi>>' And '<<dff>>' And cban_haber>0
 	If goApp.Cdatos = 'S' Then
 	    \And x.ctas_codt=<<goApp.tienda>>
 	Endif
@@ -756,7 +789,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	INNER Join fe_plan a On a.idcta = b.cban_idct
 	\	INNER Join fe_ctasb As x On x.ctas_idct=b.cban_idba
 	\	INNER Join fe_plan As T On T.idcta=x.ctas_ncta
-	\	Where  b.cban_acti In ('A') And Month(b.cban_fech)=<<This.nmes>> And Year(b.cban_fech)=<<This.Na>> And Length(Trim(a.cdestinod))>0
+	\	Where  b.cban_acti In ('A') And b.cban_fech Between '<<dfi>>' And '<<dff>>' And Length(Trim(a.cdestinod))>0
 	If goApp.Cdatos = 'S' Then
 	    \And x.ctas_codt=<<goApp.tienda>>
 	Endif
@@ -774,7 +807,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	\	INNER Join fe_plan a On a.idcta = b.cban_idct
 	\	INNER Join fe_ctasb As x On x.ctas_idct=b.cban_idba
 	\	INNER Join fe_plan As T On T.idcta=x.ctas_ncta
-	\	Where  b.cban_acti  In('A') And Month(b.cban_fech)=<<This.nmes>> And Year(b.cban_fech)=<<This.Na>>  And Length(Trim(a.cdestinoh))>0
+	\	Where  b.cban_acti  In('A') And b.cban_fech Between '<<dfi>>' And '<<dff>>'  And Length(Trim(a.cdestinoh))>0
 	If goApp.Cdatos = 'S' Then
 	    \And x.ctas_codt=<<goApp.tienda>>
 	Endif
@@ -834,10 +867,10 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Function ingresadatosldiario()
 	Local lC, lp
 	lC			  = "ProIngresaDatosLibroDiarioPLE55"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
      ('<<cfechas(this.dfecha)>>',<<this.ndebe>>,<<this.nhaber>>,'<<this.cglosa>>', '<<this.ctipo>>','<<this.cndoc>>',<<this.nidcta>>,'<<this.ccond>>', <<this.Nitem>>,'<<this.ctipomvto>>',0,0,'S','<<this.ctran>>',<<this.nttd>>,
      <<this.ntth>>,'<<this.cTdoc>>',<<goapp.tienda>>)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
@@ -846,12 +879,12 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Function  IngresaDatosDiarioBProvision5()
 	cur = "rild"
 	lC = "FunIngresaDatosLibroDiarioCP"
-	TEXT To lp Noshow Textmerge
+	Text To lp Noshow Textmerge
      ('<<cfechas(this.dfecha)>>',<<this.ndebe>>,<<this.nhaber>>,'<<this.cglosa>>',
      '<<this.ctipo>>','<<this.cndoc>>',<<this.nidcta>>,'<<this.ccond>>',
      <<this.Nitem>>,'<<this.ctipomvto>>',0,0,'<<this.cmoneda>>','<<this.ctran>>',<<this.nttd>>,
      <<this.ntth>>,<<this.nidprovision>>,<<this.ncodt>>)
-	ENDTEXT
+	Endtext
 	nidl = This.EJECUTARf(lC, lp, cur)
 	If nidl < 1 Then
 		Return 0
@@ -877,10 +910,10 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	goApp.npara14 = np14
 	goApp.npara15 = np15
 	goApp.npara16 = np16
-	TEXT To lp Noshow
+	Text To lp Noshow
      (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
       ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16)
-	ENDTEXT
+	Endtext
 	If This.EJECUTARP(lC, lp, cur) < 1 Then
 		Return 0
 	Endif
@@ -891,9 +924,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		This.Cmensaje = "Ingrese Un Número de Asiento Válido"
 		Return 0
 	Endif
-	TEXT To lC  Noshow Textmerge
+	Text To lC  Noshow Textmerge
       UPDATE fe_ldiario SET ldia_acti='I' WHERE TRIM(ldia_nume)='<<TRIM(nid)>>' AND ldia_acti='A'
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -901,18 +934,18 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function Anulapagoscreditos(nid)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
       UPDATE fe_cred SET acti='I' WHERE cred_iddi=<<nid>> and cred_iddi>0
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function Anulapagosdeudas(nid)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
       UPDATE fe_deu SET acti='I' WHERE deud_iddi=<<nid>> and deud_iddi>0
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -922,15 +955,15 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Local lp
 	Na	= Val(goApp.Año)
 	If Na >= 2020 Then
-		TEXT To lp Noshow Textmerge
+		Text To lp Noshow Textmerge
         select pcta as ctap,GROUP_CONCAT(TRIM(nomb)) AS nomb FROM (
         SELECT LEFT(ncta,2) AS pcta,nomb FROM fe_plan WHERE plan_acti='A' AND RIGHT(ncta,2)='00' ORDER BY pcta) AS p GROUP BY pcta
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lp Noshow Textmerge
+		Text To lp Noshow Textmerge
         select  pcta as ctap,GROUP_CONCAT(TRIM(nomb)) AS nomb FROM (
         SELECT LEFT(ncta,2) AS pcta,nomb FROM fe_plan WHERE plan_acti='A' AND RIGHT(ncta,2)='00' ORDER BY pcta) AS p GROUP BY pcta
-		ENDTEXT
+		Endtext
 	Endif
 	If This.ejecutaconsulta(lp, ccursor) < 1 Then
 		Return 0
@@ -957,10 +990,40 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	goApp.npara15 = 0
 	goApp.npara16 = 0
 	goApp.npara17 = This.nidbancos
-	TEXT To lp Noshow
+	Text To lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
-	ENDTEXT
+	Endtext
+	nidl = This.EJECUTARf(lC, lp, cur)
+	If nidl < 1 Then
+		Return 0
+	Endif
+	Return nidl
+	Endfunc
+	Function  IngresaDatosLDiarioCProvisionCaja()
+	cur = "rild"
+	lC = "FunIngresaDatosLibroDiarioCP"
+	goApp.npara1 = This.dFecha
+	goApp.npara2 = This.ndebe
+	goApp.npara3 = This.nhaber
+	goApp.npara4 = This.cglosa
+	goApp.npara5 = This.cTdoc
+	goApp.npara6 = This.cndoc
+	goApp.npara7 = This.nidcta
+	goApp.npara8 = This.ctipomvto
+	goApp.npara9 =  This.Nitem
+	goApp.npara10 = This.ccond
+	goApp.npara11 = 0
+	goApp.npara12 = 0
+	goApp.npara13 = This.Cmoneda
+	goApp.npara14 = ""
+	goApp.npara15 = 0
+	goApp.npara16 = 0
+	goApp.npara17 = This.nidcaja
+	Text To lp Noshow
+	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
+	Endtext
 	nidl = This.EJECUTARf(lC, lp, cur)
 	If nidl < 1 Then
 		Return 0
@@ -968,9 +1031,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Return nidl
 	Endfunc
 	Function listadiariosimplificado(ccursor)
-	f1 = Cfechas(This.dfi)
-	f2 = Cfechas(This.dff)
-	TEXT To lC Noshow Textmerge
+	f1 = cfechas(This.dfi)
+	f2 = cfechas(This.dff)
+	Text To lC Noshow Textmerge
 	  SELECT ncta,ldia_fech,ldia_idcta,ldia_debe,ldia_haber as ldia_haber,ldia_glosa,ldia_nume,ldia_idau,ldia_comp,ifnull(ndoc,'') as ndoc,ldia_cond FROM fe_ldiario
 	  INNER JOIN fe_plan  ON fe_plan.`idcta`=fe_ldiario.`ldia_idcta`
 	  left join fe_rcom on fe_rcom.idauto=fe_ldiario.ldia_idau
@@ -996,7 +1059,7 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	  left join fe_rcom on fe_rcom.idauto=fe_ldiario.ldia_idau
 	  WHERE ldia_fech BETWEEN '<<f1>>' AND '<<f2>>' AND ldia_acti='A' AND LEFT(ncta,2) BETWEEN '70' AND '79'
 	  ORDER BY ncta,ldia_fech,ldia_idau,ldia_nume,ldia_cond
-	ENDTEXT
+	Endtext
 	If This.ejecutaconsulta(lC, ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1008,11 +1071,14 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endif
 	If !Pemstatus(goApp, 'cdatos', 5)
 		AddProperty(goApp, 'cdatos', '')
-	Endif
+	ENDIF
+	ofechas = dfianddff(np2, np3)
+	dfi = cfechas(ofechas.dfi)
+	dff = cfechas(ofechas.dff)
 	ccursor = 'c_' + Sys(2015)
 	Set Textmerge On
 	Set Textmerge To Memvar lC Noshow Textmerge
-    \ Select ldia_idld From fe_ldiario Where ldia_acti='A' And Left(ldia_comp,3)='<<np1>>' And Month(ldia_fech)=<<np2>> And Year(ldia_fech)=<<np3>>
+    \ Select ldia_idld From fe_ldiario Where ldia_acti='A' And Left(ldia_comp,3)='<<np1>>' And ldia_fech between '<<dfi>>' and '<<dff>>'
 	If goApp.Cdatos = 'S' Then
       \ And ldia_codt=<<goApp.tienda>>
 	Endif
@@ -1034,8 +1100,33 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endif
 	Return 1
 	Endfunc
+	Function BuscarAsiento1(cndoc)
+	ccursor = 'c_' + Sys(2015)
+	Text To lC Noshow Textmerge
+	SELECT b.ncta,b.nomb,a.ldia_glosa AS glosa,ldia_debe AS debe,ldia_haber AS haber,ldia_tipo AS tipo,
+	a.ldia_idcta AS idcta,a.ldia_idld AS nreg,ldia_fech AS fecha,ldia_cond AS cond,a.ldia_comp AS Comp,
+	IFNULL(p.razo,'') AS Cliente,IFNULL(q.razo,'') AS Proveedor,IFNULL(a.ldia_idcv,0) AS idcliente,IFNULL(a.ldia_idcc,0) AS idproveedor
+	FROM fe_ldiario AS a
+	INNER JOIN fe_plan AS b ON b.idcta=a.ldia_idcta
+	LEFT JOIN fe_ctasctesv AS m ON m.ctcv_idct=a.ldia_idcv
+	LEFT JOIN fe_clie AS p ON p.idclie=m.ctcv_idcl
+	LEFT JOIN fe_ctasctesc AS n ON n.ctcc_idct=a.ldia_idcc
+	LEFT JOIN fe_prov AS q ON q.idprov=n.ctcc_idpr
+	WHERE ldia_nume='<<cndoc>>' AND ldia_acti<>'I'
+	Endtext
+	If This.ejecutaconsulta(lC, ccursor) < 1 Then
+		Return 0
+	Endif
+	Select (ccursor)
+	If !Empty(ncta) Then
+		This.Cmensaje = "Ya existe un Registro con este Número"
+		Return 0
+	Endif
+	Return  1
+	Endfunc
 	Function enviardiarioservidor(ccursor)
 	oser = Newobject("servicio", "d:\capass\services\service.prg")
+	This.ccursor = m.ccursor
 	m.rpta = oser.Inicializar(This, 'ldiario')
 	If m.rpta < 1 Then
 		This.Cmensaje = oser.Cmensaje
@@ -1047,12 +1138,20 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 		d:\Librerias\_.prg  Additive
 	Select (ccursor)
 	m.cdata = nfcursortojson(.T.)
-	TEXT To m.envio Noshow Textmerge
+	ncodt=0
+	If goApp.Cdatos = 'S' Then
+		cnruc = oempresa.nruc
+		ncodt=goapp.tienda
+	Else
+		cnruc = fe_gene.nruc
+	Endif
+	Text To m.envio Noshow Textmerge
 	{
-	     "ruc":"<<fe_gene.nruc>>",
+	     "ruc":"<<cnruc>>",
+	     "codt":<<ncodt>>,
 	     "lista":<<m.cdata>>
 	}
-	ENDTEXT
+	Endtext
 	rutajson = Addbs(Sys(5) + Sys(2003)) + 'datos.json'
 	Strtofile(m.envio, rutajson)
 	oHTTP = Createobject("Microsoft.XMLHTTP")
@@ -1084,9 +1183,9 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Return 1
 	Endfunc
 	Function devvuelveidcta(ncta)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT idcta,nomb,ncta FROM fe_plan WHERE ncta='<<ncta>>' AND plan_acti='A' limit 1
-	ENDTEXT
+	Endtext
 	ccursor = 'c_' + Sys(2015)
 	If This.ejecutaconsulta(lC, ccursor) < 1 Then
 		Return 0
@@ -1098,33 +1197,72 @@ Define Class Ldiario As OData Of "d:\capass\database\data.prg"
 	Endif
 	Return idcta
 	Endfunc
-	Function listardetallecta(nid,fi,ff,ccursor)
-	f1=Cfechas(m.fi)
-	f2=Cfechas(m.ff)
-	TEXT To lC Noshow Textmerge
+	Function listardetallecta(nid, fi, ff, ccursor)
+	f1 = cfechas(m.fi)
+	f2 = cfechas(m.ff)
+	Text To lC Noshow Textmerge
     select ldia_fech,ldia_nume,ldia_debe,ldia_haber,ldia_glosa,
     ldia_tipo,ldia_comp,p.ncta from fe_ldiario  as l
     inner join fe_plan as p   ON p.idcta=l.ldia_idcta
     where ldia_fech between'<<f1>>'  and '<<f2>>'  and ldia_idcta=<<nid>> and ldia_Acti='A' and ldia_tran<>'T'  order by ldia_fech,ldia_tipo
-	ENDTEXT
+	Endtext
 	If This.ejecutaconsulta(lC, ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
-	Function remplazarcuentasectasc(nidcta,ccursor)
+	Function remplazarcuentasectasc(nidcta, ccursor)
+	dv = 1
 	Select cctas
-	Scan For sw=1
-		idec=cctas.idectas
-		TEXT TO lc noshow
+	Scan For sw = 1
+		idec = cctas.idectas
+		Text To lC Noshow
          UPDATE fe_ectasc SET idcta=?nidcta WHERE idectas=?idec
-		ENDTEXT
-		If This.Ejecutarsql(lC)<1 Then
+		Endtext
+		If This.Ejecutarsql(lC) < 1 Then
+			m.dv = 0
 			Exit
 		Endif
 	Endscan
+	If m.dv = 0 Then
+		Return 0
+	Endif
+	Return 1
 	Endfunc
+*!*		Function  IngresaDatosDiarioBProvisionO()
+*!*		cur = "rild"
+*!*		lC = "FunIngresaDatosLibroDiarioBP"
+*!*	    goApp.npara1 = this.dFecha
+*!*		goApp.npara2 = this.ndebe
+*!*		goApp.npara3 =this.nhaber
+*!*		goApp.npara4 =this.cglosa
+*!*		goApp.npara5 = this.Ctipo
+*!*		goApp.npara6 =this.cndoc
+*!*		goApp.npara7 = this.nidcta
+*!*		goApp.npara8 = this.ccond
+*!*		goApp.npara9 = this.Nitem
+*!*		goApp.npara10 = this.ctipomvt
+*!*		goApp.npara11 = 0
+*!*		goApp.npara12 = 0
+*!*		goApp.npara13 = 'S'
+*!*		goApp.npara14 = ""
+*!*		goApp.npara15 = this.nttd
+*!*		goApp.npara16 = this.ntth
+*!*		goApp.npara17 = this.nidbancos
+*!*		TEXT To lp Noshow
+*!*		     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
+*!*		      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
+*!*		ENDTEXT
+*!*		nidl = This.EJECUTARf(lC, lp, cur)
+*!*		If nidl < 1 Then
+*!*			Return 0
+*!*		Endif
+*!*		Return nidl
+*!*		Endfunc
 Enddefine
+
+
+
 
 
 

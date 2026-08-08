@@ -100,7 +100,7 @@ Define Class Tienda As OData Of 'd:\capass\database\data.prg'
 		Set DataSession To This.idsesion
 	Endif
 	TEXT To lC Noshow Textmerge
-	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9,10,11) ORDER BY idalma
+	   SELECT nomb,idalma,dire,ciud,sucuidserie FROM fe_sucu  WHERE idalma IN(1,2,3,4,5,6,7,8,9,10,11,12) ORDER BY idalma
 	ENDTEXT
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0

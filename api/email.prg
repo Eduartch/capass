@@ -55,9 +55,9 @@ Define Class E_MAIL As Custom
 				This.cContrasena=goapp.clavecorreo
 			Endif
 		Else
-			objcorreo=This.Solicitaemail('cpe')
+	    	objcorreo=This.Solicitaemail('cpe')
 			If Vartype(objcorreo.correo)='L' Then
-				This.CmensajeError='No se Puede Acceder a la URL del Correo '+This.cRemitente
+				This.CmensajeError=' No se Puede Acceder a la URL del Correo '+This.cRemitente
 				Return
 			Endif
 			This.cContrasena=objcorreo.Password
@@ -196,6 +196,7 @@ Define Class E_MAIL As Custom
 
 	Function Solicitaemail(cemail)
 	URL=DOMINIO1+'dcorreo.php'
+
 	TEXT To cdata Noshow Textmerge
 	{
 	"nombre":"<<cemail>>"
@@ -211,7 +212,6 @@ Define Class E_MAIL As Custom
 		This.CmensajeError="Servicio "+Trim(URL)+" NO Disponible "+Alltrim(Str(oHTTP.Status))
 		Return cvalor
 	Endif
-
 	lcHTML = oHTTP.responseText
 	Set Procedure To  d:\librerias\json Additive
 	ovalor = json_decode(lcHTML)

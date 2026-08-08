@@ -63,7 +63,7 @@ Define Class Preciosproductos As Odata Of 'd:\capass\database\data.prg'
 	TEXT to lp noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6)
 	ENDTEXT
-	If EJECUTARP(lc,lp,cur)<1 Then
+	If this.EJECUTARP(lc,lp,cur)<1 Then
 		Return 0
 	Endif
 	Return 1
@@ -75,7 +75,7 @@ Define Class Preciosproductos As Odata Of 'd:\capass\database\data.prg'
 	TEXT to lp noshow
           (?goapp.npara1)
 	ENDTEXT
-	If EJECUTARP(lc,lp,ccursor)<1 Then
+	If this.EJECUTARP(lc,lp,ccursor)<1 Then
 		Return 0
 	Endif
 	Return 1
@@ -88,7 +88,7 @@ Define Class Preciosproductos As Odata Of 'd:\capass\database\data.prg'
 	TEXT to lp noshow
           (?goapp.npara1,?goapp.npara2)
 	ENDTEXT
-	If EJECUTARP(lc,lp,ccursor)<1 Then
+	If this.EJECUTARP(lc,lp,ccursor)<1 Then
 		Return 0
 	Endif
 	Return 1
@@ -102,7 +102,7 @@ Define Class Preciosproductos As Odata Of 'd:\capass\database\data.prg'
 	TEXT to lp noshow
           (?goapp.npara1,?goapp.npara2,?goapp.npara3)
 	ENDTEXT
-	If EJECUTARP(lc,lp,ccursor)< 1 Then
+	If this.EJECUTARP(lc,lp,ccursor)< 1 Then
 		Return 0
 	Endif
 	Return 1

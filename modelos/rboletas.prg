@@ -1,32 +1,31 @@
-#Define MENSAJE1 "NO Se envío el comprobante Por las siguientes razones"+Chr(13)+Chr(10)+" NO Hay Conexión a Internet "+Chr(13)+Chr(10)
-#Define MENSAJE2 "NO Hay Respuesta desde la WEB SERVICE DE SUNAT"+Chr(13)+Chr(10)
-#Define MENSAJE3       "Ya se envio correctamente pero la respuesta no se recibio Correctamente-(Consultar con Clave Sol en www.sunat.gob.pe)"
 Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	todos = 0
-	dfecha=Date()
+	dfecha = Date()
 	cTdoc = ""
 	Cserie = ""
 	ndesde = 0
 	nhasta = 0
-	nimpo=0
-	nvalor=0
-	nexon=0
-	ninafectas=0
-	nigv=0
-	ngrati=0
-	cxml=""
-	chash=""
-	cfile=""
+	nimpo = 0
+	nvalor = 0
+	nexon = 0
+	ninafectas = 0
+	nigv = 0
+	ngrati = 0
+	cxml = ""
+	chash = ""
+	cfile = ""
 	estado = ""
 	cticket = ""
-	crespuesta=""
-	ncodt=0
+	crespuesta = ""
+	ncodt = 0
 	nidr = 0
+	cfilecdr = ""
+	soloporenviar = ""
 *curb.fech, curb.Tdoc, curb.Serie, curb.desde, curb.hasta, curb.Impo, curb.valor, curb.Exon, curb.inafectas, curb.igv, curb.gratificaciones,  carxml, crhash, goApp.cArchivo, cresp
 	conmensajerapido = ""
 	Function ConsultaBoletasyNotasporenviar(f1, f2)
 	Local lC
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    SELECT resu_fech,enviados,resumen,resumen-enviados,enviados-resumen
 		FROM(SELECT resu_fech,CAST(SUM(enviados) AS DECIMAL(12,2)) AS enviados,CAST(SUM(resumen) AS DECIMAL(12,2))AS resumen FROM(
 		SELECT resu_fech,CASE tipo WHEN 1 THEN resu_impo ELSE 0 END AS enviados,
@@ -42,7 +41,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 		WHERE  f.fech between '<<f1>>' and '<<f2>>' and f.acti='A' AND f.tdoc IN ('07','08') AND LEFT(f.ndoc,1) in('F','B') AND w.tdoc='03' AND f.idcliente>0) AS x)
 		AS y GROUP BY resu_fech ORDER BY resu_fech) AS zz  WHERE resumen-enviados>=1
-	ENDTEXT
+	Endtext
 	If  This.EJECutaconsulta(lC, 'rbolne') < 1 Then
 		Return 0
 	Endif
@@ -108,24 +107,24 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function solounticketenvio(Df, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    select resu_tick,resu_arch FROM fe_resboletas f
         where f.resu_acti='A' and (LEFT(resu_mens,1)<>'0' OR ISNULL(resu_mens)) and resu_fech='<<df>>' and length(TRIM(resu_tick))>0 limit 1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function mostrardetalleboletasxenviarurl(Df, Ccursor)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	SELECT tdoc,ndoc,fech,impo,idauto FROM fe_rcom WHERE tdoc='03' AND acti='A' AND idcliente>0 AND fech='<<df>>'
 	UNION ALL
 	SELECT f.tdoc,f.ndoc,f.fech,f.impo,f.idauto FROM fe_rcom  AS f
 	INNER JOIN fe_ncven g ON g.ncre_idan=f.idauto
 	INNER JOIN fe_rcom AS w ON w.idauto=g.ncre_idau
 	WHERE f.tdoc="07"  AND f.acti='A' AND f.idcliente>0 AND w.tdoc='03' AND f.fech='<<df>>'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -139,7 +138,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Else
 		Cruc = Oempresa.nruc
 	Endif
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	"ruc":"<<cruc>>",
 	"ndoc":"<<cndoc>>",
@@ -149,7 +148,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	"ticket":"<<cticket>>",
 	"idauto":"<<nidauto>>"
 	}
-	ENDTEXT
+	Endtext
 	oHTTP = Createobject("MSXML2.XMLHTTP")
 	oHTTP.Open("post", pURL_WSDL, .F.)
 	oHTTP.setRequestHeader("Content-Type", "application/json")
@@ -169,13 +168,13 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Set Procedure To d:\Librerias\json Additive
 	m.lcURL		= "http://companiasysven.com/apisunat20.php"
 	m.loXmlHttp	= Createobject("Microsoft.XMLHTTP")
-	TEXT To cdata Noshow Textmerge
+	Text To cdata Noshow Textmerge
 	{
 	"fi":"<<fi>>",
 	"ff":"<<ff>>",
 	"ruc":"<<cruc>>"
 	}
-	ENDTEXT
+	Endtext
 	m.loXmlHttp.Open('POST', m.lcURL, .F.)
 	m.loXmlHttp.setRequestHeader("Content-Type", "application/json")
 	m.loXmlHttp.Send(cdata)
@@ -228,9 +227,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 *totenvio=totenvio+boletas.importe
 			Cmensaje = boletas.Mensaje
 *	Wait Window cticket
-			TEXT To lC Noshow Textmerge
+			Text To lC Noshow Textmerge
 	           UPDATE fe_rcom SET rcom_mens='<<boletas.mensaje>>',rcom_fecd=curdate() WHERE idauto=<<boletas.idauto>>
-			ENDTEXT
+			Endtext
 			If This.Ejecutarsql(lC) < 1 Then
 				Sw = 0
 				Exit
@@ -241,9 +240,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		If Sw = 0 Then
 			Exit
 		Endif
-		TEXT To lcc Noshow Textmerge
+		Text To lcc Noshow Textmerge
 		  UPDATE fe_resboletas SET resu_mens='<<cmensaje>>',resu_feen=curdate() WHERE resu_tick='<<cticket>>'
-		ENDTEXT
+		Endtext
 		If This.Ejecutarsql(lcc) < 1 Then
 			Sw = 0
 			Exit
@@ -262,9 +261,14 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function  EnviarBoletasiNotas(Df)
 	Local ocomp As "comprobante"
-	cpropiedad = "cdatos"
-	If !Pemstatus(goApp, cpropiedad, 5)
+	If !Pemstatus(goApp, "cdatos", 5)
 		goApp.AddProperty("cdatos", "")
+	Endif
+	If !Pemstatus(goApp,  "Firmarcondll", 5)
+		goApp.AddProperty("Firmarcondll", "")
+	Endif
+	If !Pemstatus(goApp, "multiempresa", 5)
+		goApp.AddProperty("multiempresa", "")
 	Endif
 	goApp.datosg = ""
 	If This.Idsesion > 1 Then
@@ -279,9 +283,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Select Tdoc, Serie, desde, hasta, valor, Exon, ;
-		000000.00 As inafectas, igv, Impo, 0.00 As gratificaciones, Df As fech From rb1 Into Cursor curb
+		inafecta As inafectas, igv, Impo, rcom_otro As gratificaciones, Df As fech From rb1 Into Cursor curb
 	Select fech, Tdoc, Serie, numero, tipodoc, ndni, valor, rcom_exon As Exon, ;
-		000000.00 As inafectas, igv, Impo, 0.00 As gratificaciones, trefe, serieref, numerorefe, Idauto From rmbol Into Cursor crb
+		rcom_inaf As inafectas, igv, Impo, rcom_otro As gratificaciones, trefe, serieref, numerorefe, Idauto From rmbol Into Cursor crb
 	Select crb
 	ocomp.itemsdocumentos = Reccount()
 	tr					  = ocomp.itemsdocumentos
@@ -314,7 +318,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		ocomp.direccionempresa	 = Oempresa.ptop
 		ocomp.ciudademisor		 = Oempresa.ciudad
 		ocomp.distritoemisor	 = Oempresa.distrito
-*	nres					 = oempresa.gene_nres
 		Cnruc					 = Oempresa.nruc
 	Endif
 	nres					 = fe_gene.gene_nres
@@ -342,14 +345,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		ocomp.ItemsFacturas[i, 15] = "0.00"
 		ocomp.ItemsFacturas[i, 16] = Alltrim(Str(crb.gratificaciones, 12, 2))
 	Endscan
-	cpropiedad = "Firmarcondll"
-	If !Pemstatus(goApp, cpropiedad, 5)
-		goApp.AddProperty("Firmarcondll", "")
-	Endif
-	cpropiedad = "multiempresa"
-	If !Pemstatus(goApp, cpropiedad, 5)
-		goApp.AddProperty("multiempresa", "")
-	Endif
+
 	ocomp.Cmulti = goApp.Multiempresa
 	ocomp.FirmarconDLL = goApp.FirmarconDLL
 	If nres = 0 Then
@@ -385,11 +381,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 				dfenvio	= fe_gene.fech
 				np3		= "0 El Resumen de Boletas ha sido aceptada " + goApp.ticket
 				dfenvio	= Cfechas(fe_gene.fech)
-				TEXT To lC Noshow
+				Text To lC Noshow
                     UPDATE fe_rcom SET rcom_mens=?np3,rcom_fecd=?dfenvio WHERE idauto=?np1
-				ENDTEXT
-				If  This.Ejecutarsql(lC) < 0 Then
-					This.Cmensaje = 'No se Grabo el mensaje de Respuesta'
+				Endtext
+				If  This.Ejecutarsql(lC) < 1 Then
 					v = 0
 					Exit
 				Endif
@@ -416,7 +411,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 *	WAIT WINDOW 'aqui  '+goapp.cdatos
 	If goApp.Cdatos = 'S' Then
 		nidt = goApp.tienda
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		SELECT fech,tdoc,
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,
 		If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
@@ -449,11 +444,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
         inner join fe_clie c on c.idclie=f.idcliente
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>>
-		ENDTEXT
+		Endtext
 		If This.EJECutaconsulta(lC, "rboletas") < 1 Then
 			Return 0
 		Endif
-		TEXT To lcx Noshow Textmerge
+		Text To lcx Noshow Textmerge
 		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo
 		from(select
@@ -476,9 +471,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		FROM fe_rcom f
 		inner join fe_ncven g on g.ncre_idan=f.idauto inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>' and f.codt=<<nidt>>  order by f.ndoc) as x group by serie
-		ENDTEXT
+		Endtext
 	Else
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 		SELECT fech,tdoc,
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,
 		If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
@@ -510,11 +505,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
         inner join fe_clie c on c.idclie=f.idcliente
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>'
-		ENDTEXT
+		Endtext
 		If This.EJECutaconsulta(lC, "rboletas") < 1 Then
 			Return 0
 		Endif
-		TEXT To lcx Noshow Textmerge
+		Text To lcx Noshow Textmerge
 		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo
 		from(select
@@ -539,7 +534,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		inner join fe_ncven g on g.ncre_idan=f.idauto
 		inner join fe_rcom as w on w.idauto=g.ncre_idau
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<f>>'  order by f.ndoc) as x group by serie
-		ENDTEXT
+		Endtext
 	Endif
 	If This.EJECutaconsulta(lcx, "rb1") < 1 Then
 		Return 0
@@ -643,7 +638,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		carxml = ""
 		cresp = Alltrim(Str(Year(curb.fech))) + Alltrim(Str(Month(curb.fech))) + Alltrim(Str(Day(curb.fech))) + '-' + Alltrim(Str(x))
 		If RegistraResumenBoletas(curb.fech, curb.Tdoc, curb.Serie, curb.desde, curb.hasta, curb.Impo, curb.valor, curb.Exon, curb.inafectas, curb.igv, curb.gratificaciones, ;
-				carxml, "", goApp.cArchivo, cresp) = 0 Then
+				  carxml, "", goApp.cArchivo, cresp) = 0 Then
 			This.Cmensaje = "NO se Registro el Informe de Envío de Boletas en Base de Datos"
 			Vdvto = 0
 			Exit
@@ -671,11 +666,15 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Set Textmerge To Memvar lC Noshow Textmerge
 			\	Select fech,Tdoc,
 			\	Left(Ndoc,4) As Serie,Substr(Ndoc,5) As numero,If(Length(Trim(c.ndni))<8,'0','1') As tipodoc,If(Length(Trim(c.ndni))<8,'00000000',c.ndni) As ndni,
-		    \    c.razo,If(F.mone='S',valor,valor*dolar) As valor,If(F.mone='S',rcom_exon,rcom_exon*dolar) As rcom_exon,If(F.mone='S',igv,igv*dolar) As igv,
-			\	If(F.mone='S',Impo,Impo*dolar) As Impo,"" As trefe,"" As serieref,"" As numerorefe,If(F.mone='S',rcom_otro,rcom_otro*dolar) As rcom_otro,F.Idauto
+		    \   c.razo,If(F.mone='S',valor,valor*dolar) As valor,If(F.mone='S',rcom_exon,rcom_exon*dolar) As rcom_exon,If(F.mone='S',rcom_inaf,rcom_inaf*dolar) As rcom_inaf,
+		    \   If(F.mone='S',rcom_otro,rcom_otro*dolar) As rcom_otro,If(F.mone='S',igv,igv*dolar) As igv,
+			\	If(F.mone='S',Impo,Impo*dolar) As Impo,"" As trefe,"" As serieref,"" As numerorefe,F.Idauto
 			\	From fe_rcom F
 			\	INNER Join fe_clie c On c.idclie=F.idcliente
 			\	Where Tdoc="03" And fech='<<df>>' And Acti='A' And idcliente>0 And Left(Ndoc,1)='B' And (F.Impo>0 Or F.rcom_otro>0)
+		If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+		Endif
 		If goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -687,15 +686,18 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			\	Select F.fech,F.Tdoc,
 			\	Concat("BD",Substr(F.Ndoc,3,2)) As Serie,Substr(F.Ndoc,5) As numero,'1' As tipodoc,If(Length(Trim(c.ndni))<8,'00000000',c.ndni) As ndni,
 		    \   c.razo,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
+			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar)) As rcom_inaf,
+			\   Abs(If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar)) As rcom_otro,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
 		    \   Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,w.Tdoc As trefe,Left(w.Ndoc,4) As serieref,Substr(w.Ndoc,5) As numerorefe,
-		    \   If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
+		    \   F.Idauto
 			\	From fe_rcom F
 			\	INNER Join fe_ncven g On g.ncre_idan=F.Idauto
 			\	INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 		    \   INNER Join fe_clie c On c.idclie=F.idcliente
 			\	Where F.Tdoc="08"  And F.Acti='A' And F.idcliente>0 And w.Tdoc='03' And F.fech='<<df>>' And (F.Impo<>0 Or F.rcom_otro>0)
-
+		If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+		Endif
 		If goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -707,14 +709,18 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			\	Select F.fech,F.Tdoc,
 			\	Concat("BC",Substr(F.Ndoc,3,2)) As Serie,Substr(F.Ndoc,5) As numero,'1' As tipodoc,If(Length(Trim(c.ndni))<8,'00000000',c.ndni) As ndni,
 		    \   c.razo,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
+			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar)) As rcom_inaf,
+			\   Abs(If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar)) As rcom_otro,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
 		    \   Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,w.Tdoc As trefe,Left(w.Ndoc,4) As serieref,Substr(w.Ndoc,5) As numerorefe,
-		    \   If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
+		    \  F.Idauto
 			\	From fe_rcom F
 			\	INNER Join fe_ncven g On g.ncre_idan=F.Idauto
 			\	INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 		    \   INNER Join fe_clie c On c.idclie=F.idcliente
 			\	Where F.Tdoc="07"  And F.Acti='A' And F.idcliente>0 And w.Tdoc='03' And F.fech='<<df>>' And (F.Impo<>0 Or F.rcom_otro>0)
+		If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+		Endif
 		If goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -726,12 +732,17 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Set Textmerge Off
 		Set Textmerge On
 		Set Textmerge To Memvar lcx Noshow Textmerge
-			\   Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,
-			\	Sum(igv) As igv,Sum(Impo) As Impo,Sum(rcom_otro) As rcom_otro
+			\   Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,Sum(rcom_inaf) As inafecta,Sum(rcom_otro) As rcom_otro,
+			\	Sum(igv) As igv,Sum(Impo) As Impo
 			\	From(Select
 			\	Left(Ndoc,4) As Serie,Substr(Ndoc,5) As numero,If(F.mone='S',valor,valor*dolar) As valor,If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar) As rcom_exon,
-			\	If(F.mone='S',igv,igv*dolar) As igv,If(F.mone='S',Impo,Impo*dolar) As Impo,If(F.mone='S',rcom_otro,rcom_otro*dolar) As rcom_otro,Tdoc
-			\	From fe_rcom F Where Tdoc="03" And fech='<<df>>' And Acti='A' And idcliente>0
+			\   If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar) As rcom_inaf,If(F.mone='S',rcom_otro,rcom_otro*dolar) As rcom_otro,
+			\	If(F.mone='S',igv,igv*dolar) As igv,If(F.mone='S',Impo,Impo*dolar) As Impo,Tdoc
+			\	From fe_rcom F
+			\   Where Tdoc="03" And fech='<<df>>' And Acti='A' And idcliente>0
+		If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+		Endif
 		If  goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -741,15 +752,18 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Endif
 			\ Order By Ndoc) As x  Group By Serie
 			\	Union All
-			\	Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,
-			\	Sum(igv) As igv,Sum(Impo) As Impo,Sum(rcom_otro) As rcom_otro From(Select
+			\	Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,Sum(rcom_inaf) As inafecta,Sum(rcom_otro) As rcom_otro,
+			\	Sum(igv) As igv,Sum(Impo) As Impo From(Select
 			\	Concat("BC",Substr(F.Ndoc,3,2)) As Serie,Substr(F.Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,
-			\   If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Tdoc
+			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar)) As rcom_inaf,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,
+			\   Abs(If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar)) As rcom_otro,F.Tdoc
 			\	From fe_rcom F
 			\	INNER Join fe_ncven g On g.ncre_idan=F.Idauto
 			\	INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 			\	Where F.Tdoc="07"  And F.Acti='A' And F.idcliente>0 And w.Tdoc='03' And F.fech='<<df>>'
+		If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+		Endif
 		If  goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -759,15 +773,18 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Endif
 			\ Order By F.Ndoc) As x Group By Serie
 			\	Union All
-			\	Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,
-			\	Sum(igv) As igv,Sum(Impo) As Impo,Sum(rcom_otro) As rcom_otro  From(Select
+			\	Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,Sum(rcom_inaf) As inafecta,Sum(rcom_otro) As rcom_otro,
+			\	Sum(igv) As igv,Sum(Impo) As Impo From(Select
 			\	Concat("BD",Substr(F.Ndoc,3,2)) As Serie,Substr(F.Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,
+			\	Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar)) As rcom_inaf,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,
 			\   If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Tdoc
 			\	From fe_rcom F
 			\	INNER Join fe_ncven g On g.ncre_idan=F.Idauto
 			\	INNER Join fe_rcom As w On w.Idauto=g.ncre_idau
 			\	Where F.Tdoc="08"  And F.Acti='A' And F.idcliente>0 And w.Tdoc='03' And F.fech='<<df>>'
+		If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+		Endif
 		If  goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -783,10 +800,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			Set Textmerge On
 			Set Textmerge To Memvar lC Noshow Textmerge
 				\Select fech,Tdoc,Serie,numero,If(Length(Trim(ndni))<8,'0','1') As tipodoc,If(Length(Trim(ndni))<8,'00000000',ndni) As ndni,
-  		        \razo,valor,rcom_exon,igv,Impo,trefe,serieref,numerorefe,rcom_otro,Idauto
+  		        \razo,valor,rcom_exon,rcom_inaf,rcom_otro,igv,Impo,trefe,serieref,numerorefe,Idauto
 			    \From(Select F.fech,F.Tdoc,
 			    \Left(F.Ndoc,4) As Serie,Substr(F.Ndoc,5) As numero,If(F.mone='S',F.valor,F.valor*F.dolar) As valor,
-			    \If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar) As rcom_exon,If(F.mone='S',F.igv,F.igv*F.dolar) As igv,
+			    \If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar) As rcom_exon,If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar) As rcom_inaf,If(F.mone='S',F.igv,F.igv*F.dolar) As igv,
 			    \If(F.mone='S',F.Impo,F.Impo*F.dolar) As Impo,Cast(mid(F.Ndoc,5) As unsigned) As numero1,c.razo,c.ndni,
 		        \"" As trefe,"" As serieref,""  As numerorefe,If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
 		     	\From fe_rcom F
@@ -794,6 +811,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			    \Left Join fe_ncven g On g.ncre_idan=F.Idauto
 			    \Left Join fe_rcom As w On w.Idauto=g.ncre_idau
 			    \Where F.Tdoc='<<this.ctdoc>>' And F.fech='<<df>>'  And F.Acti='A' And (F.Impo<>0 Or F.rcom_otro>0)
+			If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+			Endif
 			If  goApp.Cdatos = 'S' Then
 				If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -809,17 +829,20 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			Set Textmerge On
 			Set Textmerge To Memvar lC Noshow Textmerge
 			\Select fech,Tdoc,Serie,numero,If(Length(Trim(ndni))<8,'0','1') As tipodoc,If(Length(Trim(ndni))<8,'00000000',ndni) As ndni,
-	        \razo,valor,rcom_exon,igv,Impo,trefe,serieref,numerorefe,rcom_otro,Idauto
+	        \razo,valor,rcom_exon,rcom_inaf,rcom_otro,igv,Impo,trefe,serieref,numerorefe,Idauto
 		    \From(Select F.fech,F.Tdoc,
 		    \If(F.Tdoc='07',Concat("BC",Substr(F.Ndoc,3,2)),Concat("BD",Substr(F.Ndoc,3,2))) As Serie,Substr(F.Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-	        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
+	        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar)) As rcom_inaf,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
 	        \Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,Cast(mid(F.Ndoc,5) As unsigned) As numero1,c.razo,c.ndni,
-	        \ifnull(w.Tdoc,"") As trefe,ifnull(Left(w.Ndoc,4),"") As serieref,ifnull(Substr(w.Ndoc,5),"") As numerorefe,If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar) As rcom_otro,F.Idauto
+	        \ifnull(w.Tdoc,"") As trefe,ifnull(Left(w.Ndoc,4),"") As serieref,ifnull(Substr(w.Ndoc,5),"") As numerorefe,Abs(If(F.mone='S',F.rcom_otro,F.rcom_otro*F.dolar)) As rcom_otro,F.Idauto
 	     	\From fe_rcom F
 	     	\INNER Join fe_clie As c On c.idclie=F.idcliente
 		    \Left Join fe_ncven g On g.ncre_idan=F.Idauto
 		    \Left Join fe_rcom As w On w.Idauto=g.ncre_idau
 		    \Where F.Tdoc='<<this.ctdoc>>' And F.fech='<<df>>'  And F.Acti='A'  And (F.Impo<>0 Or F.rcom_otro<>0)
+			If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+			Endif
 			If goApp.Cdatos = 'S' Then
 				If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
@@ -834,23 +857,26 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Endif
 		Set Textmerge On
 		Set Textmerge To Memvar lcx Noshow Textmerge
-		\Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,
-		\Sum(igv) As igv,Sum(Impo) As Impo,Sum(rcom_otro) As rcom_otro
+		\Select Serie,Tdoc,Min(numero) As desde,Max(numero) As hasta,Sum(valor) As valor,Sum(rcom_exon) As Exon,Sum(rcom_inaf) As inafecta,Sum(rcom_otro) As rcom_otro,
+		\Sum(igv) As igv,Sum(Impo) As Impo
 		\From(Select
 		\If(Tdoc='03',Left(Ndoc,4),If(Tdoc='07',Concat("BC",Substr(F.Ndoc,3,2)),Concat("BD",Substr(F.Ndoc,3,2)))) As Serie,Substr(Ndoc,5) As numero,Abs(If(F.mone='S',F.valor,F.valor*F.dolar)) As valor,
-        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
-        \Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,Tdoc,Cast(mid(Ndoc,5) As unsigned) As numero1,If(F.mone='S',rcom_otro,rcom_otro*dolar) As rcom_otro
+        \Abs(If(F.mone='S',F.rcom_exon,F.rcom_exon*F.dolar)) As rcom_exon,Abs(If(F.mone='S',F.rcom_inaf,F.rcom_inaf*F.dolar)) As rcom_inaf,Abs(If(F.mone='S',F.igv,F.igv*F.dolar)) As igv,
+        \Abs(If(F.mone='S',F.Impo,F.Impo*F.dolar)) As Impo,Tdoc,Cast(mid(Ndoc,5) As unsigned) As numero1,Abs(If(F.mone='S',rcom_otro,rcom_otro*dolar)) As rcom_otro
 		\From fe_rcom F Where Tdoc='<<this.ctdoc>>' And fech='<<df>>' And Acti='A' And idcliente>0
+		If This.soloporenviar = 'S' Then
+		    \ And Left(F.rcom_mens,1)<>'0'
+		Endif
 		If goApp.Cdatos = 'S' Then
 			If Empty(goApp.Tiendas) Then
 	    		\ And F.codt=<<goApp.tienda>>
 			Else
-	           \And F.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
+	            \ And F.codt In ('<<LEFT(goapp.Tiendas,1)>>','<<SUBSTR(goapp.Tiendas,2,1)>>')
 			Endif
 		Endif
-				\ Order By Ndoc) As x
-				\ Where numero1 Between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
-				\ Group By Serie Order By Serie
+		\ Order By Ndoc) As x
+		\ Where numero1 Between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
+		\ Group By Serie Order By Serie
 		Set Textmerge Off
 		Set Textmerge To
 	Endif
@@ -864,15 +890,15 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function generaserieboletas()
 	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    UPDATE fe_gene as g SET gene_nres=gene_nres+1 WHERE idgene=1
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    select gene_nres FROM fe_gene WHERE idgene=1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -915,12 +941,15 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function consultarticket1000(cticket)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
 	Local lC, lcr
 	np3		= "0 El Resumen de Boletas ha sido aceptado desde API-SUNAT"
 	dfenvio	= Cfechas(fe_gene.fech)
-	TEXT To lcr Noshow Textmerge
+	Text To lcr Noshow Textmerge
      UPDATE fe_resboletas SET resu_mens='<<np3>>',resu_feen=CURDATE() WHERE resu_tick='<<cticket>>';
-	ENDTEXT
+	Endtext
 	Sw	 = 1
 	Select * From rmvtos Where Alltrim(rmvtos.resu_tick) = cticket Into Cursor ax
 	Select ax
@@ -934,10 +963,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Else
 			Cserie = ax.resu_serie
 		Endif
-		TEXT To lC Noshow
+		Text To lC Noshow
 			Select  idauto,	numero,tdoc,fech,Impo,ndoc FROM (Select  idauto,	ndoc,Cast(mid(ndoc, 5) As unsigned) As numero,tdoc,	fech,Impo From fe_rcom F
 			Where tdoc = ?ctdoc And Acti = 'A'  And idcliente > 0 and impo<>0) As x where numero Between ?ndesde And ?nhasta And Left(ndoc, 4) = ?cserie
-		ENDTEXT
+		Endtext
 		If  This.EJECutaconsulta(lC, 'crb') < 1 Then
 			Sw = 0
 			Exit
@@ -949,10 +978,10 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			odvto = ConsultaApisunat(crb.Tdoc, Left(crb.Ndoc, 4), Trim(Substr(crb.Ndoc, 5)), Dtoc(crb.fech), Alltrim(Str(crb.Impo, 12, 2)))
 			If odvto.Vdvto = '1' Then
 				Mensaje(odvto.Mensaje + ' ' + crb.Ndoc)
-				TEXT  To lC Noshow Textmerge Pretext 7
+				Text  To lC Noshow Textmerge Pretext 7
                  UPDATE fe_rcom SET rcom_mens='<<np3>>',rcom_fecd='<<dfenvio>>' WHERE idauto=<<np1>>
-				ENDTEXT
-				If This.Ejecutasql(lC) < 1 Then
+				Endtext
+				If This.Ejecutarsql(lC) < 1 Then
 					Sw = 0
 					Exit
 				Endif
@@ -978,12 +1007,12 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	np3 = "0 El Resumen de Boletas ha sido aceptado "
 	dfenvio = Cfechas(fe_gene.fech)
 	Sw = 1
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
    	select resu_desd,resu_hast,resu_tdoc,resu_serie FROM fe_resboletas where resu_tick='<<ALLTRIM(this.cticket)>>' AND resu_acti='A'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'ax') < 1 Then
 		This.cticket = ""
-		Return 0.
+		Return 0
 	Endif
 	If This.IniciaTransaccion() < 1 Then
 		This.cticket = ""
@@ -1000,11 +1029,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Else
 			Cserie = ax.resu_serie
 		Endif
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
 			select idauto,numero from(
 			SELECT idauto,ndoc,cast(mid(ndoc,5) as unsigned) as numero FROM fe_rcom f where tdoc='<<ctdoc>>' and acti='A' and idcliente>0) as x
 			where numero between <<ndesde>> and <<nhasta>> and LEFT(ndoc,4)='<<cserie>>'
-		ENDTEXT
+		Endtext
 		If This.EJECutaconsulta(lC, 'crb') < 1 Then
 			Sw = 0
 			Exit
@@ -1012,9 +1041,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Select crb
 		Go Top
 		Scan All
-			TEXT  To lC Noshow Textmerge Pretext 7
+			Text  To lC Noshow Textmerge Pretext 7
              UPDATE fe_rcom SET rcom_mens='<<np3>>',rcom_fecd='<<dfenvio>>' WHERE idauto=<<crb.idauto>>
-			ENDTEXT
+			Endtext
 			If This.Ejecutarsql(lC) < 1 Then
 				Sw = 0
 				Exit
@@ -1023,9 +1052,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Select ax
 	Endscan
 	If Sw = 1 Then
-		TEXT To lC Noshow Textmerge
+		Text To lC Noshow Textmerge
         UPDATE fe_resboletas SET resu_mens='<<np3>>',resu_feen=CURDATE() WHERE resu_tick='<<this.cticket>>';
-		ENDTEXT
+		Endtext
 		If This.Ejecutarsql(lC) < 1 Then
 			Return 0
 		Endif
@@ -1042,9 +1071,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endif
 	Endfunc
 	Function Anularenvio()
-	TEXT  To lC Noshow Textmerge
+	Text  To lC Noshow Textmerge
         UPDATE fe_resboletas SET resu_acti='I' WHERE resu_idre=<<this.nidr>>
-	ENDTEXT
+	Endtext
 	If This.Ejecutarsql(lC) < 1 Then
 		Return 0
 	Endif
@@ -1057,8 +1086,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Local oXMLBody As 'MSXML2.DOMDocument.6.0'
 	Local oXMLHttp As "MSXML2.XMLHTTP.6.0"
 	Local lcXML, lnCount, lnI, lsURL, ls_envioXML, ls_fileName, ls_pwd_sol, ls_ruc_emisor, ls_user
-*:Global CMensajeMensaje, CmensajeError, TxtB64, cDirDesti, carchivozip, cfilecdr, cfilerpta
-*:Global cnombre, cpropiedad, cresp, crespuesta, ctipoarchivo, npos, oArchi, ps_fileZip, rptaSunat
 	Declare Integer CryptBinaryToString In Crypt32;
 		String @pbBinary, Long cbBinary, Long dwFlags, ;
 		String @pszString, Long @pcchString
@@ -1124,7 +1151,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	crespuesta	 = ls_fileName
 	Do Case
 	Case  goApp.ose = 'conastec'
-		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 		<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 		<soapenv:Header>
 		<wsse:Security   xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -1141,9 +1168,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		</ser:getStatus>
 		</soapenv:Body>
 		</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 	Case goApp.ose = "efact"
-		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
      <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe" xmlns:wsse="http://docs.oasisopen.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 	   <soapenv:Header>
 	   <wsse:Security soapenv:mustUnderstand="0" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
@@ -1159,9 +1186,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	     </ser:getStatus>
 	   </soapenv:Body>
 	</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 	Case  goApp.ose = 'bizlinks'
-		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 			<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="http://service.sunat.gob.pe">
 			<soapenv:Header xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
 			<wsse:Security soap:mustUnderstand="1" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:soap="soap">
@@ -1177,9 +1204,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 			      </ser:getStatus>
 			   </soapenv:Body>
 			</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 	Otherwise
-		TEXT To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
+		Text To ls_envioXML Textmerge Noshow Flags 1 Pretext 1 + 2 + 4 + 8
 			<soapenv:Envelope xmlns:ser="http://service.sunat.gob.pe" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
 					xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
 				<soapenv:Header>
@@ -1196,7 +1223,7 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 					</ser:getStatus>
 				</soapenv:Body>
 			</soapenv:Envelope>
-		ENDTEXT
+		Endtext
 	Endcase
 	If goApp.ose = 'bizlinks' Then
 		oXMLHttp = Createobject("MSXML2.XMLHTTP.6.0")
@@ -1217,7 +1244,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Else
 		oXMLHttp.setRequestHeader( "Content-Type", "text/xml;charset=ISO-8859-1" )
 	Endif
-
 *oXMLHttp.setRequestHeader( "Content-Type", "text/xml" )
 *oXMLHttp.setRequestHeader( "Content-Type", "text/xml;charset=ISO-8859-1" )
 	oXMLHttp.setRequestHeader( "Content-Length", Len(ls_envioXML) )
@@ -1242,7 +1268,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		This.Cmensaje = Alltrim(CmensajeError) + ' ' + Alltrim(CMensajeMensaje)
 		Return 0
 	Endif
-
 	lcXML = oXMLHttp.responseText
 	If "<statusCode>" $ lcXML
 		lnCount = 1
@@ -1268,7 +1293,6 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML')
 	Else
 		cnombre = VerificaArchivoRespuesta(Addbs(Sys(5) + Sys(2003) + '\SunatXml\' + Alltrim(Oempresa.nruc)) + crespuesta, crespuesta, cticket)
-*cnombre=Sys(5)+Sys(2003)+'\SunatXml\'+Alltrim(oempresa.nruc)+"\"+crespuesta
 		cfilerpta = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc)) + 'R-' + carchivozip + '.XML'
 		cDirDesti = Addbs(Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc))
 	Endif
@@ -1295,24 +1319,25 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		cfilecdr  = Sys(5) + Sys(2003) + '\SunatXML\' + Alltrim(Oempresa.nruc) + "\" + cfilerpta
 	Endif
 	If !Empty(rptaSunat)
-		If Len(Alltrim(rptaSunat)) <= 100 Then
-			Mensaje(rptaSunat)
-		Else
+		If Len(Alltrim(rptaSunat)) > 100  Then
 			This.Cmensaje = Left(rptaSunat, 240)
 			Return 0
 		Endif
 	Endif
 	If !Empty(rptaSunat) Then
-		If Substr(ctipoarchivo, 13, 2) = 'RA' Then
-			If ActualizaResumenBajas(cticket, cfilecdr) = 0 Then
-				This.Cmensaje = "NO se Grabo la Respuesta de SUNAT en Base de Datos"
-			Endif
-		Else
-			If ActualizaResumenBoletas(cticket, cfilecdr) = 0 Then
-				This.Cmensaje = "NO se Grabo la Respuesta de SUNAT en Base de Datos"
-			Endif
-		Endif
 		If Left(rptaSunat, 1) == '0' Then
+			If Substr(ctipoarchivo, 13, 2) = 'RA' Then
+				If ActualizaResumenBajas(cticket, cfilecdr) = 0 Then
+					This.Cmensaje = "NO se Grabo la Respuesta de SUNAT en Base de Datos"
+				Endif
+			Else
+				This.cticket = cticket
+				This.cfilecdr = m.cfilecdr
+				If  This.ActualizaDesdeticket() < 1 Then
+					Return 0
+				Endif
+			Endif
+			This.Cmensaje = rptaSunat
 			Return 1
 		Else
 			Return 0
@@ -1321,38 +1346,36 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Endfunc
-***********************************
 	Function RegistraResumenBoletasConbaja()
-*np1, np2, np3, np4, np5, np6, np7, np8, np9, np10, np11, np12, np13, np14, np15
 	Local lC, lp
 	lC			  = "proIngresaResumenBoletasconbaja"
-	goApp.npara1  = This.dfecha
-	goApp.npara2  = This.cTdoc
-	goApp.npara3  = This.Cserie
-	goApp.npara4  = This.ndesde
-	goApp.npara5  = This.nhasta
-	goApp.npara6  = This.nimpo
-	goApp.npara7  = This.nvalor
-	goApp.npara8  = This.nexon
-	goApp.npara9  = This.ninafectas
-	goApp.npara10 = This.nigv
-	goApp.npara11 = This.ngrati
-	goApp.npara12 = This.cxml
-	goApp.npara13 = This.chash
-	goApp.npara14 = This.cfile
-	goApp.npara15 = This.cticket
-	TEXT To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-	ENDTEXT
+	npara1  = This.dfecha
+	npara2  = This.cTdoc
+	npara3  = This.Cserie
+	npara4  = This.ndesde
+	npara5  = This.nhasta
+	npara6  = This.nimpo
+	npara7  = This.nvalor
+	npara8  = This.nexon
+	npara9  = This.ninafectas
+	npara10 = This.nigv
+	npara11 = This.ngrati
+	npara12 = This.cxml
+	npara13 = This.chash
+	npara14 = This.cfile
+	npara15 = This.cticket
+	Text To lp Noshow
+     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10,?npara11,?npara12,?npara13,?npara14,?npara15)
+	Endtext
 	If This.EJECUTARP(lC, lp, '') < 1 Then
 		Return 0
 	Endif
 	Return 1
 	Endfunc
 	Function AnuladesdesRboletas()
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
    	select resu_desd,resu_hast,resu_tdoc,resu_serie FROM fe_resboletas where resu_tick='<<this.cticket>>' AND resu_acti='A'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'ax') < 1 Then
 		Return 0
 	Endif
@@ -1364,11 +1387,11 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Else
 		Cserie = ax.resu_serie
 	Endif
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 			select idauto,numero,tech,tdoc from(
 			SELECT idauto,ndoc,cast(mid(ndoc,5) as unsigned) as numero,fech,tdoc FROM fe_rcom f where tdoc='<<ctdoc>>' and acti='A' and idcliente>0) as x
 			where numero between <<ndesde>> and <<nhasta>> and LEFT(ndoc,4)='<<cserie>>'
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, 'crb') < 1 Then
 		Sw = 0
 		Exit
@@ -1393,9 +1416,9 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function estadoenvio()
 	Ccursor = 'c_' + Sys(2015)
-	TEXT To lC Noshow Textmerge
+	Text To lC Noshow Textmerge
 	    select resu_esta FROM fe_resboletas where resu_acti='A' ALLTRIM(resu_tick)='<<this.cticket>>'  limit 1
-	ENDTEXT
+	Endtext
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1445,112 +1468,115 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Enddo
 		If nr = 1 Then
 			np3 = "0 El Resumen de Boletas ha sido aceptada"
+
 			Select crb
 			Go Top
+			If This.IniciaTransaccion() < 1 Then
+				Return 0
+			Endif
 			Scan All
 				np1 = crb.Idauto
-				TEXT  To lC Noshow Textmerge
+				Text  To lC Noshow Textmerge
                   UPDATE fe_rcom SET rcom_mens='<<np3>>' WHERE idauto=<<np1>>
-				ENDTEXT
+				Endtext
 				If This.Ejecutarsql(lC) < 1 Then
 					Sw = 0
 					Exit
 				Endif
 			Endscan
+			If Sw = 0 Then
+				This.DEshacerCambios()
+				Return 0
+			Endif
+			If This.GRabarCambios() < 1 Then
+				Return 0
+			Endif
 		Endif
-	Catch To oErr When oErr.ErrorNo = 1429
-		This.Cmensaje = MENSAJE1 + MENSAJE2 + MENSAJE3
-	Catch To oErr When oErr.ErrorNo = 1924
-		This.Cmensaje = MENSAJE1 + MENSAJE2 + MENSAJE3
+	Catch To oErr
+		This.Cmensaje = oErr.Message
 	Finally
 	Endtry
-	If Sw = 0 Then
-		Return 0
-	Endif
 	Return 1
 	Endfunc
 	Function RegistraResumenBoletas()
 	Local lC, lp
-	If !Pemstatus(goApp,'cdatos',5) Then
-		AddProperty(goApp,'cdatos','')
+	If !Pemstatus(goApp, 'cdatos', 5) Then
+		AddProperty(goApp, 'cdatos', '')
 	Endif
 	lC			  = "proIngresaResumenBoletas"
-	goApp.npara1  = This.dfecha
-	goApp.npara2  = This.cTdoc
-	goApp.npara3  = This.Cserie
-	goApp.npara4  = This.ndesde
-	goApp.npara5  = This.nhasta
-	goApp.npara6  = This.nimpo
-	goApp.npara7  = This.nvalor
-	goApp.npara8  = This.nexon
-	goApp.npara9  = This.ninafectas
-	goApp.npara10 = This.nigv
-	goApp.npara11 = This.ngrati
-	goApp.npara12 = This.cxml
-	goApp.npara13 = This.chash
-	goApp.npara14 = This.cfile
-	goApp.npara15 = This.cticket
-	If goApp.Cdatos='S' Then
-		goApp.npara16=goApp.tienda
-		TEXT To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16)
-		ENDTEXT
+	npara1  = This.dfecha
+	npara2  = This.cTdoc
+	npara3  = This.Cserie
+	npara4  = This.ndesde
+	npara5  = This.nhasta
+	npara6  = This.nimpo
+	npara7  = This.nvalor
+	npara8  = This.nexon
+	npara9  = This.ninafectas
+	npara10 = This.nigv
+	npara11 = This.ngrati
+	npara12 = This.cxml
+	npara13 = This.chash
+	npara14 = This.cfile
+	npara15 = This.cticket
+	If goApp.Cdatos = 'S' Then
+		npara16 = goApp.tienda
+		Text To lp Noshow
+     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10,?npara11,?npara12,?npara13,?npara14,?npara15,?npara16)
+		Endtext
 	Else
-		TEXT To lp Noshow
-     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
-      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15)
-		ENDTEXT
+		Text To lp Noshow
+     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10,?npara11,?npara12,?npara13,?npara14,?npara15)
+		Endtext
 	Endif
 	If This.EJECUTARP(lC, lp, "") < 1Then
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC
-	FUNCTION GetAllboletaspsys(dfecha, Ccursor, Ccursor1)
-	IF this.idsesion>0 then
-	   SET DATASESSION TO this.idsesion
-	ENDIF    
+	Endfunc
+	Function GetAllboletaspsys(dfecha, Ccursor, Ccursor1)
+	If This.Idsesion > 0 Then
+		Set DataSession To This.Idsesion
+	Endif
 	Df = Cfechas(dfecha)
 	If This.todos = 0 Then
-		TEXT TO lc NOSHOW TEXTMERGE 
+		Text To lC Noshow Textmerge
 		select fech,tdoc,
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,If(Length(trim(c.ndni))<8,'0','1') as tipodoc,If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,
-        c.razo,if(f.mone='S',valor,valor*dolar) as valor,rcom_exon,if(f.mone='S',igv,igv*dolar) as igv,
-		if(f.mone='S',impo,impo*dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,"" as trefe,"" as serieref,"" as numerorefe,f.idauto
-		fROM fe_rcom f 
-		inner join fe_clie c on c.idclie=f.idcliente where tdoc="03" and fech='<<DF>>' and acti='A' and idcliente>0 and LEFT(ndoc,1)='B'
+        c.razo,if(f.mone='S',valor,valor*dolar) as valor,rcom_exon,if(f.mone='S',igv,igv*dolar) as igv,if(f.mone='S',impo,impo*dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,"" as trefe,"" as serieref,"" as numerorefe,f.idauto
+		fROM fe_rcom f
+		inner join fe_clie c on c.idclie=f.idcliente 
+		where tdoc="03" and fech='<<DF>>' and acti='A' and idcliente>0 and LEFT(ndoc,1)='B'
 		union all
 		SELECT f.fech,f.tdoc,concat("BC",SUBSTR(f.ndoc,3,2)) as serie,substr(f.ndoc,5) as numero,'1' as tipodoc,If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,c.razo,
-		abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,
-		abs(rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
-		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,w.tdoc as trefe,
-		LEFT(ff.ndoc,4) as serieref,SUBSTR(ff.ndoc,5) as numerorefe,f.idauto
+		abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,abs(rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
+		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,w.tdoc as trefe,LEFT(ff.ndoc,4) as serieref,SUBSTR(ff.ndoc,5) as numerorefe,f.idauto
 		FROM fe_rcom f
-		inner join fe_rven as rv on rv.idauto=f.idauto 
+		inner join fe_rven as rv on rv.idauto=f.idauto
 		inner join fe_refe ff on ff.idrven=rv.idrven
 		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
-		inner join fe_clie as c on c.idclie=f.idcliente where f.tdoc="07"  and f.fech='<<DF>>' and f.acti='A' and w.tdoc='03'
+		inner join fe_clie as c on c.idclie=f.idcliente 
+		where f.tdoc="07"  and f.fech='<<DF>>' and f.acti='A' and w.tdoc='03'
 		union all
 		SELECT f.fech,f.tdoc,concat("BC",SUBSTR(f.ndoc,3,2)) as serie,substr(f.ndoc,5) as numero,'1' as tipodoc,If(Length(trim(c.ndni))<8,'00000000',c.ndni) as ndni,c.razo,
-		abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,
-		abs(rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
-		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,w.tdoc as trefe,
-		LEFT(ff.ndoc,4) as serieref,SUBSTR(ff.ndoc,5) as numerorefe,f.idauto
+		abs(if(f.mone='S',f.valor,f.valor*f.dolar)) as valor,abs(rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
+		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,w.tdoc as trefe,LEFT(ff.ndoc,4) as serieref,SUBSTR(ff.ndoc,5) as numerorefe,f.idauto
 		FROM fe_rcom f
-		inner join fe_rven as rv on rv.idauto=f.idauto 
-		inner join fe_refe ff on ff.idrven=rv.idrven 
+		inner join fe_rven as rv on rv.idauto=f.idauto
+		inner join fe_refe ff on ff.idrven=rv.idrven
 		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
-		inner join fe_clie as c on c.idclie=f.idcliente where f.tdoc="08"  and f.fech='<<DF>>' and f.acti='A' and w.tdoc='03'
-		ENDTEXT
-		********
-		TEXT TO lcx NOSHOW TEXTMERGE 
+		inner join fe_clie as c on c.idclie=f.idcliente 
+		where f.tdoc="08"  and f.fech='<<DF>>' and f.acti='A' and w.tdoc='03'
+		Endtext
+********
+		Text To lcx Noshow Textmerge
 		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo,SUM(grati) as grati
 		from(select
 		left(ndoc,4) as serie,substr(ndoc,5) as numero,if(f.mone='S',valor,valor*dolar) as valor,rcom_exon,if(f.mone='S',igv,igv*dolar) as igv,
 		if(f.mone='S',impo,impo*dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,tdoc
-		fROM fe_rcom f where tdoc="03" and fech='<<DF>>' and acti='A' and idcliente>0 order by ndoc) as x  group by serie
+		fROM fe_rcom f 
+		where tdoc="03" and fech='<<DF>>' and acti='A' and idcliente>0 order by ndoc) as x  group by serie
 		union all
 		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo,SUM(grati) as grati from(select
@@ -1558,8 +1584,8 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		abs(f.rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
 		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,f.tdoc
 		FROM fe_rcom f
-		inner join fe_rven as rv on rv.idauto=f.idauto 
-		inner join fe_refe ff on ff.idrven=rv.idrven 
+		inner join fe_rven as rv on rv.idauto=f.idauto
+		inner join fe_refe ff on ff.idrven=rv.idrven
 		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
 		where f.tdoc="07"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<DF>>' order by f.ndoc) as x group by serie
 		union all
@@ -1569,14 +1595,14 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		abs(f.rcom_exon) as rcom_exon,abs(if(f.mone='S',f.igv,f.igv*f.dolar)) as igv,abs(if(f.mone='S',f.impo,f.impo*f.dolar)) as impo,
 		if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,f.tdoc
 		FROM fe_rcom f
-		inner join fe_rven as rv on rv.idauto=f.idauto 
-		inner join fe_refe ff on ff.idrven=rv.idrven 
+		inner join fe_rven as rv on rv.idauto=f.idauto
+		inner join fe_refe ff on ff.idrven=rv.idrven
 		inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
 		where f.tdoc="08"  and f.acti='A' and f.idcliente>0 and w.tdoc='03' and f.fech='<<DF>>' order by f.ndoc) as x group by serie
-		ENDTEXT
+		Endtext
 	Else
-		If this.cTdoc='03' Then
-			TEXT TO lc NOSHOW TEXTMERGE 
+		If This.cTdoc = '03' Then
+			Text To lC Noshow Textmerge
 			SELECT fech,tdoc,serie,numero,If(Length(trim(ndni))<8,'0','1') as tipodoc,If(Length(trim(ndni))<8,'00000000',ndni) as ndni,
 	        razo,valor,rcom_exon,igv,impo,grati,trefe,serieref,numerorefe,idauto
 		    from(select f.fech,f.tdoc,
@@ -1585,14 +1611,14 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		    if(f.mone='S',f.impo,f.impo*f.dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,
 		    cast(mid(f.ndoc,5) as unsigned) as numero1,c.ndni,c.razo,
 	        "" as trefe,"" as serieref,"" as numerorefe,f.idauto
-	     	fROM fe_rcom f 
+	     	fROM fe_rcom f
 	     	inner join fe_clie as c on c.idclie=f.idcliente
-		    inner join fe_rven as rv on rv.idauto=f.idauto 
+		    inner join fe_rven as rv on rv.idauto=f.idauto
 		    where f.tdoc='03' and f.fech='<<DF>>'  and f.acti='A' order by f.ndoc) as x
 		    where numero1 between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
-			ENDTEXT
+			Endtext
 		Else
-		  TEXT TO lc NOSHOW TEXTMERGE 
+			Text To lC Noshow Textmerge
 			SELECT fech,tdoc,serie,numero,If(Length(trim(ndni))<8,'0','1') as tipodoc,If(Length(trim(ndni))<8,'00000000',ndni) as ndni,
 	        razo,valor,rcom_exon,igv,impo,grati,trefe,serieref,numerorefe,idauto
 		    from(select f.fech,f.tdoc,
@@ -1601,17 +1627,17 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		    if(f.mone='S',f.impo,f.impo*f.dolar) as impo,if(f.mone='S',f.rcom_otro,f.rcom_otro*f.dolar) as grati,
 		    cast(mid(f.ndoc,5) as unsigned) as numero1,c.ndni,c.razo,
 	        ifnull(w.tdoc,"") as trefe,ifnull(left(ff.ndoc,4),"") as serieref,ifnull(substr(ff.ndoc,5),"") as numerorefe,f.idauto
-	     	fROM fe_rcom f 
+	     	fROM fe_rcom f
 	     	inner join fe_clie as c on c.idclie=f.idcliente
-		    inner join fe_rven as rv on rv.idauto=f.idauto 
-		    inner join fe_refe ff on ff.idrven=rv.idrven 
+		    inner join fe_rven as rv on rv.idauto=f.idauto
+		    inner join fe_refe ff on ff.idrven=rv.idrven
 		    inner join fe_tdoc as w on w.idtdoc=ff.idtdoc
 		    where f.tdoc='<<this.ctdoc>>' and f.fech='<<DF>>'  and f.acti='A' order by f.ndoc) as x
 		    where numero1 between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
-			ENDTEXT
+			Endtext
 		Endif
-		********
-		TEXT TO lcx NOSHOW TEXTMERGE 
+********
+		Text To lcx Noshow Textmerge
 		SELECT serie,tdoc,min(numero) as desde,max(numero) as hasta,sum(valor) as valor,SUM(rcom_exon) as exon,
 		sum(igv) as igv,sum(impo) as impo,SUM(grati) as grati
 		from(select
@@ -1620,8 +1646,8 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		fROM fe_rcom f where tdoc='<<this.ctdoc>>' and fech='<<DF>>' and acti='A' and idcliente>0 order by ndoc) as x
 		where numero1 between <<This.ndesde>> And <<This.nhasta>> And Serie='<<this.cserie>>'
 		group by serie
-		ENDTEXT
-	ENDIF
+		Endtext
+	Endif
 	If This.EJECutaconsulta(lC, Ccursor) < 1 Then
 		Return 0
 	Endif
@@ -1629,8 +1655,431 @@ Define Class Rboletas As OData Of 'd:\capass\database\data.prg'
 		Return 0
 	Endif
 	Return 1
-	ENDFUNC 
+	Endfunc
+	Function  EnviarBoletasiNotasporserie(Df, Ccursor1, ccursor2)
+	If !Pemstatus(goApp, 'cdatos', 5)
+		goApp.AddProperty("cdatos", "")
+	Endif
+	If !Pemstatus(goApp, "Firmarcondll", 5)
+		goApp.AddProperty("Firmarcondll", "")
+	Endif
+	If !Pemstatus(goApp, "multiempresa", 5)
+		goApp.AddProperty("multiempresa", "")
+	Endif
+	Set Classlib To d:\Librerias\fe.Vcx Additive
+	ocomp = Createobject("comprobante")
+	ocomp.Cmulti = goApp.Multiempresa
+	ocomp.FirmarconDLL = goApp.FirmarconDLL
+	goApp.datosg = ""
+	If This.Idsesion > 1 Then
+		Set DataSession To This.Idsesion
+	Endif
+	oapp = Newobject("appsysven", "d:\capass\modelos\appsysven.prg")
+	If oapp.dATOSGLOBALES("fe_gene") < 1 Then
+		This.Cmensaje = oapp.Cmensaje
+		Return 0
+	Endif
+	F	  = Cfechas(m.Df)
+	m.dfecha = fe_gene.fech
+	Sw = 1
+	ncont = 0
+	tvalor = 0
+	TExon = 0
+	Tinafectas = 0
+	Tigv = 0
+	TImpo = 0
+	Tgratificaciones = 0
+	cinicio = ''
+	cfinal = ''
+	cerie = ''
+	cierre = ''
+	entro = 0
+	Create Cursor curb(Tdoc c(2), Serie c(4), desde c(8), hasta c(8), valor N(12, 2), Exon N(12, 2), inafectas N(12, 2), igv N(12, 2), Impo N(12, 2), gratificaciones N(12, 2), fech d)
+	Create Cursor crb(fech d, Tdoc c(2), Serie c(4), numero c(8), tipodoc c(2), ndni c(10), valor N(10, 2), Exon N(10, 2), inafectas N(10, 2), igv N(10, 2), Impo N(12, 2), gratificaciones N(10, 2), trefe c(2), serieref c(4), numerorefe c(8), Idauto N(15))
+*!*		Select Serie From (Ccursor1) Into Cursor seriesbol
+	Select (ccursor2)
+	Scan All
+		entro = 1
+		If m.ncont = 0 Then
+			m.cinicio = rmvtos.numero
+			m.Cserie = rmvtos.Serie
+			ocomp.fechaemision	  = Alltrim(Str(Year(m.dfecha))) + '-' + Iif(Month(m.dfecha) <= 9, '0' + Alltrim(Str(Month(m.dfecha))), Alltrim(Str(Month(m.dfecha)))) + '-' + Iif(Day(m.dfecha) <= 9, '0' + Alltrim(Str(Day(m.dfecha))), Alltrim(Str(Day(m.dfecha))))
+			ocomp.FechaDocumentos = Alltrim(Str(Year(Df))) + '-' + Iif(Month(Df) <= 9, '0' + Alltrim(Str(Month(Df))), Alltrim(Str(Month(Df)))) + '-' + Iif(Day(Df) <= 9, '0' + Alltrim(Str(Day(Df))), Alltrim(Str(Day(Df))))
+			cnombreArchivo		  = Alltrim(Str(Year(m.dfecha))) + Iif(Month(m.dfecha) <= 9, '0' + Alltrim(Str(Month(m.dfecha))), Alltrim(Str(Month(m.dfecha)))) + Iif(Day(m.dfecha) <= 9, '0' + Alltrim(Str(Day(m.dfecha))), Alltrim(Str(Day(m.dfecha))))
+			ocomp.Moneda		  = 'PEN'
+			ocomp.Tigv			  = '10'
+			ocomp.vigv			  = '18'
+			ocomp.fechaemision	  = Alltrim(Str(Year(m.dfecha))) + '-' + Iif(Month(m.dfecha) <= 9, '0' + Alltrim(Str(Month(m.dfecha))), Alltrim(Str(Month(m.dfecha)))) + '-' + Iif(Day(m.dfecha) <= 9, '0' + Alltrim(Str(Day(m.dfecha))), Alltrim(Str(Day(m.dfecha))))
+			If Type('oempresa') = 'U' Then
+				ocomp.rucfirma			 = fe_gene.rucfirmad
+				ocomp.nombrefirmadigital = fe_gene.razonfirmad
+				ocomp.rucemisor			 = fe_gene.nruc
+				ocomp.razonsocialempresa = fe_gene.Empresa
+				ocomp.Ubigeo			 = fe_gene.Ubigeo
+				ocomp.direccionempresa	 = fe_gene.ptop
+				ocomp.ciudademisor		 = fe_gene.ciudad
+				ocomp.distritoemisor	 = fe_gene.distrito
+				Cnruc					 = fe_gene.nruc
+			Else
+				ocomp.rucfirma			 = Oempresa.rucfirmad
+				ocomp.nombrefirmadigital = Oempresa.razonfirmad
+				ocomp.rucemisor			 = Oempresa.nruc
+				ocomp.razonsocialempresa = Oempresa.Empresa
+				ocomp.Ubigeo			 = Oempresa.Ubigeo
+				ocomp.direccionempresa	 = Oempresa.ptop
+				ocomp.ciudademisor		 = Oempresa.ciudad
+				ocomp.distritoemisor	 = Oempresa.distrito
+				Cnruc					 = Oempresa.nruc
+			Endif
+		Endif
+		m.ncont = m.ncont + 1
+		cTdoc = rmvtos.Tdoc
+		If m.ncont <= 500  Then
+			If  rmvtos.Serie <> m.Cserie Then
+				Insert Into curb(Tdoc, Serie, desde, hasta, valor, Exon, inafectas, igv, Impo, gratificaciones, fech);
+					Values(m.cTdoc, m.Cserie, m.cinicio, m.cfinal, m.tvalor, m.TExon, m.Tinafectas, m.Tigv, m.TImpo, m.Tgratificaciones, m.dfecha)
+				m.ncont = 0
+				m.tvalor = 0
+				m.TExon = 0
+				m.Tinafectas = 0
+				m.Tigv = 0
+				m.TImpo = 0
+				Tgratificaciones = 0
+				cierre = 'S'
+				cfinal = ''
+				If This.enviarsunat(ocomp, m.dfecha) < 1 Then
+					Sw = 0
+				Endif
+				Zap In curb
+				Zap In crb
+			Endif
+		Else
+			Insert Into curb(Tdoc, Serie, desde, hasta, valor, Exon, inafectas, igv, Impo, gratificaciones, fech);
+				Values(m.cTdoc, m.Cserie, m.cinicio, m.cfinal, m.tvalor, m.TExon, m.Tinafectas, m.Tigv, m.TImpo, m.Tgratificaciones, m.dfecha)
+			m.ncont = 0
+			m.tvalor = 0
+			m.TExon = 0
+			m.Tinafectas = 0
+			m.Tigv = 0
+			m.TImpo = 0
+			m.cfinal = ""
+			Tgratificaciones = 0
+			cierre = 'S'
+			If This.enviarsunat(ocomp, m.dfecha) < 1 Then
+				Sw = 0
+			Endif
+			Zap In curb
+			Zap In crb
+		Endif
+		m.tvalor = + m.tvalor + rmvtos.valor
+		m.TExon = m.TExon + rmvtos.rcom_exon
+		m.Tinafectas = m.Tinafectas + rmvtos.rcom_inaf
+		m.Tigv = m.Tigv + rmvtos.igv
+		m.TImpo = m.TImpo + rmvtos.Impo
+		Tgratificaciones = m.Tgratificaciones + rmvtos.rcom_otro
+		m.cfinal = rmvtos.numero
+		m.Cserie = rmvtos.Serie
+		cierre = ''
+		Insert Into crb(fech, Tdoc, Serie, numero, tipodoc, ndni, valor, Exon, inafectas, igv, Impo, gratificaciones, trefe, serieref, numerorefe, Idauto);
+			Value(rmvtos.fech, rmvtos.Tdoc, rmvtos.Serie, rmvtos.numero, rmvtos.tipodoc, rmvtos.ndni, rmvtos.valor, rmvtos.rcom_exon, rmvtos.rcom_inaf, rmvtos.igv, rmvtos.Impo, rmvtos.rcom_otro, rmvtos.trefe, rmvtos.serieref, rmvtos.numerorefe, rmvtos.Idauto )
+*!*			Select Tdoc, Serie, desde, hasta, valor, Exon, inafecta As inafectas, igv, Impo, rcom_otro As gratificaciones, Df As fech From (Ccursor1)  Where Serie = seriesbol.Serie Into Cursor curb
+*!*			Select fech, Tdoc, Serie, numero, tipodoc, ndni, valor, rcom_exon As Exon, rcom_inaf As inafectas, igv, Impo, rcom_otro As gratificaciones, trefe, serieref, numerorefe, Idauto From (m.ccursor2)  Where Serie = seriesbol.Serie Into Cursor crb
+*!*			Select crb
+*!*			ocomp.itemsdocumentos = Reccount()
+*!*			tr					  = ocomp.itemsdocumentos
+*!*			If tr = 0 Then
+*!*				This.Cmensaje = "No Hay Boletas Por enviar"
+*!*				swenvio = 0
+*!*				Exit
+*!*			Endif
+*!*			If oapp.dATOSGLOBALES("fe_gene") < 1 Then
+*!*				This.Cmensaje = oapp.Cmensaje
+*!*				swenvio = 0
+*!*				Exit
+*!*			Endif
+*!*			nres					 = fe_gene.gene_nres
+*!*			ocomp.pais = 'PE'
+*!*			Dimension ocomp.ItemsFacturas[tr, 16]
+*!*			i  = 0
+*!*			ta = 1
+*!*			Select crb
+*!*			Scan All
+*!*				i						   = i + 1
+*!*				ocomp.ItemsFacturas[i, 1]  = crb.Tdoc
+*!*				ocomp.ItemsFacturas[i, 2]  = Alltrim(crb.Serie) + '-' + Alltrim(Str(Val(crb.numero)))
+*!*				ocomp.ItemsFacturas[i, 3]  = Alltrim(crb.ndni)
+*!*				ocomp.ItemsFacturas[i, 4]  = crb.tipodoc
+*!*				ocomp.ItemsFacturas[i, 5]  = crb.trefe
+*!*				ocomp.ItemsFacturas[i, 6]  = Alltrim(crb.serieref) + '-' + Alltrim(crb.numerorefe)
+*!*				ocomp.ItemsFacturas[i, 7]  = Alltrim(Str(crb.Impo, 12, 2))
+*!*				ocomp.ItemsFacturas[i, 8]  = Alltrim(Str(crb.valor, 12, 2))
+*!*				ocomp.ItemsFacturas[i, 9]  = Alltrim(Str(crb.Exon, 12, 2))
+*!*				ocomp.ItemsFacturas[i, 10] = Alltrim(Str(crb.inafectas, 12, 2))
+*!*				ocomp.ItemsFacturas[i, 11] = "0.00"
+*!*				ocomp.ItemsFacturas[i, 12] = "0.00"
+*!*				ocomp.ItemsFacturas[i, 13] = Alltrim(Str(crb.igv, 12, 2))
+*!*				ocomp.ItemsFacturas[i, 14] = "0.00"
+*!*				ocomp.ItemsFacturas[i, 15] = "0.00"
+*!*				ocomp.ItemsFacturas[i, 16] = Alltrim(Str(crb.gratificaciones, 12, 2))
+*!*			Endscan
+*!*			If nres = 0 Then
+*!*				If This.generaCorrelativoEnvioResumenBoletas() < 1 Then
+*!*					swenvio = 0
+*!*					Exit
+*!*				Endif
+*!*				goApp.datosg = ''
+*!*				If oapp.dATOSGLOBALES("fe_gene") < 1 Then
+*!*					This.Cmensaje = oapp.Cmensaje
+*!*					swenvio = 0
+*!*					Exit
+*!*				Endif
+*!*				nres = fe_gene.gene_nres
+*!*			Endif
+*!*			Cserie = cnombreArchivo + "-" + Alltrim(Str(nres))
+*!*			If ocomp.generaxmlrboletas(Cnruc, Cserie) = 1 Then
+*!*				If This.generaCorrelativoEnvioResumenBoletas() < 1  Then
+*!*					swenvio = 0
+*!*					Exit
+*!*				Endif
+*!*			Else
+*!*				This.Cmensaje = "No se Genero el XML de envío "
+*!*				swenvio = 0
+*!*				Exit
+*!*			Endif
+*!*			If !Empty(goApp.ticket) Then
+*!*				Do While .T.
+*!*					nr = This.ConsultaTicket(Alltrim(goApp.ticket), goApp.cArchivo)
+*!*					If nr >= 0 Or nr < 0 Then
+*!*						swenvio = 0
+*!*						Exit
+*!*					Endif
+*!*				Enddo
+*!*				v = 1
+*!*				If nr = 1 Then
+*!*					dfenvio	= fe_gene.fech
+*!*					np3		= "0 El Resumen de Boletas ha sido aceptada " + goApp.ticket
+*!*					dfenvio	= Cfechas(fe_gene.fech)
+*!*					If This.IniciaTransaccion() < 1 Then
+*!*						swenvio = 0
+*!*						Exit
+*!*					Endif
+*!*					Select crb
+*!*					Go Top
+*!*					Scan All
+*!*						np1		= crb.Idauto
+*!*						Text To lC Noshow
+*!*	                    UPDATE fe_rcom SET rcom_mens=?np3,rcom_fecd=?dfenvio WHERE idauto=?np1
+*!*						Endtext
+*!*						If  This.Ejecutarsql(lC) < 1 Then
+*!*							v = 0
+*!*							Exit
+*!*						Endif
+*!*					Endscan
+*!*					If v = 0 Then
+*!*						This.DEshacerCambios()
+*!*						swenvio = 0
+*!*						Exit
+*!*					Endif
+*!*					If This.GRabarCambios() < 1 Then
+*!*						swenvio = 0
+*!*						Exit
+*!*					Endif
+*!*				Endif
+*!*			Else
+*!*				This.Cmensaje = 'No se Obtuvo el Ticket de Respuesta'
+*!*				swenvio = 0
+*!*				Exit
+*!*			Endif
+*!*			Select seriesbol
+	Endscan
+	If m.cierre <> 'S'  And entro = 1 Then
+		Insert Into curb(Tdoc, Serie, desde, hasta, valor, Exon, inafectas, igv, Impo, gratificaciones, fech);
+			Values(m.cTdoc, m.Cserie, m.cinicio, m.cfinal, m.tvalor, m.TExon, m.Tinafectas, m.Tigv, m.TImpo, m.Tgratificaciones, m.dfecha)
+		If This.enviarsunat(ocomp, m.dfecha) < 1 Then
+			Sw = 0
+		Endif
+	Endif
+	If Sw = 0 Then
+		Return 0
+	Endif
+*!*		If swenvio = 0 Then
+*!*			Return 0
+*!*		Endif
+*!*		oapp = Null
+*!*		Select * From crb Into Table Addbs(Sys(5) + Sys(2003)) + 'detalle.dbf'
+*!*		Select * From curb Into Table Addbs(Sys(5) + Sys(2003)) + 'resumen.dbf'
+	Return 1
+	Endfunc
+	Function  generaCorrelativoEnvioResumenBoletas()
+	Local lC
+	Text To lC Noshow Textmerge
+	UPDATE fe_gene  as f SET gene_nres=f.gene_nres+1 WHERE idgene=1
+	Endtext
+	If This.Ejecutarsql(lC) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function ActualizaResumenBoletas(np1, np2)
+	Local lC, lp
+	cur			 = []
+	lC			 = "ProactualizaResumenBoletas"
+	npara1 = np1
+	npara2 = np2
+	crptaSunat	 = LeerRespuestaSunat(np2)
+	cdrxml		 = Filetostr(np2)
+	cdrxml = ""
+	If goApp.Grabarxmlbd = 'S' Then
+		Text To lp Noshow
+       (?npara1,?crptaSunat,?cdrxml)
+		Endtext
+	Else
+		Text To lp Noshow
+        (?npara1,?crptaSunat)
+		Endtext
+	Endif
+	If This.EJECUTARP(lC, lp, cur) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function enviarsunat(ocomp, dfecha)
+	If verificaAlias("crb") = 0 Then
+		This.Cmensaje = 'No hay Boletas Para Enviar'
+		Return 0
+	Endif
+	Select crb
+	ocomp.itemsdocumentos = Reccount()
+	tr					  = ocomp.itemsdocumentos
+	If tr = 0 Then
+		This.Cmensaje = "No Hay Boletas Por enviar"
+		Return 0
+	Endif
+	If oapp.dATOSGLOBALES("fe_gene") < 1 Then
+		This.Cmensaje = oapp.Cmensaje
+		Return 0
+	Endif
+	cnombreArchivo		  = Alltrim(Str(Year(m.dfecha))) + Iif(Month(m.dfecha) <= 9, '0' + Alltrim(Str(Month(m.dfecha))), Alltrim(Str(Month(m.dfecha)))) + Iif(Day(m.dfecha) <= 9, '0' + Alltrim(Str(Day(m.dfecha))), Alltrim(Str(Day(m.dfecha))))
+	nres					 = fe_gene.gene_nres
+	ocomp.pais = 'PE'
+	Dimension ocomp.ItemsFacturas[tr, 16]
+	i  = 0
+	ta = 1
+	Select crb
+	Scan All
+		i						   = i + 1
+		ocomp.ItemsFacturas[i, 1]  = crb.Tdoc
+		ocomp.ItemsFacturas[i, 2]  = Alltrim(crb.Serie) + '-' + Alltrim(Str(Val(crb.numero)))
+		ocomp.ItemsFacturas[i, 3]  = Alltrim(crb.ndni)
+		ocomp.ItemsFacturas[i, 4]  = crb.tipodoc
+		ocomp.ItemsFacturas[i, 5]  = crb.trefe
+		ocomp.ItemsFacturas[i, 6]  = Alltrim(crb.serieref) + '-' + Alltrim(crb.numerorefe)
+		ocomp.ItemsFacturas[i, 7]  = Alltrim(Str(crb.Impo, 12, 2))
+		ocomp.ItemsFacturas[i, 8]  = Alltrim(Str(crb.valor, 12, 2))
+		ocomp.ItemsFacturas[i, 9]  = Alltrim(Str(crb.Exon, 12, 2))
+		ocomp.ItemsFacturas[i, 10] = Alltrim(Str(crb.inafectas, 12, 2))
+		ocomp.ItemsFacturas[i, 11] = "0.00"
+		ocomp.ItemsFacturas[i, 12] = "0.00"
+		ocomp.ItemsFacturas[i, 13] = Alltrim(Str(crb.igv, 12, 2))
+		ocomp.ItemsFacturas[i, 14] = "0.00"
+		ocomp.ItemsFacturas[i, 15] = "0.00"
+		ocomp.ItemsFacturas[i, 16] = Alltrim(Str(crb.gratificaciones, 12, 2))
+	Endscan
+	If nres = 0 Then
+		If This.generaCorrelativoEnvioResumenBoletas() < 1 Then
+			Return 0
+		Endif
+		goApp.datosg = ''
+		If oapp.dATOSGLOBALES("fe_gene") < 1 Then
+			This.Cmensaje = oapp.Cmensaje
+			Return 0
+		Endif
+		nres = fe_gene.gene_nres
+	Endif
+	Cserie = cnombreArchivo + "-" + Alltrim(Str(nres))
+	If ocomp.generaxmlrboletas(Cnruc, Cserie) = 1 Then
+		If This.generaCorrelativoEnvioResumenBoletas() < 1  Then
+			Return 0
+		Endif
+	Else
+		This.Cmensaje = "No se Genero el XML de envío "
+		Return 0
+	Endif
+	If !Empty(goApp.ticket) Then
+		Do While .T.
+			nr = This.ConsultaTicket(Alltrim(goApp.ticket), goApp.cArchivo)
+			If nr >= 0 Or nr < 0 Then
+				swenvio = 0
+				Exit
+			Endif
+		Enddo
+		If m.swenvio = 0 Then
+			Return 0
+		Endif
+		v = 1
+		If nr = 1 Then
+			dfenvio	= fe_gene.fech
+			np3		= "0 El Resumen de Boletas ha sido aceptada " + goApp.ticket
+			dfenvio	= Cfechas(fe_gene.fech)
+			If This.IniciaTransaccion() < 1 Then
+				m.swenvio = 0
+				Return 0
+			Endif
+			Select crb
+			Go Top
+			Scan All
+				np1		= crb.Idauto
+				Text To lC Noshow
+                    UPDATE fe_rcom SET rcom_mens=?np3,rcom_fecd=?dfenvio WHERE idauto=?np1
+				Endtext
+				If  This.Ejecutarsql(lC) < 1 Then
+					v = 0
+					Exit
+				Endif
+			Endscan
+			If v = 0 Then
+				This.DEshacerCambios()
+				Return 0
+			Endif
+			If This.GRabarCambios() < 1 Then
+				Return 0
+			Endif
+		Endif
+	Else
+		This.Cmensaje = 'No se Obtuvo el Ticket de Respuesta'
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -57,7 +57,6 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	Local lC, lp
 	m.lC		  = 'funcreaproveedor'
 	cur			  = "xt"
-	*cnruc,crazo,cdire,cciud,cfono,cfax,crpm,cemail,crefe,ccelu,nidus,cidpc
 	goApp.npara1  = This.nruc
 	goApp.npara2  = This.nombre
 	goApp.npara3  = This.Direccion
@@ -245,7 +244,7 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	goApp.npara15 = this.distrito
 	goApp.npara16 =this.provincia
 	goApp.npara17 = this.departamento
-	Text To m.lp Noshow
+    Text To m.lp Noshow
 	     (?goapp.npara1,?goapp.npara2,?goapp.npara3,?goapp.npara4,?goapp.npara5,?goapp.npara6,?goapp.npara7,?goapp.npara8,?goapp.npara9,
 	      ?goapp.npara10,?goapp.npara11,?goapp.npara12,?goapp.npara13,?goapp.npara14,?goapp.npara15,?goapp.npara16,?goapp.npara17)
 	Endtext
@@ -287,6 +286,18 @@ Define Class proveedor As OData Of 'd:\capass\database\data'
 	If This.EJECUTARP(lC, lp, "") < 1 Then
 		Return 0
 	Endif
+	Return 1
+	ENDFUNC
+	Function ActualizarLineacredito()
+	np1 = This.Codigo
+	np2 = This.Linea
+	Text To lc Noshow Textmerge
+	UPDATE fe_prov SET prov_lcrs=<<np2>> where idprov=<<np1>>
+	Endtext
+	If This.ejecutarsql(lc) < 1 Then
+		Return 0
+	ENDIF
+	this.cmensaje='ok'
 	Return 1
 	Endfunc
 Enddefine

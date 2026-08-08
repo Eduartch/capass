@@ -254,7 +254,7 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 				Exit
 			Endif
 		Endif
-		Wait WINDOW 'hola'
+	
 		If  oproductos.ActualizaStock(tmpv.Coda, This.sucursal1, tmpv.cant, 'V') < 1 Then
 			Sw = 0
 			This.Cmensaje = oproductos.Cmensaje
@@ -836,9 +836,9 @@ Define Class guiaremisionxtraspaso As GuiaRemision Of 'd:\capass\modelos\guiasre
 			Cmensajex = This.Cmensaje
 			Exit
 		Endif
-		If ActualizaStock(tmpv.Coda, This.sucursal1, tmpv.cant, "V") < 1 Then
+		If _Screen.oproductos.ActualizaStock(tmpv.Coda, This.sucursal1, tmpv.cant, "V") < 1 Then
 			Sw = 0
-			Cmensajex = "Al Actualizar Stock " + Alltrim(cdescri)
+			Cmensajex = _Screen.oproducto.cmensaje
 			Exit
 		Endif
 		Select tmpv

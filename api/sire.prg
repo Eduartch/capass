@@ -41,6 +41,7 @@ Define Class sire As Custom
 			condicion = ' And Importe <> 0'
 		Endif
 	Endif
+*!*		wait WINDOW 'hola'+condicion
 	Cnruc = This.nruc
 	cempresa = This.cempresa
 	Cruta = Addbs(Justpath(np1)) + np2
@@ -56,9 +57,9 @@ Define Class sire As Custom
 		Round(Val(Ndoc), 0) As nrocomp, ;
 		'' As pagofinal, ;
 		Icase(Tdoc = '01', Iif(Left(nruc, 1) = '*', '0', '6'), ;
-		Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
-		Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
-		Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
+		  Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
+		  Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
+		  Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
 		Icase(Tdoc = '03', Iif(Empty(ndni), '' + Space(11), ndni + Space(3)), Tdoc = '01', Iif(Left(nruc, 1) = '*', '' + Space(11), nruc), Iif(Empty(nruc), ndni + Space(3), Iif(Left(nruc, 1) = '*', '' + Space(11), nruc))) As nruc, ;
 		Iif(Tdoc = '03', Iif(Empty(ndni), '' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '' + Space(40), Razo)) As Cliente, ;
 		0 As exporta, ;
@@ -122,11 +123,11 @@ Define Class sire As Custom
 		notros = 1
 	Endif
 	If Fsize("ccost") = 0 Then
-		nccostos = 0
+		m.nccostosenc = 0
 	Else
-		nccostos = 1
-	Endif
-	ccuo = 'M002'
+		m.nccostosenc = 1
+	ENDIF
+    ccuo = 'M002'
 	cr1 = Cruta + '.txt'
 	Select;
 		Cnruc As rucempresa, ;
@@ -174,7 +175,7 @@ Define Class sire As Custom
 		Round((vigv * 100) - 100, 0) As porcigv, ;
 		Tipo, Mone As Moneda, ;
 		Iif(Vartype(Auto) = 'N', Alltrim(Str(Auto)), Alltrim(Auto)) As Auto, ;
-		Iif(m.nccostos = 1, ccost, m.nccostos) As Ccostos, ;
+		Iif(m.nccostosenc = 0,  m.nccostosenc ,ccost) As Ccostos, ;
 		ncta, ;
 		ncta1;
 		From registro Where Left(Razo, 5) <> '-----'  Into Cursor lreg
@@ -279,7 +280,7 @@ Define Class sire As Custom
 	Case opt = 1
 		_Screen.ActiveForm.cmdaexcel.Click()
 	Case opt = 2
-		conerror=0
+		conerror = 0
 		Try
 			Set Procedure To CapaDatos, ple5 Additive
 			cf = Getfile('TXT', "Nombre:", 'Nombre', 1, "Elija Una Ubicación Para Guardar el Archivo")
@@ -297,7 +298,7 @@ Define Class sire As Custom
 			_Screen.ocompras.Idsesion = This.Idsesion
 			If _Screen.ocompras.registrocomprasNodomiciliados('lnd') < 1 Then
 				This.Cmensaje = _Screen.ocompras.Cmensaje
-				conerror=1
+				conerror = 1
 			Endif
 			If REgdvto("lnd") > 0 Then
 				cnombre = "00080200001111"
@@ -308,7 +309,7 @@ Define Class sire As Custom
 			GeneraPlE5Compras1(cf, cr, This.nmes, Val(This.Na))
 			aviso("Se Genero el Archivo 2 de 2:" + Cruta + " Correctamente")
 		Catch To oerror
-			This.Cmensaje=oerror.Message
+			This.Cmensaje = oerror.Message
 		Endtry
 	Case opt = 3
 		Try
@@ -357,7 +358,7 @@ Define Class sire As Custom
 		Endif
 		Select fech, Tdoc, Serie, Ndoc, nruc, Razo As proveedor, Importe, 0000000000.00 As total_sunat, nruc + Trim(Tdoc) + Trim(Serie) + Alltrim(Str(Round(Val(Ndoc), 0) ))As clave;
 			From registro Into Cursor result Readwrite
-			*Where Month(fech)=This.nmes And Year(fech)=Val(This.Na) 
+*Where Month(fech)=This.nmes And Year(fech)=Val(This.Na) 
 		Select propsunat
 		Scan All
 			Select result
@@ -374,7 +375,7 @@ Define Class sire As Custom
 			From result Into Cursor result Order By fech
 		Select result
 		Go Top
-		goapp.Form("ka_sirecompras", This.Idsesion, 'result',this.nmes,VAL(this.na))
+		goapp.Form("ka_sirecompras", This.Idsesion, 'result', This.nmes, Val(This.Na))
 	Endcase
 	Endfunc
 	Function correlativocompras()
@@ -454,19 +455,19 @@ Define Class sire As Custom
 		'' As errpro3, ;
 		Iif(Importe > 3500, '1', ' ') As Mpago, ;
 		Icase(Tdoc = '01', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
-		Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
-		Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '10', '0', ;
-		Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
-		Tdoc = '16', '0', ;
-		Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
-		Iif(Month(fech) = nmes, '1', '9')) As estado;
+		  Tdoc = '02', Iif(Month(fech) = nmes, '0', '0'), ;
+		  Tdoc = '03', Iif(Month(fech) = nmes, '0', '0'), ;
+		  Tdoc = '05', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '06', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '07', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '08', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '10', '0', ;
+		  Tdoc = '12', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '13', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '14', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Tdoc = '16', '0', ;
+		  Tdoc = '50', Iif(Month(fech) = nmes, '1', '6'), ;
+		  Iif(Month(fech) = nmes, '1', '9')) As estado;
 		From registro Where Left(Razo, 5) <> '-----'  Into Cursor lreg
 	Select lreg
 	Set Textmerge On Noshow
@@ -510,9 +511,9 @@ Define Class sire As Custom
 		Round(Val(Ndoc), 0) As nrocomp, ;
 		' ' As consolidado, ;
 		Icase(Tdoc = '01', Iif(Left(nruc, 1) = '*', '0', '6'), ;
-		Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
-		Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
-		Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
+		  Tdoc = '03', Iif(Len(Alltrim(ndni)) < 8, '0', '1'), ;
+		  Tdoc = '07', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), ;
+		  Tdoc = '08', Iif(Len(Alltrim(nruc)) = 11, '6', '1'), '1') As tipodocc, ;
 		Icase(Tdoc = '03', Iif(Empty(ndni), '0' + Space(11), ndni + Space(3)), Tdoc = '01', Iif(Left(nruc, 1) = '*', '0' + Space(11), nruc), Iif(Empty(nruc), ndni + Space(3), Iif(Left(nruc, 1) = '*', '-' + Space(11), nruc))) As nruc, ;
 		Iif(Tdoc = '03', Iif(Empty(ndni), '-' + Space(40), Razo), Iif(Left(nruc, 1) = '*', '-' + Space(40), Razo)) As Cliente, ;
 		0.00 As exporta, ;
@@ -554,6 +555,7 @@ Define Class sire As Custom
 	Set Textmerge Off
 	Endfunc
 Enddefine
+
 
 
 

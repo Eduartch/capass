@@ -60,7 +60,7 @@ Define Class servicio As Custom
 		This.cmensaje = "Ingrese la Descripción de Marca"
 		Return 0
 	Case obj.cmodo = 'M' And obj.nidmar < 1
-		This.cmensaje = "Seleccione Una Linea"
+		This.cmensaje = "Seleccione Una  MARCA"
 		Return 0
 	Case obj.buscarsiexiste() < 1
 		This.cmensaje = obj.cmensaje
@@ -124,10 +124,10 @@ Define Class servicio As Custom
 		Return 0
 	Endif
 	ccursor = "c_" + Sys(2015)
-	Select ncta From (obj.ccursor) Where idcta < 1 Into Cursor (ccursor)
+	Select ncta From (obj.ccursor) Where Iif(Vartype(idcta) = 'C', Val(idcta), idcta) < 1 Into Cursor (ccursor)
 	Select (ccursor)
 	If !Empty(ncta) Then
-		This.cmensaje = "Hay una Cuenta Sin ID"
+		This.cmensaje = "Hay una Cuenta Sin ID " + Alltrim(ncta)
 		Return 0
 	Endif
 	This.cmensaje = ""
@@ -150,7 +150,22 @@ Define Class servicio As Custom
 	If !Pemstatus(goApp, 'proyecto', 5) Then
 		AddProperty(goApp, 'proyecto', '')
 	Endif
+	If  Type('oempresa') = 'U' Then
+		cnruc = fe_gene.nruc
+	Else
+		cnruc = oempresa.nruc
+	Endif
 	obj =(This.oobjeto)
+	If m.cnruc = '20601140625' Then
+		If  obj.nidresponsable < 1 Then
+			This.cmensaje = 'Seleccione El Responsable para este Producto'
+			Return 0
+		Endif
+		If obj.np1 <= 0 Or obj.np3 <= 0 Then
+			This.cmensaje = 'Ingrese Precios para este Producto'
+			Return 0
+		Endif
+	Endif
 	Do Case
 	Case  Len(Alltrim(obj.cdesc)) < 1
 		This.cmensaje = "Ingrese Descripcion"
@@ -334,23 +349,18 @@ Define Class servicio As Custom
 	Case  PermiteIngresox(obj.dfecha) = 0 Or !esfechaValida(obj.dfecha)
 		This.cmensaje = "No Es posible Registrar en esta Fecha estan bloqueados Los Ingresos O Fecha de Ingreso NO es Válida"
 		Return 0
-	Case obj.ctdoc = '07'
-		If obj.ntotal > obj.ntfactura Then
-			This.cmensaje = "El Importe No Puede Ser Mayor al del Documento"
-			Return 0
-		Endif
+	Case obj.ctdoc = '07' And  obj.ntotal > obj.ntfactura
+		This.cmensaje = "El Importe No Puede Ser Mayor al del Documento"
+		Return 0
 	Case (Len(Alltrim(obj.cnombrecliente)) < 5 Or !validaruc(obj.cruc)) And obj.ctdocref = '01'
 		This.cmensaje = "Es Necesario Ingresar el Nombre Completo de Cliente, RUC Válidos"
 		Return 0
 	Case obj.ctdocref = "03" And (Len(Alltrim(obj.cdni)) <> 8 Or Val(obj.cdni) = 0)
 		This.cmensaje = "Es Obligatorio DNI del Cliente"
 		Return 0
-	Case obj.ctdoc = '07'
-		ndif = obj.ntotal - obj.ntfactura
-		If ndif > 0.10 Then
-			This.cmensaje = "El Importe No Puede Ser Mayor al del Documento"
-			Return 0
-		Endif
+	Case obj.ctdoc = '07' And  (obj.ntotal - obj.ntfactura) > 0.10
+		This.cmensaje = "El Importe No Puede Ser Mayor al del Documento"
+		Return 0
 	Case Left(obj.ctiponotacredito, 2) = '13' And  Left(obj.cformapago, 1) <> 'C'
 		This.cmensaje = "El documento se debe ingresar como Crédito y fecha de vencimiento "
 		Return 0
@@ -424,7 +434,7 @@ Define Class servicio As Custom
 	Otherwise
 		Return 1
 	Endcase
-	ENDFUNC
+	Endfunc
 	Function validarventasxsys3()
 	obj = This.oobjeto
 	If This.validarVentas(obj) < 1 Then
@@ -443,8 +453,28 @@ Define Class servicio As Custom
 	Endfunc
 	Function validarventaspsysg()
 	obj = This.oobjeto
-	If This.validarVentas(obj) < 1 Then
+	If This.validarVentas(This.oobjeto) < 1 Then
 		Return 0
+	Endif
+	If  Left(obj.formaPago, 1) = 'C'   Then
+		octasxcobrar = Newobject("ctasporcobrar", "d:\capass\modelos\ctasxcobrar.prg")
+		If octasxcobrar.vlineacreditoydias(obj.codigo, obj.monto, obj.lineacredito, obj.ndiascredito) < 1 Then
+			This.cmensaje = octasxcobrar.cmensaje
+			Return 0
+		Endif
+		octasxcobrar = Null
+	Endif
+	If  Left(obj.formaPago, 1) = 'R'   Then
+		If obj.dias >= 10 Then
+			This.cmensaje = "El Máximo de Dias es de 10 Días"
+			Return 0
+		Endif
+*!*			octasxcobrar=Newobject("ctasporcobrar","d:\capass\modelos\ctasxcobrar.prg")
+*!*			If octasxcobrar.vlineacreditoydias(obj.codigo, obj.monto, obj.lineacredito ,10)<1 Then
+*!*				This.cmensaje=octasxcobrar.cmensaje
+*!*				Return 0
+*!*			Endif
+*!*			octasxcobrar=Null
 	Endif
 	Do Case
 	Case This.VerificaIngresoItemsVentas(obj.calias) < 1
@@ -461,10 +491,10 @@ Define Class servicio As Custom
 	nt1 = obj.valor + obj.exonerado + obj.igv + obj.inafecta
 	nt2 = obj.monto
 	Do Case
-	Case Month(obj.fecha) <> goApp.mes  Or Year(obj.fecha) <> Val(goApp.año) 
+	Case Month(obj.fecha) <> goApp.mes  Or Year(obj.fecha) <> Val(goApp.año)
 		This.cmensaje = "Mes y Año No Configurados por el Sistema"
 		Return 0
-	Case Len(Alltrim(obj.SErie)) < 3 Or   Alltrim(obj.SErie) = '000' Or Alltrim(obj.SErie) = '0000'
+	Case Len(Alltrim(obj.SErie)) < 3 Or Alltrim(obj.SErie) = '000' Or Alltrim(obj.SErie) = '0000'
 		This.cmensaje = "La SERIE de Documento no es Válido"
 		Return 0
 	Case Len(Alltrim(obj.NUmero)) < 7  Or Val(obj.NUmero) = 0
@@ -549,6 +579,8 @@ Define Class servicio As Custom
 			Exit
 		Case Prec < costo And aprecios <> 'A' And grati <> 'S'
 			Sw		 = 0
+*!*				WAIT WINDOW costo
+*!*				WAIT WINDOW prec
 			cmensaje = "El Producto: " + Rtrim(Desc) + " Tiene Un precio Por Debajo del Costo y No esta Autorizado para hacer esta Venta"
 			Exit
 		Case cant * costo <= 0 And grati = 'S' And Prec = 0
@@ -562,7 +594,26 @@ Define Class servicio As Custom
 	Endif
 	Return 1
 	Endfunc
+	Function validarutas()
+	obj =(This.oobjeto)
+	Do Case
+	Case Empty(obj.cnombre)
+		This.cmensaje = "Ingrese nombre de RUTA"
+		Return 0
+	Case obj.cmodo = 'M' And obj.nidruta < 1
+		This.cmensaje = "Seleccione Una RUTA"
+		Return 0
+	Case obj.buscarsiexiste() < 1
+		This.cmensaje = obj.cmensaje
+		Return 0
+	Otherwise
+		Return 1
+	Endcase
+	Endfunc
 Enddefine
+
+
+
 
 
 

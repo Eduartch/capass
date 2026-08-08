@@ -1,5 +1,28 @@
 Define Class guiaremisionxvtas As GuiaRemision Of 'd:\capass\modelos\guiasremision'
 	Function listaritemsparaguia(nid, Calias)
+	IF !PEMSTATUS(goapp,'proyecto',5) then
+	   ADDPROPERTY(goapp,'proyecto','')
+	ENDIF 
+	IF ALLTRIM(goapp.proyecto)=='psysw' THEN 
+	   TEXT To lC Noshow Textmerge
+           select a.idauto,a.idkar,a.idart AS coda,a.saldo AS cant,r.fech,r.form,r.idcliente AS idclie,
+	       c.razo,c.nruc,c.dire,c.ciud,c.ndni,r.tdoc,r.ndoc,concat(e.descri,' ',ifnull(rser_seri,' ') ) as descri,
+	       e.unid,e.peso,a.saldo
+	       FROM (SELECT SUM(IFNULL(`f`.`entr_cant`,0)) AS `entregado`, (`b`.`cant` - SUM(IFNULL(`f`.`entr_cant`,CAST(0 as decimal(12,2))))) AS `saldo`, `a`.`idauto` AS `idauto`, `b`.`idkar`  AS `idkar`, `b`.`idart`  AS `idart`
+	       FROM `fe_kar` `b`
+	       INNER JOIN `fe_rcom` `a`   ON `a`.`idauto` = `b`.`idauto`
+	       LEFT JOIN (SELECT SUM(entr_cant) AS entr_cant,guia_idau,entr_idkar FROM fe_guias AS g
+	       INNER JOIN fe_ent AS e ON e.`entr_idgu`=g.`guia_idgui`
+	       WHERE g.`guia_idau`=<<nids>> AND g.guia_acti='A' AND e.`entr_acti`='A' GROUP BY entr_idkar,entr_idgu) AS f   ON f.entr_idkar=b.`idkar`
+	       WHERE (`a`.`acti` = 'A'   AND `b`.`acti` = 'A' AND a.idauto=<<nids>>) GROUP BY `b`.`idkar`,`a`.`idauto`,`b`.`idart`) AS a
+	       INNER JOIN fe_rcom AS r ON r.idauto=a.idauto
+	       INNER JOIN fe_clie AS c  ON c.idclie=r.idcliente
+	       INNER JOIN fe_art AS e ON e.idart=a.idart
+	       left join fe_dseries as s on s.dser_idka=a.idkar
+		   left join fe_rseries as q on q.rser_idse=s.dser_idre
+	       where saldo>0  ORDER BY a.idkar
+	ENDTEXT
+	ELSE     
 	TEXT To lC Noshow Textmerge
            select a.idauto,a.idkar,a.idart AS coda,a.saldo AS cant,r.fech,r.form,r.idcliente AS idclie,
 	       c.razo,c.nruc,c.dire,c.ciud,c.ndni,r.tdoc,r.ndoc,e.descri,e.unid,e.peso,a.saldo
@@ -15,6 +38,7 @@ Define Class guiaremisionxvtas As GuiaRemision Of 'd:\capass\modelos\guiasremisi
 	       INNER JOIN fe_art AS e ON e.idart=a.idart
 	       where saldo>0  ORDER BY a.idkar
 	ENDTEXT
+	ENDIF 
 	If This.EjecutaConsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif

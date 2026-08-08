@@ -4,6 +4,18 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	motivocierre = ""
 	nidlectura = 0
 	dFecha = Date()
+	nidlectura1=0
+	nsurtidor=0
+	nidusua=0
+	nidproducto=0
+	clado=''
+	nprecio=0
+	nidingreso=0
+	nmontoinicial=0
+	nmontofinal=0
+	ncantinicial=0
+	ncantfinal=0
+*listaci.Surtidor, goApp.IDturno, 0, listaci.Monto, fe_gene.fech, goApp.nidusua, listaci.Codigo, listaci.lado, listaci.Precio, nsgtelectura
 	Function ConsultarLecturas(Calias)
 	Df = Cfechas(fe_gene.fech - 2)
 	lC = 'ProlistarDespachos'
@@ -108,7 +120,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 		Case goApp.Isla = 4
 			TEXT TO lscierra NOSHOW TEXTMERGE
 			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (7,8) AND lect_acti='A' AND lect_esta='A'
-			ENDTEXT	
+			ENDTEXT
 		Endcase
 	Otherwise
 		Do Case
@@ -127,7 +139,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 		Case goApp.Isla = 4
 			TEXT TO lscierra NOSHOW TEXTMERGE
 			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (9,10) AND lect_acti='A' AND lect_esta='A'
-			ENDTEXT	
+			ENDTEXT
 		Endcase
 	Endcase
 	q = 1
@@ -168,6 +180,17 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Endfunc
 	Function consultarxislaturno(Calias, nisla, nturno)
 	lC = 'ProListarlecturasrealesxisla'
+	goApp.npara1 = nisla
+	TEXT To lp Noshow
+	     (?goapp.npara1)
+	ENDTEXT
+	If This.EJECUTARP10(lC, lp, Calias) < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function consultarcontometroxisla(Calias, nisla, nturno)
+	lC = 'ListarContometroxisla'
 	goApp.npara1 = nisla
 	TEXT To lp Noshow
 	     (?goapp.npara1)
@@ -257,7 +280,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 		Case goApp.Isla = 4
 			TEXT TO lscierra NOSHOW TEXTMERGE
 			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (7,8) AND lect_acti='A' AND lect_esta='A'
-			ENDTEXT	
+			ENDTEXT
 		Endcase
 	Otherwise
 		Do Case
@@ -276,7 +299,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 		Case goApp.Isla = 4
 			TEXT TO lscierra NOSHOW TEXTMERGE
 			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (9,10) AND lect_acti='A' AND lect_esta='A'
-			ENDTEXT	
+			ENDTEXT
 		Endcase
 	Endcase
 	Do Case
@@ -324,15 +347,15 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 				nislax = 2
 			Endcase
 		Case  fe_gene.nruc = '20609681609'
-				Do Case
+			Do Case
 			Case liq.Surtidor = 1 Or  liq.Surtidor = 2
 				nislax = 1
 			Case liq.Surtidor = 3 Or  liq.Surtidor = 4
 				nislax = 2
-			Case liq.Surtidor = 5 Or  liq.Surtidor = 6 
+			Case liq.Surtidor = 5 Or  liq.Surtidor = 6
 				nislax = 3
 			Case liq.Surtidor = 7 Or  liq.Surtidor = 8
-				nislax = 4	
+				nislax = 4
 			Endcase
 		Otherwise
 			Do Case
@@ -343,7 +366,7 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 			Case liq.Surtidor = 5 Or  liq.Surtidor = 6 Or liq.Surtidor = 7 Or  liq.Surtidor = 8
 				nislax = 3
 			Case liq.Surtidor = 9 Or  liq.Surtidor = 10
-				nislax = 4	
+				nislax = 4
 			Endcase
 		Endcase
 		Select islas
@@ -404,23 +427,50 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 	Return 1
 	Endfunc
 	Function ConsultarCierreslecturas(dfi, dff, Calias)
-	If (dff - dfi) > 31 Then
-		This.Cmensaje = 'Máximo a consultar es 30 Días'
+	If (dff - dfi) > 120 Then
+		This.Cmensaje = 'Máximo a consultar es 120 Días'
 		Return 0
 	Endif
 	fi = Cfechas(dfi)
 	ff = Cfechas(dff)
-	TEXT To lC Noshow Textmerge
-	SELECT descri AS producto,lect_cfinal as final,lect_inic AS inicial,lect_cfinal-lect_inic as cantidad,lect_prec as Precio,
-	Round((lect_cFinal-lect_inic)*lect_prec,2) As Ventas,
-	lect_mfinal as montofinal,lect_inim as montoinicial,lect_mfinal-lect_inim as monto,lect_mang AS manguera,lect_idco AS surtidor,
-	u.nomb as Cajero,lect_fope as InicioTurno,lect_fope1 as FinTurno,lect_idtu as turno,lect_idle as Idlecturas,lect_idar AS codigo,'a' as orden
-	FROM fe_lecturas AS l
-	INNER JOIN fe_art AS a ON a.idart=l.lect_idar
-	inner join fe_usua as u on u.idusua=l.lect_idus
-	WHERE lect_acti='A'  and lect_idin=<<this.nidlectura>>  and lect_fech='<<fi>>'  order by u.nomb,descri,lect_idco
-	ENDTEXT
-	If This.EJECutaconsulta(lC, Calias) < 1 Then
+	Do Case
+	Case This.nisla = 1
+		nlado1=1
+		nlado2=2
+	Case  This.nisla  = 2
+		nlado1=3
+		nlado2=4
+	Case  This.nisla  = 3
+		nlado1=5
+		nlado2=6
+	Case  This.nisla  = 4
+		nlado1=7
+		nlado2=8
+	Endcase
+	If goApp.ConectaControlador = 'Y' THEN 
+		TEXT To lC Noshow Textmerge
+		SELECT descri AS producto,lect_cfinal as final,lect_inic AS inicial,lect_cfinal-lect_inic as cantidad,lect_prec as Precio,
+		Round((lect_cFinal-lect_inic)*lect_prec,2) As Ventas,
+		lect_mfinal as montofinal,lect_inim as montoinicial,lect_mfinal-lect_inim as monto,lect_mang AS manguera,lect_idco AS surtidor,
+		u.nomb as Cajero,lect_fope as InicioTurno,lect_fope1 as FinTurno,lect_idtu as turno,lect_idle as Idlecturas,lect_idar AS codigo,'a' as orden
+		FROM fe_lecturas AS l
+		INNER JOIN fe_art AS a ON a.idart=l.lect_idar
+		inner join fe_usua as u on u.idusua=l.lect_idus
+		WHERE lect_acti='A'  and lect_idin=<<this.nidlectura>>  and lect_fech='<<fi>>'  order by u.nomb,descri,lect_idco
+		ENDTEXT
+	Else
+		TEXT To lC Noshow Textmerge
+		SELECT descri AS producto,lect_cfinal as final,lect_inic AS inicial,lect_cfinal-lect_inic as cantidad,lect_prec as Precio,
+		Round((lect_cFinal-lect_inic)*lect_prec,2) As Ventas,
+		lect_mfinal as montofinal,lect_inim as montoinicial,lect_mfinal-lect_inim as monto,lect_lado AS manguera,lect_idco AS surtidor,
+		u.nomb as Cajero,lect_fope as InicioTurno,lect_fope1 as FinTurno,lect_idtu as turno,lect_idle as Idlecturas,lect_idar AS codigo,lect_sgtel,'a' as orden
+		FROM fe_lecturas AS l
+		INNER JOIN fe_art AS a ON a.idart=l.lect_idar
+		inner join fe_usua as u on u.idusua=l.lect_idus
+		WHERE lect_acti='A'  and lect_idin=<<this.nidlectura>>  and lect_fech='<<fi>>' and lect_idco in(<<nlado1>>,<<nlado2>>)   order by u.nomb,descri,lect_idco
+		ENDTEXT
+	ENDIF
+    If This.EJECutaconsulta(lC, Calias) < 1 Then
 		Return 0
 	Endif
 	Return 1
@@ -486,14 +536,309 @@ Define Class lecturas As OData Of 'd:\capass\database\data.prg'
 		Return  0
 	Endif
 	Endfunc
+	Function registralecturascontometros(Calias)
+	If goApp.IDturno = 1 Then
+		Nsgte = 2
+	Else
+		Nsgte = 1
+	Endif
+	nsgtelectura = goApp.Idlecturas + 1
+	Do Case
+	Case goApp.Isla = 1
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene  SET idle1=<<nsgtelectura>>
+		ENDTEXT
+	Case goApp.Isla = 2
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle2=<<nsgtelectura>>
+		ENDTEXT
+	Case goApp.Isla = 3
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle3=<<nsgtelectura>>
+		ENDTEXT
+	Case goApp.Isla = 4
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle4=<<nsgtelectura>>
+		ENDTEXT
+	Endcase
+	Do Case
+	Case goApp.Isla = 1
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu1=<<nsgte>>
+		ENDTEXT
+	Case goApp.Isla = 2
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu2=<<nsgte>>
+		ENDTEXT
+	Case goApp.Isla = 3
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu3=<<nsgte>>
+		ENDTEXT
+	Case goApp.Isla = 4
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu4=<<nsgte>>
+		ENDTEXT
+	Endcase
+	Do Case
+	Case goApp.Isla = 1
+		TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (1, 2) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Case goApp.Isla = 2
+		TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (3,4) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Case goApp.Isla = 3
+		TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (5,6) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Case goApp.Isla = 4
+		TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (7,8) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Endcase
+	q = 1
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	If  This.Ejecutarsql(lCt) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If  This.Ejecutarsql(lscierra) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	This.contransaccion = 'S'
+	If  This.Ejecutarsql(lcx) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Select listaci
+	Scan All
+		This.nsurtidor=listaci.Surtidor
+		This.nturno=goApp.IDturno
+		This.nmontoinicial=listaci.Monto
+		This.dFecha=fe_gene.fech
+		This.nidusua=goApp.nidusua
+		This.nidproducto=listaci.Codigo
+		This.clado=listaci.lado
+		This.nprecio=listaci.Precio
+		This.nidingreso=nsgtelectura
+		If This.IngresalecturasContometros00()<1 Then
+			q = 0
+			Exit
+		Endif
+	Endscan
+	If q=0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	goApp.IDturno = m.Nsgte
+	goApp.Idlecturas = m.nsgtelectura
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresalecturasContometros00()
+*listaci.Surtidor, goApp.IDturno, 0, listaci.Monto, fe_gene.fech, goApp.nidusua, listaci.Codigo, listaci.lado, listaci.Precio, nsgtelectura
+	Local cur As String
+	lC = 'FUNINGRESALECTURA'
+	npara1 = This.nsurtidor
+	npara2 = This.nturno
+	npara3 = This.ncantinicial
+	npara4 = This.nmontoinicial
+	npara5 = This.dFecha
+	npara6 = This.nidusua
+	npara7 = This.nidproducto
+	npara8 = This.clado
+	npara9 = This.nprecio
+	npara10 = This.nidingreso
+	TEXT To lp Noshow
+	     (?npara1,?npara2,?npara3,?npara4,?npara5,?npara6,?npara7,?npara8,?npara9,?npara10)
+	ENDTEXT
+	nidxl=This.EJECUTARP(lC, lp, "xxll")
+	If m.nidxl < 1 Then
+		Return 0
+	Endif
+	Return nidxl
+	Endfunc
+	Function consultarcontometroxislainicial(nisla,Ccursor)
+	np1=m.nisla
+	lC='ProlistarLecturasInicio'
+	TEXT TO lp NOSHOW
+	(?np1)
+	ENDTEXT
+	If This.EJECUTARP(lC,lp,Ccursor)<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function registrarlecturafinalcontometros(nidus,Ccursor)
+	sw=1
+	Select (Ccursor)
+	Scan All
+		If montofinal<=0 Then
+			This.Cmensaje="Ingrese Lectura Final"
+			sw=0
+			Exit
+		Endif
+	Endscan
+	If sw=0 Then
+		Return 0
+	Endif
+	If goApp.IDturno = 1 Then
+		Nsgte = 2
+	Else
+		Nsgte = 1
+	Endif
+	nsgtelectura = goApp.Idlecturas + 1
+	Do Case
+	Case goApp.Isla = 1
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene  SET idle1=<<nsgtelectura>>
+		ENDTEXT
+	Case goApp.Isla = 2
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle2=<<nsgtelectura>>
+		ENDTEXT
+	Case goApp.Isla = 3
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle3=<<nsgtelectura>>
+		ENDTEXT
+	Case goApp.Isla = 4
+		TEXT To lcx Noshow Textmerge
+          UPDATE fe_gene SET idle4=<<nsgtelectura>>
+		ENDTEXT
+	Endcase
+	Do Case
+	Case goApp.Isla = 1
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu1=<<nsgte>>
+		ENDTEXT
+	Case goApp.Isla = 2
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu2=<<nsgte>>
+		ENDTEXT
+	Case goApp.Isla = 3
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu3=<<nsgte>>
+		ENDTEXT
+	Case goApp.Isla = 4
+		TEXT To lCt Noshow Textmerge
+          UPDATE fe_gene SET idtu4=<<nsgte>>
+		ENDTEXT
+	Endcase
+	Do Case
+	Case goApp.Isla = 1
+		TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (1, 2) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Case goApp.Isla = 2
+		TEXT TO lscierra NOSHOW  TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (3,4) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Case goApp.Isla = 3
+		TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (5,6) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Case goApp.Isla = 4
+		TEXT TO lscierra NOSHOW TEXTMERGE
+			UPDATE fe_lecturas SET lect_esta='C' WHERE lect_idco in (7,8) AND lect_acti='A' AND lect_esta='A'
+		ENDTEXT
+	Endcase
+	q = 1
+	If This.IniciaTransaccion() < 1 Then
+		Return 0
+	Endif
+	If  This.Ejecutarsql(lCt) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If  This.Ejecutarsql(lscierra) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If  This.Ejecutarsql(lcx) < 1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	Select (Ccursor)
+	Scan All
+		This.nsurtidor=listaci.Surtidor
+		This.nturno=goApp.IDturno
+		This.nmontoinicial=listaci.montofinal
+		This.dFecha=fe_gene.fech
+		This.nidusua=m.nidus
+		This.nidproducto=listaci.Codigo
+		This.clado=listaci.lado
+		This.nprecio=listaci.Precio
+		This.nidingreso=nsgtelectura
+*!*		    this.nidlectura1=listaci.lect_idle
+		nidxl=This.IngresalecturasContometros00()
+		If m.nidxl<1 Then
+			q = 0
+			Exit
+		Endif
+		If This.IngresalecturasFinalContometros00(listaci.lect_idle, 0, listaci.montofinal, goApp.nidusua,m.nidxl) Then
+			q = 0
+			Exit
+		Endif
+	Endscan
+	If q=0 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	goApp.IDturno = m.Nsgte
+	goApp.Idlecturas = m.nsgtelectura
+	If This.GRabarCambios() < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function IngresalecturasFinalContometros00(np1, np2, np3, np4,np5)
+	lC = 'PROINGRESALECTURAFINAL'
+	npara1 = np1
+	npara2 = np2
+	npara3 = np3
+	npara4 = np4
+	npara5 = np5
+	TEXT To lp Noshow
+	     (?npara1,?npara2,?npara3,?npara4,?npara5)
+	ENDTEXT
+	If EJECUTARP(lC, lp, "") < 1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
+	Function  ActualizaMontofinal(nidl,nidsgte,nmonto)
+	np1=nidl
+	np2=nidsgte
+	np3=nmonto
+	If This.IniciaTransaccion()<1 Then
+		Return 0
+	Endif
+	TEXT TO lc NOSHOW
+       UPDATE fe_lecturas SET lect_mfinal=?np3  WHERE lect_idle=?np1
+	ENDTEXT
+	If This.Ejecutarsql(lC)<1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	TEXT TO lc NOSHOW
+       UPDATE fe_lecturas SET lect_inim=?np3  WHERE lect_sgtel=?np2
+	ENDTEXT
+	If This.Ejecutarsql(lC)<1 Then
+		This.DEshacerCambios()
+		Return 0
+	Endif
+	If This.GRabarCambios()<1 Then
+		Return 0
+	Endif
+	Return 1
+	Endfunc
 Enddefine
-
-
-
-
-
-
-
 
 
 

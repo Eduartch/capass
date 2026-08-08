@@ -256,13 +256,12 @@ Define Class Correlativo As OData Of 'd:\capass\database\data.prg'
 	Return gene_corc
 	Endfunc
 	Function GeneraCorrelativo1()
-	lC = "ProGeneraCorrelativo"
-	goApp.npara1 = This.Nsgte + 1
-	goApp.npara2 = This.Idserie
-	TEXT To lp Noshow
-        (?goapp.npara1,?goapp.npara2)
+	nn=  this.Nsgte + 1
+	ns = This.Idserie
+	TEXT To lc Noshow
+       UPDATE fe_serie SET nume=?nn WHERE idserie=?ns
 	ENDTEXT
-	If This.EJECUTARP(lC, lp, "") < 1 Then
+	If This.Ejecutarsql(lc)<1 THEN 
 		Return 0
 	Endif
 	This.Nsgte = This.Nsgte + 1

@@ -11,6 +11,35 @@ Define Class productosneumaticos As Producto Of 'd:\capass\modelos\productos.prg
 	Endif
 	Return 1
 	Endfunc
+	Function EnviarListaPreciosServidor()
+	Local lC, lp
+	Ccursor = 'lprecios'
+	m.lC		 = 'ProMuestraCostosParaVenta'
+	npara1 = '%%'
+	Text To m.lp Noshow
+     (?npara1)
+	ENDTEXT
+	If This.EJECUTARP(m.lC, m.lp, Ccursor) < 1 Then
+		Return 0
+	ENDIF
+	Select (Ccursor)
+	hConn = This.Abrirconexionremoto("neumaticosch")
+	If hConn > 0
+* Configurar timeout de la conexión para consultas pesadas
+		This.establecertime(m.hConn)
+* 3. Ejecutar inserción en bloques de 1,000 registros
+		lnFilasIncertadas = This.InsertarBloqueMySQL(Ccursor, "fe_art", hConn, 1000)
+		If lnFilasIncertadas > 0
+			This.Cmensaje = "Se insertaron exitosamente " + Transform(lnFilasIncertadas) + " registros."
+		Endif
+* 4. Cerrar conexión
+		This.CierraConexion(hConn)
+	Else
+		Aerror(laErr)
+		This.Cmensaje = "No se pudo conectar a MySQL: " + laErr[1, 2]
+	Endif
+	Return 1
+	Endfunc
 	Function Nuevo()
 	If This.validarproducto() < 1 Then
 		Return 0
@@ -101,7 +130,136 @@ Define Class productosneumaticos As Producto Of 'd:\capass\modelos\productos.prg
 	Endif
 	Return 1
 	Endfunc
+********************************************************************************
+* Rutina: InsertarBloqueMySQL
+* Descripción: Transfiere registros de un cursor local VFP a una tabla MySQL
+*              usando inserción en bloque (Batched/Multi-row Insert).
+********************************************************************************
+	Function InsertarBloqueMySQL(tcCursorVFP, tcTablaMySQL, tnHandleConn, tnTamanoLote)
+	Local lnRegistros, lnInsertados, lcSQLBase, lcSQLValues, lnContadorLote
+	Local lnIteracion, lcValoresFila, lnExito, lcSqlFinal
+
+* Configuración por defecto del tamaño de lote (1,000 es óptimo)
+	If Vartype(tnTamanoLote) <> "N" Or tnTamanoLote <= 0
+		tnTamanoLote = 1000
+	Endif
+
+* Verificar que el cursor existe y tiene datos
+	If !Used(tcCursorVFP) Or Reccount(tcCursorVFP) = 0
+		This.Cmensaje = "No Hay Datos para enviar"
+		Return 0
+	Endif
+
+	lnRegistros   = Reccount()
+	lnInsertados  = 0
+	lnContadorLote = 0
+* Prepara la estructura base del INSERT
+* NOTA: Ajusta las columnas según la estructura real de tu tabla MySQL
+	lcSQLBase = "INSERT INTO " + tcTablaMySQL + " (descri,unid,peso,idcat,idmar,tipro,idflete,tmon,prod_mode,prod_ccai,cost,uno,dos,tre,cua,cin,sei,die,sie,onc,doce,trece,catorce,quince) VALUES "
+	lcSQLValues = ""
+* Iniciar transacción en MySQL para mayor velocidad e integridad
+	SQLExec(tnHandleConn, "START TRANSACTION")
+	lnExito = SQLExec(tnHandleConn, "Call Reiniciaproductos()")
+	If lnExito < 1
+* Si hay error, revertimos la transacción y salimos
+		SQLExec(tnHandleConn, "ROLLBACK")
+		Aerror(laErr)
+		This.Cmensaje = "Error al  Eliminar Items de Productos: " + laErr[1, 2]
+		Return - 1
+	Endif
+	Select (tcCursorVFP)
+	Go Top
+	Scan
+* Construir la tupla de valores sanitizando datos para SQL
+		lcValoresFila = "(" + ;
+			"'" + this.LimpiarCadena(lprecios.Descri) + "', " + ;
+			"'" + this.LimpiarCadena(lprecios.unid) + "', " + ;
+			Transform(lprecios.peso) + ", " + ;
+			Transform(lprecios.idcat) + ", " + ;
+			Transform(lprecios.idmar) + ", " + ;
+			"'" + this.LimpiarCadena(lprecios.tipro) + "', " + ;
+			Transform(lprecios.idflete) + ", " + ;
+			"'" + this.LimpiarCadena(lprecios.tmoneda) + "', " + ;
+			"'" + this.LimpiarCadena(lprecios.prod_mode) + "', " + ;
+			"'" + this.LimpiarCadena(lprecios.prod_ccai) + "', " + ;
+			Transform(lprecios.cost, "9999999.99") + ", " + ;
+			Transform(lprecios.uno) + ", " + ;
+			Transform(lprecios.Dos) + ", " + ;
+			Transform(lprecios.tre) + ", " + ;
+			Transform(lprecios.cua) + ", " + ;
+			Transform(lprecios.cin) + ", " + ;
+			Transform(lprecios.sei) + ", " + ;
+			Transform(lprecios.die) + ", " + ;
+			Transform(lprecios.sie) + ", " + ;
+			Transform(lprecios.onc) + ", " + ;
+			Transform(lprecios.doce) + ", " + ;
+			Transform(lprecios.trece) + ", " + ;
+			Transform(lprecios.catorce) + ", " + ;
+			Transform(lprecios.quince) + ")"
+* Acumular valores en el lote actual
+		If Empty(lcSQLValues)
+			lcSQLValues = lcValoresFila
+		Else
+			lcSQLValues = lcSQLValues + ", " + lcValoresFila
+		Endif
+		lnContadorLote = lnContadorLote + 1
+* Cuando alcanzamos el tamaño del lote, enviamos la consulta a MySQL
+		If lnContadorLote >= tnTamanoLote
+			lcSqlFinal = lcSQLBase + lcSQLValues
+			lnExito = SQLExec(tnHandleConn, lcSqlFinal)
+			If lnExito < 1
+* Si hay error, revertimos la transacción y salimos
+				SQLExec(tnHandleConn, "ROLLBACK")
+				Aerror(laErr)
+				This.Cmensaje = "Error al insertar lote en MySQL: " + laErr[1, 2]
+				Return - 1
+			Endif
+			lnInsertados = lnInsertados + lnContadorLote
+			lcSQLValues = ""
+			lnContadorLote = 0
+		Endif
+	Endscan
+* Procesar los registros remanentes que no completaron un lote entero
+	If !Empty(lcSQLValues)
+		lcSqlFinal = lcSQLBase + lcSQLValues
+		lnExito = SQLExec(tnHandleConn, lcSqlFinal)
+		If lnExito < 1
+			SQLExec(tnHandleConn, "ROLLBACK")
+			Aerror(laErr)
+			This.Cmensaje = "Error al insertar lote final en MySQL: " + laErr[1, 2]
+			Return - 1
+		Endif
+		lnInsertados = lnInsertados + lnContadorLote
+	Endif
+* Confirmar todos los cambios acumulados
+	SQLExec(tnHandleConn, "COMMIT")
+	Return lnInsertados
+	Endfunc
+********************************************************************************
+* Función Auxiliar: LimpiarCadena
+* Escapa apóstrofes (') y barras invertidas (\) para evitar fallos de sintaxis SQL
+********************************************************************************
+	Function LimpiarCadena(tcTexto)
+	Local lcSalida
+	lcSalida = Alltrim(Transform(tcTexto))
+	lcSalida = Strtran(lcSalida, "\", "\\")
+	lcSalida = Strtran(lcSalida, "'", "''")
+	Return lcSalida
+	Endfunc
 Enddefine
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
